@@ -38,7 +38,7 @@ Lokal: http://localhost:5153 — TASK-03 commit + `dotnet run --project src/Clea
 | **Coder** | Disk: Account, Identity cookie, özet `0,00 ₺`. Origin: iskelet. | **WIP / kritik** | **Yalnızca TASK-03.** Org ajanları kesmez. Ledger/havale PageModel’de yok. |
 | **Payments** | Origin Domain Ledger + `NetOf`. | **Done / yeşil** | Relaunch yok. EF login sonrası. Havale TASK-06. |
 | **Architect** | `ARCHITECTURE.md`. Portlar Application (DIP). | **Kapı** | Canvas + SOLID. SPEC değişmeden ekran ekleme. |
-| **Tester** | Disk test WIP. | **Sarı** | Coder sonrası `dotnet test`. `LedgerPair` unit OK. Web yok. |
+| **Tester** | Origin 8 `LedgerPairTests`. | **Done (unit) / yeşil** | Relaunch yok. Tam test Coder Identity sonrası. |
 | **Deploy** | CANLI + SQL Compose. | **Plan yeşil** | TASK-16 yok. |
 | **SEO/Ads** | SEO + ADS. | **Yeşil** | Kampanya canlı URL sonrası. Razor çalma. |
 | **Designer** | Origin `666dd32`: TASARIM, MARKA, `brand.css`. | **Done / yeşil** | Relaunch yok. Coder `brand.css` bağlar. |
@@ -50,7 +50,7 @@ Lokal: http://localhost:5153 — TASK-03 commit + `dotnet run --project src/Clea
 
 ## Karar
 
-1. Coder TASK-03 → origin (Identity + boş özet + UI). Port/ledger işi PageModel’de değil.
-2. Architect Application portları = para özelliği kapısı (TASK-05/06 öncesi).
-3. Tester: Coder sonrası smoke; `NetOf` unit şimdi olabilir.
-4. TASK-06 / Azure / Ads harcaması **şimdi değil**.
+1. Coder **yalnızca TASK-03** — org ajanları kesmez, ekstra iş yok.
+2. Sales / Tester / Designer relaunch yok.
+3. Org: `docs/ORGANIZASYON.md` land edince HANDOFF işaret eder.
+4. TASK-06 / Azure / Ads harcama **şimdi değil**.
