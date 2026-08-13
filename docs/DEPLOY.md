@@ -41,7 +41,15 @@ powershell -File scripts/db-smoke.ps1
 
 Windows native MySQL84 zaten `:3306` dinliyorsa Compose MySQL icin o servisi durdur (veriyi silme). Native MSSQLSERVER data C: Program Files'da kalir; Compose SQL D: bind kullanir.
 
-Docker Desktop Linux motoru Virtual Machine Platform ister. `wsl --install --no-distribution` sonrasi **reboot** sart (CBS pending). Oracle EULA `ORACLE_PASSWORD` ile kabul; pirated imaj yok. Redis/Rabbit `docker-compose.yml` icinde durur (TASK-12).
+Docker Desktop Linux motoru Virtual Machine Platform ister. Ozellikler acildi (`scripts/docker-vmp-fix.ps1`); **CBS reboot pending** — ajan reboot etmez. Reboot sonrasi:
+
+```powershell
+powershell -File scripts/docker-up.ps1
+```
+
+Development (`dotnet run` / VS `http`): native SQL **shared memory** + Windows auth (`Server=localhost`, Integrated Security). `localhost,1433` + `sa` Compose SQL icindir; native TCP kapali ki reboot sonrasi 1433 Docker'a kalsin.
+
+Oracle EULA `ORACLE_PASSWORD` ile kabul; pirated imaj yok. Redis/Rabbit `docker-compose.yml` icinde durur (TASK-12).
 ## CI (TASK-15)
 
 `.github/workflows/ci.yml`: `dotnet restore` → `build` → `test`. Secret yok.

@@ -42,6 +42,7 @@
   <data name="InvalidEmail" xml:space="preserve"><value>Geben Sie eine gültige E-Mail ein.</value></data>
   <data name="Language" xml:space="preserve"><value>Sprache</value></data>
   <data name="LinkedAccount" xml:space="preserve"><value>Verknüpftes Konto</value></data>
+  <data name="LiveBadge" xml:space="preserve"><value>Live</value></data>
   <data name="MainMenu" xml:space="preserve"><value>Hauptmenü</value></data>
   <data name="MetaActivity" xml:space="preserve"><value>Wallet-Bewegungen. Demo — gefälschtes Gateway für Aufladungen.</value></data>
   <data name="MetaDefault" xml:space="preserve"><value>ASP.NET Core 8 Digital-Wallet-Demo. Demo — gefälschtes Gateway für Aufladungen.</value></data>
@@ -75,8 +76,14 @@
   <data name="SendTransfer" xml:space="preserve"><value>Überweisung senden</value></data>
   <data name="SignIn" xml:space="preserve"><value>Anmelden</value></data>
   <data name="SignInLede" xml:space="preserve"><value>Melden Sie sich mit E-Mail und Passwort an Ihrer Wallet an.</value></data>
+  <data name="SignInWithApple" xml:space="preserve"><value>Mit Apple anmelden</value></data>
+  <data name="SignInWithGoogle" xml:space="preserve"><value>Mit Google anmelden</value></data>
   <data name="SignOut" xml:space="preserve"><value>Abmelden</value></data>
   <data name="SkipToContent" xml:space="preserve"><value>Zum Inhalt</value></data>
+  <data name="SocialEmailRequired" xml:space="preserve"><value>Der Anbieter hat keine E-Mail gesendet. Registrieren Sie sich mit E-Mail und Passwort.</value></data>
+  <data name="SocialLoginFailed" xml:space="preserve"><value>Soziale Anmeldung fehlgeschlagen.</value></data>
+  <data name="SocialNotConfigured" xml:space="preserve"><value>{0}-Anmeldung ist nicht konfiguriert. Client-ID und Secret gehören in user-secrets oder Azure App Settings.</value></data>
+  <data name="OrContinueWith" xml:space="preserve"><value>oder</value></data>
   <data name="SourceAccount" xml:space="preserve"><value>Quellkonto</value></data>
   <data name="StatusActive" xml:space="preserve"><value>Aktiv</value></data>
   <data name="StatusCompleted" xml:space="preserve"><value>Abgeschlossen</value></data>

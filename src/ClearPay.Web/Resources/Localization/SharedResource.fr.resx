@@ -42,6 +42,7 @@
   <data name="InvalidEmail" xml:space="preserve"><value>Saisissez un e-mail valide.</value></data>
   <data name="Language" xml:space="preserve"><value>Langue</value></data>
   <data name="LinkedAccount" xml:space="preserve"><value>Compte lié</value></data>
+  <data name="LiveBadge" xml:space="preserve"><value>En direct</value></data>
   <data name="MainMenu" xml:space="preserve"><value>Menu principal</value></data>
   <data name="MetaActivity" xml:space="preserve"><value>Mouvements du portefeuille. Démo — passerelle fictive pour les recharges.</value></data>
   <data name="MetaDefault" xml:space="preserve"><value>Démo de portefeuille numérique ASP.NET Core 8. Démo — passerelle fictive pour les recharges.</value></data>
@@ -75,8 +76,14 @@
   <data name="SendTransfer" xml:space="preserve"><value>Envoyer un virement</value></data>
   <data name="SignIn" xml:space="preserve"><value>Connexion</value></data>
   <data name="SignInLede" xml:space="preserve"><value>Connectez-vous à votre portefeuille avec e-mail et mot de passe.</value></data>
+  <data name="SignInWithApple" xml:space="preserve"><value>Connexion avec Apple</value></data>
+  <data name="SignInWithGoogle" xml:space="preserve"><value>Connexion avec Google</value></data>
   <data name="SignOut" xml:space="preserve"><value>Déconnexion</value></data>
   <data name="SkipToContent" xml:space="preserve"><value>Aller au contenu</value></data>
+  <data name="SocialEmailRequired" xml:space="preserve"><value>Le fournisseur n’a pas envoyé d’e-mail. Inscrivez-vous avec e-mail et mot de passe.</value></data>
+  <data name="SocialLoginFailed" xml:space="preserve"><value>La connexion sociale n’a pas abouti.</value></data>
+  <data name="SocialNotConfigured" xml:space="preserve"><value>La connexion {0} n’est pas configurée. Client ID et secret vont dans user-secrets ou Azure App Settings.</value></data>
+  <data name="OrContinueWith" xml:space="preserve"><value>ou</value></data>
   <data name="SourceAccount" xml:space="preserve"><value>Compte source</value></data>
   <data name="StatusActive" xml:space="preserve"><value>Actif</value></data>
   <data name="StatusCompleted" xml:space="preserve"><value>Terminé</value></data>

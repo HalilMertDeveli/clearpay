@@ -1,7 +1,10 @@
-/* ClearPay brand tokens — additive. Load after site.css. Do not copy site.css. */
+/* ClearPay brand layer — T-032. Load after site.css. Additive visual tokens. */
 
 :root {
   --brand-navy: #1b2a4a;
+  --brand-teal: #0f766e;
+  --brand-teal-bright: #14b8a6;
+  --brand-warm: #c2782a;
   --brand-track: 0.04em;
   --brand-kicker-track: 0.08em;
   --brand-accent-line: 3px;
@@ -27,12 +30,13 @@
   letter-spacing: var(--brand-kicker-track);
   text-transform: uppercase;
   margin: 0 0 0.4rem;
+  color: var(--teal, #0f766e);
 }
 
 .page-title {
-  font-size: 1.75rem;
+  font-size: 1.85rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   margin: 0 0 0.5rem;
 }
 
@@ -46,13 +50,17 @@ td.num {
 }
 
 .stat-value-xl {
-  font-size: 2.35rem;
-  letter-spacing: -0.02em;
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.stat-in .stat-value {
+  color: var(--teal, #0f766e);
 }
 
 .balance-hero {
-  border-left: var(--brand-accent-line) solid var(--brand-navy, var(--navy));
-  padding: 1.75rem 1.5rem;
+  border-left: var(--brand-accent-line) solid var(--teal-bright, #14b8a6);
 }
 
 .field-input[inputmode="decimal"] {
@@ -66,9 +74,35 @@ td.num {
   padding: 2.25rem 1rem;
 }
 
+.empty-block {
+  background: rgba(15, 118, 110, 0.05);
+  border: 1px dashed rgba(15, 118, 110, 0.28);
+  border-radius: var(--radius, 12px);
+}
+
+.empty-mark {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: 0 auto 0.85rem;
+  border-radius: 0.7rem;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.28);
+}
+
+.empty-mark::after {
+  content: "";
+  width: 1.2rem;
+  height: 0.72rem;
+  border: 2px solid #fff;
+  border-radius: 3px;
+  box-shadow: 0.35rem 0.15rem 0 -1px #fff;
+}
+
 .empty-title {
   margin: 0 0 0.35rem;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--ink, #1b2a4a);
 }
@@ -78,6 +112,14 @@ td.num {
   color: var(--muted, #5c6b86);
   font-size: 0.875rem;
   font-weight: 400;
+}
+
+.empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 1.1rem 0 0;
 }
 
 .auth-card .brand-tagline {
@@ -116,6 +158,87 @@ td.num {
   margin-top: 1.35rem;
 }
 
+/* Social login — keep/restyle Coder Identity buttons; do not remove. */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0 1rem;
+  color: var(--muted, #5c6b86);
+  font-size: 0.8rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line, #d8dee8);
+}
+
+.auth-social,
+.external-logins,
+.auth-providers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: 0 0 0.25rem;
+}
+
+.btn-social,
+.btn-external,
+.btn-google,
+.btn-apple,
+button.external-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--radius-btn, 10px);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.btn.btn-google,
+.btn-google,
+button.external-login[value="Google"],
+button[name="provider"][value="Google"] {
+  background: #fff;
+  color: var(--navy, #1b2a4a);
+  border: 1px solid var(--line, #d8dee8);
+}
+
+.btn.btn-google:hover,
+.btn-google:hover,
+button.external-login[value="Google"]:hover,
+button[name="provider"][value="Google"]:hover {
+  border-color: var(--teal, #0f766e);
+  background: rgba(15, 118, 110, 0.06);
+  color: var(--navy, #1b2a4a);
+}
+
+.btn.btn-apple,
+.btn-apple,
+button.external-login[value="Apple"],
+button[name="provider"][value="Apple"] {
+  background: #111;
+  color: #fff;
+  border: 1px solid #111;
+}
+
+.btn.btn-apple:hover,
+.btn-apple:hover,
+button.external-login[value="Apple"]:hover,
+button[name="provider"][value="Apple"]:hover {
+  background: #2a2a2a;
+  border-color: #2a2a2a;
+  color: #fff;
+}
+
 th.num,
 td.num {
   text-align: right;
@@ -124,6 +247,10 @@ td.num {
 .mono {
   font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
   font-size: 0.85rem;
+}
+
+.data-table tbody tr:hover td {
+  background: rgba(15, 118, 110, 0.04);
 }
 
 .sidebar {
@@ -136,22 +263,23 @@ td.num {
 
 .btn,
 .btn-ghost,
+.btn-social,
 .lang-btn {
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
 }
 
 .stat-card,
 .panel,
-.balance-hero,
 .auth-card {
-  transition: border-color 180ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .stat-card:hover,
 .panel:hover,
-.balance-hero:hover,
 .auth-card:hover {
-  border-color: rgba(27, 42, 74, 0.4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow, 0 12px 32px rgba(18, 28, 51, 0.12));
+  border-color: rgba(15, 118, 110, 0.35);
 }
 
 .nav-link {
@@ -163,13 +291,13 @@ td.num {
 }
 
 .field-input:focus {
-  outline: 2px solid var(--brand-navy, #1b2a4a);
+  outline: 2px solid var(--brand-teal, #0f766e);
   outline-offset: 0;
 }
 
 @media (max-width: 800px) {
   .stat-value-xl {
-    font-size: 1.9rem;
+    font-size: 2rem;
   }
 }
 
@@ -178,6 +306,7 @@ td.num {
   .nav-backdrop,
   .btn,
   .btn-ghost,
+  .btn-social,
   .lang-btn,
   .stat-card,
   .panel,
@@ -186,5 +315,11 @@ td.num {
   .nav-link,
   .field-input {
     transition: none;
+  }
+
+  .stat-card:hover,
+  .panel:hover,
+  .auth-card:hover {
+    transform: none;
   }
 }

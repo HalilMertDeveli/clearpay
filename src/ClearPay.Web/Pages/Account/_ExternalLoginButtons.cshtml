@@ -1,0 +1,7 @@
+@model string?
+<div class="auth-divider"><span>@L["OrContinueWith"]</span></div>
+<form method="post" asp-page="/Account/ExternalLogin" class="auth-social">
+    <input type="hidden" name="returnUrl" value="@Model" />
+    <button type="submit" name="provider" value="Google" class="btn btn-social btn-google btn-block">@L["SignInWithGoogle"]</button>
+    <button type="submit" name="provider" value="Apple" class="btn btn-social btn-apple btn-block">@L["SignInWithApple"]</button>
+</form>

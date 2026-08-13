@@ -1,3 +1,5 @@
+using AspNet.Security.OAuth.Apple;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +60,55 @@ public static class IdentityServiceCollectionExtensions
                 : CookieSecurePolicy.Always;
             options.SlidingExpiration = true;
         });
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Google/Apple only when secrets exist. Missing config: buttons still render;
+    /// challenge explains not configured. Callbacks <c>/signin-google</c> and <c>/signin-apple</c>.
+    /// </summary>
+    public static IServiceCollection AddClearPayExternalLogin(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        var auth = services.AddAuthentication();
+
+        if (SocialLoginConfiguration.IsGoogleConfigured(configuration))
+        {
+            auth.AddGoogle(options =>
+            {
+                options.ClientId = SocialLoginConfiguration.Read(
+                    configuration, "Authentication:Google:ClientId", "Google:ClientId")!;
+                options.ClientSecret = SocialLoginConfiguration.Read(
+                    configuration, "Authentication:Google:ClientSecret", "Google:ClientSecret")!;
+                options.CallbackPath = "/signin-google";
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+            });
+        }
+
+        if (SocialLoginConfiguration.IsAppleConfigured(configuration))
+        {
+            var pem = SocialLoginConfiguration.NormalizePem(
+                SocialLoginConfiguration.Read(
+                    configuration, "Authentication:Apple:PrivateKey", "Apple:PrivateKey")!);
+            auth.AddApple(options =>
+            {
+                options.ClientId = SocialLoginConfiguration.Read(
+                    configuration, "Authentication:Apple:ClientId", "Apple:ClientId")!;
+                options.TeamId = SocialLoginConfiguration.Read(
+                    configuration, "Authentication:Apple:TeamId", "Apple:TeamId")!;
+                options.KeyId = SocialLoginConfiguration.Read(
+                    configuration, "Authentication:Apple:KeyId", "Apple:KeyId")!;
+                options.CallbackPath = "/signin-apple";
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.GenerateClientSecret = true;
+                options.PrivateKey = (_, _) => Task.FromResult(pem.AsMemory());
+            });
+        }
 
         return services;
     }

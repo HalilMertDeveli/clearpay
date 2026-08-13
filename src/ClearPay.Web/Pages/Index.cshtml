@@ -13,19 +13,22 @@
 }
 
 <article class="balance-hero">
+    <p class="live-pill"><span class="live-dot" aria-hidden="true"></span>@L["LiveBadge"]</p>
     <p class="stat-label">@L["AvailableBalance"]</p>
-    <p class="stat-value stat-value-xl">@Html.Raw(Model.BalanceText)</p>
+    <p class="stat-value stat-value-xl" data-count="@Model.BalanceAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.BalanceText)</p>
     <p class="status-line">@L["AccountStatus"]: <span class="@(Model.IsFrozen ? "badge-frozen" : "badge-active")">@(Model.IsFrozen ? L["StatusFrozen"] : L["StatusActive"])</span></p>
 </article>
 
 <div class="stat-row">
-    <article class="stat-card">
+    <article class="stat-card stat-card--out">
         <p class="stat-label">@L["MonthOut"]</p>
-        <p class="stat-value">@Html.Raw(Model.MonthOutText)</p>
+        <p class="stat-value" data-count="@Model.MonthOutAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.MonthOutText)</p>
+        <svg class="spark" viewBox="0 0 120 36" aria-hidden="true"><path d="M0 26 20 22 40 24 60 16 80 18 100 10 120 12" /></svg>
     </article>
-    <article class="stat-card">
+    <article class="stat-card stat-card--in">
         <p class="stat-label">@L["MonthIn"]</p>
-        <p class="stat-value">@Html.Raw(Model.MonthInText)</p>
+        <p class="stat-value" data-count="@Model.MonthInAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.MonthInText)</p>
+        <svg class="spark" viewBox="0 0 120 36" aria-hidden="true"><path d="M0 28 18 24 36 20 54 22 72 14 90 10 120 8" /></svg>
     </article>
 </div>
 
@@ -55,8 +58,13 @@
                 <tr>
                     <td colspan="4" class="empty-cell">
                         <div class="empty-block">
+                            <div class="empty-mark" aria-hidden="true"></div>
                             <p class="empty-title">@L["EmptyMovementsTitle"]</p>
                             <p class="empty-hint">@L["EmptyMovementsHint"]</p>
+                            <div class="empty-actions">
+                                <a class="btn" asp-page="/Havale">@L["SendTransfer"]</a>
+                                <a class="btn btn-ghost" asp-page="/YukleCek">@L["TopUp"]</a>
+                            </div>
                         </div>
                     </td>
                 </tr>

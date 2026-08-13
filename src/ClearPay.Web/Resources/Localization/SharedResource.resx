@@ -42,6 +42,7 @@
   <data name="InvalidEmail" xml:space="preserve"><value>Geçerli bir e-posta girin.</value></data>
   <data name="Language" xml:space="preserve"><value>Dil</value></data>
   <data name="LinkedAccount" xml:space="preserve"><value>Bağlı hesap</value></data>
+  <data name="LiveBadge" xml:space="preserve"><value>Canlı</value></data>
   <data name="MainMenu" xml:space="preserve"><value>Ana menü</value></data>
   <data name="MetaActivity" xml:space="preserve"><value>Cüzdan hareketleri. Demo — yükleme için sahte gateway.</value></data>
   <data name="MetaDefault" xml:space="preserve"><value>ASP.NET Core 8 dijital cüzdan demosu. Demo — yükleme için sahte gateway.</value></data>
@@ -75,8 +76,14 @@
   <data name="SendTransfer" xml:space="preserve"><value>Havale gönder</value></data>
   <data name="SignIn" xml:space="preserve"><value>Giriş</value></data>
   <data name="SignInLede" xml:space="preserve"><value>E-posta ve şifrenizle cüzdanınıza bağlanın.</value></data>
+  <data name="SignInWithApple" xml:space="preserve"><value>Apple ile giriş</value></data>
+  <data name="SignInWithGoogle" xml:space="preserve"><value>Google ile giriş</value></data>
   <data name="SignOut" xml:space="preserve"><value>Çıkış</value></data>
   <data name="SkipToContent" xml:space="preserve"><value>İçeriğe geç</value></data>
+  <data name="SocialEmailRequired" xml:space="preserve"><value>Sağlayıcı e-posta göndermedi. E-posta ve şifre ile kaydolun.</value></data>
+  <data name="SocialLoginFailed" xml:space="preserve"><value>Sosyal giriş tamamlanamadı.</value></data>
+  <data name="SocialNotConfigured" xml:space="preserve"><value>{0} girişi yapılandırılmadı. Client ID ve secret user-secrets veya Azure App Settings’te olmalı.</value></data>
+  <data name="OrContinueWith" xml:space="preserve"><value>veya</value></data>
   <data name="SourceAccount" xml:space="preserve"><value>Kaynak hesap</value></data>
   <data name="StatusActive" xml:space="preserve"><value>Aktif</value></data>
   <data name="StatusCompleted" xml:space="preserve"><value>Tamamlandı</value></data>

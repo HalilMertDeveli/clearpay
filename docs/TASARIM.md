@@ -2,21 +2,25 @@
 
 Kaynak: `docs/SPEC.md` ekran listesi. Piksel Figma yok; Razor mevcut sınıflara yakın. Coder `site.css` sahibi; bu belge + `wwwroot/css/brand.css` (ek token). Layout linki Coder HANDOFF’ta.
 
-## Görsel bar
+## Görsel bar (T-032 — canlı, kurumsal)
 
 | Kural | Değer |
 |-------|--------|
-| Navy | `#1B2A4A` |
-| Zemin | `#FFFFFF` (kart), wash `#F4F6F9` (sayfa) |
-| Mürekkep | navy; muted `#5C6B86` |
-| Çizgi | `#E6E9EF` |
-| Tip | Inter 400/500/600/700 |
-| Gölge | yok |
-| Gradient | yok |
+| Navy | `#1B2A4A` (mürekkep, sidebar, birincil buton) |
+| Teal | metin/vurgu `#0F766E`; parlak `#14B8A6` (hero glow, aktif nav, gelen tutar) |
+| Ilık | `#C2782A` (rozet / küçük vurgu; birincil CTA değil) |
+| Zemin | kart `#FFFFFF`; wash `#E8EEF5` + çok hafif teal radial (sayfa rainbow değil) |
+| Muted | `#5C6B86` |
+| Çizgi | `#D8DEE8` |
+| Tip | Inter 400/500/600/700/800 |
+| Radius | kart 12px; buton 10px; input 8px |
+| Elevation | `--shadow-sm` `0 4px 14px rgba(18,28,51,.08)`; `--shadow` `0 12px 32px rgba(18,28,51,.12)` |
+| Gradient | yalnız hero + auth atmosfer + marka karesi; sayfa-içi rainbow yok |
+| Cam | auth kart: `rgba(255,255,255,.88)` + `backdrop-filter: blur(12px)` |
 | Emoji | yok |
 | Bootstrap | yok |
 
-Yaratıcılık: hiyerarşi, boş durum, wordmark, form ritmi. Landing / kampanya sayfası yok.
+Yaratıcılık: hiyerarşi, boş durum + CTA, wordmark, form ritmi, kısa hareket. Landing / kampanya / şube yok.
 
 **One-liner:** ClearPay — demo dijital cüzdan (WePay benzeri).
 
@@ -25,14 +29,14 @@ Yaratıcılık: hiyerarşi, boş durum, wordmark, form ritmi. Landing / kampanya
 ## Tipografi
 
 - Sayfa kicker: 0.75rem, 600, letter-spacing `0.08em`, uppercase, muted
-- `h1.page-title`: 1.75rem / 700 / tracking `-0.02em` — tek h1 = ekran adı (wordmark h1 değil)
+- `h1.page-title`: 1.85rem / 700 / tracking `-0.03em` — tek h1 = ekran adı (wordmark h1 değil)
 - Lede: muted, title’dan sonra tek satır
-- Para: `font-variant-numeric: tabular-nums`; özet bakiyesi ~2.35rem
-- Buton: 600, min-height 2.75rem, navy dolgu veya ghost (şeffaf + navy çerçeve)
+- Para: `font-variant-numeric: tabular-nums`; özet bakiyesi ~2.6rem / 800 (hero’da beyaz)
+- Buton: 600, min-height 2.75rem, navy dolgu (hover teal-navy) veya ghost (şeffaf + navy; hover teal çerçeve)
 
 ## Wordmark
 
-Kare marka: 2rem, 1px çerçeve, içinde **C** — dolgu yok, gölge yok.  
+Kare marka: 2rem, 8px radius, teal→parlak teal gradient (`#0F766E` → `#14B8A6`), içinde beyaz **C**.  
 İsim: **ClearPay**, tracking `0.04em`, 700. Sidebar’da beyaz; auth’ta navy.  
 Tagline (yalnız auth): `Demo dijital cüzdan`.
 
@@ -53,17 +57,17 @@ Sidebar drawer: kapalı `translateX(-100%)`, açık `is-open`. Hamburger topbar�
 
 ### Giriş / kayıt (`_AuthLayout`)
 
-Dikey ortalı kart, max 420px, 1px çizgi, gölge yok. Sıra: wordmark → tagline → `h1` (Giriş / Hesap oluştur) → lede → form → switch link. Birincil buton tam genişlik. Auth footer kartın dışında: **Demo — yükleme için sahte gateway**.
+Auth atmosfer: wash üzerinde teal + ılık radial (carnival değil). Kart max 420px, 16px radius, cam + `--shadow`. Sıra: wordmark → tagline → `h1` (Giriş / Hesap oluştur) → lede → form → (varsa sosyal butonlar, Coder Identity) → switch link. Birincil buton tam genişlik. Auth footer kartın dışında: **Demo — yükleme için sahte gateway**. Google/Apple işaretleri silinmez; `.btn-google` (beyaz kart) / `.btn-apple` (siyah) / `.auth-divider` — `.btn-ghost` değil.
 
 ### Özet (`/`)
 
 Kicker **Cüzdan** → **Özet** → (isteğe selamlama).  
-1. `balance-hero`: kullanılabilir bakiye (xl) + durum satırı (Aktif / Dondurulmuş)  
-2. İki `stat-card`: bu ay giden | bu ay gelen  
+1. `balance-hero`: navy→teal gradient, beyaz tip, cam glow; kullanılabilir bakiye (xl / 800) + durum satırı (Aktif teal / Dondurulmuş ılık)  
+2. İki `stat-card` (elevation): bu ay giden (navy) | bu ay gelen (teal)  
 3. CTA: **Havale gönder** (dolu), **Yükle** / **Çek** (ghost)  
 4. Panel **Son hareketler** + “Tümünü gör”
 
-Boş hareket: tablo hücresi değil, `empty-block` — başlık + bir satır ne yapılacağı. “Henüz hareket yok.” yetmez.
+Boş hareket: `empty-block` — `empty-mark` (CSS cüzdan karesi) + başlık + hint + CTA (Havale / Yükle). “Henüz hareket yok.” yetmez.
 
 ### Havale (`/havale`)
 
@@ -77,11 +81,13 @@ SPEC sırası. İki kolon Yükle | Çek (`split-2`); hareketler filtre şeridi +
 
 ```
 .empty-block
+  .empty-mark    — CSS kare (emoji/illüstrasyon yok)
   .empty-title   — ne yok
-  .empty-hint    — sonraki eylem (Havale / Yükle)
+  .empty-hint    — sonraki eylem
+  .empty-actions — Havale gönder + Yükle (özet); hareketler sayfasında isteğe link
 ```
 
-Renk muted; ortalama hizalı; padding ~2.25rem. İllüstrasyon yok.
+Teal-tint wash, 12px radius, ortalama; padding ~2.25rem. Raster illüstrasyon yok.
 
 ## Form
 
@@ -89,33 +95,32 @@ Label 0.875rem / 500. Input 2.75rem, 1px `--line`, focus: 2px navy outline, offs
 
 ## brand.css
 
-Yalnız ek: kicker tracking, tabular-nums, wordmark, `empty-block`, hero sol 3px navy çizgi, para input. `site.css` kopyalanmaz. Coder her iki layout’ta `site.css` **sonrasına** linkler.
+Ek katman (site.css sonrası): teal/ılık token, elevation, hero gradient, cam auth, `empty-mark`, sosyal kancalar (`.auth-divider`, `.btn-social`, `.btn-google`, `.btn-apple`). `site.css` iskelet durur; kopyalanmaz. Her iki layout: `site.css` → `brand.css` → `motion.css`.
 
 ## Motion (canlı site)
 
-Süre **150–250ms**, eğri `ease` (`transition-timing-function: ease`). Gölge kalkışı, bounce, blur, gradient sweep yok.
+Süre **150–250ms** tıklama; ambient **6–14s**. Bounce, confetti, `scale(1.05)` yok. Shimmer / pulse / count-up T-034.
 
 | Hedef | Ne | Süre |
 |--------|----|------|
-| `.sidebar` | `transform` (drawer `translateX`) | 200ms |
-| `.nav-backdrop` | `opacity` | 180ms |
-| `.btn` / `.btn-ghost` | `background-color`, `border-color`, `color` | 160ms |
-| `.stat-card`, `.panel`, `.balance-hero`, `.auth-card` | `border-color` only (hover `#1B2A4A` %40) | 180ms |
-| `.nav-link` | `background-color`, `color` | 150ms |
-| `.field-input` | `border-color` | 150ms |
-
-Yasak: `box-shadow` animasyonu, `scale(1.05)`, sayfa-içi confetti, kart “lift”.
+| `.sidebar` orbs | `transform` döngü | 12–14s |
+| `.balance-hero::after` | shimmer | 5.5s |
+| `.live-dot` | pulse | 1.8s |
+| count-up | bakiye / ay tutar | ~700ms |
+| kart giriş | `opacity` + `translateY(14px→0)` | 420–500ms |
 
 ```css
 @media (prefers-reduced-motion: reduce) {
   .sidebar, .nav-backdrop, .btn, .stat-card, .panel,
   .balance-hero, .auth-card, .nav-link, .field-input {
     transition: none;
+    animation: none;
+    transform: none;
   }
 }
 ```
 
-Token önerisi (`brand.css`): `--motion: 180ms ease;` — 150–250ms bandı dışına çıkma.
+Token: `--motion: 180ms ease;` — tıklama 150–250ms. Ambient döngü (orb / shimmer / pulse) **6–14s** (T-034). Count-up ~700ms.
 
 ## Tarifler (Coder — Razor ezme, CSS/sınıf)
 
@@ -126,10 +131,10 @@ Mevcut sınıflar: `auth-card`, `balance-hero`, `stack-form`, `data-table`, `emp
 | Rol | Boyut | Ağırlık | Satır / ekstra |
 |-----|--------|---------|----------------|
 | Kicker `.page-kicker` | 0.75rem | 600 | tracking 0.08em, uppercase |
-| `h1.page-title` | 1.75rem | 700 | tracking −0.02em; margin 0 0 0.5rem |
+| `h1.page-title` | 1.85rem | 700 | tracking −0.03em; margin 0 0 0.5rem |
 | `.lede` | 1rem | 400 | muted; margin 0 0 1.5rem |
 | `.stat-label` | 0.8rem | 400 | muted; margin 0 0 0.4rem |
-| `.stat-value-xl` | 2.35rem (≤800px: 1.9rem) | 700 | tabular-nums; tracking −0.02em |
+| `.stat-value-xl` | 2.6rem (≤800px: 2rem) | 800 | tabular-nums; tracking −0.03em |
 | `.stat-value` | 1.35rem | 700 | tabular-nums |
 | `.field-label` | 0.875rem | 500 | margin-bottom 0.35rem |
 | `.field-input` | 1rem | 400 | height 2.75rem |
@@ -146,7 +151,7 @@ Dikey ortalı dijital cüzdan girişi (WePay benzeri).
 ```
 auth-shell  padding 2.5rem 1.25rem
 auth-card   max-width 420px; padding 2.5rem 2.15rem 2.15rem
-            border 1px --line; gölge yok
+            border 1px --line; radius 16px; cam + --shadow
 wordmark    mark 2rem + isim; tagline 0.85rem muted, margin −1.25rem 0 1.5rem
             metin: Demo dijital cüzdan
 h1          Giriş — 1.75rem; lede 1rem, margin-bottom 0
@@ -162,28 +167,31 @@ Kayıt aynı kart ritmi; dört field, hint şifre altında 0.35rem. Boş durum y
 
 ### 2) Özet hero (`/` `.balance-hero`)
 
-Cüzdan bakiyesi (WePay benzeri özet). Sol 3px navy (`brand.css`).
+Cüzdan bakiyesi (WePay benzeri özet). Navy→teal gradient; sol 3px teal çizgi durur.
 
 ```
 content        padding 2.25rem 2rem; max-width 920px
 kicker→title   kicker 0 0 0.4rem; title 0 0 0.5rem; lede (ad) 0 0 1.75rem
-balance-hero   padding 1.75rem 1.5rem; margin-bottom 1rem
-               border 1px --line + border-left 3px #1B2A4A
-stat-label     0.8rem muted → xl tutar 2.35rem tabular
-status-line    margin 0.75rem 0 0; 0.85rem muted  (“Aktif” / “Dondurulmuş”)
+balance-hero   padding 1.85rem 1.6rem; margin-bottom 1rem; radius 14px
+               gradient navy→teal; renk beyaz; --shadow
+stat-label     0.8rem rgba(255,255,255,.72) → xl tutar 2.6rem / 800 tabular
+status-line    margin 0.75rem 0 0; 0.85rem
 stat-row       2 kolon, gap 1rem, margin-bottom 1.5rem
-stat-card      padding 1.25rem 1.35rem
+stat-card      padding 1.25rem 1.35rem; radius 12px; --shadow-sm
+               gelen tutar teal
 actions        gap 0.6rem; margin 0 0 1.75rem
                dolu: Havale gönder; ghost: Yükle, Çek
-panel          padding 1.25rem 1.35rem; panel-head space-between, margin-bottom 0.75rem
+panel          padding 1.25rem 1.35rem; radius 12px; --shadow-sm
 ```
 
 **Boş (son hareketler):** `td.empty-cell` colspan 4; padding 2.25rem 1rem; ortalama.
 
+- `.empty-mark`: CSS kare
 - `.empty-title`: Henüz hareket yok
 - `.empty-hint`: İlk havaleniz veya yüklemeniz burada görünür.
+- `.empty-actions`: Havale gönder + Yükle
 
-İllüstrasyon yok. Mobil: hero + stat-row tek kolon; xl 1.9rem.
+Raster yok. Mobil: hero + stat-row tek kolon; xl 2rem.
 
 ### 3) Havale formu (`/havale` `.stack-form`)
 

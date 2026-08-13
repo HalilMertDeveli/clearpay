@@ -559,3 +559,17 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Karar:** **2.** `src/` yok. Azure `azurewebsites.net` iddiası yok. 409 = TASK-06 skip. Eski sayfa silinmez.
 - **Neden:** Kullanıcı “yeni sayfa + herkes linkle + README + lokal kopya + commit/push” dedi. Public kanıt hâlâ GitHub md; Notion logged-out için Halil Publish tıklar.
 - **Sonra hangi dosya:** `docs/OTURUM-PLAN.md`, `README.md` / `README.tr.md` / `README.fr.md` Docs satırı, `docs/HANDOFF.md` append. LED yok.
+
+---
+
+## T-037 — 2026-08-13 — Docker engine duruyor; native SQL TCP kapalı
+
+- **Kim:** Deploy (kullanıcı: Docker kısmı hala devam etmiyor, çöz)
+- **Konu:** Desktop 4.86 kurulu, process var, `docker.exe` PATH’te yok, `docker info` engine’e takılıyor. WSL2: distro yok; VMP DISM **Enabled** ama **CBS.RebootPending**. Native `MSSQLSERVER` çalışıyor; TCP **Enabled=0** (1433 kapalı); named pipe kapalı; shared memory + Windows auth **çalışıyor**. Compose SQL `:1433` reboot’suz kalkmaz.
+- **Seçenekler:**
+  1. Ajan reboot etsin (kullanıcı oturumu kesilir).
+  2. **Development:** `Server=localhost` + Integrated Security (shared memory; 1433’ü Docker’a bırak). User PATH’e Docker CLI. `scripts/docker-up.ps1` reboot sonrası compose. Compose dosyaları T-029 bind ile durur.
+  3. Native SQL’de TCP 1433 aç (Docker SQL ile port çatışır).
+- **Karar:** **2.** Reboot ajan yapmaz. MySQL native `:3306` durur; Compose MySQL çakıştırılmaz. Oracle reboot+Docker ister.
+- **Neden:** DISM 3010 = reboot şart. Shared memory ledger’ı şimdi açar; 1433 boş kalsın ki reboot sonrası `clearpay-sql` bağlansın.
+- **Sonra hangi dosya:** `appsettings.Development.json`, `scripts/docker-up.ps1`, `docs/DEPLOY.md` bir paragraf, `docs/HANDOFF.md` append. `docker-compose.yml` ezilmez.

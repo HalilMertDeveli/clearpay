@@ -23,4 +23,5 @@
     </div>
     <button type="submit" class="btn btn-block">@L["SignIn"]</button>
 </form>
+<partial name="_ExternalLoginButtons" model="Model.ReturnUrl" />
 <p class="auth-switch">@L["NoAccount"] <a asp-page="/Account/Register">@L["CreateAccount"]</a></p>

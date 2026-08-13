@@ -12,12 +12,12 @@ ClearPay **demo dijital cüzdan** (WePay benzeri). CEO burada ürün sesi / CV k
 - `docs/TASARIM.md` — layout, tipografi, renk, giriş/özet/havale kompozisyon, mobil
 - `docs/MARKA.md` — one-liner, ton, demo disclaimer, CV hikâyesi, asla iddia edilmeyenler
 - `.cursor/rules/designer.mdc`
-- `wwwroot/css/brand.css` — **yalnızca ek token / sınıf**; `site.css` ezilmez
+- `wwwroot/css/brand.css` — ek token / görsel katman; `site.css` iskelet + `:root`
 
-## Görsel bar (bozulmaz)
-Navy `#1B2A4A`, beyaz zemin, Inter. Bootstrap yok. Gölge yok. Emoji yok. Gradient “şeker” yok.
+## Görsel bar (T-032)
+Navy `#1B2A4A`, teal `#0F766E` / `#14B8A6`, ılık vurgu `#C2782A`, beyaz kart, Inter. Bootstrap yok. Emoji yok. Parti gradient / confetti yok.
 
-Yaratıcılık **cüzdan / havale disiplini içinde**: keskin hiyerarşi, boş durum, wordmark, form. Parti landing ve sahte banka şubesi yok.
+Yaratıcılık **cüzdan / havale disiplini içinde**: keskin hiyerarşi, elevation, hero cam/gradient, boş durum + CTA, wordmark, form. Parti landing ve sahte banka şubesi yok.
 
 ## CEO / marka
 One-liner: **ClearPay — demo dijital cüzdan (WePay benzeri).** Sahte banka uygulaması değil.  

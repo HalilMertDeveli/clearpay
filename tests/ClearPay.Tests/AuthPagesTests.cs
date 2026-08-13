@@ -37,6 +37,8 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
         html.Should().Contain("Şifre");
         html.Should().Contain("Hesap oluştur");
         html.Should().Contain("Giriş");
+        html.Should().Contain("Google ile giriş");
+        html.Should().Contain("Apple ile giriş");
     }
 
     [Fact]
@@ -49,6 +51,8 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
         html.Should().Contain("E-posta");
         html.Should().Contain("Şifre tekrar");
         html.Should().Contain("Hesap oluştur");
+        html.Should().Contain("Google ile giriş");
+        html.Should().Contain("Apple ile giriş");
     }
 
     [Theory]

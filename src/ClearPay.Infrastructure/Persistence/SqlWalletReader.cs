@@ -67,7 +67,9 @@ public sealed class SqlWalletReader : IWalletReader
     {
         try
         {
-            return await _db.Database.CanConnectAsync(cancellationToken).ConfigureAwait(false);
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            timeout.CancelAfter(TimeSpan.FromSeconds(3));
+            return await _db.Database.CanConnectAsync(timeout.Token).ConfigureAwait(false);
         }
         catch (Exception)
         {

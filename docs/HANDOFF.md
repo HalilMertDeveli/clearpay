@@ -528,6 +528,14 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - Placeholders `appsettings.json` boş. UserSecretsId Web csproj. Secret git’te yok.
 - Tester: Release 66 geçti, 1 skip (409 = TASK-06).
 
+## 2026-08-13 — Docker engine blok (T-037)
+
+- **OWN:** T-037. Desktop 4.86 kurulu; CLI PATH yoktu (User PATH’e `resources\bin` eklendi). Engine `docker info` takılıyor: VMP Enabled ama **CBS.RebootPending**. WSL distro yok.
+- Native `MSSQLSERVER` Running; TCP/NP **Enabled=0**; 1433 kapalı. Shared memory + `-E` çalışıyor. `ClearPay` DB oluşturuldu. `appsettings.Development.json` Integrated Security `Server=localhost` (1433 Docker’a bırakıldı).
+- `scripts/docker-up.ps1` reboot sonrası compose. `docker-compose.yml` ezilmedi. MySQL native `:3306` duruyor.
+- **Kullanıcı:** Windows’u yeniden başlat → Docker Desktop aç → `powershell -File scripts/docker-up.ps1`. Ajan reboot etmez.
+- Site şimdi native SQL ile migrate edebilir (`dotnet run --launch-profile http`).
+
 ## 2026-08-13 — Oturum planı yeni Notion (T-036)
 
 - **OWN:** `docs/OTURUM-PLAN.md`, README Docs satırı (EN/TR/FR + DE URL hizası). TARTISMA **T-036**. `src/` yok.
@@ -544,4 +552,13 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Kanıt:** `dotnet build ClearPay.slnx -warnaserror` → 0 Warning / 0 Error. `dotnet test` → Passed **66**, Failed **0**, Skipped **1** (409 = TASK-06).
 - **compose ps:** yok. Client 29.7.2; `dockerDesktopLinuxEngine` 500. VMP+WSL+Hyper-V Enabled, CBS RebootPending. Native MySQL84 `:3306` açık (reboot sonrası Compose MySQL için durdur, veriyi silme).
 - **Sen tıklarsın:** Windows restart → Docker Desktop → `docker compose up -d` ve `docker compose -f docker-compose.databases.yml up -d` → `docker compose ps`.
+
+## 2026-08-13 — Coder (T-035 Google/Apple src + T-032/T-034 canlı UI)
+
+- **OWN:** T-035 + T-032/T-034. `docs/GIRIS-SOSYAL.md` / `SENIN-ISLERIN.md` rewrite yok. Domain ledger rewrite yok. `SqlWalletReader` yalnızca 3s CanConnect timeout (T-037 test host).
+- Google/Apple: `AddClearPayExternalLogin`; NuGet Google 8.0.21 + Apple 8.3.0. Callback `/signin-google` `/signin-apple`. `/giris` `/kayit`: **Google ile giriş** / **Apple ile giriş**. Secret yoksa buton durur, POST “yapılandırılmadı”. E-posta/şifre Identity cookie durur. `appsettings.json` boş placeholder; UserSecretsId Web. Secret git’te yok.
+- UI: navy+teal+ılık, kart elevation, hero/auth cam+gradient, boş cüzdan `empty-mark`, 150–250ms + ambient 6–14s, `prefers-reduced-motion`. Menü Özet / Havale / Yükle-Çek / Hareketler (Admin = TASK-10). Sosyal butonlar silinmedi (`.btn-google` / `.btn-apple`).
+- Tester: `dotnet test -c Release` **68 geçti**, 1 skip (409 = TASK-06).
+- **Kullanıcı:** Google Cloud OAuth + user-secrets (`docs/GIRIS-SOSYAL.md`). Apple isteğe bağlı. TASK-16 URL yok.
+- **Sıradaki ürün:** TASK-06.
 

@@ -25,6 +25,9 @@ public class IndexModel : PageModel
     public string BalanceText { get; private set; } = MoneyDisplay.FormatTry(0m);
     public string MonthOutText { get; private set; } = MoneyDisplay.FormatTry(0m);
     public string MonthInText { get; private set; } = MoneyDisplay.FormatTry(0m);
+    public decimal BalanceAmount { get; private set; }
+    public decimal MonthOutAmount { get; private set; }
+    public decimal MonthInAmount { get; private set; }
     public bool IsFrozen { get; private set; }
     public IReadOnlyList<WalletMovement> LastMovements { get; private set; } = [];
 
@@ -37,9 +40,12 @@ public class IndexModel : PageModel
             ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? string.Empty;
         var summary = await _wallets.GetByUserIdAsync(userId, cancellationToken);
-        BalanceText = MoneyDisplay.FormatTry(summary?.Balance ?? 0m);
-        MonthOutText = MoneyDisplay.FormatTry(summary?.MonthOutgoing ?? 0m);
-        MonthInText = MoneyDisplay.FormatTry(summary?.MonthIncoming ?? 0m);
+        BalanceAmount = summary?.Balance ?? 0m;
+        MonthOutAmount = summary?.MonthOutgoing ?? 0m;
+        MonthInAmount = summary?.MonthIncoming ?? 0m;
+        BalanceText = MoneyDisplay.FormatTry(BalanceAmount);
+        MonthOutText = MoneyDisplay.FormatTry(MonthOutAmount);
+        MonthInText = MoneyDisplay.FormatTry(MonthInAmount);
         IsFrozen = summary?.IsFrozen ?? false;
         LastMovements = summary?.LastMovements ?? [];
     }

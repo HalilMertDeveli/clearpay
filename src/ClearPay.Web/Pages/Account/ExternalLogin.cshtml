@@ -1,0 +1,15 @@
+@page
+@model ClearPay.Web.Pages.Account.ExternalLoginModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = L["SignIn"].Value;
+}
+
+<h1 class="page-title">@L["SignIn"]</h1>
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="validation-summary">
+        <p>@Model.ErrorMessage</p>
+    </div>
+}
+<p class="auth-switch"><a asp-page="/Account/Login">@L["SignIn"]</a></p>

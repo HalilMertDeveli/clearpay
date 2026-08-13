@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails();
 builder.Services.AddClearPayLocalization();
 builder.Services.AddClearPayIdentity(builder.Configuration, builder.Environment);
+builder.Services.AddClearPayExternalLogin(builder.Configuration);
 builder.Services.AddClearPay(builder.Configuration);
 builder.Services.AddValidatorsFromAssembly(typeof(ApplicationAssembly).Assembly);
 builder.Services.AddRazorPages(options =>
