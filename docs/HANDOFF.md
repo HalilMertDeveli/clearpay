@@ -301,3 +301,9 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - `IBankGateway` yalnızca yükle/çek stub. Coder UI: navy, Özet / Havale / Yükle-Çek — retail bank yok.
 - Product/SPEC güncelleniyor. Coder TASK-03 kesilmedi (Identity + boş özet).
 
+## 2026-08-13 — README EN/TR/FR + MIT (T-010)
+
+- **OWN:** `README.md`, `README.tr.md`, `README.fr.md`, `LICENSE`. Razor / `src/` yok. TASK-14 Swagger ayrı (Done değil).
+- GitHub varsayılan İngilizce; üstte dil linkleri. Build rozeti placeholder. Sahte screenshot yok. Papara rakibi iddiası yok.
+- Durum dürüst: TASK-03 cookie Identity + boş özet; JWT/ledger SQL/409 HTTP/Azure plan.
+
