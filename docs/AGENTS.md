@@ -18,4 +18,5 @@ Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadec
 4. Kullanıcıya 3–5 satır kontrol notu bırak
 5. LED teknik destek reposuna dokunma
 
-Detaylı kurallar: `.cursor/rules/`
+Detaylı kurallar: `.cursor/rules/`  
+Nedenler: `docs/OGRENME.md`. Ajan defteri: `docs/HANDOFF.md`. Kullanıcı checklist: `docs/SENIN-ISLERIN.md`.

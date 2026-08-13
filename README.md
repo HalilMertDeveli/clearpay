@@ -46,3 +46,5 @@ TASK-02 skeleton is in the repo. Next: **TASK-03** login, register, empty wallet
 - [TASKS](docs/TASKS.md) — queue
 - [AGENTS](docs/AGENTS.md) — roles
 - [DEPLOY](docs/DEPLOY.md) — local / Azure
+- [Öğrenme](docs/OGRENME.md) — neden böyle (Turkish)
+- [Senin işlerin](docs/SENIN-ISLERIN.md) — human-only checklist
