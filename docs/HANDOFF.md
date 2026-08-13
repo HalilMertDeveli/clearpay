@@ -55,6 +55,28 @@ Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanı
 - Tester: anonim GET `/` `/havale` `/yukle-cek` `/hareketler` → 302 `/Account/Login`. GET login/register/health → 200.
 - Not: Web, Infrastructure Identity + Application FluentValidation’a bağlanır. Site: http://localhost:5153
 
+## 2026-08-13 — Designer (TASARIM / MARKA)
+
+- **OWN:** `docs/TASARIM.md`, `docs/MARKA.md`, `.cursor/rules/designer.mdc`, `src/ClearPay.Web/wwwroot/css/brand.css` (ek token). Coder Razor **yeniden yazılmadı**. `site.css` dokunulmadı.
+- **Landed:** TASARIM + MARKA evet. One-liner: ClearPay — demo cüzdan, sahte banka. Disclaimer duruyor.
+- Sales `FARK.md` / `SATIS.md` fold: MARKA’ya 2 çizgi (çift kayıt + 409; outbox + REST/SOAP). Papara rakibi yok.
+- **Coder: link brand.css** — `_Layout.cshtml` ve `_AuthLayout.cshtml` içinde `site.css` satırının hemen altına:
+  `<link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />`
+- **Coder: sınıflar / metin** (Razor’u Designer yazmaz):
+  1. `.brand-name` yanına isteğe `wordmark` (aynı span).
+  2. `_AuthLayout` tagline: `Dijital cüzdan` → **Demo cüzdan**.
+  3. Özet / hareketler boş satır: `empty-cell` içinde `<p class="empty-title">Henüz hareket yok</p><p class="empty-hint">İlk havaleniz veya yüklemeniz burada görünür.</p>` (hareketler tablosunda title: `Bu dönemde hareket bulunmuyor.`).
+  4. Identity/havale işi yok; Gönder disabled kalsın.
+- AGENTS.md Designer satırı eklendi. Google Ads açılmadı.
+
+## 2026-08-13 — Sales
+
+- **OWN:** `docs/SATIS.md`, `docs/FARK.md`, `.cursor/rules/sales.mdc`. `src/` / CSS / TASKS dokunulmadı. Ads harcaması yok.
+- **SATIS.md:** 15–30s + 2 dk pitch, CV maddeleri (EN/TR), README/demo copy, Q&A. Ses = hiring manager; Papara GTM yok. Kilit: Demo — sahte banka gateway.
+- **FARK.md:** tablo — Papara/Tosla/Paycell (cüzdan), iyzico/PayTR (PSP), banka havale UX, öğrenci ASP.NET CRUD. Sonra 6 fark: ledger, 409, outbox, REST+SOAP mock, audit/freeze/correlation, dürüst demo. Mimari ASCII. FAST/BOA/POS/pazaryeri yok.
+- **AGENTS.md:** Sales satırı eklendi.
+- Designer / SEO: `FARK.md` § One-liner’lar. Coder: isteğe bağlı footer **Neden ClearPay** sonra (pazaryeri yok). README Docs’a SATIS/FARK linki bu commit’te.
+
 ## 2026-08-13 — SEO/Ads
 
 - **OWN:** `docs/SEO.md`, `docs/ADS.md`, `.cursor/rules/seo.mdc`, `wwwroot/robots.txt`, `wwwroot/sitemap.xml`; `docs/AGENTS.md` SEO satırı; `docs/SENIN-ISLERIN.md` madde 10. Razor/CSS/TASARIM/MARKA dokunulmadı.
@@ -98,3 +120,18 @@ Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanı
 - **ADS.md:** yazıldı. Kampanya **yalnızca** canlı Azure URL sonrası. Portföy kelimeleri (`ASP.NET Core cüzdan demo`); `ucuz havale` yok. 3 metin, başlıkta Demo. Negatif: kredi, gerçek IBAN, Papara alternatif. Hesap/harcama yok.
 - **Dosyalar:** `.cursor/rules/seo.mdc`, `wwwroot/robots.txt`, `wwwroot/sitemap.xml`, AGENTS SEO satırı, SENIN-ISLERIN madde 10. Razor/TASARIM/MARKA dokunulmadı (`MARKA.md` henüz yok; ses = footer).
 - **Coder’a:** layout’a meta description + canonical (`docs/SEO.md`). `/giris` `/kayit` Coder. Ads/SC/GA4 hesabı açılmadı.
+
+## 2026-08-13 — Sales
+
+- **OWN:** `docs/SATIS.md`, `docs/FARK.md`, `.cursor/rules/sales.mdc`. `src/` / CSS / TASKS dokunulmadı. Ads harcaması yok.
+- **SATIS.md:** yazıldı. 15–30s + 2 dk pitch, CV maddeleri (EN/TR), README/demo copy, Q&A. Ses = hiring manager; Papara GTM yok. Kilit: Demo — sahte banka gateway.
+- **FARK.md:** yazıldı. Tablo — Papara/Tosla/Paycell (cüzdan), iyzico/PayTR (PSP), banka havale UX, öğrenci ASP.NET CRUD. Sonra 6 fark: ledger, 409, outbox, REST+SOAP mock, audit/freeze/correlation, dürüst demo. Mimari ASCII. FAST/BOA/POS/pazaryeri yok.
+- **AGENTS.md:** Sales satırı eklendi. README Docs: SATIS + FARK link.
+- Designer / SEO: `FARK.md` § One-liner’lar. Coder: isteğe bağlı footer **Neden ClearPay** sonra (pazaryeri yok).
+
+## 2026-08-13 — Designer status (yönetici)
+
+- **TASARIM.md:** landed (`docs/TASARIM.md`). Navy `#1B2A4A`, Inter, gölge/gradient/emoji yok. Giriş / özet / havale kompozisyon + mobil + boş durum.
+- **MARKA.md:** landed. One-liner: **ClearPay — demo cüzdan, sahte banka.** Disclaimer duruyor. FARK/SATIS’ten 2 çizgi fold (çift kayıt+409; outbox+REST/SOAP). Papara rakibi yok.
+- **brand.css:** additive tokens `wwwroot/css/brand.css`. `site.css` / Razor dokunulmadı. Coder: layout’a link (yukarıdaki Designer HANDOFF).
+- Coder status’taki “TASARIM / brand.css henüz yok” **eski**; dosyalar diskte. Identity silinmedi. Google Ads yok.

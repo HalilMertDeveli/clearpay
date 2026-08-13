@@ -1,0 +1,68 @@
+/* ClearPay brand tokens — additive. Load after site.css. Do not copy site.css. */
+
+:root {
+  --brand-navy: #1b2a4a;
+  --brand-track: 0.04em;
+  --brand-kicker-track: 0.08em;
+  --brand-accent-line: 3px;
+}
+
+.brand-name,
+.wordmark {
+  letter-spacing: var(--brand-track);
+  font-weight: 700;
+}
+
+.brand-mark {
+  letter-spacing: 0;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.page-kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: var(--brand-kicker-track);
+  text-transform: uppercase;
+}
+
+.stat-value,
+.remain strong,
+.panel-inline strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.balance-hero {
+  border-left: var(--brand-accent-line) solid var(--brand-navy, var(--navy));
+}
+
+.field-input[inputmode="decimal"] {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.empty-block {
+  text-align: center;
+  padding: 2.25rem 1rem;
+}
+
+.empty-title {
+  margin: 0 0 0.35rem;
+  font-weight: 600;
+  color: var(--ink, #1b2a4a);
+}
+
+.empty-hint {
+  margin: 0;
+  color: var(--muted, #5c6b86);
+  font-size: 0.875rem;
+}
+
+.empty-cell .empty-title,
+.empty-cell .empty-hint {
+  text-align: center;
+}
+
+.auth-card .brand-tagline {
+  letter-spacing: 0.02em;
+}

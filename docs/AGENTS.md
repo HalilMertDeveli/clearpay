@@ -10,6 +10,9 @@ Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadec
 | **Payments** | Ledger, idempotency, 409, iade, outbox, bakiye invarianti | Para hareketi (TASK-04…11) |
 | **Tester** | `dotnet build` / `dotnet test`, ekran smoke, 409 kanıtı | Kod sonrası |
 | **Deploy** | Docker Compose, GitHub Actions, Azure talimatı | TASK-02 Compose, TASK-15+ |
+| **Designer** | `docs/TASARIM.md`, `docs/MARKA.md`, `brand.css` token; CEO = ürün sesi | UI kompozisyon + CV markası; Razor’u Coder uygular |
+| **SEO/Ads** | `docs/SEO.md`, `docs/ADS.md`, robots/sitemap, `.cursor/rules/seo.mdc` | Keşif / meta; **harcama yok**; gerçek banka değil |
+| **Sales** | `docs/SATIS.md`, `docs/FARK.md`, `.cursor/rules/sales.mdc` | Mülakat / README / demo copy; **lisanslı cüzdan değil**; Ads harcaması yok |
 
 ## Çalışma kuralı
 1. Tek seferde tek TASK
