@@ -2,6 +2,7 @@ using ClearPay.Application.Ports;
 using ClearPay.Infrastructure.Banking;
 using ClearPay.Infrastructure.Persistence;
 using ClearPay.Infrastructure.Time;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +21,11 @@ public static class ServiceCollectionExtensions
 
         services.Configure<global::ClearPay.Infrastructure.SqlOptions>(
             configuration.GetSection(global::ClearPay.Infrastructure.SqlOptions.SectionName));
+
+        var ledgerConnection = configuration.GetConnectionString("ClearPay")
+            ?? throw new InvalidOperationException("ConnectionStrings:ClearPay is required for ledger SQL Server.");
+        services.AddDbContext<ClearPayDbContext>(options => options.UseSqlServer(ledgerConnection));
+
         services.AddSingleton<IClock, SystemClock>();
         services.AddScoped<IWalletReader, EmptyWalletReader>();
         services.AddScoped<ITransferExecutor, NotImplementedTransferExecutor>();

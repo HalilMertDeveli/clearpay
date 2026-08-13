@@ -16,20 +16,23 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [ ] TASK-16: Azure App Service + Azure SQL (açık URL)
 
 ## Doing
-- [ ] TASK-04: SQL model + ledger iskeleti (Wallet, LedgerEntry, indeks)
+- (boş)
 
 ## Done
 - [x] TASK-01: Repo + MD sistemi + ajan rolleri
 - [x] TASK-02: Solution iskeleti (.NET 8 Clean Arch, Docker SQL, sol menü layout)
 - [x] TASK-03: Giriş + Kayıt + boş cüzdan özeti
+- [x] TASK-04: SQL model + ledger iskeleti (Wallet, LedgerEntry, indeks)
 - [x] TASK-15: GitHub remote + GitHub Actions
 
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»
-- **Ürün sırası TASK-04** (EF SQL Server ledger). TASK-03 Done (`4fa4648`). Havale API (TASK-06) yok. Identity SQLite (T-009); ledger SQL.
+- **Ürün sırası TASK-05.** Deploy: CI landed; TASK-16 URL kullanıcı `az login` + `infra/deploy.ps1` sonrası.
 - TASK-12: Compose Redis/Rabbit var; uygulama bağlı değil. Ads harcaması yok.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz
 - Satıcı ödemesi ve canlı Redis/Rabbit bağlama Q2; Todo’da TASK-12
-- T-019: kod mimarisi Onion/Clean; n-tier aynı dört projenin adı (ikinci BLL/DAL yok). TASK-04 sırası değişmez.
+- T-019: kod mimarisi Onion/Clean; n-tier aynı dört projenin adı (ikinci BLL/DAL yok). TASK-04 Done (T-024).
+- **Operasyon (T-025):** `halilmertdeveliii@gmail.com`. GitHub `HalilMertDeveli`. TASK-16 **şimdi değil** (abonelik `az` ile görünmedi; hesap uydurma yok). Ads harcama yok.
+- TASK-04 Doing + D: MSSQL/MySQL/Oracle bind (T-021) ajanları **ezilmez**.

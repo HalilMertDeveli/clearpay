@@ -1,6 +1,7 @@
 using ClearPay.Application;
 using ClearPay.Infrastructure.DependencyInjection;
 using ClearPay.Infrastructure.Identity;
+using ClearPay.Infrastructure.Persistence;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,10 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 await IdentitySeeder.EnsureCreatedAndRolesAsync(app.Services);
+if (app.Configuration.GetValue("ClearPay:ApplyLedgerMigrations", true))
+{
+    await LedgerDatabase.EnsureMigratedAsync(app.Services, app.Logger);
+}
 
 if (!app.Environment.IsDevelopment())
 {

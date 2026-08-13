@@ -393,3 +393,44 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 
 
 
+
+## 2026-08-13 - Docker engine henuz yok (T-020 devam)
+
+- com.docker.service Automatic + Running, client 29.7.2. Linux engine **ayaga kalkmadi**: backend log `Virtual Machine Platform not enabled`. WSL2: virtualization component reboot bekliyor (DISM 3010). Whale / WSL first-run kullanici.
+- Native: SQL Server `localhost` (Windows auth) + LocalDB `MSSQLLocalDB` Running. MySQL84 `127.0.0.1:3306` (root / `.env.example`). Oracle **yok** (1521 kapali).
+- Compose: `docker compose -f docker-compose.databases.yml up -d` reboot + `docker info` sonrasi. `docker-compose.yml` dokunulmadi.
+- Cok-DB uygulama **sonra**. Azure yok.
+
+## 2026-08-13 — TASK-04 landed (T-024)
+
+- **OWN:** TARTISMA T-021/T-022/T-023/T-024. Coder `src/ClearPay.Infrastructure/Persistence/**` (`ClearPayDbContext`, Fluent, `InitialLedger`). Payments Domain ekleme: `OutboxStatus`, `Wallet.EnsureCanDebit` (LedgerPair rewrite yok). Tester model + mevcut testler.
+- Kazanan: SQL Server ledger EF; Identity SQLite ayrı; 1 user=1 wallet unique; `LedgerEntry(WalletId, CreatedAt)`; `IdempotencyRecord.Key` unique; **Balance kolonu yok**; outbox tablosu şimdi (worker TASK-11). `EmptyWalletReader` durur. Havale API yok. PageModel ledger yok.
+- Site: `docker compose up -d` → `dotnet run --project src/ClearPay.Web --launch-profile http` → http://localhost:5153 `/giris`. SQL yoksa Identity yine çalışır; migrate atlanır.
+- **Sıradaki:** TASK-05 cüzdan özeti canlı (ledger net, `IWalletReader` SQL).
+
+## 2026-08-13 — Coder TASK-04 EF (Infrastructure + Program DI)
+
+- **OWN:** `ClearPayDbContext` + Fluent configs + `InitialLedger` + `AddDbContext` SQL Server. `LedgerDatabase.EnsureMigratedAsync` (SQL yoksa Identity devam). Tests: `ClearPay:ApplyLedgerMigrations=false`.
+- Unique `UX_Wallet_UserId`, `UX_IdempotencyRecord_Key`, `IX_LedgerEntry_WalletId_CreatedAt`. Balance kolonu yok. `POST /api/transfers` yok.
+- Site: http://localhost:5153. Sıradaki TASK-05.
+
+
+
+## 2026-08-13 — Operasyon kimliği (T-025)
+
+- **OWN:** `docs/SENIN-ISLERIN.md`, `docs/CANLI.md`, `docs/TASKS.md` not, `docs/TARTISMA.md` T-025. `src/` / compose / ledger / LED **dokunulmadı**.
+- Kimlik: **`halilmertdeveliii@gmail.com`**. Parola/KEY sorulmadı; secret git’e yok.
+- **Doğrulandı:** `gh` = `HalilMertDeveli` (keyring); `gh api user/emails` primary `halilmertdeveliii@gmail.com` verified. Remote `https://github.com/HalilMertDeveli/clearpay.git` **public**. Gmail MCP `mcp_auth` → ready; kutu aynı Gmail (GitHub mail `to:` bu adres).
+- **Doğrulanmadı:** `az` bu PATH’te yok — abonelik listesi yok. Gmail’de Azure “account is ready” (2026-05-11) + eski deneme uyarı (2025-04). Abonelik **uydurulmadı**. Search Console maili yok.
+- **Gmail işi:** etiket `ClearPay` (`Label_2`); 3 CI fail thread etiketlendi (`9dd576c`, `4fa4648`, `2c36974`). Papara maili yok. Ads harcama yok. LED thread’e dokunulmadı.
+- **Yapılmadı:** push, Azure/SC/Ads hesabı, TASK-16 deploy, TASK-04 / D: bind ezme.
+- **Sıradaki ürün:** TASK-04 (Doing). TASK-16 şimdi değil.
+
+## 2026-08-13 — Error-fixer (T-026, CI 31701150300)
+
+- **OWN:** `tests/ClearPay.Tests/{AuthPages,AuthOrUi,PlaceholderPages}Tests.cs` Location satırı; `.github/workflows/ci.yml`; `.cursor/skills/clearpay-error-fixer/SKILL.md`; TARTISMA **T-026**. Domain / Persistence / compose **dokunulmadı** (TASK-04 + Docker ajanları).
+- CI kırmızı: 12 test `Location` `/giris` iken `/Account/Login` arıyordu. Cookie `LoginPath` zaten `/giris` (doğru). Assert hizalandı.
+- SO: https://stackoverflow.com/questions/60019975 https://stackoverflow.com/questions/39206489 — docs: https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie
+- `ci.yml`: `checkout@v5` + `setup-dotnet@v5` (Node 20 deprecation; https://github.com/actions/setup-dotnet/releases/tag/v5.0.0).
+- Lokal MSB3027: `ClearPay.Web` Debug kilitli — process öldürülmedi; Release test. Docker PATH yok (kullanıcı Desktop).
+- **Sıradaki:** push sonrası Actions yeşil beklenir. TASK-04 ajanı devam.

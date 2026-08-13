@@ -342,3 +342,87 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Karar:** **2.** Payments Domain POCOs durur (`UPDATE Balance` yok). Coder Infrastructure DbContext + migration. PageModel’de ledger yok. `POST /api/transfers` yok.
 - **Neden:** T-009 kilit ayrı, para motoru ayrı. TASK-04 kabul: şema + indeks; çift kayıt Domain’de zaten var. 409 HTTP TASK-06.
 - **Sonra hangi dosya:** Coder `src/ClearPay.Infrastructure` (EF, migration), Web `AddDbContext` SQL connection. Domain/Ledger **dokunulmaz**. Tester sonra migration smoke.
+
+---
+
+## T-022 — 2026-08-13 — TASK-04 ekran-akış (SPEC 8, Architect b)
+
+- **Kim:** Architect (ekran-akış OWN), Coder
+- **Konu:** Ledger şeması hangi ekranı / kaydı değiştirir?
+- **Seçenekler:**
+  1. Kayıtta SQL Server’a wallet insert (Compose yoksa kayıt kırılır; T-009 bozulur). Dekont/havale API şimdi.
+  2. **Ekran listesi sabit:** 8 SPEC ekranı. Giriş/kayıt/boş özet durur. Havale/Yükle-Çek/Hareketler placeholder. PageModel ledger net yok. Wallet satırı TASK-05 (SQL okuyunca). `POST /api/transfers` yok. 9. ekran / satıcı / POS yok.
+  3. Özet şimdi ledger net (TASK-05’i öne çeker).
+- **Karar:** **2.** TASK-04 görünür ürün akışını değiştirmez; şema hazır, UI boş özet.
+- **Neden:** Robust = SPEC 8 + T-009 cookie kanıtı. Kayıt Identity SQLite’da kalır. Canlı bakiye TASK-05; 409 HTTP TASK-06.
+- **Sonra hangi dosya:** Coder Razor **yazmaz** (TASK-04). Payments Domain kuralı. Infrastructure EF.
+
+---
+
+## T-023 — 2026-08-13 — TASK-04 port-DIP (Architect c)
+
+- **Kim:** Architect (port/DIP OWN), Coder, Payments
+- **Konu:** DbContext kime enjekte edilir; hangi port şimdi gerçeklenir?
+- **Seçenekler:**
+  1. `ClearPayDbContext` PageModel’e; özet SQL net şimdi (DIP kırılır, TASK-05).
+  2. **`AddClearPay` içinde `ClearPayDbContext` (SQL Server).** `IWalletReader` → `EmptyWalletReader` kalır. `ITransferExecutor` / `IIdempotencyStore` stub. Program.cs’te `SqlOptions` / `UseSqlServer` yok. Havale API yok. Gateway stub. Migrate: SQL yoksa Identity çalışır (test factory migrate kapalı).
+  3. `IWalletReader` SQL adapter + `ITransferExecutor` gerçek (TASK-05+06).
+- **Karar:** **2.** DIP durur: Web Application port; Infrastructure adapter; Domain EF bilmez.
+- **Neden:** T-007 portlar para özelliğinden önce. T-019 Onion. Eşitlikte ledger şema netliği > kolay UI. Outbox tablosu aynı tx tasarımı; worker TASK-11.
+- **Sonra hangi dosya:** Coder `ClearPay.Infrastructure/Persistence` + DI. Web Pages dokunulmaz. Application port imzası dokunulmaz.
+
+---
+
+## T-024 — 2026-08-13 — TASK-04 kazanan (T-017, üç Architect)
+
+- **Kim:** Orchestrator (T-016/T-017), Architect a/b/c, Coder, Payments, Tester
+- **Konu:** Paralel önerilerden hangisi koda gider?
+- **Seçenekler:**
+  1. Coder üç taslağı birleştirir / hepsini yazar (T-017 yasak).
+  2. Identity+ledger tek DB + kayıtta wallet + PageModel DbContext (kolay UI; T-009/DIP kırılır).
+  3. **Kazanan = T-021.2 + T-022.2 + T-023.2:** SQL Server ledger EF (Balance kolonu yok, 1 user=1 wallet unique, indeks PLAN, outbox satırı şimdi / worker sonra); Identity SQLite ayrı; 8 ekran; EmptyWalletReader; stub executor; Domain LedgerPair/CreateRefund/WouldGoNegative durur (rewrite yok; freeze helper / OutboxStatus eklemesi serbest); havale HTTP yok.
+- **Karar:** **3.** Coder yalnızca bunu yazar. Kaybeden (tek DB, kayıtta wallet, PageModel EF, SQL özet, transfer API) kodlanmaz.
+- **Neden (robust):** SPEC 8; çift kayıt Domain’de; `UPDATE Balance` yok; 409 şema unique Key (HTTP TASK-06); freeze/iade=ters Domain’de; outbox aynı tx insert tasarımı; DIP; tek host + sahte gateway; T-009; HANDOFF overwrite yok. Eşitlikte ledger+idempotency/outbox > kolay UI.
+- **Sonra hangi dosya:** Coder `src/ClearPay.Infrastructure/Persistence/**` (DbContext, Fluent, migration), `ServiceCollectionExtensions`, Web Design paketi. Payments Domain ekleme (OutboxStatus, `Wallet.EnsureCanDebit`). Tester `dotnet build`/`test` + model testi. Razor/Havale API yok. `docs/TASKS.md` TASK-04 Done. `docs/HANDOFF.md` append. `docs/ARCHITECTURE.md` TASK-04 satırı.
+
+---
+
+## T-021 - 2026-08-13 - Lokal MSSQL/MySQL/Oracle veri D: bind mount
+
+- **Kim:** Deploy (kullanici: D: bos alana kur; MSSQL + MySQL + Oracle; app ledger SQL Server kalsin)
+- **Konu:** Compose SQL data C: named volume'da siser (~20 GB bos). Uc motor D: uzerinde mi, yoksa Docker data-root mu tasinir?
+- **Secenekler:**
+  1. Docker Desktop data-root'u D: yapmak (sistem geneli; diger projeleri bozar).
+  2. **Proje bind mount:** `D:\ClearPay\data\mssql|mysql|oracle`. MSSQL `docker-compose.yml` servis sql. MySQL+Oracle `docker-compose.databases.yml` (T-020 ayri dosya durur). App connection string yalnizca MSSQL. C: named volume sessiz silinmez.
+  3. Ucunu tek docker-compose.yml'e birlestir (T-020 reddi; Redis/Rabbit OWN carpismasi).
+  4. Web/Identity'yi MySQL veya Oracle'a tasi (SPEC kilit SQL Server; TASK-03 SQLite Identity; TASK-05 yok).
+- **Karar:** **2.** Uc motor lokal Compose; veri D: bind. ClearPay Web ledger **yalnizca MSSQL** (:1433). MySQL :3306 ve Oracle :1521 yan servis (ogrenme / lokal test; Q2 Azure DB degil). Identity SQLite durur. EF/SQL Server migration TASK-04 ajaninda kalir.
+- **Neden:** C: ~20 GB, D: ~940 GB bos. AutoCAD/ss/sss/Test dolu veya amacsiz; yeni `D:\ClearPay\data` bos kok. data-root tasimak Desktop'u bozar. T-020 ayri compose korunur. Secret `.env` (gitignore); `.env.example` placeholder. Azure/DNS/LED/TASK-05 yok.
+- **Sonra hangi dosya:** `docker-compose.yml` (sql bind), `docker-compose.databases.yml` (mysql/oracle bind), `docs/DEPLOY.md`, `.env` (git yok), `docs/HANDOFF.md` append. `src/` ve TASK-04 migration ezilmez.
+
+---
+
+## T-025 — 2026-08-13 — Operasyon kimliği tek Gmail
+
+- **Kim:** Orchestrator, Öğrenme, Deploy
+- **Konu:** Azure / GitHub / Search Console / Ads / Gmail MCP hangi hesapta yürür?
+- **Seçenekler:**
+  1. Ayrı hesaplar (ajan yeni Microsoft/Google hesabı uydurur).
+  2. **Tek operasyon:** `halilmertdeveliii@gmail.com` (yazım Gmail; kullanıcı: bütün hesaplar buradan). Ajan hesap açmaz; parola/KEY sormaz; secret git’e koymaz.
+- **Karar:** **2.** Operasyon kimliği bu Gmail. Azure/SC/Ads hesabı **açılmaz** (zaten var iddiası). TASK-16 **şimdi değil**. Ads harcama yok. Papara maili yok. LED repo yok.
+- **Neden:** Kullanıcı tek kimlik verdi. Yeni hesap uydurmak T-005/T-012 ile çelişir. Abonelik `az` yokken görünmez; uydurulmaz. TASK-04 + D: bind ajanları ezilmez.
+- **Sonra hangi dosya:** `docs/SENIN-ISLERIN.md`, `docs/CANLI.md`, `docs/TASKS.md` not, `docs/HANDOFF.md` append. `src/` / compose / ledger yok.
+
+---
+
+## T-026 — 2026-08-13 — CI 12 fail: Location `/giris` vs `/Account/Login`
+
+- **Kim:** Tester / error-fixer (CI run 31701150300), Coder Identity
+- **Konu:** Cookie `LoginPath` `/giris`. Testler `Location` içinde `/Account/Login` arıyor. 12 kırmızı. LoginPath’i mi geri alalım, testleri mi hizalayalım?
+- **Seçenekler:**
+  1. `LoginPath`’i default `/Account/Login` yapmak (TR `/giris` kırılır; T-012 ürün).
+  2. **Test `Location` assert = yapılandırılmış path `/giris`.** `/Account/Login` sayfa hâlâ 200 (Razor). TASK-04 EF / Domain / compose **dokunulmaz**.
+  3. Her iki string’i OR’la kabul (gevşek; yanlış path kaçırır).
+- **Karar:** **2.** Assert `Contain("/giris")`. Uygulama doğru; test eski default’u bekliyordu.
+- **Neden:** [Cookie LoginPath](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie) Location’a o path’i yazar. SO: [AllowAutoRedirect=false + Location](https://stackoverflow.com/questions/60019975/how-to-disable-auto-redirect-when-integration-testing-in-asp-net-core-3), [LoginPath PathString](https://stackoverflow.com/questions/39206489/asp-net-core-cookieauthenticationoptions-loginpath-on-different-domain). Reddit’te aynı hata yok. CI Node 20 uyarısı: `checkout@v5` + `setup-dotnet@v5` ([setup-dotnet v5](https://github.com/actions/setup-dotnet/releases/tag/v5.0.0)). Lokal MSB3027: Debug `ClearPay.Web` kilitli → Release test, process öldürme yok (Docker ajanı).
+- **Sonra hangi dosya:** Tester `AuthPagesTests` / `AuthOrUiTests` / `PlaceholderPagesTests` (yalnızca Location satırı). Deploy `ci.yml` action pin. Skill `.cursor/skills/clearpay-error-fixer/SKILL.md`. Infrastructure Persistence / Domain / compose **yok**.

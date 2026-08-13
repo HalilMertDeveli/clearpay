@@ -16,3 +16,14 @@ public enum TransferStatus
     Completed = 1,
     Failed = 2
 }
+
+/// <summary>
+/// Outbox row lifecycle. Inserted in the same SQL transaction as the ledger pair (TASK-06).
+/// Worker (TASK-11) moves Pending → Sent / Failed. Null ProcessedAt means unpublished.
+/// </summary>
+public enum OutboxStatus
+{
+    Pending = 0,
+    Sent = 1,
+    Failed = 2
+}

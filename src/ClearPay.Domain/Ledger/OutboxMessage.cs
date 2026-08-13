@@ -18,6 +18,9 @@ public sealed class OutboxMessage
 
     public DateTimeOffset OccurredAt { get; set; }
 
+    /// <summary>Pending until the TASK-11 worker publishes. Same-tx insert with the ledger pair.</summary>
+    public OutboxStatus Status { get; set; } = OutboxStatus.Pending;
+
     /// <summary>Null = unpublished. Worker sets this after a successful publish.</summary>
     public DateTimeOffset? ProcessedAt { get; set; }
 }

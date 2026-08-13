@@ -1,6 +1,6 @@
 namespace ClearPay.Infrastructure;
 
-/// <summary>Local SQL Server (Docker Compose). DbContext arrives in TASK-04.</summary>
+/// <summary>Local SQL Server (Docker Compose). Bound in AddClearPay from ConnectionStrings:ClearPay.</summary>
 public sealed class SqlOptions
 {
     public const string SectionName = "ConnectionStrings";

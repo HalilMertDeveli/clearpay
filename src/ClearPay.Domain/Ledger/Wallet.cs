@@ -19,4 +19,12 @@ public sealed class Wallet
     public DateTimeOffset CreatedAt { get; set; }
 
     public bool CanDebit => !IsFrozen;
+
+    /// <summary>SPEC: frozen wallets cannot send or withdraw. Incoming credit may still post.</summary>
+    public void EnsureCanDebit()
+    {
+        if (IsFrozen)
+            throw new InvalidOperationException("Frozen wallet cannot send or withdraw.");
+    }
 }
+
