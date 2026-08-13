@@ -1,6 +1,6 @@
 namespace ClearPay.Application;
 
-/// <summary>Marker for use cases. Transfer/wallet handlers arrive with later tasks.</summary>
+/// <summary>Marker for use-case ports (IWalletReader, ITransferExecutor, IBankGateway, …).</summary>
 public static class ApplicationAssembly
 {
     public const string Name = "ClearPay.Application";

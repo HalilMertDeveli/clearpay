@@ -44,7 +44,22 @@ Razor ve JSON API aynı ASP.NET Core 8 uygulamasında. Mülakat omurgası “mik
 
 Para kuralları Domain + Application’dadır (Payments ajanı). Web yalnızca HTTP: sayfa veya 201/409. Çift kayıt, bakiye invarianti, freeze, iade ve outbox insert **aynı SQL transaction**’da Infrastructure’da biter. Ledger PageModel’de olsa 409 ve invariant UI’ye kilitlenir; “UPDATE Balance” yolu açılır — yasak.
 
-Şema (TASK-04, henüz kod yok): `Wallet` (1 user = 1 wallet), `LedgerEntry`, `Transfer`, `IdempotencyRecord` (Key unique), `AuditLog`, `OutboxMessage`. İndeks: `LedgerEntry(WalletId, CreatedAt)`. Identity tabloları şimdilik SQLite’da kalır; ledger Azure/Docker SQL Server’da.
+Şema (TASK-04 Domain POCOs var; EF Coder): `Wallet` (1 user = 1 wallet, bakiye kolonu yok), `LedgerEntry`, `Transfer`, `IdempotencyRecord` (Key unique), `AuditLog`, `OutboxMessage`. İndeks: `LedgerEntry(WalletId, CreatedAt)`. Identity SQLite ayrı; ledger SQL Server.
+
+## SOLID haritası
+
+| Sınıf | İlke |
+|-------|------|
+| `IWalletReader` | ISP + DIP — özet okuma. PageModel ledger net hesaplamaz (TASK-05). |
+| `ITransferExecutor` | SRP + DIP — havale Application port; Web yalnızca HTTP 201/409 (TASK-06). |
+| `IIdempotencyStore` | ISP — 409 deposu executor’dan ayrı. |
+| `IClock` | ISP — test double; para kuralı değil. |
+| `IBankGateway` | OCP + LSP — Rest/Soap aynı sözleşme; Web `switch` yazmaz. |
+| `RestBankGateway` / `SoapBankGateway` | OCP strateji (TASK-07/08 stub). |
+| `AddClearPay()` | Composition; Web `Application.Ports` enjekte eder. |
+| `LedgerPair` (Domain) | SRP para kuralı; Payments. Web’de yok. |
+
+Coder: `Program.cs` içinde `builder.Services.AddClearPay();` (`ClearPay.Infrastructure.DependencyInjection`). Havale API bu katmanda açılmaz.
 
 ## Q1 vs Q2 — Redis / Rabbit
 
