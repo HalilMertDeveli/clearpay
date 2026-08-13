@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ClearPay.Domain\ClearPay.Domain.csproj" />
     <ProjectReference Include="..\..\src\ClearPay.Web\ClearPay.Web.csproj" />
   </ItemGroup>
 
