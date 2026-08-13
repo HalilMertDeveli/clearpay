@@ -1,3 +1,8 @@
+# SQL Server only for now (TASK-02+).
+# Web is not a Compose service yet — run on the host:
+#   docker compose up -d
+#   dotnet run --project src/ClearPay.Web --launch-profile http
+# Redis + RabbitMQ: TASK-12.
 services:
   sql:
     image: mcr.microsoft.com/mssql/server:2022-latest
