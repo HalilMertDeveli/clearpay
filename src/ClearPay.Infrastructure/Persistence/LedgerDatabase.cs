@@ -1,5 +1,6 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -8,11 +9,18 @@ namespace ClearPay.Infrastructure.Persistence;
 /// <summary>
 /// Applies ledger migrations when SQL Server is up. Identity SQLite is separate.
 /// Unreachable SQL must not take down the cookie site (TASK-03).
+/// Tests set <c>ClearPay:ApplyLedgerMigrations=false</c> (T-023).
 /// </summary>
 public static class LedgerDatabase
 {
     public static async Task EnsureMigratedAsync(IServiceProvider services, ILogger logger)
     {
+        var configuration = services.GetService<IConfiguration>();
+        if (configuration?.GetValue("ClearPay:ApplyLedgerMigrations", true) == false)
+        {
+            return;
+        }
+
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ClearPayDbContext>();
         try

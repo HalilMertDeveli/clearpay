@@ -13,3 +13,9 @@ alwaysApply: false
 - Para akışı değişince Payments ajanına bırak; “kolay UPDATE” önerme
 - Q1: site + SQL + Hangfire/outbox tablosu. Redis/Rabbit canlısı Q2
 - Mockup’lar tahmini; Razor yakın olsun, piksel kopya değil. Navy `#1B2A4A`
+
+## Paralel Architect (T-016 / T-017)
+- Aynı TASK’ta birden fazla Architect paralel çalışır; her biri **ayrı OWN** (SQL/şema, ekran-akış SPEC, port/DIP/gateway). Aynı dosyayı sessizce ezme.
+- TARTISMA’sız `src/` yok. Çatışma = yeni T-NNN. HANDOFF overwrite yok.
+- Öneriler bittikten sonra Orchestrator **en robust** tek kazananı TARTISMA’da yazar. Coder yalnızca onu uygular; kaybeden taslağı HANDOFF’a bırakma.
+- Robust: SPEC 8 ekran + para kilitleri (çift kayıt, 409, freeze, iade=ters, outbox aynı tx); `UPDATE Balance` yok; DIP; tek host + sahte gateway. Eşitlikte ledger/idempotency > kolay UI.

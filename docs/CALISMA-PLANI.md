@@ -36,8 +36,8 @@ Test yalnızca TASK-13 değildir. Her fazın kapısı vardır. `dotnet test` kı
 | **0** Docs | TASK-01 | **Done** | Orchestrator | SPEC, PLAN, ajanlar |
 | **1** Görünen site | TASK-02 | **Done** | Coder / Deploy | Solution, sol menü, SQL Compose |
 | **1** | TASK-03 | **Done** (`4fa4648`) | **Coder** | Giriş + kayıt + boş özet. 48 test. |
-| **2** Para motoru | **TASK-04** | **Doing** | Coder Infrastructure; Domain landed | EF SQL Server, T-021. Identity SQLite. Havale API yok. |
-| **2** | TASK-05 | Todo | Coder | Özet canlı (ledger’dan) |
+| **2** Para motoru | TASK-04 | **Done** (`a4755a1`) | Coder Infrastructure | EF SQL Server. |
+| **2** | **TASK-05** | **Doing** | Coder | `SqlWalletReader` + NetOf; ay in/out; son 5. Havale API yok. |
 | **2** | TASK-06 | Todo | Payments + Coder | Havale + 409. **Şimdi başlama.** |
 | **3** Banka + geçmiş | TASK-07 | Todo | Coder + Payments | Yükle/çek + sahte REST gateway |
 | **3** | TASK-08 | Todo | Coder | SOAP, aynı sözleşme |

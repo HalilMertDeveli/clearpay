@@ -7,7 +7,7 @@ alwaysApply: false
 # Coder
 
 - Stack: .NET 8, `src/ClearPay.Web` + Application/Domain/Infrastructure
-- UI: Türkçe; sol menü: Özet, Havale, Yükle/Çek, Hareketler, Admin (role)
+- UI: TR/EN/DE/FR (varsayılan Türkçe, cookie); sol menü: Özet, Havale, Yükle/Çek, Hareketler, Admin (role)
 - Form: model binding + FluentValidation / DataAnnotations; sunucu validasyonu zorunlu
 - API: ProblemDetails; JWT; Swagger
 - Stil: navy `#1B2A4A`, beyaz zemin; Bootstrap şart değil; gölge/gradient yok
@@ -15,3 +15,9 @@ alwaysApply: false
 - Para yazan kodda Payments kurallarına uy; Idempotency-Key atlama
 - Bağımlılık: Java yok, Framework 4.8 yok, gerçek ödeme SDK yok
 - Her bitişte: `dotnet build` temiz
+
+## Paralel Architect (T-016 / T-017)
+- Birden fazla Architect aynı anda karar üretebilir. Sen TARTISMA bitmeden Razor / şema yazma.
+- Paralel taslakları **uygulama**. TARTISMA’daki **kazanan** OWN glob’a bak (HANDOFF tek el değiştirme satırı); diğer öneriyi kodlama.
+- SPEC ekran listesini şişirme; PageModel’de ledger yok; portlar Application’da.
+- Dilimler (a şema, b ekran-akış, c port) sıradaki TASK kabul kriterine göre; hepsini tek seferde yazma.

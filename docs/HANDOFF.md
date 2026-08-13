@@ -434,3 +434,33 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - `ci.yml`: `checkout@v5` + `setup-dotnet@v5` (Node 20 deprecation; https://github.com/actions/setup-dotnet/releases/tag/v5.0.0).
 - Lokal MSB3027: `ClearPay.Web` Debug kilitli — process öldürülmedi; Release test. Docker PATH yok (kullanıcı Desktop).
 - **Sıradaki:** push sonrası Actions yeşil beklenir. TASK-04 ajanı devam.
+
+## 2026-08-13 — TASK-04 Done (Orchestrator / Coder / Payments / Tester)
+
+- **OWN:** T-024 kazanan. `ClearPayDbContext` + `InitialLedger`. Domain: `OutboxStatus`, `Wallet.EnsureCanDebit` (LedgerPair durur). `EmptyWalletReader` + stub executor. Razor/havale API yok.
+- Tester: `dotnet test` yeşil (409 HTTP skip = TASK-06). Identity SQLite; ledger SQL Server. Docker PATH yok — site Identity ile açılır; SQL gelince migrate uygulanır.
+- `docs/TASKS.md` TASK-04 Done. **Sıradaki:** TASK-05.
+
+## 2026-08-13 — Push: CI `/giris` + TASK-04 EF (compose yok)
+
+- **OWN:** T-026 test Location + `ci.yml` v5; T-024 Persistence/`InitialLedger` + Domain freeze/outbox status. `docker-compose.yml` / `docker-compose.databases.yml` / `db-smoke.ps1` **dokunulmadı**.
+- Lokal Release: 50 geçti, 1 skip (409 = TASK-06). CI 31701150300 kırmızıydı (`/Account/Login` assert).
+- Docker Linux engine 500 / Oracle :1521 kapalı — kullanıcı Desktop/WSL. Native SQL + MySQL diğer ajan. Azure: `infra/deploy.ps1` durur; `az login` yok.
+- **Sıradaki:** origin push sonrası Actions; ürün TASK-05.
+
+## 2026-08-13 — TASK-05 Doing (Yönetim)
+
+- TASK-04 Done `a4755a1`. `docs/TASKS.md` Doing **TASK-05**. Tartışma **T-028**.
+- Coder: `IWalletReader` → `SqlWalletReader` (`AddClearPay`). Bakiye `LedgerPair.NetOf`; ay giden/gelen; son 5; freeze rozeti. Boş = 0,00 ₺. PageModel math yok. `POST /api/transfers` yok.
+- SQL down: `docker compose up -d` (sql) **veya** CanConnect → sıfır özet (500 yok). Identity SQLite durur.
+- `SqlWalletReader.cs` diskte; DI hâlâ `EmptyWalletReader` — kayıt değiştir. Domain rewrite yok.
+
+
+## 2026-08-13 - Deploy (T-021 MSSQL/MySQL/Oracle data on D:)
+
+- **OWN:** TARTISMA **T-021**; `docker-compose.yml` (sql bind `D:\ClearPay\data\mssql`); `docker-compose.databases.yml` (mysql `D:\ClearPay\data\mysql`, oracle `D:\ClearPay\data\oracle`); `docs/DEPLOY.md`; `.env` gitignored (MySQL/Oracle random local secrets); `.env.example` placeholder. `src/` yok. TASK-04 migration ezilmedi. TASK-05 baslamadi.
+- **Karar:** Uc motor lokal Compose. ClearPay Web ledger **yalnizca MSSQL** (:1433). MySQL :3306 + Oracle :1521 yan servis. Identity SQLite durur. C: named volume `clearpay-sql` silinmedi.
+- **Disk:** D: ~940 GB bos -> `D:\ClearPay\data\...`. C: ~19 GB; AutoCAD/ss/sss/Test kullanilmadi.
+- **Blok:** Docker Linux engine kalkmadi: Virtual Machine Platform. `wsl --install --no-distribution` OK; CBS reboot pending. `docker compose up` reboot sonrasi. Native MySQL84 su an 127.0.0.1:3306 (C:\ProgramData\MySQL\...); Compose 3306 icin durdur, data silme. Native MSSQLSERVER calisiyor (TCP 1433 kayitli).
+- **Site:** http://localhost:5153. Azure/DNS/LED yok.
+- **Siradaki:** TASK-04 ledger iskeleti (o ajan). Deploy: reboot -> `docker compose up -d` + databases compose; `docker compose ps`.

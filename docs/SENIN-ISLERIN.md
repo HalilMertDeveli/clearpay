@@ -7,6 +7,19 @@ Kod ve TASK sırası ajanın işi. Sen hesap, makine ve sırları tutarsın.
 - Ödeme nasıl: [`ODEME-SENIN.md`](ODEME-SENIN.md)
 - Azure (şimdi hesap açma): [`CANLI.md`](CANLI.md)
 
+## Operasyon kimliği
+
+Bütün hesaplar **`halilmertdeveliii@gmail.com`** (Gmail). Yeni Microsoft / Google / GitHub hesabı açma. Parola, App Password, connection string, JWT git’e koyma; ajan bunları sormaz.
+
+| Servis | Bu Gmail’de | Ajan ne yapmaz |
+|--------|-------------|----------------|
+| **GitHub** | `HalilMertDeveli` — primary e-posta doğrulanmış; repo `HalilMertDeveli/clearpay` public `main` | Yeni hesap / force push / secret |
+| **Gmail MCP** | Aynı kutu; etiket `ClearPay` | Papara maili, Ads harcaması |
+| **Azure** | Portal hesabı bu Gmail iddiası; bu makinede `az` yok → abonelik görünmedi | Abonelik uydurma, Portal açma, TASK-16 şimdi |
+| **Search Console / Ads** | Canlı URL sonrası sen; harcama yok | Hesap açma, kampanya, “ucuz havale” |
+
+TASK-16: [`CANLI.md`](CANLI.md) — **şimdi değil**. `az login` sen; ajan hesabı açmaz.
+
 ## Her gün
 
 1. **Visual Studio** — `C:\Users\clt\Projects\clearpay\ClearPay.slnx` (zaten bir kez açıldıysa aynı dosya).
@@ -50,3 +63,4 @@ Gerçek banka / Papara / iyzico / FAST başvurusu. POS, 3D Secure, lisans. Gerç
 5. Canlıda: Azure’u sen açarsın (`CANLI.md`). App Settings’e SQL + JWT. **Ödeme KEY yok.**
 6. Mülakat: 15/30 dk script + 409/tx/outbox + hangi firma (`IK.md`). Kısa üçlü: `OGRENME.md` / `FARK.md` / `KRONIK.md` §13.
 7. Google Ads’te “ucuz havale / Papara alternatif” **yazma**.
+8. **Banka / iş yeri sunumu** — pitch, rota, gelir mertebesi: [`GELIR.md`](GELIR.md) (T-013). Lisans başvurusu yok. Kapıya soğuk girme.

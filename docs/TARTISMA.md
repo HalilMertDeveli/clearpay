@@ -426,3 +426,30 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Karar:** **2.** Assert `Contain("/giris")`. Uygulama doğru; test eski default’u bekliyordu.
 - **Neden:** [Cookie LoginPath](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie) Location’a o path’i yazar. SO: [AllowAutoRedirect=false + Location](https://stackoverflow.com/questions/60019975/how-to-disable-auto-redirect-when-integration-testing-in-asp-net-core-3), [LoginPath PathString](https://stackoverflow.com/questions/39206489/asp-net-core-cookieauthenticationoptions-loginpath-on-different-domain). Reddit’te aynı hata yok. CI Node 20 uyarısı: `checkout@v5` + `setup-dotnet@v5` ([setup-dotnet v5](https://github.com/actions/setup-dotnet/releases/tag/v5.0.0)). Lokal MSB3027: Debug `ClearPay.Web` kilitli → Release test, process öldürme yok (Docker ajanı).
 - **Sonra hangi dosya:** Tester `AuthPagesTests` / `AuthOrUiTests` / `PlaceholderPagesTests` (yalnızca Location satırı). Deploy `ci.yml` action pin. Skill `.cursor/skills/clearpay-error-fixer/SKILL.md`. Infrastructure Persistence / Domain / compose **yok**.
+
+---
+
+## T-027 — 2026-08-13 — UI dilleri TR/EN/DE/FR (layout chrome)
+
+- **Kim:** Orchestrator, Architect (ekran-akış), Coder
+- **Konu:** Kullanıcı uygulamada İngilizce, Türkçe, Almanca, Fransızca istiyor. SPEC «Çok dilli UI» kapsam dışı ve UI Türkçe kilitliydi.
+- **Seçenekler:**
+  1. Reddet: SPEC kapsam dışı; UI Türkçe kalır (9. ekran / ürün şişmesi korkusu).
+  2. **Kabul:** TR/EN/DE/FR cookie + `.resx` Razor. Dil seçici **layout chrome** (sol menü + üst); 9. ekran yok. Varsayılan Türkçe.
+- **Karar:** **2.** README zaten EN/TR/FR (T-010); UI aynı diller + DE. Ads/Papara metni çevrilmez. Demo disclaimer her dilde (lokalize). Para kuralları değişmez (₺, çift kayıt, 409).
+- **Neden:** Kullanıcı şimdi istiyor; 9. ekran açılmaz (seçici chrome). Cookie `c=tr|en|de|fr` (`RequestLocalization` + `.AspNetCore.Culture`). Eşitlikte SPEC 8 ekran durur. TASK-04 Domain/EF ezilmez; TASK-05+ başlamaz.
+- **Sonra hangi dosya:** Coder `src/ClearPay.Web/**` (localization, `_Layout` / `_AuthLayout`, görünür metinler). `docs/SPEC.md` dar (kapsam dışı satır kalkar; varsayılan TR). Tester `dotnet build` + seçici smoke. `docs/HANDOFF.md` append. `docs/TASKS.md` yeni TASK yok. Payments Domain / Infrastructure Persistence **yok**.
+
+---
+
+## T-028 — 2026-08-13 — TASK-05 özet: ledger net vs EmptyWalletReader
+
+- **Kim:** Architect (port), Payments, Coder
+- **Konu:** Cüzdan özeti bakiyeyi nereden okur?
+- **Seçenekler:**
+  1. `EmptyWalletReader` kalır (hep 0,00 ₺) — TASK-03 kanıtı, canlı özet yok.
+  2. `Wallet.Balance` kolonu + UPDATE — SPEC yasak.
+  3. **`SqlWalletReader`:** bakiye = `LedgerPair.NetOf`; ay giden/gelen aggregate; son 5 `LedgerEntry`; freeze rozeti. PageModel yalnızca DTO. SQL yoksa (Docker kapalı) sıfır özet, 500 yok. Cüzdan yoksa 1 user = 1 wallet insert (ledger satırı yok).
+- **Karar:** **3.** En robust: invariant Domain’de; HTTP/Razor ledger math yok; `UPDATE Balance` yok.
+- **Neden:** PLAN TASK-05; T-003/T-007. 1 SQL down kullanıcı deneyimi TASK-04 HANDOFF ile aynı. Havale API yok (TASK-06).
+- **Sonra hangi dosya:** `SqlWalletReader`, `AddClearPay` kayıt, `WalletReaderPortTests` + `SqlWalletReaderTests`. `EmptyWalletReader` kaydı kalkar. Razor Index zaten port bağlı.

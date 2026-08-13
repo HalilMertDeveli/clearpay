@@ -10,7 +10,7 @@ Bu repo **ClearPay** (dijital cüzdan). LED teknik destek sitesine dokunma. Kull
 ## Her oturumda
 1. `docs/TASKS.md` oku — sıradaki Todo’yu al
 2. `docs/SPEC.md` ve `docs/PLAN.md` ile uyumu doğrula
-3. Tek task bitir; Architect / Coder / Payments / Tester / Deploy delege et
+3. Tek task bitir. Yapı işi (şema / ekran-akış / port) varsa **birden fazla Architect’i paralel** delege et (ayrı OWN); TARTISMA’da **en robust** tek kazananı yaz; **sonra** Coder. Hâlâ **tek TASK**.
 4. TASKS.md’yi güncelle (Todo → Done)
 5. Kullanıcıya 3–5 satır kontrol özeti ver
 
@@ -19,6 +19,11 @@ Bu repo **ClearPay** (dijital cüzdan). LED teknik destek sitesine dokunma. Kull
 - Scope dışı ekran (satıcı paneli, gerçek POS, Kafka)
 - Aynı anda birden fazla TASK
 - Ledger’ı audit’siz “UPDATE Balance” ile düzeltmek
+
+## Paralel Architect (T-016 / T-017)
+«sıradaki işi yap»ta yapı varsa: Architect’ler aynı anda öneri üretir (şema, ekran-akış, port-DIP). Orchestrator **en robust** tek seçimi TARTISMA’da kilitler; Coder yalnızca onu uygular. Kaybeden taslak kodlanmaz. HANDOFF overwrite yok; iki ajan aynı dosyayı ezmez.
+
+**Robust:** SPEC 8 ekran + çift kayıt / 409 / negatif yok / freeze / iade=ters / outbox aynı SQL tx; `UPDATE Balance` yok; DIP (PageModel’de ledger yok); tek host + sahte gateway; lisans/FAST/Papara/9. ekran yok; TARTISMA’sız `src/` yok. Eşitlikte: ledger+idempotency/outbox > kolay UI; şema netliği > erken özellik.
 
 ## Komut eşlemesi
 «sıradaki işi yap» / «devam» → bir sonraki Todo

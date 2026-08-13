@@ -4,6 +4,21 @@ Kaynak: `SPEC.md`, `PLAN.md`. Kod LED reposuna yazılmaz. Ekran listesi sabittir
 
 Ürün: WePay benzeri dijital cüzdan **sitesi**. Sahte banka uygulaması değil; sahte olan yalnızca `IBankGateway` (yükle/çek REST+SOAP stub).
 
+## Seçilen mimari (T-019)
+
+Derleme kuralı **Onion / Clean Architecture**’tır. Klasik n-tier’a (UI → BLL → DAL, BLL içinde EF, çift yönlü referans) geçilmez: ledger, idempotency ve 409 iş kuralını PageModel veya “kolay UPDATE Balance” yoluna kilitlemesin diye bağımlılık **içe** bakar.
+
+Aynı dört proje, n-tier bilenlere **isim eşlemesi**dir — ikinci BLL/DAL ağacı yok, ikinci uygulama yok:
+
+| Onion / Clean (csproj kuralı) | n-tier adı (aynı proje) | Hexagonal (aynı soğan) |
+|-------------------------------|-------------------------|-------------------------|
+| `ClearPay.Domain` (merkez) | iş kuralları / varlık | domain model |
+| `ClearPay.Application` | BLL (use case + DTO) | ports (`IWalletReader`, `ITransferExecutor`, `IBankGateway`, …) |
+| `ClearPay.Infrastructure` | DAL + dış sistem | adapters (SQL, Identity, Rest/Soap gateway) |
+| `ClearPay.Web` | sunum + composition root | host (Razor/HTTP); `new RestBankGateway()` yok |
+
+`csproj` neyi zorunlu kılar: Domain paket/proje referansı yok (EF/HTTP yok). Application yalnız Domain. Infrastructure → Application (+ Domain, EF eşlemesi için). Web → Application + Infrastructure; Web **Domain’e doğrudan ProjectReference vermez**. n-tier cümlesi dokümandadır; derleyici Onion grafiğini tutar.
+
 ## Katmanlar (Clean Architecture, tek process)
 
 | Proje | Ne tutar | Ne tutmaz |
@@ -15,7 +30,7 @@ Kaynak: `SPEC.md`, `PLAN.md`. Kod LED reposuna yazılmaz. Ekran listesi sabittir
 
 Bağımlılık: Web → Application + Infrastructure; Infrastructure → Application → Domain. Domain dışarı bakmaz.
 
-Bugün (TASK-03): Identity SQLite (`App_Data/identity.db`). Ledger SQL Server TASK-04; uygulama Compose SQL’e o task’ta bağlanır.
+Bugün (TASK-04): Identity SQLite (`App_Data/identity.db`). Ledger SQL Server `ClearPayDbContext` + `InitialLedger` migration (Wallet, LedgerEntry, Transfer, IdempotencyRecord, AuditLog, OutboxMessage). Özet bakiyesi hâlâ `IWalletReader` → `EmptyWalletReader` (sıfır; canlı net TASK-05). `SqlOptions` Web `Program.cs`’te değil, `AddClearPay(configuration)` içinde bağlanır. SQL yoksa Identity çalışır; migrate atlanır.
 
 ## Ekran haritası (SPEC ↔ Razor)
 
@@ -46,22 +61,22 @@ Razor ve JSON API aynı ASP.NET Core 8 uygulamasında. Mülakat omurgası “mik
 
 Para kuralları Domain + Application’dadır (Payments ajanı). Web yalnızca HTTP: sayfa veya 201/409. Çift kayıt, bakiye invarianti, freeze, iade ve outbox insert **aynı SQL transaction**’da Infrastructure’da biter. Ledger PageModel’de olsa 409 ve invariant UI’ye kilitlenir; “UPDATE Balance” yolu açılır — yasak.
 
-Şema (TASK-04 Domain POCOs var; EF Coder): `Wallet` (1 user = 1 wallet, bakiye kolonu yok), `LedgerEntry`, `Transfer`, `IdempotencyRecord` (Key unique), `AuditLog`, `OutboxMessage`. İndeks: `LedgerEntry(WalletId, CreatedAt)`. Identity SQLite ayrı; ledger SQL Server.
+Şema (TASK-04 landed): `Wallet` (1 user = 1 wallet, bakiye kolonu yok), `LedgerEntry`, `Transfer`, `IdempotencyRecord` (Key unique), `AuditLog`, `OutboxMessage` (Status; worker TASK-11). İndeks: `LedgerEntry(WalletId, CreatedAt)`. Identity SQLite ayrı; ledger SQL Server. `EmptyWalletReader` durur; havale API yok.
 
 ## SOLID haritası
 
 | Sınıf | İlke |
 |-------|------|
-| `IWalletReader` | ISP + DIP — özet okuma. PageModel ledger net hesaplamaz (TASK-05). |
+| `IWalletReader` | ISP + DIP — özet okuma. PageModel ledger net hesaplamaz. TASK-03 `EmptyWalletReader`; TASK-05 SQL. |
 | `ITransferExecutor` | SRP + DIP — havale Application port; Web yalnızca HTTP 201/409 (TASK-06). |
 | `IIdempotencyStore` | ISP — 409 deposu executor’dan ayrı. |
 | `IClock` | ISP — test double; para kuralı değil. |
 | `IBankGateway` | OCP + LSP — Rest/Soap aynı sözleşme; Web `switch` yazmaz. |
 | `RestBankGateway` / `SoapBankGateway` | OCP strateji (TASK-07/08 stub). |
-| `AddClearPay()` | Composition; Web `Application.Ports` enjekte eder. |
+| `AddClearPay(configuration)` | Composition; `SqlOptions` burada; Web `Application.Ports` enjekte eder. |
 | `LedgerPair` (Domain) | SRP para kuralı; Payments. Web’de yok. |
 
-Coder: `Program.cs` içinde `builder.Services.AddClearPay();` (`ClearPay.Infrastructure.DependencyInjection`). Havale API bu katmanda açılmaz.
+Coder: `Program.cs` içinde `builder.Services.AddClearPay(builder.Configuration);` (`ClearPay.Infrastructure.DependencyInjection`). Havale API bu katmanda açılmaz.
 
 ## Q1 vs Q2 — Redis / Rabbit
 

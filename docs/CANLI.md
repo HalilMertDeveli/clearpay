@@ -4,6 +4,8 @@ Kaynak: `docs/CALISMA-PLANI.md` **Faz 5**. Azure / DNS / ödeme hesabı **kullan
 
 **Orchestrator:** TASK-16 Done yalnızca tarayıcıda açık URL. Abonelik yokken ajan Portal açmaz. TASK-15 = GitHub Actions `dotnet test`. `dotnet test` kırmızıysa Actions Done yok.
 
+**Operasyon kimliği (T-025):** `halilmertdeveliii@gmail.com`. Azure / GitHub / Search Console / Ads bu kutudan. Ajan yeni hesap açmaz. Bu makinede `az` CLI **yok** — abonelik listesi doğrulanmadı, uydurulmadı. Gmail’de 2026-05-11 “Your new Azure account is ready” var; 2025-04 ücretsiz deneme uyarı maili de var (PAYG yükseltme / silinme). **TASK-16 şimdi değil** — deploy TASK-16 ajanına. Secret git’e yok.
+
 SEO/Ads: canlı URL **sonrası**; demo disclaimer (gerçek banka değil).
 
 ## Nerede

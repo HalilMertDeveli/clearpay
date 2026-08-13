@@ -8,7 +8,7 @@ Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadec
 |-------|------|------------|----------|
 | **Yönetim** | **Orchestrator** | Sıradaki task’ı seçer, delege eder, TASKS günceller | Her «sıradaki işi yap» |
 | **Ürün** | **Product** | `docs/URUN.md`; SPEC ekran listesi sabit | Yeni özellik anlatımı; Razor yok |
-| **Yazılım** | **Architect** | SPEC/PLAN uyumu, ekran/şema/akış, Application portları | Yeni özellik / yapı / tablo |
+| **Yazılım** | **Architect** | SPEC/PLAN uyumu, ekran/şema/akış, Application portları. **Paralel Architect mümkün** (ayrı OWN); Orchestrator TARTISMA’da **en robust** tek seçimi kilitler; **Coder sonra** | Yeni özellik / yapı / tablo |
 | **Yazılım** | **Coder** | Razor Pages, `site.css`, API, Identity, EF | Kod yazma task’ları; **tek Razor yazarı** |
 | **Yazılım** | **Payments** | Ledger, idempotency, 409, iade, outbox, bakiye invarianti | Para hareketi (TASK-04…11) |
 | **Yazılım** | **Deploy** | Docker Compose, GitHub Actions, Azure talimatı | TASK-02 Compose, TASK-15+ |

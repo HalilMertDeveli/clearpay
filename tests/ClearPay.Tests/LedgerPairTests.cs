@@ -113,7 +113,10 @@ public sealed class LedgerPairTests
         };
 
         wallet.CanDebit.Should().BeFalse();
+        var frozenDebit = () => wallet.EnsureCanDebit();
+        frozenDebit.Should().Throw<InvalidOperationException>();
         new Wallet { UserId = "user-2" }.CanDebit.Should().BeTrue();
+        new Wallet { UserId = "user-2" }.EnsureCanDebit();
     }
 
     [Fact]
@@ -169,6 +172,7 @@ public sealed class LedgerPairTests
         idempotency.Key.Should().NotBeNullOrEmpty();
         audit.CorrelationId.Should().Be(correlation);
         outbox.ProcessedAt.Should().BeNull();
+        outbox.Status.Should().Be(OutboxStatus.Pending);
         LedgerSchema.AmountScale.Should().Be(2);
         LedgerSchema.IdempotencyKeyUnique.Should().Be("UX_IdempotencyRecord_Key");
     }

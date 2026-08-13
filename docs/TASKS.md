@@ -3,7 +3,6 @@
 Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a taşır.
 
 ## Todo
-- [ ] TASK-05: Cüzdan özeti canlı (bakiye, ay giden/gelen, son 5 hareket)
 - [ ] TASK-06: Havale (idempotency, transaction, 409)
 - [ ] TASK-07: Yükle / çek + sahte BankGateway REST
 - [ ] TASK-08: SOAP gateway + timeout aynı sözleşme
@@ -16,7 +15,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [ ] TASK-16: Azure App Service + Azure SQL (açık URL)
 
 ## Doing
-- (boş)
+- [ ] TASK-05: Cüzdan özeti canlı (bakiye, ay giden/gelen, son 5 hareket)
 
 ## Done
 - [x] TASK-01: Repo + MD sistemi + ajan rolleri
@@ -28,11 +27,11 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»
-- **Ürün sırası TASK-05.** Deploy: CI landed; TASK-16 URL kullanıcı `az login` + `infra/deploy.ps1` sonrası.
+- **Ürün sırası TASK-05** (T-028: `SqlWalletReader` + `LedgerPair.NetOf`). TASK-04 Done (`a4755a1`). Havale API yok. Identity SQLite. SQL yoksa `docker compose up -d` veya sıfır özet.
 - TASK-12: Compose Redis/Rabbit var; uygulama bağlı değil. Ads harcaması yok.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz
 - Satıcı ödemesi ve canlı Redis/Rabbit bağlama Q2; Todo’da TASK-12
 - T-019: kod mimarisi Onion/Clean; n-tier aynı dört projenin adı (ikinci BLL/DAL yok). TASK-04 Done (T-024).
 - **Operasyon (T-025):** `halilmertdeveliii@gmail.com`. GitHub `HalilMertDeveli`. TASK-16 **şimdi değil** (abonelik `az` ile görünmedi; hesap uydurma yok). Ads harcama yok.
-- TASK-04 Doing + D: MSSQL/MySQL/Oracle bind (T-021) ajanları **ezilmez**.
+- D: MSSQL/MySQL/Oracle bind (T-021) Deploy OWN; `docker-compose.yml` / `docker-compose.databases.yml` ezilmez.
