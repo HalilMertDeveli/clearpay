@@ -2,7 +2,7 @@
 # Web is not a Compose service yet — run on the host:
 #   docker compose up -d
 #   dotnet run --project src/ClearPay.Web --launch-profile http
-# Redis + RabbitMQ: TASK-12.
+# Redis + RabbitMQ: TASK-12 (CALISMA-PLANI Faz 4). Live Azure: docs/CANLI.md (not this file).
 services:
   sql:
     image: mcr.microsoft.com/mssql/server:2022-latest
