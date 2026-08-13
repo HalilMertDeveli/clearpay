@@ -4,7 +4,7 @@ namespace ClearPay.Application.Ports;
 
 /// <summary>
 /// ISP: read-only wallet summary. PageModels must not compute ledger net.
-/// Implementation: TASK-05 (Infrastructure). Balance = signed ledger sum, not UPDATE.
+/// TASK-03: EmptyWalletReader (zeros). TASK-05: SQL ledger net, not UPDATE. PageModels do not compute net.
 /// </summary>
 public interface IWalletReader
 {

@@ -366,5 +366,22 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sales:** wedge = cüzdan/ledger UX (409, çift kayıt, outbox). “Biz sahte bankayız” yok. `SATIS.md` / `FARK.md` / `sales.mdc`.
 - **Coder:** TASK-03 = giriş/kayıt/boş özet. Yeni banka ekranı yok.
 
+## 2026-08-13 — Coder (TASARIM tarif + T-015 footer)
+
+- **OWN:** `src/ClearPay.Web/**` (append). Identity durur. Havale API yok.
+- Footer / sidebar / auth: **Demo — yükleme için sahte gateway** (7e95ca8). “Sahte banka uygulaması” yok.
+- Tarif: giriş kartı 420px, özet hero + empty-block, havale stack-form (kicker Transfer, Gönder disabled), hareket `filter-row` + 6 kolon + empty-hint, `brand.css` `--motion: 180ms ease`, `motion.css` 200ms fade, reduced-motion.
+- `Program.cs`: `AddClearPayIdentity` + `AddClearPay()`. Özet `0,00 ₺` (UserManager; IWalletReader yok).
+- Site: http://localhost:5153
+
+## 2026-08-13 — Architect (T-019 Onion + n-tier eşleme)
+
+- **OWN:** TARTISMA **T-019**; `docs/ARCHITECTURE.md`; `Program.cs` / PageModels / `EmptyWalletReader`; `tests/ClearPay.Tests/ArchitectureTests.cs` + `WalletReaderPortTests.cs`. README / docker-compose.databases / Azure **dokunulmadı**. TASK-04…16 Done değil.
+- **Karar:** derleme kuralı Onion/Clean (Domain merkez, DIP içeri). n-tier = aynı projelerin adı (Web=sunum, Application=BLL, Infrastructure=DAL). Hexagonal port/adapter aynı soğan. İkinci BLL/DAL ağacı yok.
+- **Kod:** `SqlOptions` `AddClearPay(configuration)` içinde. Özet/Havale/Yükle-Çek `IWalletReader` okur; PageModel ledger net yok. TASK-03 adapter `EmptyWalletReader` (0,00 ₺). `ITransferExecutor` / gateway hâlâ stub.
+- **Kalan sızıntı (sonraki TASK):** Login/Register `ApplicationUser` + `UserManager` (Identity host). Havale API / SQL reader / `RestBankGateway` gerçek çağrı TASK-06/05/07. Identity SQLite ayrı (T-009).
+- **Sıradaki ürün:** TASK-04 SQL model + ledger iskeleti.
+
+
 
 

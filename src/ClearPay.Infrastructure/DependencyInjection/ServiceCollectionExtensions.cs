@@ -2,6 +2,7 @@ using ClearPay.Application.Ports;
 using ClearPay.Infrastructure.Banking;
 using ClearPay.Infrastructure.Persistence;
 using ClearPay.Infrastructure.Time;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ClearPay.Infrastructure.DependencyInjection;
@@ -12,12 +13,15 @@ namespace ClearPay.Infrastructure.DependencyInjection;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddClearPay(this IServiceCollection services)
+    public static IServiceCollection AddClearPay(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
 
+        services.Configure<global::ClearPay.Infrastructure.SqlOptions>(
+            configuration.GetSection(global::ClearPay.Infrastructure.SqlOptions.SectionName));
         services.AddSingleton<IClock, SystemClock>();
-        services.AddScoped<IWalletReader, NotImplementedWalletReader>();
+        services.AddScoped<IWalletReader, EmptyWalletReader>();
         services.AddScoped<ITransferExecutor, NotImplementedTransferExecutor>();
         services.AddScoped<IIdempotencyStore, NotImplementedIdempotencyStore>();
 

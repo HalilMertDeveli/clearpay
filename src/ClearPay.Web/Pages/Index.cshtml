@@ -2,7 +2,7 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Özet";
-    ViewData["MetaDescription"] = "Bakiye, bu ay giden/gelen, son hareketler. ASP.NET Core ledger demosu. Demo — sahte banka gateway.";
+    ViewData["MetaDescription"] = "Cüzdan bakiyesi, bu ay giden/gelen, son hareketler. Demo — yükleme için sahte gateway.";
 }
 
 <p class="page-kicker">Cüzdan</p>
@@ -15,7 +15,7 @@
 <article class="balance-hero">
     <p class="stat-label">Kullanılabilir bakiye</p>
     <p class="stat-value stat-value-xl">@Html.Raw(Model.BalanceText)</p>
-    <p class="status-line">Hesap durumu: Aktif</p>
+    <p class="status-line">Hesap durumu: @(Model.IsFrozen ? "Dondurulmuş" : "Aktif")</p>
 </article>
 
 <div class="stat-row">
@@ -45,17 +45,34 @@
             <tr>
                 <th>Tarih</th>
                 <th>İşlem</th>
-                <th>Tutar</th>
+                <th class="num">Tutar</th>
                 <th>Durum</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td colspan="4" class="empty-cell">
-                    <p class="empty-title">Henüz hareket yok.</p>
-                    <p class="empty-hint">İlk havaleniz veya yüklemeniz burada görünür.</p>
-                </td>
-            </tr>
+            @if (Model.LastMovements.Count == 0)
+            {
+                <tr>
+                    <td colspan="4" class="empty-cell">
+                        <div class="empty-block">
+                            <p class="empty-title">Henüz hareket yok.</p>
+                            <p class="empty-hint">İlk havaleniz veya yüklemeniz burada görünür.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var movement in Model.LastMovements)
+                {
+                    <tr>
+                        <td>@movement.At.ToLocalTime().ToString("g")</td>
+                        <td>@movement.Kind</td>
+                        <td class="num">@ClearPay.Web.Presentation.MoneyDisplay.FormatTry(movement.Amount)</td>
+                        <td>Tamamlandı</td>
+                    </tr>
+                }
+            }
         </tbody>
     </table>
 </section>

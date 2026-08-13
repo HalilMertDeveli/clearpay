@@ -1,6 +1,6 @@
 @{
     var meta = ViewData["MetaDescription"] as string
-        ?? "ASP.NET Core 8 cüzdan demosu. Giriş yapın. Demo — sahte banka gateway; lisanslı ödeme kuruluşu değil.";
+        ?? "ASP.NET Core 8 dijital cüzdan demosu. Giriş yapın. Demo — yükleme için sahte gateway.";
     var title = ViewData["Title"] as string ?? "Giriş";
 }
 <!DOCTYPE html>
@@ -23,6 +23,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/motion.css" asp-append-version="true" />
 </head>
 <body class="auth-body">
     <a class="skip-link" href="#main">İçeriğe geç</a>
@@ -35,7 +36,7 @@
             <p class="brand-tagline">Demo cüzdan</p>
             @RenderBody()
         </main>
-        <p class="auth-footer">Demo — sahte banka gateway</p>
+        <p class="auth-footer">Demo — yükleme için sahte gateway</p>
     </div>
 </body>
 </html>

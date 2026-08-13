@@ -2,10 +2,62 @@
 @model HareketlerModel
 @{
     ViewData["Title"] = "Hareketler";
+    ViewData["MetaDescription"] = "Cüzdan hareketleri. Demo — yükleme için sahte gateway.";
 }
 
 <p class="page-kicker">Geçmiş</p>
 <h1 class="page-title">Hareketler</h1>
+<p class="lede">Cüzdanınızdaki gönderim, yükleme ve çekimler.</p>
+
 <section class="panel">
-    <p class="empty">Filtre, tablo ve dekont TASK-09’da. Admin menüde gizli (rol TASK-10).</p>
+    <form method="get" class="stack-form filter-bar" novalidate>
+        <div class="filter-row">
+            <div class="field">
+                <label class="field-label" for="baslangic">Başlangıç</label>
+                <input class="field-input" id="baslangic" name="baslangic" type="date" disabled />
+            </div>
+            <div class="field">
+                <label class="field-label" for="tur">Tür</label>
+                <select class="field-input" id="tur" name="tur" disabled>
+                    <option>Tümü</option>
+                    <option>Havale</option>
+                    <option>Yükle</option>
+                    <option>Çek</option>
+                </select>
+            </div>
+            <div class="field">
+                <label class="field-label" for="durum">Durum</label>
+                <select class="field-input" id="durum" name="durum" disabled>
+                    <option>Tümü</option>
+                    <option>Tamamlandı</option>
+                    <option>Beklemede</option>
+                </select>
+            </div>
+            <div class="field">
+                <button type="submit" class="btn" disabled>Filtrele</button>
+            </div>
+        </div>
+    </form>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Tarih</th>
+                <th>İşlem no</th>
+                <th>Tür</th>
+                <th>Karşı taraf</th>
+                <th class="num">Tutar</th>
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="6" class="empty-cell">
+                    <div class="empty-block">
+                        <p class="empty-title">Bu dönemde hareket bulunmuyor.</p>
+                        <p class="empty-hint">Tarih veya tür filtresini genişletin; ya da ilk havaleyi Özet’ten gönderin.</p>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>

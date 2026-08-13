@@ -7,7 +7,7 @@
   --paper: #ffffff;
   --wash: #f4f6f9;
   --accent: #1b2a4a;
-  --sidebar-w: 240px;
+  --sidebar-w: 248px;
   --font: "Inter", system-ui, sans-serif;
 }
 
@@ -153,8 +153,8 @@ a {
 }
 
 .content {
-  padding: 1.75rem 1.5rem 2.5rem;
-  max-width: 960px;
+  padding: 2.25rem 2rem 2.5rem;
+  max-width: 920px;
 }
 
 .page-kicker {
@@ -164,23 +164,24 @@ a {
 }
 
 .page-title {
-  margin: 0 0 1.25rem;
-  font-size: 1.65rem;
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .stat-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.85rem;
-  margin-bottom: 1.25rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .stat-card,
 .panel {
   background: var(--paper);
   border: 1px solid var(--line);
-  padding: 1rem 1.1rem;
+  padding: 1.25rem 1.35rem;
 }
 
 .stat-label {
@@ -198,8 +199,8 @@ a {
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 1rem 0 1.5rem;
+  gap: 0.6rem;
+  margin: 0 0 1.75rem;
 }
 
 .btn {
@@ -207,7 +208,7 @@ a {
   align-items: center;
   justify-content: center;
   border: 1px solid var(--navy);
-  padding: 0.55rem 0.95rem;
+  padding: 0.65rem 1.15rem;
   font: inherit;
   font-weight: 600;
   background: var(--navy);
@@ -286,23 +287,23 @@ select {
 }
 
 .lede {
-  margin: 0 0 1.5rem;
+  margin: 0 0 1.75rem;
   color: var(--muted);
 }
 
 .balance-hero {
   background: var(--paper);
   border: 1px solid var(--line);
-  padding: 1.5rem 1.25rem;
+  padding: 1.75rem 1.5rem;
   margin-bottom: 1rem;
 }
 
 .stat-value-xl {
-  font-size: 2.2rem;
+  font-size: 2.35rem;
 }
 
 .status-line {
-  margin: 0.7rem 0 0;
+  margin: 0.75rem 0 0;
   color: var(--muted);
   font-size: 0.85rem;
 }
@@ -358,7 +359,7 @@ select {
 }
 
 .field {
-  margin-bottom: 1rem;
+  margin-bottom: 1.1rem;
 }
 
 .field-row,
@@ -422,7 +423,7 @@ select {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
-  margin: 1.15rem 0 0;
+  margin: 1.25rem 0 0;
 }
 
 .data-table {
@@ -433,6 +434,7 @@ select {
 .data-table th {
   text-align: left;
   font-size: 0.75rem;
+  font-weight: 600;
   color: var(--muted);
   padding: 0.5rem 0.6rem 0.75rem;
   border-bottom: 1px solid var(--line);
@@ -441,6 +443,7 @@ select {
 .data-table td {
   padding: 0.85rem 0.6rem;
   border-bottom: 1px solid var(--line);
+  font-size: 0.925rem;
 }
 
 .empty-cell {
@@ -481,7 +484,7 @@ select {
   max-width: 420px;
   background: var(--paper);
   border: 1px solid var(--line);
-  padding: 2.4rem 2.1rem 2.1rem;
+  padding: 2.5rem 2.15rem 2.15rem;
 }
 
 .auth-form {

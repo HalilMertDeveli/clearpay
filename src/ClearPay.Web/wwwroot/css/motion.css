@@ -1,0 +1,32 @@
+/* ClearPay motion — 150–250ms ease. No lift, bounce, blur, or carnival. */
+
+.auth-card,
+.balance-hero,
+.stat-card,
+.panel {
+  animation: cp-fade 200ms ease both;
+}
+
+.balance-hero .stat-value-xl {
+  animation: cp-fade 220ms ease both;
+}
+
+@keyframes cp-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-card,
+  .balance-hero,
+  .stat-card,
+  .panel,
+  .balance-hero .stat-value-xl {
+    animation: none;
+  }
+}

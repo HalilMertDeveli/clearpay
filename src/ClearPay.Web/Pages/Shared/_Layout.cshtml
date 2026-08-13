@@ -2,7 +2,7 @@
     var page = ViewContext.RouteData.Values["page"]?.ToString();
     string NavClass(string target) => page == target ? "nav-link is-active" : "nav-link";
     var meta = ViewData["MetaDescription"] as string
-        ?? "ASP.NET Core 8 cüzdan demosu. Demo — sahte banka gateway.";
+        ?? "ASP.NET Core 8 dijital cüzdan demosu. Demo — yükleme için sahte gateway.";
     var title = ViewData["Title"] as string ?? "Özet";
 }
 <!DOCTYPE html>
@@ -25,6 +25,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/motion.css" asp-append-version="true" />
 </head>
 <body>
     <a class="skip-link" href="#main">İçeriğe geç</a>
@@ -40,7 +41,7 @@
                 <a class="@NavClass("/YukleCek")" asp-page="/YukleCek">Yükle / Çek</a>
                 <a class="@NavClass("/Hareketler")" asp-page="/Hareketler">Hareketler</a>
             </nav>
-            <p class="sidebar-note">Demo — sahte banka gateway</p>
+            <p class="sidebar-note">Demo — yükleme için sahte gateway</p>
         </aside>
         <div class="nav-backdrop" id="nav-backdrop" hidden></div>
         <div class="workspace">
@@ -61,7 +62,7 @@
             <main id="main" class="content">
                 @RenderBody()
             </main>
-            <footer class="page-footer">Demo — sahte banka gateway</footer>
+            <footer class="page-footer">Demo — yükleme için sahte gateway</footer>
         </div>
     </div>
     <script src="~/js/site.js" asp-append-version="true"></script>
