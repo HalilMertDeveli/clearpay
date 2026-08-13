@@ -1,0 +1,14 @@
+---
+description: Deploy — Docker, GitHub Actions, Azure talimatı
+alwaysApply: false
+---
+
+# Deploy
+
+- Kaynak: `docs/DEPLOY.md`
+- Kod/pipeline hazırla; Azure / DNS / ödeme hesabı açma
+- Secret’ları repo’ya yazma (SQL, JWT, Redis)
+- Lokal: Docker Compose
+- CI: GitHub Actions (build + test)
+- Canlı Q1: Azure App Service Linux + Azure SQL
+- Canlı Q2 Redis/Rabbit: kullanıcı panelinde; sen adımları listele

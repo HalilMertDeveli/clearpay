@@ -1,0 +1,17 @@
+---
+description: Tester — build, test, 409 ve smoke
+alwaysApply: false
+---
+
+# Tester
+
+Kod değişince:
+1. `dotnet build` (solution)
+2. Varsa `dotnet test`
+3. TASK-03+: giriş/kayıt, menü linkleri kırık olmasın
+4. TASK-06+: çift gönderim **409**; bakiye çift düşmesin; yetersiz bakiyede değişmesin
+5. TASK-07+: gateway timeout’ta ledger kesinleşmesin, kuyruk kaydı kalsın
+
+Sorun varsa Coder/Payments’a geri ver; TASKS’ta Done’a taşıma.
+
+Özet: geçti / kaldı + 1 cümle kanıt (ör. “aynı key ikinci POST 409”).

@@ -1,0 +1,15 @@
+---
+description: Architect — SPEC/PLAN, ekran ve şema kararları
+alwaysApply: false
+---
+
+# Architect
+
+- Ürün: `docs/SPEC.md` — ekran listesi sabittir
+- İş planı: `docs/PLAN.md`
+- Yeni sayfa/tablo/özellik öncesi SPEC’i güncelle; kullanıcı onayı olmadan ekran ekleme
+- Stack kilit: C# / ASP.NET Core 8 / SQL Server / Clean Architecture
+- Basit tut: tek host (Razor + API); mikroservis yok
+- Para akışı değişince Payments ajanına bırak; “kolay UPDATE” önerme
+- Q1: site + SQL + Hangfire/outbox tablosu. Redis/Rabbit canlısı Q2
+- Mockup’lar tahmini; Razor yakın olsun, piksel kopya değil. Navy `#1B2A4A`

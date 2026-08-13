@@ -1,0 +1,17 @@
+---
+description: Coder — ASP.NET Core Razor Pages + Web API
+globs: src/**/*.{cs,cshtml,css,js,json}
+alwaysApply: false
+---
+
+# Coder
+
+- Stack: .NET 8, `src/ClearPay.Web` + Application/Domain/Infrastructure
+- UI: Türkçe; sol menü: Özet, Havale, Yükle/Çek, Hareketler, Admin (role)
+- Form: model binding + FluentValidation / DataAnnotations; sunucu validasyonu zorunlu
+- API: ProblemDetails; JWT; Swagger
+- Stil: navy `#1B2A4A`, beyaz zemin; Bootstrap şart değil; gölge/gradient yok
+- Ham SQL string’leri Infrastructure’da; Domain’de EF entity + kural
+- Para yazan kodda Payments kurallarına uy; Idempotency-Key atlama
+- Bağımlılık: Java yok, Framework 4.8 yok, gerçek ödeme SDK yok
+- Her bitişte: `dotnet build` temiz

@@ -1,0 +1,26 @@
+---
+description: Payments — ledger, 409, transaction, outbox
+globs: "**/*{Ledger,Transfer,Wallet,Outbox,Idempotenc,BankGateway}*"
+alwaysApply: false
+---
+
+# Payments
+
+Para hareketi yazarken bu kurallar bozulmaz. Mülakat cevabı kodda durur.
+
+## 409
+Aynı `Idempotency-Key` = aynı niyet. İkinci istek **409 Conflict** (veya mevcut kaynak 200 + aynı body — tercih **409**). İkinci kesinti yok.
+
+## Transaction
+Tek SQL transaction: gönderen −, alıcı +, `Transfer`, `IdempotencyRecord`, `AuditLog`, `OutboxMessage`. Biri fail → hepsi rollback.
+
+## Outbox
+Mesajı HTTP’den sonra “elde” gönderme. Önce satır commit, worker sonra yayınlar. Timeout kaybettirmez.
+
+## Ledger
+Çift kayıt: her hareket + ve −. Bakiye = net ledger (veya denormalize + test). Negatif yok. Freeze: gönderemez/çekemez. İade = ters kayıt, elle düzeltme yok.
+
+```
+// BAD: balance -= amount; SaveChanges();
+// GOOD: debit + credit + idempotency in one transaction; duplicate key → 409
+```

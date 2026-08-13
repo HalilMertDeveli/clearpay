@@ -1,0 +1,35 @@
+## Build
+bin/
+obj/
+out/
+artifacts/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## IDE
+.vs/
+.idea/
+*.swp
+.DS_Store
+
+## Secrets
+appsettings.*.local.json
+*.pfx
+.env
+.env.*
+!.env.example
+
+## Test / coverage
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+## Docker / logs
+*.log
+docker-data/
+
+## OS
+Thumbs.db

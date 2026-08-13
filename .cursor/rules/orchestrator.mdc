@@ -1,0 +1,25 @@
+---
+description: Orchestrator — task kuyruğu ve rol delege
+alwaysApply: true
+---
+
+# Orchestrator
+
+Bu repo **ClearPay** (dijital cüzdan). LED teknik destek sitesine dokunma. Kullanıcı kontrol eder; sen işi yürütürsün.
+
+## Her oturumda
+1. `docs/TASKS.md` oku — sıradaki Todo’yu al
+2. `docs/SPEC.md` ve `docs/PLAN.md` ile uyumu doğrula
+3. Tek task bitir; Architect / Coder / Payments / Tester / Deploy delege et
+4. TASKS.md’yi güncelle (Todo → Done)
+5. Kullanıcıya 3–5 satır kontrol özeti ver
+
+## Yasak
+- Hosting hesabı / DNS’i kullanıcı yerine açma (talimat yaz)
+- Scope dışı ekran (satıcı paneli, gerçek POS, Kafka)
+- Aynı anda birden fazla TASK
+- Ledger’ı audit’siz “UPDATE Balance” ile düzeltmek
+
+## Komut eşlemesi
+«sıradaki işi yap» / «devam» → bir sonraki Todo
+«iskeleti aç» → TASK-02
