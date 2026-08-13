@@ -26,9 +26,18 @@ ASP.NET Core 8 digital wallet (demo). Idempotent P2P transfers, double-entry led
 - Integrated a mock bank gateway over REST and SOAP; used an outbox + queue so payment completion is not lost on timeout.
 - Shipped Docker Compose, xUnit tests, Serilog correlation, and CI/CD to Azure App Service.
 
+## Run locally
+
+```bash
+docker compose up -d
+dotnet run --project src/ClearPay.Web --launch-profile http
+```
+
+Open http://localhost:5153 — left nav: Özet, Havale, Yükle/Çek, Hareketler. Admin is hidden until TASK-10. SQL is up; the app does not read it yet (TASK-04).
+
 ## Status
 
-Scaffold and agent workflow are in `docs/`. Application code starts at **TASK-02**. Run the next task from `docs/TASKS.md`.
+TASK-02 skeleton is in the repo. Next: **TASK-03** login, register, empty wallet. Queue: `docs/TASKS.md`.
 
 ## Docs
 

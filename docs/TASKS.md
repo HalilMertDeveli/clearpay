@@ -3,7 +3,6 @@
 Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a taşır.
 
 ## Todo
-- [ ] TASK-02: Solution iskeleti (.NET 8 Clean Arch, Docker SQL, sol menü layout)
 - [ ] TASK-03: Giriş + Kayıt + boş cüzdan özeti
 - [ ] TASK-04: SQL model + ledger iskeleti (Wallet, LedgerEntry, indeks)
 - [ ] TASK-05: Cüzdan özeti canlı (bakiye, ay giden/gelen, son 5 hareket)
@@ -24,6 +23,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 
 ## Done
 - [x] TASK-01: Repo + MD sistemi + ajan rolleri
+- [x] TASK-02: Solution iskeleti (.NET 8 Clean Arch, Docker SQL, sol menü layout)
 
 ## Notlar
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»

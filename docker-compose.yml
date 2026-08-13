@@ -1,0 +1,14 @@
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: clearpay-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:-ClearPay_Dev1!}"
+    ports:
+      - "1433:1433"
+    volumes:
+      - clearpay-sql:/var/opt/mssql
+
+volumes:
+  clearpay-sql:

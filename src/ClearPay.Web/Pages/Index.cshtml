@@ -1,0 +1,31 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Özet";
+}
+
+<p class="page-kicker">Cüzdan</p>
+<h1 class="page-title">Özet</h1>
+<div class="stat-row">
+    <article class="stat-card">
+        <p class="stat-label">Bakiye</p>
+        <p class="stat-value">—</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-label">Bu ay giden</p>
+        <p class="stat-value">—</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-label">Bu ay gelen</p>
+        <p class="stat-value">—</p>
+    </article>
+</div>
+<div class="actions">
+    <a class="btn" asp-page="/Havale">Havale gönder</a>
+    <a class="btn btn-ghost" asp-page="/YukleCek">Yükle</a>
+    <a class="btn btn-ghost" asp-page="/YukleCek">Çek</a>
+</div>
+<section class="panel">
+    <p class="stat-label">Son hareketler</p>
+    <p class="empty">Henüz hareket yok. Giriş ve boş cüzdan TASK-03’te bağlanır.</p>
+</section>

@@ -5,9 +5,11 @@ Hesap açma ajanın işi değildir. Ajan kodu ve talimatı hazırlar.
 ## Lokal
 ```bash
 docker compose up -d
-dotnet run --project src/ClearPay.Web
+dotnet run --project src/ClearPay.Web --launch-profile http
 ```
-Compose: SQL Server (gün 1). Redis + RabbitMQ TASK-12.
+Site: http://localhost:5153  
+Compose: SQL Server (gün 1, uygulama TASK-04’e kadar bağlanmaz). Redis + RabbitMQ TASK-12.  
+Lokal SA şifresi varsayılanı `ClearPay_Dev1!` (yalnızca Docker; Azure’da kullanma).
 
 ## CI
 GitHub Actions: `dotnet restore` → `build` → `test`. Secret yok.
