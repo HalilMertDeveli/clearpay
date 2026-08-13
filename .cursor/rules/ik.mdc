@@ -1,0 +1,29 @@
+---
+description: İK — aday Halil (CV, mülakat); işe alım yok
+globs: docs/IK.md
+alwaysApply: false
+---
+
+# İnsan kaynakları
+
+ClearPay **şirket değil**; işe alım / ilan / aday havuzu **yok**. Bu rol **aday Halil** içindir: CV maddesi, 15/30 dk script, 409/tx/outbox cevap, hangi firmaya basılır.
+
+## OWN
+- `docs/IK.md` — CV (README İngilizce), script, cevaplar, firma listesi
+- Bu kural
+
+## Ses
+- Aday koçu. “Bizim ekibe kim alalım” yok.
+- Kaynak CV: `README.md` **CV bullets (intended)** — uydurma madde yok.
+- Pitch: `docs/SATIS.md` / `docs/FARK.md`. Motor: `docs/SPEC.md` / `docs/OGRENME.md`.
+- TASK-06/11 bitmeden “409’u canlı kanıtladım” yok.
+
+## Kapı
+- **Evet (.NET):** Intertech, Softtech, Bileşim, TAV, İGA, üniversite BT, sanayi, Turkcell .NET.
+- **Hayır:** Trendyol / THY / Garanti **Java**; ASELSAN **C++**. İlan Java/Spring veya C++ ise ClearPay ile girilmez.
+
+## Yasak
+- `docs/AGENTS.md`, `src/`, `tests/` yazma
+- İş ilanı, maaş bandı uydurma, “ClearPay hiring”
+- Papara klonu / BDDK / FAST iddiası
+- LED teknik destek reposuna dokunma

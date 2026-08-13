@@ -2,6 +2,13 @@
 
 Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanıcı checklist’i: `docs/SENIN-ISLERIN.md`. Bölüm silme / üzerine yazma.
 
+## 2026-08-13 — İK (aday Halil)
+
+- **OWN:** `docs/IK.md`, `.cursor/rules/ik.mdc`. `docs/AGENTS.md` ve `src/` dokunulmadı.
+- İşe alım yok. Aday paketi: README İngilizce CV 3 madde (kopya), 15/30 dk script, 409/tx/outbox cevap, kapı Intertech/Softtech/Bileşim/TAV/İGA/uni BT/sanayi/Turkcell .NET; **hayır** Trendyol/THY/Garanti Java, ASELSAN C++.
+- TASK-06/11 bitmeden “kanıtladım” yok. Sales `SATIS.md` pitch durur; İK ezber + firma filtresi.
+- README Docs’a İK linki. `SENIN-ISLERIN` mülakat maddesi `IK.md` gösterir.
+
 ## 2026-08-13 — Architect (SOLID ports)
 
 - **OWN:** `src/ClearPay.Application/Ports|Wallets|Transfers|Banking`, `src/ClearPay.Infrastructure/{DependencyInjection,Time,Persistence,Banking}`. Domain/Ledger ve Razor dokunulmadı. Havale API yok.
@@ -233,3 +240,19 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 
 - Sales **yeşil**: wedge origin — her kuruşun +/− satırı ve correlation id sizin defterinizde; onlar bakiye güncellendi der. Relaunch yok.
 - Tester **yeşil (ledger)**: 8 `LedgerPairTests` origin. Tam solution Coder Identity sonrası. Relaunch yok.
+
+## 2026-08-13 — Org (ORGANIZASYON landed)
+
+- **OWN:** `docs/ORGANIZASYON.md`, `docs/AGENTS.md`. `src/` yok. Kardeş dosyalar yazılmadı: `URUN.md`, `DESTEK.md`, `PAZARLAMA.md`, `IK.md`, `FINANS.md`.
+- DEMO şirket; gerçek banka İK değil. Harita: Yönetim=Orchestrator, Ürün=Product (yeni), Yazılım=Coder+Architect+Payments, Tasarım=Designer, Kalite=Tester, Destek=Support (yeni), Satış=Sales, Pazarlama=Marketing+SEO+PR, İK=`IK.md` (Halil CV, işe alım yok), Finans=`FINANS.md` (ledger mülakat).
+- **Razor tek yazar = Coder.** Designer/SEO/PR/Marketing/Product/Support `.cshtml` yazmaz.
+- `AGENTS.md` birim sütunu + yeni ajan satırları. Coder TASK-03 kesilmedi.
+
+## 2026-08-13 — Finans (öğretme)
+
+- **OWN:** `docs/FINANS.md`, `.cursor/rules/finans.mdc`, bu bölüm. `docs/AGENTS.md` ve `src/` **dokunulmadı**. TASKS / Razor / Domain rewrite yok.
+- **FINANS.md:** çift kayıt (imzalı +/−, `PairId`, `NetOf`); neden `UPDATE Balance` yok (iz, yarış, iade, kısmi yazma); correlation id = mutabakat (PairId ≠ CorrelationId; dekont/audit/outbox/gateway); demo ≠ gerçek para; finans mülakat Q&A (mizan/GL yok, 409, timeout, freeze, kuruş).
+- Kod gerçeği: `Wallet` bakiye kolonu yok; `LedgerPair.Create` / `CreateRefund` / `MoneyTransaction.RequiredInserts`. Payments `UPDATE Balance` helper eklemez.
+- **Coder:** TASK-09 dekontta correlation id (yeni TASK değil). **Payments:** Domain durur. Sales wedge aynı: her kuruş +/− ve correlation defterde.
+- ORGANIZASYON’daki “FINANS.md henüz yok” **eski**; dosya bu commit’te. Ads/lisans/PSP yok.
+

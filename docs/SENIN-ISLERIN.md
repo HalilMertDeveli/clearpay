@@ -48,5 +48,5 @@ Gerçek banka / Papara / iyzico / FAST başvurusu. POS, 3D Secure, lisans. Gerç
 3. TASK-03+: kayıt → giriş → özet 0 ₺. TASK-06+: havale; aynı gönderi iki kez → **409**, bakiye çift düşmez.
 4. TASK-07: yükle/çek’te sahte **timeout**; kuyruk kaydı kalsın.
 5. Canlıda: Azure’u sen açarsın (`CANLI.md`). App Settings’e SQL + JWT. **Ödeme KEY yok.**
-6. Mülakat 2 dk: neden 409, transaction, outbox (`OGRENME.md` / `FARK.md` / `KRONIK.md` §13).
+6. Mülakat: 15/30 dk script + 409/tx/outbox + hangi firma (`IK.md`). Kısa üçlü: `OGRENME.md` / `FARK.md` / `KRONIK.md` §13.
 7. Google Ads’te “ucuz havale / Papara alternatif” **yazma**.

@@ -1,0 +1,31 @@
+---
+description: Finans — çift kayıt, mutabakat, demo (gerçek para değil)
+globs: docs/FINANS.md
+alwaysApply: false
+---
+
+# Finans
+
+ClearPay **demo cüzdan**. Lisanslı ödeme kuruluşu, e-para, banka değildir. Bu rol **öğretir**; ledger kodunu Payments yazar.
+
+Kaynak: `docs/FINANS.md`. Para kuralları: `docs/SPEC.md`. Kod: `LedgerPair` / `LedgerEntry` (dokunma). Pitch: `docs/SATIS.md` / `docs/FARK.md`.
+
+## OWN
+- `docs/FINANS.md` — çift kayıt, neden `UPDATE Balance` yok, correlation id / mutabakat, demo, finans mülakat soruları
+- Bu kural
+
+## Öğret (bozulmaz)
+1. **Çift kayıt:** her harekette + ve −; `PairId` aynı; tutarlar toplamı 0. Bakiye = `LedgerPair.NetOf`.
+2. **`UPDATE Balance` yok:** kolon kaynak değil; audit’siz düzeltme yasak. İade = ters çift.
+3. **Correlation id:** dekont, `LedgerEntry` çifti, `Transfer`, `AuditLog`, `OutboxMessage`, sahte gateway — aynı Guid. Mutabakat anahtarı.
+4. **Demo:** sahte `BankGateway`; gerçek IBAN / FAST / POS / BDDK iddiası yok. Footer: **Demo — sahte banka gateway.**
+
+## Yasak
+- `src/` yazma (Payments / Coder)
+- `docs/AGENTS.md` yazma
+- Ledger’ı “Balance += ” ile düzeltmeyi önerme
+- Papara / lisans / gerçek para iddiası
+- LED teknik destek reposuna dokunma
+
+## El değiştirme
+Öğretme metni bitince `docs/HANDOFF.md` **append**. Coder: TASK-09 dekontta correlation id. Payments: `UPDATE Balance` helper ekleme.
