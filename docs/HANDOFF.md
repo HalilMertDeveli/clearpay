@@ -288,3 +288,11 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Coder:** TASK-03 kesilmedi; meta `SEO.md`. **Orchestrator:** AGENTS Pazarlama satırı (bu ajan AGENTS yazmadı). RAG: Pazarlama **yeşil** (kanal playbook); org grubundan ayır.
 - ORGANIZASYON’daki “PAZARLAMA.md henüz yok” **eski**; dosya bu commit’te.
 
+## 2026-08-13 — Tartışma kuralı (Yönetim)
+
+- **Karar defteri:** `docs/TARTISMA.md`. HANDOFF yalnızca status.
+- **Kural:** `src/` değişikliği önce TARTISMA (kim / seçenekler / karar). Maddesiz `src/` yok.
+- Masalar: işlemden önce TARTISMA’ya yazın; tartışın; sonra owned glob.
+- **T-001 karar:** Identity TASK-03 = **SQLite**; ledger SQL Server sonra. Coder TASK-03 bitirebilir.
+- GitHub PR açılmadı.
+

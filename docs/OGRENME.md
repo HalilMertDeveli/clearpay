@@ -94,7 +94,8 @@ Ledger yazıldı, HTTP timeout oldu, client tekrar dener. Mesajı commit’ten *
 | `docs/OGRENME.md` | Bu dosya: kısa nedenler |
 | `docs/SENIN-ISLERIN.md` | Senin checklist |
 | `docs/ODEME-SENIN.md` | Ödeme yöntemi — senin işin (nasıl) |
-| `docs/HANDOFF.md` | Ajanların konuşma defteri (senin işin değil) |
+| `docs/TARTISMA.md` | Ekipler tartışır, sonra işlem (`src/` öncesi zorunlu) |
+| `docs/HANDOFF.md` | Ajanların durum defteri (senin işin değil) |
 | `README.md` | İngilizce özet, CV, nasıl çalıştırılır |
 
 ---

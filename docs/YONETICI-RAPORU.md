@@ -4,6 +4,8 @@ Kaynak: `docs/CALISMA-PLANI.md`, `docs/HANDOFF.md`, `docs/TASKS.md`, `docs/FARK.
 
 **Kritik yol:** TASK-03 — Coder Identity + UI. Havale API (TASK-06) **yok**. Azure hesabı **açılmadı**.
 
+**Tartışma:** `docs/TARTISMA.md`. `src/` maddesiz değişmez. T-001: Identity = SQLite (TASK-03); ledger SQL sonra.
+
 **Sales wedge (FARK, origin):** *Her kuruşun +/− satırı ve correlation id sizin defterinizde; onlar “bakiye güncellendi” der.* Papara tüketici yerine geçmiyoruz.
 
 **Architect kapısı:** Application portları (`IBankGateway`, `IWalletReader`, `ITransferExecutor`, DIP) yapı kapısıdır. Coder PageModel’e ledger/havale koymaz. Payments Domain durur.

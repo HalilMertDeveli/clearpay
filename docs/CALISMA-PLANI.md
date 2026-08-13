@@ -8,6 +8,8 @@ Bu belge **tüm ajanların** izlediği sıra ve test kapısıdır. Ürün kurall
 
 **Dosya sahipliği:** İki yazar aynı `.cshtml`’e girmez. `_Layout` aynı anda Coder + Designer yazılmaz (Designer token; Coder uygular).
 
+**Tartışma:** `src/` öncesi `docs/TARTISMA.md` (kim / seçenekler / karar). HANDOFF status.
+
 ---
 
 ## Test omurgası (her fazda)

@@ -27,6 +27,7 @@ Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadec
 - **Razor (`*.cshtml`, PageModel):** yalnızca Coder. Designer / SEO / PR / Marketing / Product / Support markup yazmaz; HANDOFF’ta Coder’a bırakır.
 - Aynı dosyaya iki yazar yok. Ayrıntı: `docs/ORGANIZASYON.md`.
 - `docs/HANDOFF.md` yalnızca **append** (silme / overwrite yok).
+- `src/` değişikliği önce `docs/TARTISMA.md` (kim / seçenekler / karar).
 
 ## Çalışma kuralı
 1. Tek seferde tek TASK
@@ -34,6 +35,8 @@ Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadec
 3. Bitince TASKS.md → Done
 4. Kullanıcıya 3–5 satır kontrol notu bırak
 5. LED teknik destek reposuna dokunma
+
+Tartışma (karar): `docs/TARTISMA.md`. Durum: `docs/HANDOFF.md`.
 
 Detaylı kurallar: `.cursor/rules/`  
 Nedenler: `docs/OGRENME.md`. Kronik: `docs/KRONIK.md`. Ajan defteri: `docs/HANDOFF.md`. Kullanıcı checklist: `docs/SENIN-ISLERIN.md`. Ödeme (insan): `docs/ODEME-SENIN.md`. Org: `docs/ORGANIZASYON.md`.
