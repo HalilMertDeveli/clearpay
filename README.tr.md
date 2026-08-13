@@ -9,6 +9,7 @@
 
 ASP.NET Core 8 demo cüzdan: idempotent P2P havale, SQL Server üzerinde çift kayıt defteri, sahte banka gateway (REST + SOAP) ve HTTP timeout’ta ödemenin kaybolmaması için outbox.
 
+> [!WARNING]
 > **Demo — gerçek banka değil.** Canlı POS, FAST, kart tahsilatı veya e-para lisansı yok. ClearPay **Papara** (veya Tosla / Paycell / ininal) rakibi **değil**. Arayüz Türkçe. Ekran görüntüleri sekiz ekran oturunca eklenecek; burada sahte görsel yok.
 
 ## İçindekiler
@@ -46,6 +47,8 @@ Sabit ürün listesi ([`docs/SPEC.md`](docs/SPEC.md)). Satıcı paneli yok, ger�
 | 8 | Admin | Kullanıcı dondur, başarısız kuyruk, audit ara |
 
 Sol menü her sayfada aynı: **Özet**, **Havale**, **Yükle/Çek**, **Hareketler**. **Admin** yalnızca rolde (TASK-10’a kadar gizli).
+
+Ekran görüntüsü galerisi yok — sekiz ekran oturunca gerçek yakalama konur. Mockup, ürün fotoğrafı diye yayınlanmaz.
 
 ## Mimari
 
@@ -110,7 +113,10 @@ HTTP 409 **TASK-06**. Outbox worker **TASK-11**. Çift kayıt kuralları `ClearP
 
 ## Lokal çalıştırma
 
-**Gerekli:** [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). SQL Server için Docker. Giriş/kayıt Docker olmadan da açılır (TASK-04’e kadar Identity SQLite).
+**Gerekli**
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- SQL Server için [Docker](https://docs.docker.com/get-docker/) (Compose). Giriş ve kayıt TASK-04’e kadar Docker olmadan da açılır (Identity SQLite).
 
 ```bash
 docker compose up -d
@@ -150,7 +156,7 @@ clearpay/
 | TASK-02 solution, layout, Compose SQL | TASK-05 canlı cüzdan özeti |
 | TASK-03 giriş, kayıt, boş özet | TASK-06 havale + **409** |
 
-Cookie Identity repoda (SQLite). JWT, ledger-on-SQL, sahte banka HTTP, Hangfire, CI ve açık Azure URL **yok**. Kuyruk: [`docs/TASKS.md`](docs/TASKS.md). Canlı plan (Azure’u siz açmadan publish yok): [`docs/CANLI.md`](docs/CANLI.md).
+TASK-03 (giriş, kayıt, boş `0,00 ₺` özet) Done işaretli; cookie Identity SQLite bu ağaçta. `/Account/Login` 404 ise klon o commit’in gerisinde. JWT, ledger-on-SQL, sahte banka HTTP, Hangfire, CI ve açık Azure URL **yok**. Kuyruk: [`docs/TASKS.md`](docs/TASKS.md). Canlı plan (Azure’u siz açmadan publish yok): [`docs/CANLI.md`](docs/CANLI.md).
 
 **CV maddeleri (hedef; her satırın HTTP’de kanıtlandığı iddiası değil):**
 
@@ -186,6 +192,8 @@ TASK-06 / TASK-11 / TASK-16 gelene kadar: **kural kilitli**, HTTP kanıtı kuyru
 | [PR](docs/PR.md) | Dürüst sıra (Papara’ya karşı #1 yok) |
 | [PAZARLAMA](docs/PAZARLAMA.md) | GitHub / LinkedIn / demo URL |
 | [DESTEK](docs/DESTEK.md) | Demo SSS (banka yardım masası değil) |
+| [ORGANIZASYON](docs/ORGANIZASYON.md) | Demo “masalar” (gerçek banka organigramı değil) |
+| [MARKA](docs/MARKA.md) / [TASARIM](docs/TASARIM.md) | Wordmark, navy `#1B2A4A` |
 | [SEO](docs/SEO.md) / [ADS](docs/ADS.md) | Meta / ads taslağı (canlı URL sonrası) |
 
 ## Lisans

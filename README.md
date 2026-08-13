@@ -9,6 +9,7 @@
 
 ASP.NET Core 8 demo wallet: idempotent P2P transfers, a double-entry ledger on SQL Server, and a mock bank gateway (REST + SOAP) with an outbox so an HTTP timeout cannot drop a payment.
 
+> [!WARNING]
 > **Demo — not a real bank.** No live POS, FAST, card acquiring, or e-money licence. ClearPay is **not** a Papara (or Tosla / Paycell / ininal) competitor. The UI is Turkish. Screenshots will be added when the eight screens are stable; none are faked here.
 
 ## Table of contents
@@ -46,6 +47,8 @@ Fixed product list ([`docs/SPEC.md`](docs/SPEC.md)). No merchant panel, no real 
 | 8 | Admin | Freeze user, failed queue, audit search |
 
 Left nav (same on every page): **Özet**, **Havale**, **Yükle/Çek**, **Hareketler**. **Admin** is role-only (hidden until TASK-10).
+
+No screenshot gallery yet — when those eight screens are stable, real captures go here. Mockups are not published as product photos.
 
 ## Architecture
 
@@ -110,7 +113,10 @@ HTTP 409 is **TASK-06**. The outbox worker is **TASK-11**. Domain rules for doub
 
 ## Run locally
 
-**Need:** [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). Docker is required for SQL Server; login/register can run without it (Identity uses SQLite until TASK-04).
+**Need**
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Docker](https://docs.docker.com/get-docker/) for SQL Server (Compose). Login and register can run without Docker until TASK-04 (Identity is SQLite).
 
 ```bash
 docker compose up -d
@@ -150,7 +156,7 @@ clearpay/
 | TASK-02 solution, layout, Compose SQL | TASK-05 live wallet summary |
 | TASK-03 login, register, empty summary | TASK-06 havale + **409** |
 
-Cookie Identity is in the tree (SQLite). JWT, ledger-on-SQL, mock bank HTTP, Hangfire, CI, and a public Azure URL are **not** shipped. Queue: [`docs/TASKS.md`](docs/TASKS.md). Live plan (no publish until you open Azure): [`docs/CANLI.md`](docs/CANLI.md).
+TASK-03 (login, register, empty `0,00 ₺` summary) is marked Done; cookie Identity on SQLite is in this tree. If `/Account/Login` 404s, the clone is behind that commit. JWT, ledger-on-SQL, mock bank HTTP, Hangfire, CI, and a public Azure URL are **not** shipped. Queue: [`docs/TASKS.md`](docs/TASKS.md). Live plan (no publish until you open Azure): [`docs/CANLI.md`](docs/CANLI.md).
 
 **CV lines (target, not a claim that every line is already proven in HTTP):**
 
@@ -186,6 +192,8 @@ Until TASK-06 / TASK-11 / TASK-16 land, say the **rules are locked** and the HTT
 | [PR](docs/PR.md) | Honest ranking (not #1 vs Papara) |
 | [PAZARLAMA](docs/PAZARLAMA.md) | GitHub / LinkedIn / demo URL |
 | [DESTEK](docs/DESTEK.md) | Demo FAQ (not a bank helpdesk) |
+| [ORGANIZASYON](docs/ORGANIZASYON.md) | Demo “desks” (not a real bank org chart) |
+| [MARKA](docs/MARKA.md) / [TASARIM](docs/TASARIM.md) | Wordmark, navy `#1B2A4A` |
 | [SEO](docs/SEO.md) / [ADS](docs/ADS.md) | Meta / ads drafts after a live URL |
 
 ## License

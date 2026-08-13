@@ -9,6 +9,7 @@
 
 Portefeuille démo ASP.NET Core 8 : virements P2P idempotents, grand livre en partie double sur SQL Server, passerelle bancaire fictive (REST + SOAP) et outbox pour qu’un timeout HTTP ne fasse pas disparaître un paiement.
 
+> [!WARNING]
 > **Démo — ce n’est pas une banque réelle.** Pas de POS live, de FAST, d’acquisition carte ni de licence e-money. ClearPay **n’est pas** un concurrent de Papara (ni Tosla / Paycell / ininal). L’interface est en turc. Les captures d’écran viendront quand les huit écrans seront stables ; aucune n’est inventée ici.
 
 ## Sommaire
@@ -46,6 +47,8 @@ Liste produit figée ([`docs/SPEC.md`](docs/SPEC.md)). Pas de panneau marchand, 
 | 8 | Admin | Gel d’utilisateur, file en échec, recherche d’audit |
 
 Menu gauche (identique partout) : **Özet**, **Havale**, **Yükle/Çek**, **Hareketler**. **Admin** selon le rôle (masqué jusqu’à TASK-10).
+
+Pas encore de galerie de captures — elles seront ajoutées quand les huit écrans seront stables. Les maquettes ne sont pas publiées comme photos produit.
 
 ## Architecture
 
@@ -110,7 +113,10 @@ Le 409 HTTP est **TASK-06**. Le worker outbox est **TASK-11**. Les règles de pa
 
 ## Lancer en local
 
-**Prérequis :** [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). Docker pour SQL Server. Connexion / inscription fonctionnent sans Docker (Identity en SQLite jusqu’à TASK-04).
+**Prérequis**
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Docker](https://docs.docker.com/get-docker/) pour SQL Server (Compose). Connexion et inscription fonctionnent sans Docker jusqu’à TASK-04 (Identity en SQLite).
 
 ```bash
 docker compose up -d
@@ -150,7 +156,7 @@ clearpay/
 | TASK-02 solution, layout, Compose SQL | TASK-05 synthèse portefeuille live |
 | TASK-03 connexion, inscription, synthèse vide | TASK-06 havale + **409** |
 
-Identity cookie est dans l’arbre (SQLite). JWT, grand livre sur SQL, HTTP banque fictive, Hangfire, CI et URL Azure publique **ne sont pas** livrés. File : [`docs/TASKS.md`](docs/TASKS.md). Plan live (pas de publish tant que vous n’ouvrez pas Azure) : [`docs/CANLI.md`](docs/CANLI.md).
+TASK-03 (connexion, inscription, synthèse vide `0,00 ₺`) est marqué Done ; Identity cookie sur SQLite est dans cet arbre. Si `/Account/Login` renvoie 404, le clone est en retard sur ce commit. JWT, grand livre sur SQL, HTTP banque fictive, Hangfire, CI et URL Azure publique **ne sont pas** livrés. File : [`docs/TASKS.md`](docs/TASKS.md). Plan live (pas de publish tant que vous n’ouvrez pas Azure) : [`docs/CANLI.md`](docs/CANLI.md).
 
 **Puces CV (cible ; ce n’est pas l’affirmation que chaque ligne est déjà prouvée en HTTP) :**
 
@@ -186,6 +192,8 @@ Jusqu’à TASK-06 / TASK-11 / TASK-16 : les **règles sont verrouillées** ; la
 | [PR](docs/PR.md) | Classement honnête (pas n°1 vs Papara) |
 | [PAZARLAMA](docs/PAZARLAMA.md) | GitHub / LinkedIn / URL démo |
 | [DESTEK](docs/DESTEK.md) | FAQ démo (pas un helpdesk bancaire) |
+| [ORGANIZASYON](docs/ORGANIZASYON.md) | « Bureaux » démo (pas un organigramme de banque) |
+| [MARKA](docs/MARKA.md) / [TASARIM](docs/TASARIM.md) | Wordmark, navy `#1B2A4A` |
 | [SEO](docs/SEO.md) / [ADS](docs/ADS.md) | Meta / pubs après une URL live |
 
 ## Licence
