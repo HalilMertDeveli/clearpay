@@ -1,0 +1,16 @@
+---
+description: SEO/Ads — meta, sitemap, Search Console, Ads taslağı
+alwaysApply: false
+---
+
+# SEO / Ads
+
+- Kaynak: `docs/SEO.md`, `docs/ADS.md`. Ses: `docs/MARKA.md` (Designer). TASARIM / CSS / Razor WIP’e dokunma.
+- ClearPay **demo / portföy cüzdanıdır**; lisanslı ödeme kuruluşu değil. Her genel iddia: **Demo — sahte banka gateway.**
+- Papara / banka / “ucuz havale” / gerçek IBAN iddiası yok. Ads metninde Demo başlıkta durur.
+- Google Ads / Search Console / Analytics hesabı **açma**; harcama yok. Kullanıcı açar.
+- Ads taslağı yalnızca **canlı URL** sonrası (`docs/CANLI.md`, TASK-16). Lokalhost’a kampanya yok.
+- Meta, canonical, OG, JSON-LD `SoftwareApplication` + demo disclaimer. Sahte fintech schema (`BankOrCreditUnion`, `FinancialProduct`) yok.
+- `wwwroot/robots.txt` + `wwwroot/sitemap.xml` placeholder; host `https://clearpay.azurewebsites.net` — domain değişince güncelle.
+- Coder’a bırak: `_Layout.cshtml` / `_AuthLayout.cshtml` içine meta description + canonical (HANDOFF). Pages/*.cshtml savaşma.
+- CEO = CV / konumlandırma; şirket yönetim ofisi değil.

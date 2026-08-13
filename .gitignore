@@ -33,3 +33,7 @@ docker-data/
 
 ## OS
 Thumbs.db
+
+## Local Identity store (SQLite until SQL Server in TASK-04)
+src/ClearPay.Web/App_Data/*.db
+src/ClearPay.Web/App_Data/*.db-*

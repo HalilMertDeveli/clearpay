@@ -2,13 +2,52 @@
 @model YukleCekModel
 @{
     ViewData["Title"] = "Yükle / Çek";
+    ViewData["MetaDescription"] = "Sahte banka REST/SOAP gateway. Demo — gerçek POS veya kart yok.";
 }
 
-<p class="page-kicker">Sahte banka</p>
+<p class="page-kicker">Banka hesabı</p>
 <h1 class="page-title">Yükle / Çek</h1>
-<section class="panel">
-    <p class="empty">REST/SOAP gateway TASK-07 ve TASK-08’de. Bu ekran şimdilik yer tutucu.</p>
-    <div class="actions">
-        <a class="btn btn-ghost" asp-page="/Index">İptal</a>
-    </div>
-</section>
+<p class="lede">Kayıtlı IBAN benzeri hesabınız üzerinden cüzdana para alın veya bakiyenizi çekin.</p>
+
+<div class="remain panel-inline">
+    <span class="stat-label">Cüzdan bakiyesi</span>
+    <strong>@Html.Raw(Model.BalanceText)</strong>
+</div>
+
+<div class="split-2">
+    <section class="panel" id="yukle">
+        <h2 class="panel-title">Yükle</h2>
+        <p class="field-hint">Sahte banka gateway bakiyenizi cüzdana aktarır.</p>
+        <form method="post" class="stack-form" novalidate>
+            <div class="field">
+                <label class="field-label" for="yukle-tutar">Tutar (₺)</label>
+                <input class="field-input" id="yukle-tutar" name="yukleTutar" inputmode="decimal" />
+            </div>
+            <div class="field">
+                <label class="field-label" for="yukle-iban">Kaynak hesap</label>
+                <input class="field-input" id="yukle-iban" name="yukleIban" placeholder="TR00 ACCT-000011 0000 00" />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn" disabled>Yükle</button>
+            </div>
+        </form>
+    </section>
+    <section class="panel" id="cek">
+        <h2 class="panel-title">Çek</h2>
+        <p class="field-hint">Çekim, kullanılabilir bakiyeniz kadar yapılabilir.</p>
+        <form method="post" class="stack-form" novalidate>
+            <div class="field">
+                <label class="field-label" for="cek-tutar">Tutar (₺)</label>
+                <input class="field-input" id="cek-tutar" name="cekTutar" inputmode="decimal" />
+            </div>
+            <div class="field">
+                <label class="field-label" for="cek-iban">Hedef hesap</label>
+                <input class="field-input" id="cek-iban" name="cekIban" placeholder="TR00 ACCT-000011 0000 00" />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn" disabled>Çek</button>
+                <a class="btn btn-ghost" asp-page="/Index">İptal</a>
+            </div>
+        </form>
+    </section>
+</div>

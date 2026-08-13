@@ -1,0 +1,25 @@
+@page
+@model ClearPay.Web.Pages.Account.LoginModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Giriş";
+}
+
+<h1 class="page-title">Giriş</h1>
+<p class="lede">E-posta ve şifrenizle cüzdanınıza bağlanın.</p>
+<form method="post" class="auth-form" novalidate>
+    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="field">
+        <label asp-for="Input.Email" class="field-label">E-posta</label>
+        <input asp-for="Input.Email" class="field-input" type="email" autocomplete="username" />
+        <span asp-validation-for="Input.Email" class="field-error"></span>
+    </div>
+    <div class="field">
+        <label asp-for="Input.Password" class="field-label">Şifre</label>
+        <input asp-for="Input.Password" class="field-input" type="password" autocomplete="current-password" />
+        <span asp-validation-for="Input.Password" class="field-error"></span>
+    </div>
+    <button type="submit" class="btn btn-block">Giriş</button>
+</form>
+<p class="auth-switch">Hesabınız yok mu? <a asp-page="/Account/Register">Hesap oluştur</a></p>

@@ -1,13 +1,27 @@
+using ClearPay.Application;
 using ClearPay.Infrastructure;
+using ClearPay.Infrastructure.Identity;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<SqlOptions>(builder.Configuration.GetSection(SqlOptions.SectionName));
 builder.Services.AddProblemDetails();
-builder.Services.AddRazorPages();
+builder.Services.AddClearPayIdentity(builder.Configuration, builder.Environment);
+builder.Services.AddValidatorsFromAssembly(typeof(ApplicationAssembly).Assembly);
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/");
+    options.Conventions.AllowAnonymousToFolder("/Account");
+    options.Conventions.AllowAnonymousToPage("/Error");
+    options.Conventions.AddPageRoute("/Account/Login", "/giris");
+    options.Conventions.AddPageRoute("/Account/Register", "/kayit");
+});
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+await IdentitySeeder.EnsureCreatedAndRolesAsync(app.Services);
 
 if (!app.Environment.IsDevelopment())
 {
@@ -18,6 +32,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

@@ -1,0 +1,41 @@
+@{
+    var meta = ViewData["MetaDescription"] as string
+        ?? "ASP.NET Core 8 cüzdan demosu. Giriş yapın. Demo — sahte banka gateway; lisanslı ödeme kuruluşu değil.";
+    var title = ViewData["Title"] as string ?? "Giriş";
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@title — ClearPay (Demo)</title>
+    <meta name="theme-color" content="#1B2A4A" />
+    <meta name="description" content="@meta" />
+    <link rel="canonical" href="https://clearpay.azurewebsites.net@(ViewContext.HttpContext.Request.Path)" />
+    <meta property="og:title" content="@title — ClearPay (Demo)" />
+    <meta property="og:description" content="@meta" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta name="robots" content="index,follow" />
+    <link rel="icon" href="~/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
+</head>
+<body class="auth-body">
+    <a class="skip-link" href="#main">İçeriğe geç</a>
+    <div class="auth-shell">
+        <main id="main" class="auth-card">
+            <a class="brand brand-on-light" asp-page="/Account/Login">
+                <span class="brand-mark" aria-hidden="true">C</span>
+                <span class="brand-name wordmark">ClearPay</span>
+            </a>
+            <p class="brand-tagline">Demo cüzdan</p>
+            @RenderBody()
+        </main>
+        <p class="auth-footer">Demo — sahte banka gateway</p>
+    </div>
+</body>
+</html>

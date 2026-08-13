@@ -2,30 +2,60 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Özet";
+    ViewData["MetaDescription"] = "Bakiye, bu ay giden/gelen, son hareketler. ASP.NET Core ledger demosu. Demo — sahte banka gateway.";
 }
 
 <p class="page-kicker">Cüzdan</p>
 <h1 class="page-title">Özet</h1>
+@if (!string.IsNullOrWhiteSpace(Model.GreetingName))
+{
+    <p class="lede">@Model.GreetingName</p>
+}
+
+<article class="balance-hero">
+    <p class="stat-label">Kullanılabilir bakiye</p>
+    <p class="stat-value stat-value-xl">@Html.Raw(Model.BalanceText)</p>
+    <p class="status-line">Hesap durumu: Aktif</p>
+</article>
+
 <div class="stat-row">
     <article class="stat-card">
-        <p class="stat-label">Bakiye</p>
-        <p class="stat-value">—</p>
-    </article>
-    <article class="stat-card">
         <p class="stat-label">Bu ay giden</p>
-        <p class="stat-value">—</p>
+        <p class="stat-value">@Html.Raw(Model.MonthOutText)</p>
     </article>
     <article class="stat-card">
         <p class="stat-label">Bu ay gelen</p>
-        <p class="stat-value">—</p>
+        <p class="stat-value">@Html.Raw(Model.MonthInText)</p>
     </article>
 </div>
+
 <div class="actions">
     <a class="btn" asp-page="/Havale">Havale gönder</a>
-    <a class="btn btn-ghost" asp-page="/YukleCek">Yükle</a>
-    <a class="btn btn-ghost" asp-page="/YukleCek">Çek</a>
+    <a class="btn btn-ghost" asp-page="/YukleCek" asp-fragment="yukle">Yükle</a>
+    <a class="btn btn-ghost" asp-page="/YukleCek" asp-fragment="cek">Çek</a>
 </div>
+
 <section class="panel">
-    <p class="stat-label">Son hareketler</p>
-    <p class="empty">Henüz hareket yok. Giriş ve boş cüzdan TASK-03’te bağlanır.</p>
+    <div class="panel-head">
+        <p class="stat-label">Son hareketler</p>
+        <a class="text-link" asp-page="/Hareketler">Tümünü gör</a>
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Tarih</th>
+                <th>İşlem</th>
+                <th>Tutar</th>
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="4" class="empty-cell">
+                    <p class="empty-title">Henüz hareket yok.</p>
+                    <p class="empty-hint">İlk havaleniz veya yüklemeniz burada görünür.</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>

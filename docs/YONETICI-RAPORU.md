@@ -4,7 +4,7 @@ Kaynak: `docs/CALISMA-PLANI.md`, `docs/HANDOFF.md`, `docs/TASKS.md`, `docs/FARK.
 
 **Kritik yol:** TASK-03 — Coder Identity + UI. Havale API (TASK-06) **yok**. Azure hesabı **açılmadı**.
 
-**Sales wedge (FARK):** *Çift kayıt, 409, outbox. Demo — sahte banka gateway.* Papara/iyzico rakibi değil.
+**Sales wedge (FARK, origin):** *Her kuruşun +/− satırı ve correlation id sizin defterinizde; onlar “bakiye güncellendi” der.* Papara tüketici yerine geçmiyoruz.
 
 **Architect kapısı:** Application portları (`IBankGateway`, `IWalletReader`, `ITransferExecutor`, DIP) yapı kapısıdır. Coder PageModel’e ledger/havale koymaz. Payments Domain durur.
 
@@ -25,6 +25,7 @@ Lokal: http://localhost:5153 — TASK-03 commit + `dotnet run --project src/Clea
 | **Sales** | **Yeşil (docs)** | `SATIS.md` + `FARK.md`. Tek wedge yukarıda. |
 | **Designer** | **Yeşil** | `TASARIM.md` + `MARKA.md` + `brand.css` origin `666dd32`. Relaunch yok. Coder yalnızca `brand.css` linkler. |
 | **Tester** | **Sarı** | Auth/wallet testleri untracked. `LedgerPair.NetOf` unit serbest (EF yok). |
+| **PR** | **Sarı** | `docs/PR.md` yazılıyor: canlıya çıkış + dürüst rank. Demo kelimeler; Papara/havale #1 yok. |
 | **Çalışma planı** | **Yeşil** | `docs/CALISMA-PLANI.md` yazıldı. |
 
 ---

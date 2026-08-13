@@ -2,13 +2,37 @@
 @model HavaleModel
 @{
     ViewData["Title"] = "Havale";
+    ViewData["MetaDescription"] = "Demo P2P havale (idempotency, 409). Sahte banka gateway. Gerçek FAST / IBAN yok.";
 }
 
 <p class="page-kicker">Transfer</p>
 <h1 class="page-title">Havale</h1>
+<p class="lede">Kayıtlı bir alıcıya tutar ve açıklama ile gönderin.</p>
+
 <section class="panel">
-    <p class="empty">Alıcı, tutar ve gönder formu TASK-06’da. Bu sayfa iskelet; 200 dönmesi yeterli.</p>
-    <div class="actions">
-        <a class="btn btn-ghost" asp-page="/Index">İptal</a>
-    </div>
+    <form method="post" class="stack-form" novalidate>
+        <div class="remain">
+            <span class="stat-label">Kalan bakiye</span>
+            <strong>@Html.Raw(Model.RemainingBalance)</strong>
+        </div>
+        <div class="field">
+            <label class="field-label" for="alici">Alıcı (e-posta)</label>
+            <input class="field-input" id="alici" name="alici" type="email" autocomplete="off" />
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label class="field-label" for="tutar">Tutar (₺)</label>
+                <input class="field-input" id="tutar" name="tutar" inputmode="decimal" />
+            </div>
+            <div class="field">
+                <label class="field-label" for="aciklama">Açıklama</label>
+                <input class="field-input" id="aciklama" name="aciklama" maxlength="140" />
+            </div>
+        </div>
+        <p class="field-hint">Gönderim, bakiyeniz yeterli olduğunda hesaplar arasında aynı anda işlenir.</p>
+        <div class="form-actions">
+            <button type="submit" class="btn" disabled>Gönder</button>
+            <a class="btn btn-ghost" asp-page="/Index">İptal</a>
+        </div>
+    </form>
 </section>

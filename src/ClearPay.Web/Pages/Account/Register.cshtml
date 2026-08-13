@@ -1,0 +1,35 @@
+@page
+@model ClearPay.Web.Pages.Account.RegisterModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Kayıt";
+}
+
+<h1 class="page-title">Hesap oluştur</h1>
+<p class="lede">Adınız ve e-posta adresinizle müşteri hesabı açın.</p>
+<form method="post" class="auth-form" novalidate>
+    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+    <div class="field">
+        <label asp-for="Input.FullName" class="field-label">Ad</label>
+        <input asp-for="Input.FullName" class="field-input" autocomplete="name" />
+        <span asp-validation-for="Input.FullName" class="field-error"></span>
+    </div>
+    <div class="field">
+        <label asp-for="Input.Email" class="field-label">E-posta</label>
+        <input asp-for="Input.Email" class="field-input" type="email" autocomplete="username" />
+        <span asp-validation-for="Input.Email" class="field-error"></span>
+    </div>
+    <div class="field">
+        <label asp-for="Input.Password" class="field-label">Şifre</label>
+        <input asp-for="Input.Password" class="field-input" type="password" autocomplete="new-password" />
+        <span asp-validation-for="Input.Password" class="field-error"></span>
+        <p class="field-hint">En az 8 karakter, bir küçük harf ve bir rakam.</p>
+    </div>
+    <div class="field">
+        <label asp-for="Input.ConfirmPassword" class="field-label">Şifre tekrar</label>
+        <input asp-for="Input.ConfirmPassword" class="field-input" type="password" autocomplete="new-password" />
+        <span asp-validation-for="Input.ConfirmPassword" class="field-error"></span>
+    </div>
+    <button type="submit" class="btn btn-block">Hesap oluştur</button>
+</form>
+<p class="auth-switch">Zaten hesabınız var mı? <a asp-page="/Account/Login">Giriş</a></p>

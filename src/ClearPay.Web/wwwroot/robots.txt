@@ -1,0 +1,10 @@
+# Placeholder host — gerçek domain docs/CANLI.md / TASK-16 ile değişir.
+# https://clearpay.azurewebsites.net (doluysa clearpay-wallet / hm-clearpay)
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /swagger
+Disallow: /Account/Logout
+
+Sitemap: https://clearpay.azurewebsites.net/sitemap.xml

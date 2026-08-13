@@ -192,3 +192,10 @@ Yönetici değerlendirmesi: `docs/YONETICI-RAPORU.md`
 - Konu: internette yayın (CANLI planı) + dürüst sıralama. Anahtar: ClearPay **demo** / ASP.NET cüzdan / ledger 409 — **Papara alternatif / ucuz havale #1 yok**.
 - Coder **TASK-03** durmaz. SEO.md ile çakışma: PR yayın hikâyesi, SEO title şablonları.
 - Rapor: PR **sarı** (`docs/YONETICI-RAPORU.md`).
+
+## 2026-08-13 — Sales DONE / Tester DONE (yönetici)
+
+- **Sales:** wedge origin `FARK.md` / `SATIS.md` — her kuruşun +/− satırı ve correlation id sizin defterinizde; onlar bakiye güncellendi der. Papara tüketici yerine geçmiyoruz. Relaunch yok.
+- **Tester:** 8/8 `LedgerPairTests` `NetOf` origin. Tam solution Coder Identity derlenene kadar kırmızı olabilir. Relaunch yok.
+- Coder **TASK-03 only** — ekstra iş yok.
+- Rapor RAG güncellendi: `docs/YONETICI-RAPORU.md`.
