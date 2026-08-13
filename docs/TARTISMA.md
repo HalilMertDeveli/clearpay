@@ -142,3 +142,29 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Karar:** **1.** TASK-03 Identity SQLite. Ledger SQL Server TASK-04+ (EF, login yeşil olunca). Canlıda Identity da Azure SQL (`docs/CANLI.md`); SQLite prod değil.
 - **Neden:** Kilit (cookie) para motorundan ayrı kanıtlanır. Docker PATH yoksa bile kayıt/giriş çalışır. `App_Data/*.db` commit yok.
 - **Sonra hangi dosya:** Coder `src/ClearPay.Web` (`AddClearPayIdentity`, `App_Data`). Payments Domain durur. Deploy Compose SQL-only kalır.
+
+---
+
+## T-010 — 2026-08-13 — Çok dilli README + MIT
+
+- **Kim:** Orchestrator (docs)
+- **Konu:** GitHub varsayılan README hangi dil; lisans var mı?
+- **Seçenekler:**
+  1. Tek `README.md` içinde EN + TR + FR bölümleri.
+  2. **`README.md` İngilizce (GitHub varsayılan)** + `README.tr.md` + `README.fr.md`; üstte dil linkleri. Yoksa MIT `LICENSE`.
+- **Karar:** **2.** Eşit içerik; sahte ekran görüntüsü yok; Papara rakibi iddiası yok. Build rozeti placeholder (Actions = TASK-15).
+- **Neden:** Standard-readme: birden fazla dilde `README.md` İngilizce kalır. Tek dosyada üç dil katlanır. MIT eksikti.
+- **Sonra hangi dosya:** `README.md`, `README.tr.md`, `README.fr.md`, `LICENSE`. Razor yok. TASK-14 Swagger ayrı durur.
+
+---
+
+## T-011 — 2026-08-13 — Cüzdan/ödeme sitesi, sahte banka uygulaması değil
+
+- **Kim:** Yönetim, Ürün, Coder, Architect
+- **Konu:** ClearPay nedir — WePay benzeri cüzdan/pay mi, yoksa sahte perakende banka mı?
+- **Seçenekler:**
+  1. Sahte banka uygulaması: şube, hesap açma, IBAN/FAST banka UX, “banka gibi” menü.
+  2. **Cüzdan / pay sitesi** (orijinal canvas, WePay hissi): Özet, Havale, Yükle/Çek, Hareketler. Navy. Papara / mobil havale **hissi**. `IBankGateway` yalnızca yükle/çek entegrasyon stub’u (REST sonra SOAP).
+- **Karar:** **2.** Lisanslı banka / e-para / PSP değiliz. Sahte BankGateway = yükle/çek mock; ürün “fake bank app” değil.
+- **Neden:** Canvas ve SPEC cüzdan. Banka uygulaması 9. ekran ve lisans iddiası açar. Footer “Demo — sahte banka gateway” entegrasyonu anlatır, şube bankasını değil.
+- **Sonra hangi dosya:** Product `docs/SPEC.md` / `docs/URUN.md`. Coder TASK-03 UI: navy, Özet/Havale/Yükle-Çek — retail bank layout yok. Architect port `IBankGateway` yükle/çek stub. Sales/SEO “banka uygulaması” demez.

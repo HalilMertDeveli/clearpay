@@ -295,3 +295,9 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Tohum:** T-001 LED ayrı repo … T-008 TASK-03 tek kapı; T-009 Identity SQLite (ledger SQL sonra).
 - Coder TASK-03 kesilmedi. PR açılmadı. Ads/Azure yok.
 
+## 2026-08-13 — T-011 cüzdan (Yönetim)
+
+- Tartışma: `docs/TARTISMA.md` **T-011**. ClearPay = WePay benzeri **cüzdan/pay** (canvas). Sahte banka uygulaması **değil**.
+- `IBankGateway` yalnızca yükle/çek stub. Coder UI: navy, Özet / Havale / Yükle-Çek — retail bank yok.
+- Product/SPEC güncelleniyor. Coder TASK-03 kesilmedi (Identity + boş özet).
+
