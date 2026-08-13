@@ -1,0 +1,24 @@
+# Build output — do not copy into images
+**/bin/
+**/obj/
+**/out/
+**/artifacts/
+
+# VCS / IDE
+.git/
+.vs/
+.idea/
+**/*.user
+**/*.suo
+
+# Secrets and local stores
+.env
+.env.*
+!**/.env.example
+**/App_Data/*.db
+**/App_Data/*.db-*
+
+# Tests / logs
+**/TestResults/
+**/*.log
+docker-data/
