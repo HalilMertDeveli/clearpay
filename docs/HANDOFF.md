@@ -306,4 +306,38 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **OWN:** `README.md`, `README.tr.md`, `README.fr.md`, `LICENSE`. Razor / `src/` yok. TASK-14 Swagger ayrı (Done değil).
 - GitHub varsayılan İngilizce; üstte dil linkleri. Build rozeti placeholder. Sahte screenshot yok. Papara rakibi iddiası yok.
 - Durum dürüst: TASK-03 cookie Identity + boş özet; JWT/ledger SQL/409 HTTP/Azure plan.
+- **Landed:** üç README eşit (ürün, 8 ekran, mermaid katman, yığın tablosu, 409/tx/outbox, Compose + `:5153`, docs indeksi). MIT zaten vardı. Push `origin/main`.
+
+## 2026-08-13 — Coder TASK-03 kilit (T-012)
+
+- **OWN:** `src/ClearPay.Web/**` + TARTISMA **T-012**. PageModel’de ledger/havale yok. `AddClearPay()` Program.cs’te duruyor.
+- Ürün: WePay benzeri **dijital cüzdan**. Footer/sidebar: **Demo — yükleme için sahte gateway**. Asla BankaX / şube / IBAN core.
+- Giriş `/giris` `/Account/Login`, kayıt `/kayit` → cookie `Musteri` → `/` bakiye **0,00 ₺**, ay giden/gelen 0, boş hareket.
+- Yükle/Çek: kicker Cüzdan; bağlı hesap; Gönder/Yükle/Çek disabled.
+- Tester: 41 geçti, 1 skip (409 = TASK-06). Site: http://localhost:5153
+- **Sıradaki:** TASK-04 SQL model + ledger iskeleti. TASK-03 Done.
+
+## 2026-08-13 — Designer (tarifler + motion)
+
+- **OWN:** `docs/TASARIM.md` genişledi. cshtml **yok**. `site.css` yok.
+- Ürün: WePay benzeri **cüzdan/pay**, retail bank şubesi değil. Motion: 150–250ms ease; `prefers-reduced-motion: reduce` → `transition: none`. Gölge/lift yok.
+- Tarifler: giriş kartı, özet `.balance-hero`, havale `.stack-form`, hareket `.data-table` (spacing + tip ölçeği + empty).
+- **Coder (`brand.css` after site.css — Razor sınıfı zaten varsa ekle):**
+  1. `:root { --motion: 180ms ease; }`
+  2. `.sidebar { transition: transform var(--motion); }` `.nav-backdrop { transition: opacity 180ms ease; }`
+  3. `.btn, .btn-ghost { transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease; }`
+  4. `.stat-card, .panel, .balance-hero, .auth-card { transition: border-color 180ms ease; }` hover `border-color: #1B2A4A` (opacity 0.4 ok, box-shadow yok)
+  5. `.nav-link { transition: background-color 150ms ease, color 150ms ease; }` `.field-input { transition: border-color 150ms ease; }`
+  6. `@media (prefers-reduced-motion: reduce)` listed selectors `transition: none`
+  7. Hareket tutar: `th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }` — tablo kolonuna `num` TASK-09’da
+  8. `/hareketler` boş: `empty-title` + `empty-hint` (TASARIM tarif 4); placeholder tek `.empty` paragrafını buna çek
+- Layout’ta `brand.css` zaten linkli. Identity/havale işi yok.
+
+## 2026-08-13 — Satış / Orchestrator (T-013 para kazanma)
+
+- **OWN:** `docs/GELIR.md` + TARTISMA **T-013**. `src/` ve `TASKS.md` dokunulmadı. SPEC ekran yok.
+- Araştırma: kendi ÖK/e-para lisansı **kapalı** (TCMB 20 / 40 / 105 milyon TL, 30 Haz 2026). Açık yollar: kariyer (en hızlı nakit), white-label defter (lisans alıcıda), 6493 sınırlı ağ kapalı devre (50 milyon TL/12 ay → Ocak bildirim).
+- Banka/iş yeri 15s + İstanbul gün 1–2 / işletme / Ankara-İzmir rota `GELIR.md` §4–5. Pitch Papara rakibi değil.
+- **Sıradaki kod:** TASK-04. **Sıradaki ticari:** 15s ezber; “satın alın” TASK-06/11 sonrası. Avukat 6493 kullanıcı.
+
 

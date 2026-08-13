@@ -18,6 +18,8 @@ Kaynak: `docs/SPEC.md` ekran listesi. Piksel Figma yok; Razor mevcut sınıflara
 
 Yaratıcılık: hiyerarşi, boş durum, wordmark, form ritmi. Landing / kampanya sayfası yok.
 
+**Ürün çerçevesi (T-011):** ClearPay = WePay benzeri **cüzdan / pay**, sahte **banka şubesi** değil. Kicker **Cüzdan**, tagline **Demo cüzdan**. Şube kromu, kasa illüstrasyonu, “internet bankacılığı” ızgarası yok. `IBankGateway` yalnızca yükle/çek stub.
+
 ## Tipografi
 
 - Sayfa kicker: 0.75rem, 600, letter-spacing `0.08em`, uppercase, muted
@@ -39,7 +41,7 @@ Tagline (yalnız auth): `Demo cüzdan` — “dijital banka” yazılmaz.
 ```
 
 Sol menü sırası sabit: Özet, Havale, Yükle/Çek, Hareketler; Admin role.  
-Footer her yerde: **Demo — sahte banka gateway**
+Footer her yerde: **Demo — yükleme için sahte gateway**
 
 ## Mobil (≤800px)
 
@@ -63,7 +65,7 @@ Boş hareket: tablo hücresi değil, `empty-block` — başlık + bir satır ne 
 
 ### Havale (`/havale`)
 
-Kicker **Transfer**. Panel içinde: kalan bakiye üst şerit (label sol, tutar sağ, tabular) → alıcı e-posta → tutar | açıklama → ipucu → **Gönder** + **İptal**. Gönder, bakiye 0 iken disabled (mevcut). Tutar alanı görsel olarak para; süs ikon yok.
+Kicker **Havale**. Panel içinde: kalan bakiye üst şerit (label sol, tutar sağ, tabular) → alıcı e-posta → tutar | açıklama → ipucu → **Gönder** + **İptal**. Gönder, bakiye 0 iken disabled (mevcut). Tutar alanı görsel olarak para; süs ikon yok.
 
 ### Yükle / çek, hareketler, dekont, admin
 
@@ -86,3 +88,140 @@ Label 0.875rem / 500. Input 2.75rem, 1px `--line`, focus: 2px navy outline, offs
 ## brand.css
 
 Yalnız ek: kicker tracking, tabular-nums, wordmark, `empty-block`, hero sol 3px navy çizgi, para input. `site.css` kopyalanmaz. Coder her iki layout’ta `site.css` **sonrasına** linkler.
+
+## Motion (canlı site)
+
+Süre **150–250ms**, eğri `ease` (`transition-timing-function: ease`). Gölge kalkışı, bounce, blur, gradient sweep yok.
+
+| Hedef | Ne | Süre |
+|--------|----|------|
+| `.sidebar` | `transform` (drawer `translateX`) | 200ms |
+| `.nav-backdrop` | `opacity` | 180ms |
+| `.btn` / `.btn-ghost` | `background-color`, `border-color`, `color` | 160ms |
+| `.stat-card`, `.panel`, `.balance-hero`, `.auth-card` | `border-color` only (hover `#1B2A4A` %40) | 180ms |
+| `.nav-link` | `background-color`, `color` | 150ms |
+| `.field-input` | `border-color` | 150ms |
+
+Yasak: `box-shadow` animasyonu, `scale(1.05)`, sayfa-içi confetti, kart “lift”.
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .sidebar, .nav-backdrop, .btn, .stat-card, .panel,
+  .balance-hero, .auth-card, .nav-link, .field-input {
+    transition: none;
+  }
+}
+```
+
+Token önerisi (`brand.css`): `--motion: 180ms ease;` — 150–250ms bandı dışına çıkma.
+
+## Tarifler (Coder — Razor ezme, CSS/sınıf)
+
+Mevcut sınıflar: `auth-card`, `balance-hero`, `stack-form`, `data-table`, `empty-title`, `empty-hint`. Yeni sayfa yok. Tip ölçeği 16px kök.
+
+### Tip ölçeği (sabit)
+
+| Rol | Boyut | Ağırlık | Satır / ekstra |
+|-----|--------|---------|----------------|
+| Kicker `.page-kicker` | 0.75rem | 600 | tracking 0.08em, uppercase |
+| `h1.page-title` | 1.75rem | 700 | tracking −0.02em; margin 0 0 0.5rem |
+| `.lede` | 1rem | 400 | muted; margin 0 0 1.5rem |
+| `.stat-label` | 0.8rem | 400 | muted; margin 0 0 0.4rem |
+| `.stat-value-xl` | 2.35rem (≤800px: 1.9rem) | 700 | tabular-nums; tracking −0.02em |
+| `.stat-value` | 1.35rem | 700 | tabular-nums |
+| `.field-label` | 0.875rem | 500 | margin-bottom 0.35rem |
+| `.field-input` | 1rem | 400 | height 2.75rem |
+| `.field-hint` / `.empty-hint` | 0.875rem | 400 | muted |
+| `.empty-title` | 1rem | 600 | navy; margin 0 0 0.35rem |
+| `th` | 0.75rem | 600 | muted |
+| `td` | 0.925rem | 400 | |
+| `.btn` | 1rem | 600 | min-height 2.75rem; padding 0.65rem 1.15rem |
+
+### 1) Giriş (`_AuthLayout` + Login)
+
+Dikey ortalı cüzdan kapısı — banka login kulesi değil.
+
+```
+auth-shell  padding 2.5rem 1.25rem
+auth-card   max-width 420px; padding 2.5rem 2.15rem 2.15rem
+            border 1px --line; gölge yok
+wordmark    mark 2rem + isim; tagline 0.85rem muted, margin −1.25rem 0 1.5rem
+            metin: Demo cüzdan
+h1          Giriş — 1.75rem; lede 1rem, margin-bottom 0
+auth-form   margin-top 1.5rem
+.field      margin-bottom 1.1rem  (son field + btn arası ekstra yok; btn form akışında)
+.btn-block  width 100%; margin-top 0.25rem
+auth-switch margin 1.35rem 0 0; 0.9rem
+auth-footer kart DIŞI, 0.75rem muted, margin-top 1.35rem
+```
+
+Kayıt aynı kart ritmi; dört field, hint şifre altında 0.35rem. Boş durum yok (form). Hata: `.validation-summary` 0.75rem 0.85rem padding, 1px danger.
+
+### 2) Özet hero (`/` `.balance-hero`)
+
+Cüzdan bakiyesi — hesap özeti şubesi değil. Sol 3px navy (`brand.css`).
+
+```
+content        padding 2.25rem 2rem; max-width 920px
+kicker→title   kicker 0 0 0.4rem; title 0 0 0.5rem; lede (ad) 0 0 1.75rem
+balance-hero   padding 1.75rem 1.5rem; margin-bottom 1rem
+               border 1px --line + border-left 3px #1B2A4A
+stat-label     0.8rem muted → xl tutar 2.35rem tabular
+status-line    margin 0.75rem 0 0; 0.85rem muted  (“Aktif” / “Dondurulmuş”)
+stat-row       2 kolon, gap 1rem, margin-bottom 1.5rem
+stat-card      padding 1.25rem 1.35rem
+actions        gap 0.6rem; margin 0 0 1.75rem
+               dolu: Havale gönder; ghost: Yükle, Çek
+panel          padding 1.25rem 1.35rem; panel-head space-between, margin-bottom 0.75rem
+```
+
+**Boş (son hareketler):** `td.empty-cell` colspan 4; padding 2.25rem 1rem; ortalama.
+
+- `.empty-title`: Henüz hareket yok
+- `.empty-hint`: İlk havaleniz veya yüklemeniz burada görünür.
+
+İllüstrasyon / “şubeye git” yok. Mobil: hero + stat-row tek kolon; xl 1.9rem.
+
+### 3) Havale formu (`/havale` `.stack-form`)
+
+P2P cüzdan gönderimi — EFT dekont şablonu değil.
+
+```
+kicker Transfer; h1 Havale; lede 0 0 1.75rem
+panel            padding 1.25rem 1.35rem
+.remain          flex; label sol, tutar sağ tabular
+                 padding-bottom 1rem; margin-bottom 1.25rem
+                 border-bottom 1px --line
+.field           alıcı full width; margin-bottom 1.1rem
+.field-row       tutar | açıklama; gap 1rem; ≤900px tek kolon
+#tutar           inputmode decimal; tabular-nums (brand.css)
+.field-hint      margin 0.35rem 0 0; 0.875rem
+.form-actions    margin 1.25rem 0 0; gap 0.6rem
+                 Gönder dolu (bakiye 0 → disabled); İptal ghost
+```
+
+Boş alıcı/tutar: native validation / kırmızı özet; ayrı empty-block yok. Bakiye 0 ipucu hint’te kalır — “banka mesai saati” metni yok.
+
+### 4) Hareket tablosu (`/hareketler` `.data-table`)
+
+Cüzdan geçmişi — hesap dökümü defteri değil. TASK-09 doldurur; iskelet bu ritim.
+
+```
+kicker Geçmiş; h1 Hareketler; lede 0 0 1.75rem
+filtre paneli     padding 1.25rem 1.35rem; margin-bottom 1rem
+.filter-row       3 field + Filtrele; gap 1rem; align end
+                  ≤900px tek kolon
+tablo paneli      padding 1.25rem 1.35rem (veya tablo kenarsız, th/td yatay 0.6rem)
+th                padding 0.5rem 0.6rem 0.75rem; border-bottom 1px
+td                padding 0.85rem 0.6rem; border-bottom 1px
+tutar kolonu      tabular-nums; sağa hizalı (Coder: th/td.num)
+işlem no / corr.  0.85rem; isteğe font-family ui-monospace
+```
+
+**Boş dönem:** colspan 6 (veya kolon sayısı); aynı empty çifti:
+
+- `.empty-title`: Bu dönemde hareket bulunmuyor
+- `.empty-hint`: Tarih veya tür filtresini genişletin; ya da ilk havaleyi Özet’ten gönderin.
+
+Dekont satırı (TASK-09): correlation id monospace, 0.8rem muted — banka SWIFT alanı taklidi yok.
+
