@@ -1,19 +1,30 @@
 ﻿@{
     var page = ViewContext.RouteData.Values["page"]?.ToString();
     string NavClass(string target) => page == target ? "nav-link is-active" : "nav-link";
+    var meta = ViewData["MetaDescription"] as string
+        ?? "ASP.NET Core 8 cüzdan demosu. Demo — sahte banka gateway.";
+    var title = ViewData["Title"] as string ?? "Özet";
 }
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@(ViewData["Title"] ?? "Özet") — ClearPay</title>
+    <title>@title — ClearPay (Demo)</title>
     <meta name="theme-color" content="#1B2A4A" />
+    <meta name="description" content="@meta" />
+    <link rel="canonical" href="https://clearpay.azurewebsites.net@(ViewContext.HttpContext.Request.Path)" />
+    <meta property="og:title" content="@title — ClearPay (Demo)" />
+    <meta property="og:description" content="@meta" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta name="robots" content="noindex,nofollow" />
     <link rel="icon" href="~/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
 </head>
 <body>
     <a class="skip-link" href="#main">İçeriğe geç</a>
@@ -21,7 +32,7 @@
         <aside class="sidebar" id="sidebar">
             <a class="brand" asp-page="/Index">
                 <span class="brand-mark" aria-hidden="true">C</span>
-                <span class="brand-name">ClearPay</span>
+                <span class="brand-name wordmark">ClearPay</span>
             </a>
             <nav class="side-nav" aria-label="Ana menü">
                 <a class="@NavClass("/Index")" asp-page="/Index">Özet</a>
@@ -31,17 +42,26 @@
             </nav>
             <p class="sidebar-note">Demo — sahte banka gateway</p>
         </aside>
+        <div class="nav-backdrop" id="nav-backdrop" hidden></div>
         <div class="workspace">
             <header class="topbar">
                 <button class="nav-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Menüyü aç">
                     <span></span><span></span>
                 </button>
-                <p class="topbar-title">@ViewData["Title"]</p>
-                <span class="pill">İskelet</span>
+                <p class="topbar-title">@title</p>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="pill">Musteri</span>
+                    <span class="topbar-user">@User.Identity.Name</span>
+                    <form asp-page="/Account/Logout" method="post" class="topbar-form">
+                        <button type="submit" class="btn-text">Çıkış</button>
+                    </form>
+                }
             </header>
             <main id="main" class="content">
                 @RenderBody()
             </main>
+            <footer class="page-footer">Demo — sahte banka gateway</footer>
         </div>
     </div>
     <script src="~/js/site.js" asp-append-version="true"></script>

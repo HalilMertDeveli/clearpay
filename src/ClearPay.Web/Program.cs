@@ -1,5 +1,6 @@
 using ClearPay.Application;
 using ClearPay.Infrastructure;
+using ClearPay.Infrastructure.DependencyInjection;
 using ClearPay.Infrastructure.Identity;
 using FluentValidation;
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<SqlOptions>(builder.Configuration.GetSection(SqlOptions.SectionName));
 builder.Services.AddProblemDetails();
 builder.Services.AddClearPayIdentity(builder.Configuration, builder.Environment);
+builder.Services.AddClearPay();
 builder.Services.AddValidatorsFromAssembly(typeof(ApplicationAssembly).Assembly);
 builder.Services.AddRazorPages(options =>
 {

@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ClearPay.Application\ClearPay.Application.csproj" />
     <ProjectReference Include="..\ClearPay.Infrastructure\ClearPay.Infrastructure.csproj" />
   </ItemGroup>
