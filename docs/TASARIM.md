@@ -18,7 +18,9 @@ Kaynak: `docs/SPEC.md` ekran listesi. Piksel Figma yok; Razor mevcut sınıflara
 
 Yaratıcılık: hiyerarşi, boş durum, wordmark, form ritmi. Landing / kampanya sayfası yok.
 
-**Ürün çerçevesi (T-011):** ClearPay = WePay benzeri **cüzdan / pay**, sahte **banka şubesi** değil. Kicker **Cüzdan**, tagline **Demo cüzdan**. Şube kromu, kasa illüstrasyonu, “internet bankacılığı” ızgarası yok. `IBankGateway` yalnızca yükle/çek stub.
+**One-liner:** ClearPay — demo dijital cüzdan (WePay benzeri).
+
+**Ürün çerçevesi (T-015):** WePay benzeri **dijital cüzdan / pay**. Kicker **Cüzdan**, tagline **Demo dijital cüzdan**. Şube / internet-bankacılığı kromu yok. `IBankGateway` yalnızca yükle/çek stub.
 
 ## Tipografi
 
@@ -32,7 +34,7 @@ Yaratıcılık: hiyerarşi, boş durum, wordmark, form ritmi. Landing / kampanya
 
 Kare marka: 2rem, 1px çerçeve, içinde **C** — dolgu yok, gölge yok.  
 İsim: **ClearPay**, tracking `0.04em`, 700. Sidebar’da beyaz; auth’ta navy.  
-Tagline (yalnız auth): `Demo cüzdan` — “dijital banka” yazılmaz.
+Tagline (yalnız auth): `Demo dijital cüzdan`.
 
 ## Layout
 
@@ -51,7 +53,7 @@ Sidebar drawer: kapalı `translateX(-100%)`, açık `is-open`. Hamburger topbar�
 
 ### Giriş / kayıt (`_AuthLayout`)
 
-Dikey ortalı kart, max 420px, 1px çizgi, gölge yok. Sıra: wordmark → tagline → `h1` (Giriş / Hesap oluştur) → lede → form → switch link. Birincil buton tam genişlik. Auth footer kartın dışında, aynı demo cümlesi.
+Dikey ortalı kart, max 420px, 1px çizgi, gölge yok. Sıra: wordmark → tagline → `h1` (Giriş / Hesap oluştur) → lede → form → switch link. Birincil buton tam genişlik. Auth footer kartın dışında: **Demo — yükleme için sahte gateway**.
 
 ### Özet (`/`)
 
@@ -139,27 +141,28 @@ Mevcut sınıflar: `auth-card`, `balance-hero`, `stack-form`, `data-table`, `emp
 
 ### 1) Giriş (`_AuthLayout` + Login)
 
-Dikey ortalı cüzdan kapısı — banka login kulesi değil.
+Dikey ortalı dijital cüzdan girişi (WePay benzeri).
 
 ```
 auth-shell  padding 2.5rem 1.25rem
 auth-card   max-width 420px; padding 2.5rem 2.15rem 2.15rem
             border 1px --line; gölge yok
 wordmark    mark 2rem + isim; tagline 0.85rem muted, margin −1.25rem 0 1.5rem
-            metin: Demo cüzdan
+            metin: Demo dijital cüzdan
 h1          Giriş — 1.75rem; lede 1rem, margin-bottom 0
 auth-form   margin-top 1.5rem
 .field      margin-bottom 1.1rem  (son field + btn arası ekstra yok; btn form akışında)
 .btn-block  width 100%; margin-top 0.25rem
 auth-switch margin 1.35rem 0 0; 0.9rem
 auth-footer kart DIŞI, 0.75rem muted, margin-top 1.35rem
+            metin: Demo — yükleme için sahte gateway
 ```
 
 Kayıt aynı kart ritmi; dört field, hint şifre altında 0.35rem. Boş durum yok (form). Hata: `.validation-summary` 0.75rem 0.85rem padding, 1px danger.
 
 ### 2) Özet hero (`/` `.balance-hero`)
 
-Cüzdan bakiyesi — hesap özeti şubesi değil. Sol 3px navy (`brand.css`).
+Cüzdan bakiyesi (WePay benzeri özet). Sol 3px navy (`brand.css`).
 
 ```
 content        padding 2.25rem 2rem; max-width 920px
@@ -180,11 +183,11 @@ panel          padding 1.25rem 1.35rem; panel-head space-between, margin-bottom 
 - `.empty-title`: Henüz hareket yok
 - `.empty-hint`: İlk havaleniz veya yüklemeniz burada görünür.
 
-İllüstrasyon / “şubeye git” yok. Mobil: hero + stat-row tek kolon; xl 1.9rem.
+İllüstrasyon yok. Mobil: hero + stat-row tek kolon; xl 1.9rem.
 
 ### 3) Havale formu (`/havale` `.stack-form`)
 
-P2P cüzdan gönderimi — EFT dekont şablonu değil.
+P2P cüzdan gönderimi.
 
 ```
 kicker Transfer; h1 Havale; lede 0 0 1.75rem
@@ -200,11 +203,11 @@ panel            padding 1.25rem 1.35rem
                  Gönder dolu (bakiye 0 → disabled); İptal ghost
 ```
 
-Boş alıcı/tutar: native validation / kırmızı özet; ayrı empty-block yok. Bakiye 0 ipucu hint’te kalır — “banka mesai saati” metni yok.
+Boş alıcı/tutar: native validation / kırmızı özet; ayrı empty-block yok. Bakiye 0 ipucu hint’te kalır.
 
 ### 4) Hareket tablosu (`/hareketler` `.data-table`)
 
-Cüzdan geçmişi — hesap dökümü defteri değil. TASK-09 doldurur; iskelet bu ritim.
+Cüzdan geçmişi. TASK-09 doldurur; iskelet bu ritim.
 
 ```
 kicker Geçmiş; h1 Hareketler; lede 0 0 1.75rem
@@ -223,5 +226,5 @@ işlem no / corr.  0.85rem; isteğe font-family ui-monospace
 - `.empty-title`: Bu dönemde hareket bulunmuyor
 - `.empty-hint`: Tarih veya tür filtresini genişletin; ya da ilk havaleyi Özet’ten gönderin.
 
-Dekont satırı (TASK-09): correlation id monospace, 0.8rem muted — banka SWIFT alanı taklidi yok.
+Dekont satırı (TASK-09): correlation id monospace, 0.8rem muted.
 
