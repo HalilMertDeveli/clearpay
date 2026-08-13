@@ -185,3 +185,10 @@ Yönetici değerlendirmesi: `docs/YONETICI-RAPORU.md`
 - **Kanıt:** havale 40 ₺ + ters 15 ₺ → `NetOf(from)=-25`, `NetOf(to)=25`, iki net toplamı 0. `UPDATE Balance` yok.
 - **Kaldı (Web, Coder WIP):** tam `dotnet test` Application Identity + FluentValidation / TestHost `/api/health` PipeWriter (.NET 10 testhost) yüzünden kırmızı olabilir. Ledger unit yeşil. TASK-06 409 skip duruyor.
 - Coder: `appsettings.json` duplicate `ConnectionStrings:Identity` olursa host ayağa kalkmaz (daha önce görüldü; şu an dosya tek key).
+
+## 2026-08-13 — PR (yeni)
+
+- **OWN:** `docs/PR.md` only. Razor/CSS/Domain/TASKS yok. Ads harcaması yok. Azure hesabı yok.
+- Konu: internette yayın (CANLI planı) + dürüst sıralama. Anahtar: ClearPay **demo** / ASP.NET cüzdan / ledger 409 — **Papara alternatif / ucuz havale #1 yok**.
+- Coder **TASK-03** durmaz. SEO.md ile çakışma: PR yayın hikâyesi, SEO title şablonları.
+- Rapor: PR **sarı** (`docs/YONETICI-RAPORU.md`).

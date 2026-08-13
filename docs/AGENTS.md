@@ -13,6 +13,7 @@ Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadec
 | **Designer** | `docs/TASARIM.md`, `docs/MARKA.md`, `brand.css` token; CEO = ürün sesi | UI kompozisyon + CV markası; Razor’u Coder uygular |
 | **SEO/Ads** | `docs/SEO.md`, `docs/ADS.md`, robots/sitemap, `.cursor/rules/seo.mdc` | Keşif / meta; **harcama yok**; gerçek banka değil |
 | **Sales** | `docs/SATIS.md`, `docs/FARK.md`, `.cursor/rules/sales.mdc` | Mülakat / README / demo copy; **lisanslı cüzdan değil**; Ads harcaması yok |
+| **PR** | `docs/PR.md` | İnternette yayın + dürüst sıralama; **demo kelimeler**; Papara/havale #1 yok |
 
 ## Çalışma kuralı
 1. Tek seferde tek TASK
@@ -22,4 +23,4 @@ Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadec
 5. LED teknik destek reposuna dokunma
 
 Detaylı kurallar: `.cursor/rules/`  
-Nedenler: `docs/OGRENME.md`. Ajan defteri: `docs/HANDOFF.md`. Kullanıcı checklist: `docs/SENIN-ISLERIN.md`.
+Nedenler: `docs/OGRENME.md`. Kronik: `docs/KRONIK.md`. Ajan defteri: `docs/HANDOFF.md`. Kullanıcı checklist: `docs/SENIN-ISLERIN.md`. Ödeme (insan): `docs/ODEME-SENIN.md`.

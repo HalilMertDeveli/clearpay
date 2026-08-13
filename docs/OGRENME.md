@@ -1,8 +1,10 @@
 # Öğrenme defteri — neden böyle?
 
-Bu dosya SPEC/PLAN’ı tekrar etmez. **Ne yaptık ve neden** — mülakatta ve kendi kafanda tutman için. Ürün kuralları `docs/SPEC.md`, sıra `docs/PLAN.md` / `docs/TASKS.md`.
+**Baştan oku (asıl kronik):** [`docs/KRONIK.md`](KRONIK.md) — her bölüm ne yaptık / neden / sen ne öğrenmelisin.
 
-Ajanlar birbirine sohbette değil, **`docs/HANDOFF.md`** üzerinden yazar (konuşma defteri). Sen o dosyayı okumak zorunda değilsin; iş listesi burası ve `docs/SENIN-ISLERIN.md`.
+Bu dosya SPEC/PLAN’ı tekrar etmez; kısa “neden böyle”. Ürün: `docs/SPEC.md`. Sıra: `docs/PLAN.md` / `docs/TASKS.md` / `docs/CALISMA-PLANI.md`.
+
+Ajan defteri: `docs/HANDOFF.md` (senin işin değil). Checklist: [`SENIN-ISLERIN.md`](SENIN-ISLERIN.md). Ödeme nasıl: [`ODEME-SENIN.md`](ODEME-SENIN.md).
 
 ---
 
@@ -19,7 +21,7 @@ Kod yazmak ve “hangi TASK?” seçmek **senin işin değil**. Ajan `docs/TASKS
 7. **DNS / domain** — senin panelin (varsa). Ajan DNS kaydı basmaz.
 8. **Canlı sırlar (TASK-16 civarı)** — Azure App Settings’e **sen** yapıştırırsın: Azure SQL connection string, JWT signing key, Gmail App Password (e-posta gerekirse). Repo’ya yazılmaz.
 
-Kısa liste (VS’de tek başına aç): [`docs/SENIN-ISLERIN.md`](SENIN-ISLERIN.md).
+Kısa liste: [`SENIN-ISLERIN.md`](SENIN-ISLERIN.md). Ödeme (lisans yok, demo akış): [`ODEME-SENIN.md`](ODEME-SENIN.md). Kronik: [`KRONIK.md`](KRONIK.md).
 
 ---
 
@@ -88,8 +90,10 @@ Ledger yazıldı, HTTP timeout oldu, client tekrar dener. Mesajı commit’ten *
 | `docs/TASKS.md` | Kuyruk (Todo / Done) — ajan buradan iş alır |
 | `docs/AGENTS.md` | Orchestrator / Architect / Coder / Payments / Tester / Deploy |
 | `docs/DEPLOY.md` | Lokal Compose, Azure talimatı; hesap açma yok |
-| `docs/OGRENME.md` | Bu dosya: neden böyle |
+| `docs/KRONIK.md` | Baştan sona öğrenme (asıl okuma) |
+| `docs/OGRENME.md` | Bu dosya: kısa nedenler |
 | `docs/SENIN-ISLERIN.md` | Senin checklist |
+| `docs/ODEME-SENIN.md` | Ödeme yöntemi — senin işin (nasıl) |
 | `docs/HANDOFF.md` | Ajanların konuşma defteri (senin işin değil) |
 | `README.md` | İngilizce özet, CV, nasıl çalıştırılır |
 
@@ -103,4 +107,4 @@ Ledger yazıldı, HTTP timeout oldu, client tekrar dener. Mesajı commit’ten *
   `dotnet run --project src/ClearPay.Web --launch-profile http`
 - SQL (ileride ledger): repo kökünde `docker compose up -d`
 
-Sonraki iş ajanın: **TASK-04** (SQL model + ledger iskeleti). Sen «sıradaki işi yap» / «devam» demen yeterli.
+Kritik yol ajanın: **TASK-03** (giriş + boş cüzdan, WIP). Sen «sıradaki işi yap» / «devam» demen yeterli.
