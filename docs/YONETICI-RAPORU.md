@@ -25,8 +25,9 @@ Lokal: http://localhost:5153 — TASK-03 commit + `dotnet run --project src/Clea
 | **Sales** | **Yeşil** | Wedge origin FARK/SATIS. Papara yerine geçmiyoruz. Relaunch yok. |
 | **Designer** | **Yeşil** | TASARIM/MARKA/`brand.css` `666dd32`. Relaunch yok. |
 | **Tester** | **Yeşil (ledger)** | 8/8 `LedgerPairTests` origin. Tam solution Coder Identity derlenene kadar kırmızı olabilir. Relaunch yok. |
-| **PR** | **Sarı** | `docs/PR.md` yazılıyor. Demo kelimeler; Papara/havale #1 yok. |
-| **Ürün / Destek / Pazarlama / İK / Finans** | **Sarı** | Org haritası: `docs/ORGANIZASYON.md`. Coder’a iş yok. |
+| **PR** | **Yeşil** | `docs/PR.md` landed. Demo kelimeler; Papara/havale #1 yok. |
+| **Pazarlama** | **Yeşil** | `PAZARLAMA.md` + `pazarlama.mdc`. GitHub / LinkedIn / demo URL. SEO/ADS/PR kopyalanmadı. Papara rakibi ads yok. |
+| **Ürün / Destek / İK / Finans** | **Sarı / kardeş** | Org haritası: `docs/ORGANIZASYON.md`. Coder’a iş yok. |
 | **Çalışma planı** | **Yeşil** | `docs/CALISMA-PLANI.md` yazıldı. |
 
 ---
@@ -43,6 +44,7 @@ Lokal: http://localhost:5153 — TASK-03 commit + `dotnet run --project src/Clea
 | **SEO/Ads** | SEO + ADS. | **Yeşil** | Kampanya canlı URL sonrası. Razor çalma. |
 | **Designer** | Origin `666dd32`: TASARIM, MARKA, `brand.css`. | **Done / yeşil** | Relaunch yok. Coder `brand.css` bağlar. |
 | **Sales** | SATIS + FARK. | **Yeşil** | Wedge sabit. PSP değil. |
+| **Pazarlama** | `PAZARLAMA.md` (GitHub, LinkedIn, demo URL). | **Yeşil** | SEO/ADS/PR kopyalama yok. Launch TASK-16 sonrası. |
 | **Öğrenme** | Origin. | **Yeşil** | CALISMA-PLANI link. |
 | **Orchestrator** | Bu rapor + plan + HANDOFF. | — | Tek öncelik TASK-03. |
 
