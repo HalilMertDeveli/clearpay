@@ -1,89 +1,150 @@
 # ClearPay
 
-[English](README.md) | **Türkçe** | [Français](README.fr.md)
+<p align="center">
+  <a href="README.md">English</a>
+  · <b>Türkçe</b>
+  · <a href="README.de.md">Deutsch</a>
+  · <a href="README.fr.md">Français</a>
+</p>
 
-[![CI](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg)](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml)
-[![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <a href="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml"><img src="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet" alt=".NET 8">
+  <img src="https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver" alt="SQL Server">
+  <img src="https://img.shields.io/badge/UI-TR%20%7C%20EN%20%7C%20DE%20%7C%20FR-1B2A4A" alt="Arayüz dilleri">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
+</p>
 
-ASP.NET Core 8 dijital cüzdan **sitesi** (WePay benzeri). İnsanlar para gönderir / öder **bu sitede**. Tek host: site Razor Pages, API JSON. SQL Server Docker’da. Çift kayıt Domain’de — `Wallet` üzerinde `Balance` kolonu yok.
+<p align="center"><b>Demo — yükleme için sahte gateway.</b> Lisanslı e-para kuruluşu değil. Papara / FAST / sahte perakende banka değil.</p>
 
-Ben Halil Mert Develi. Bunu Papara klonu diye değil, .NET mülakatında (Intertech / Softtech kapısı) savunabileceğim repo diye yazdım. Arayüz Türkçe. Lisans MIT.
+ASP.NET Core 8 **WePay benzeri cüzdan sitesi**. İnsanlar para gönderir / öder **bu sitede**. Tek host: site Razor Pages, API JSON. Çift kayıt Domain’de — `Wallet` üzerinde **`Balance` kolonu yok**.
 
-Demo. Sahte banka uygulaması değil (şube, IBAN çekirdeği, “BankaX” yok). Sahte olan yalnızca yükle/çek `IBankGateway`. E-para lisansı yok, FAST yok, kart tahsilatı yok, açık Azure URL yok. Bunu banka diye anlatmayın; footer zaten söylüyor.
+Ben Halil Mert Develi. Bunu Papara klonu diye değil, .NET mülakatında (Intertech / Softtech) savunabileceğim repo diye yazdım. Lisans MIT.
 
-## Defter
+---
 
-Alışılmış öğrenci cüzdanı: `wallet.Balance -= amount; SaveChanges();`. İz kalmaz, yarışta last-write-wins, iade edilecek çift yoktur. Freeze bir sayıya bantlanmış bayrak olur.
+## Kurulan yapı
 
-Burada her hareket bir `LedgerEntry` çifti: debit (−) ve credit (+), aynı `PairId`, aynı `CorrelationId`, tutarlar toplamı sıfır. Bakiye `LedgerPair.NetOf`. `Wallet`’ta bakiye alanı yok. İade = ters çift; eski satır silinmez. `UPDATE Balance` yardımcısı yok — kasten.
+![Clean Architecture katmanları](docs/assets/clearpay-layers.svg)
 
-Aynı `Idempotency-Key` = aynı niyet (çift tıklama, proxy retry). İlk başarı `201`. Tekrar `409 Conflict`. İkinci `201` cüzdanı iki kez keser. `200` + eski body de vermem: istemci yeni havale sanır.
+Web ledger hesabı yapmaz. Özet sayfası `IWalletReader` sorar. Bugün adapter `SqlWalletReader`: bakiye = `LedgerPair.NetOf`, bu ay giden/gelen, son beş hareket, freeze rozeti. SQL Server kapalıysa site yine açılır — sıfırlar, 500 değil.
 
-Debit, credit, `Transfer`, `IdempotencyRecord`, `AuditLog`, `OutboxMessage` **tek SQL commit**. Outbox satırı defterle birlikte yazılır; worker **commit’ten sonra** yayınlar. HTTP timeout olsa niyet veritabanında durur. Hangfire planlanan worker. csproj’da yok.
+![Çift kayıt çifti](docs/assets/clearpay-ledger.svg)
 
-Kural `src/ClearPay.Domain/Ledger` altında. `LedgerPair` xUnit’te. Compose SQL’e EF bağlamak duruyor. `POST /api/transfers` endpoint değil. Gateway sınıfları `NotImplementedException` atıyor.
+```mermaid
+flowchart TB
+  subgraph web [ClearPay.Web]
+    razor[Razor Pages TR/EN/DE/FR]
+    api[JSON host]
+  end
+  subgraph app [ClearPay.Application]
+    reader[IWalletReader]
+    exec[ITransferExecutor]
+  end
+  subgraph infra [ClearPay.Infrastructure]
+    sql[SqlWalletReader + EF]
+    id[Identity SQLite]
+  end
+  subgraph domain [ClearPay.Domain]
+    pair[LedgerPair / LedgerEntry]
+  end
+  razor --> reader
+  reader --> sql
+  sql --> pair
+  exec -.->|TASK-06| pair
+```
+
+| Katman | Proje | Ne tutar | Ne tutmaz |
+|--------|-------|----------|-----------|
+| UI + host | `ClearPay.Web` | Razor, cookie, dil çerezi, `:5153` | Ledger net, `UPDATE Balance` |
+| Use case | `ClearPay.Application` | Portlar, DTO, FluentValidation | Connection string |
+| Adapter | `ClearPay.Infrastructure` | EF SQL Server, Identity SQLite, gateway stub | Razor / CSS |
+| Kural | `ClearPay.Domain` | `LedgerPair`, `Wallet` (bakiye alanı yok) | EF, HTTP, ASP.NET |
+
+Bağımlılık **içe** bakar. Domain EF veya ASP.NET görmez.
+
+---
 
 ## Bugün tıklanan
 
-Cookie Identity, SQLite: `App_Data/identity.db`. Kayıt, giriş, **0,00 ₺**. Özet PageModel’de hâlâ sabit; ledger net değil.
+Cookie Identity, SQLite: `App_Data/identity.db`. Site dilleri: **Türkçe (varsayılan), English, Deutsch, Français** — seçici layout chrome; 9. ekran değil.
 
-| Sayfa | Rota | Durum |
-|-------|------|--------|
-| Giriş | `/Account/Login` (`/giris`) | Çalışır |
-| Kayıt | `/Account/Register` (`/kayit`) | Çalışır |
-| Özet | `/` | Boş özet |
+| Ekran | Rota | Dürüst durum |
+|-------|------|----------------|
+| Giriş | `/giris` | Çalışır |
+| Kayıt | `/kayit` | Çalışır |
+| Özet | `/` | **Canlı** ledger net (SQL / satır yoksa sıfır) |
 | Havale | `/havale` | Form kabuğu; Gönder kapalı |
 | Yükle / Çek | `/yukle-cek` | Form kabuğu; butonlar kapalı |
 | Hareketler | `/hareketler` | Boş tablo; filtre kapalı |
 | Dekont | — | Yok |
 | Admin | — | Yok (menü gizler) |
 
-`GET /api/health` → `{ "status": "ok", "product": "ClearPay" }`. JWT yok, Swagger yok, Hangfire paketi yok, Redis yok, RabbitMQ yok.
+`GET /api/health` → `{ "status": "ok", "product": "ClearPay" }`.
 
-`docker compose` SQL Server 2022’yi `localhost,1433`’te açar. Web henüz o veritabanını okumaz. Identity için Docker gerekmez.
+**Henüz üründe yok (kasten):** `POST /api/transfers` + HTTP **409**, Hangfire outbox worker, JWT/Swagger, uygulamada Redis/Rabbit, açık Azure URL.
+
+**Kural kilitli:** aynı `Idempotency-Key` = aynı niyet → 409, ikinci kesinti yok. Unique key tabloda durur. HTTP uç TASK-06.
+
+---
 
 ## Çalıştırma
 
-.NET 8 SDK. SQL konteyneri için Docker Desktop.
+.NET 8 SDK. Canlı özet için Docker Desktop.
 
 ```bash
 docker compose up -d
 dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
-[http://localhost:5153](http://localhost:5153)
+[http://localhost:5153](http://localhost:5153). Identity için Docker gerekmez. SQL yoksa özet `0,00 ₺` kalır.
 
 ```bash
 dotnet test
 dotnet build ClearPay.slnx
 ```
 
-Lokal SA şifresi `.env.example` içinde (`ClearPay_Dev1!`). Yalnız Docker. `.env` commit edilmez. Azure’da bu şifre yok.
+Lokal SA şifresi `.env.example` içinde. Yalnız Docker. `.env` commit edilmez. Azure’da bu şifre yok.
 
-CI (`main` üzerindeki workflow) `tests/ClearPay.Tests` restore + test eder.
+SQL veri bind: `D:\ClearPay\data\mssql` (bu makine). Uygulama defteri **yalnızca SQL Server**. MySQL/Oracle compose yan servis; cüzdan veritabanı değil.
 
-## Düzen
+---
+
+## Dizin
 
 ```
 src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (Balance yok)
-src/ClearPay.Application      portlar (ITransferExecutor, IBankGateway, …), FluentValidation
-src/ClearPay.Infrastructure   Identity (SQLite), throw eden gateway stub
-src/ClearPay.Web              Razor + MapControllers, http profili :5153
-tests/ClearPay.Tests          LedgerPair + giriş/sayfa smoke
+src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
+src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity SQLite
+src/ClearPay.Web              Razor + localization + MapControllers
+tests/ClearPay.Tests          LedgerPair, mimari, SqlWalletReader, dil
 docker-compose.yml            SQL Server 2022 — web uygulaması değil
 ClearPay.slnx
 ```
 
-Web → Application + Infrastructure. Infrastructure → Application → Domain. Domain EF veya ASP.NET görmez.
+---
+
+## Yol (dürüst)
+
+| Bitti | Sıradaki |
+|-------|----------|
+| TASK-01…05 — repo, Identity, ledger şema, canlı özet | **TASK-06** — havale, tek SQL transaction, HTTP 409 |
+| TASK-15 — GitHub Actions | TASK-07/08 gateway · TASK-11 outbox · TASK-16 Azure URL |
+
+CI `main` üzerinde `tests/ClearPay.Tests` restore + test eder.
+
+---
 
 ## Belgeler
 
 - [`docs/SPEC.md`](docs/SPEC.md) — ekranlar ve para kuralları (409, tek transaction, outbox)
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — katmanlar, önce cookie sonra JWT
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — soğan katmanları, önce cookie sonra JWT
 - [`docs/FARK.md`](docs/FARK.md) — mutabakat; Papara rakibi değil
+- [`docs/SATIS.md`](docs/SATIS.md) — 15 saniye pitch
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
+- Adım adım: [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (bu repo, public). Aynı liste [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — sayfada Share → Publish to web (Notion hesabı olmayan da okusun).
 
-Canlı hedef: Azure App Service + Azure SQL (West Europe). Aboneliği ben açacağım; tıklanacak `azurewebsites.net` yok.
+Canlı hedef: Azure App Service + Azure SQL (West Europe). Tıklanacak `azurewebsites.net` yok.
 
 ## Lisans
 

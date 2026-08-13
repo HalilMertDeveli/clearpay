@@ -487,6 +487,12 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - Tester: `dotnet test -c Release` 62 geçti, 1 skip (409 = TASK-06). Debug kilitli (ClearPay.Web PID); process öldürülmedi.
 - `docs/TASKS.md` TASK-05 Done. **Sıradaki:** TASK-06 havale + 409.
 
+## 2026-08-13 — UI canlı animasyon (T-034)
+
+- **OWN:** T-034. `motion.css` ambient orb/shimmer/pulse, bakiye count-up, sparkline, canlı rozet + saat. 8 ekran. Domain / SqlWalletReader yok. TASK-06 yok.
+- Reduced-motion kapatır. Site: http://localhost:5153 giriş sonrası Özet.
+- **Sıradaki ürün:** TASK-06.
+
 ## 2026-08-13 — README görsel + DE (T-030)
 
 - **OWN:** T-030. `README.md` (EN varsayılan), `README.tr.md`, `README.de.md` (yeni), `README.fr.md`. SVG: `docs/assets/clearpay-layers.svg`, `docs/assets/clearpay-ledger.svg`. `src/` yok. TASK-14 Swagger **Done değil**.
@@ -506,3 +512,36 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - SO: https://stackoverflow.com/questions/47977927 https://stackoverflow.com/questions/55143246
 - Temiz restart: stop → Debug build → `dotnet run --launch-profile http`. Site `http://localhost:5153`.
 - CI latest yeşil (31702028873). 409 skip = TASK-06. Oracle/VMP kullanıcı reboot.
+
+## 2026-08-13 — Oturum planı doküman + Notion (T-033)
+
+- **OWN:** `docs/OTURUM-PLAN.md` (yeni). README Docs birer satır (EN/TR/FR/DE). TARTISMA **T-033**. `src/` yok. Azure hesap yok.
+- İçerik: 8 ekran demo, Onion=derleme / n-tier=isim, lokal `:5153/giris`, CI yeşil `31702028873`, Azure şablon var URL yok, Redis/Rabbit compose bağlı değil, 409 = TASK-06, VMP reboot kullanıcı.
+- Notion **yeni sayfa** (overwrite yok): [ClearPay — yapılan işlemler (adım adım)](https://www.notion.so/3bb31a8b18e481d3887ce44090ec42d0) (`3bb31a8b18e481d3887ce44090ec42d0`). MCP’te Share/Publish aracı yok; logged-out HTML Notion kabuğu (og:title “Notion”, içerik yok). Public kanıt = bu markdown GitHub’da.
+- **Sen tıklarsın:** Notion’da Share → Publish → Publish to web; çıkan `notion.site` URL’yi README satırına koy. Sıradaki ürün: TASK-06.
+
+## 2026-08-13 — Google/Apple Identity src (T-035)
+
+- **OWN:** T-035. `AddClearPayExternalLogin` + `SqlWalletReader`/ledger **dokunulmadı**. `docs/GIRIS-SOSYAL.md` / `SENIN-ISLERIN.md` rewrite yok.
+- NuGet: `Microsoft.AspNetCore.Authentication.Google` 8.0.21, `AspNet.Security.OAuth.Apple` 8.3.0. Callback `/signin-google` `/signin-apple`.
+- Giriş/kayıt: “Google ile giriş” / “Apple ile giriş”. Secret yoksa challenge “yapılandırılmadı”. E-posta/şifre durur.
+- Placeholders `appsettings.json` boş. UserSecretsId Web csproj. Secret git’te yok.
+- Tester: Release 66 geçti, 1 skip (409 = TASK-06).
+
+## 2026-08-13 — Oturum planı yeni Notion (T-036)
+
+- **OWN:** `docs/OTURUM-PLAN.md`, README Docs satırı (EN/TR/FR + DE URL hizası). TARTISMA **T-036**. `src/` yok.
+- Önceki ajan fail; **yeni** sayfa: [ClearPay — oturum adımları (13 Ağu 2026)](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) (`3bb31a8b18e4816bb34ffa405b4dec5d`). Eski `3bb31a8b18e481d3887ce44090ec42d0` silinmedi.
+- MCP Publish yok → sayfa varsayılan **private**. Public kanıt = GitHub `docs/OTURUM-PLAN.md`. Halil: Share → Publish → Publish to web.
+- Gerçek: lokal `:5153/giris` (VS `http` profili; `https` = `:7133`), Identity SQLite, Docker giriş için şart değil; VMP özellik açık, firmware VT ON, **reboot kullanıcıda**; CI `/giris`; 409 skip TASK-06; Azure şablon var, açık URL yok.
+- **Sıradaki ürün:** TASK-06.
+
+## 2026-08-13 — Error-fixer (build/test yeşil, Compose engine kırmızı)
+
+- **OWN:** Tester düzeltme. TASK-04 **Done yapılmadı**. LED yok. Secret git’te yok. Web MSSQL’de kaldı.
+- **Kıran:** `ClearPay.Web` kilit (MSB3027); kayıt `_ExternalLoginButtons` modelsiz → `/kayit` 500; sosyal test HTML entity; test host SQL migrate/timeout; Docker Linux engine API 500.
+- **Düzeltildi:** lock process durdu; partial `model="(string?)null"`; `SocialLoginTests` HtmlDecode; `ApplyLedgerMigrations=false` + Connect Timeout test factory; `SqlWalletReader` 3s; Compose D:\ bind + `${VAR:-ClearPay_Dev1!}`; `.env` gitignore. Ledger/migration ezilmedi.
+- **Kanıt:** `dotnet build ClearPay.slnx -warnaserror` → 0 Warning / 0 Error. `dotnet test` → Passed **66**, Failed **0**, Skipped **1** (409 = TASK-06).
+- **compose ps:** yok. Client 29.7.2; `dockerDesktopLinuxEngine` 500. VMP+WSL+Hyper-V Enabled, CBS RebootPending. Native MySQL84 `:3306` açık (reboot sonrası Compose MySQL için durdur, veriyi silme).
+- **Sen tıklarsın:** Windows restart → Docker Desktop → `docker compose up -d` ve `docker compose -f docker-compose.databases.yml up -d` → `docker compose ps`.
+

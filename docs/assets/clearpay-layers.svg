@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 420" role="img" aria-labelledby="title desc">
+  <title id="title">ClearPay Clean Architecture</title>
+  <desc id="desc">Web talks to Application ports. Infrastructure and Domain sit below. Wallet has no Balance column.</desc>
+  <rect width="840" height="420" fill="#F7F8FA"/>
+  <text x="32" y="36" fill="#1B2A4A" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="700">ClearPay  what talks to what</text>
+  <text x="32" y="58" fill="#5A6573" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">Onion / Clean Architecture. Money rules stay in Domain. Razor never writes a balance.</text>
+
+  <rect x="32" y="80" width="776" height="72" rx="8" fill="#1B2A4A"/>
+  <text x="52" y="110" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="700">ClearPay.Web</text>
+  <text x="52" y="132" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Razor Pages (TR / EN / DE / FR)  ·  cookie Identity  ·  JSON API host  ·  :5153</text>
+
+  <rect x="32" y="172" width="776" height="72" rx="8" fill="#2C4570"/>
+  <text x="52" y="202" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="700">ClearPay.Application</text>
+  <text x="52" y="224" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Ports: IWalletReader, ITransferExecutor, IBankGateway  ·  DTOs  ·  FluentValidation</text>
+
+  <rect x="32" y="264" width="372" height="120" rx="8" fill="#3D5A80"/>
+  <text x="52" y="296" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="700">ClearPay.Infrastructure</text>
+  <text x="52" y="322" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">SqlWalletReader ’ ledger net</text>
+  <text x="52" y="342" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">EF SQL Server  ·  Identity SQLite</text>
+  <text x="52" y="362" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">BankGateway stubs (not wired yet)</text>
+
+  <rect x="436" y="264" width="372" height="120" rx="8" fill="#0F1C33"/>
+  <text x="456" y="296" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" font-weight="700">ClearPay.Domain</text>
+  <text x="456" y="322" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">LedgerPair  ·  LedgerEntry +/</text>
+  <text x="456" y="342" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Wallet has no Balance column</text>
+  <text x="456" y="362" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">No EF  ·  no ASP.NET  ·  no HTTP</text>
+</svg>

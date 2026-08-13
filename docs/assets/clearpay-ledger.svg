@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 280" role="img" aria-labelledby="title desc">
+  <title id="title">ClearPay double-entry pair</title>
+  <desc id="desc">Each movement is a debit and a credit with the same PairId. Balance is the net of those rows.</desc>
+  <rect width="840" height="280" fill="#F7F8FA"/>
+  <text x="32" y="36" fill="#1B2A4A" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="700">One movement = one pair, not UPDATE Balance</text>
+  <text x="32" y="58" fill="#5A6573" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">Same PairId and CorrelationId. Amounts sum to zero. Refund = reverse pair; old rows stay.</text>
+
+  <rect x="32" y="84" width="240" height="120" rx="8" fill="#FFFFFF" stroke="#1B2A4A"/>
+  <text x="52" y="118" fill="#8B1E1E" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="700">LedgerEntry  </text>
+  <text x="52" y="144" fill="#1B2A4A" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Debit the sender</text>
+  <text x="52" y="168" fill="#5A6573" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">Amount 100,00 º</text>
+  <text x="52" y="186" fill="#5A6573" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">Wallet A</text>
+
+  <rect x="300" y="84" width="240" height="120" rx="8" fill="#1B2A4A"/>
+  <text x="320" y="118" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="700">LedgerPair</text>
+  <text x="320" y="144" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">PairId  ·  CorrelationId</text>
+  <text x="320" y="168" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">NetOf = credits  debits</text>
+  <text x="320" y="186" fill="#D7DDE6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">That net is the balance</text>
+
+  <rect x="568" y="84" width="240" height="120" rx="8" fill="#FFFFFF" stroke="#1B2A4A"/>
+  <text x="588" y="118" fill="#1B6B3A" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="700">LedgerEntry  +</text>
+  <text x="588" y="144" fill="#1B2A4A" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Credit the receiver</text>
+  <text x="588" y="168" fill="#5A6573" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">Amount 100,00 º</text>
+  <text x="588" y="186" fill="#5A6573" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">Wallet B</text>
+
+  <text x="32" y="242" fill="#5A6573" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Student shortcut: wallet.Balance -= amount. Here that helper does not exist  on purpose.</text>
+  <text x="32" y="262" fill="#5A6573" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Same Idempotency-Key will be 409 Conflict (HTTP in TASK-06). Schema unique key is already there.</text>
+</svg>

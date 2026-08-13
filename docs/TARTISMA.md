@@ -506,3 +506,56 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Karar:** **2.** SPEC ekran listesi durur; görsel cümle “gölge/gradient yok” bu maddeyle gevşer (yalnızca chrome). Identity, ledger, `SqlWalletReader` dokunulmaz.
 - **Neden:** Kullanıcı canlı WePay/Papara **cüzdan** istedi, fake retail bank değil. Eşitlikte ledger > UI; burada UI isteği açık. Reduced-motion kapatır. T-014 kurumsal hareket durur, lift yasağı 2px’e açılır.
 - **Sonra hangi dosya:** `docs/TASARIM.md`, `.cursor/rules/designer.mdc`, `docs/SPEC.md` (görsel bir satır). Coder/Designer: `wwwroot/css/{site,brand,motion}.css`, `_Layout` / `_AuthLayout`, wallet Razor (Index, Havale, YukleCek, Hareketler). Login/Register markup’a sosyal buton eklenmez; CSS kancaları hazır. `docs/HANDOFF.md` append. Domain / Persistence yok.
+
+---
+
+## T-033 — 2026-08-13 — Oturum planı tek OWN doküman + Notion
+
+- **Kim:** Orchestrator (kullanıcı: planlar kesin doküman; Notion’da adım adım; README’den tıklansın; dışarı açık)
+- **Konu:** KRONIK öğrenme, YONETICI-RAPORU yönetici özeti. Tıklama sırası nereye yazılır? Notion MCP publish yok.
+- **Seçenekler:**
+  1. KRONIK/YONETICI’ye status bölümü (OWN karışır).
+  2. **Yeni** `docs/OTURUM-PLAN.md` + yeni Notion sayfası (adım adım). README Docs’ta bir satır. GitHub kopyası public; Notion’da Share → Publish to web kullanıcı tıklar (ajan hesabı/publish API yok).
+  3. Yalnız Notion, repo’da yok (GitHub ziyaretçisi göremez).
+- **Karar:** **2.** SPEC ekran uydurma yok. Azure URL iddiası yok. `src/` yok.
+- **Neden:** Kullanıcı “doküman oluşsun + Notion + README tıklama + dışarı açık” dedi. MCP’te publish aracı yok; public kanıt = bu markdown. Notion aynı metin, paylaşım Halil’de.
+- **Sonra hangi dosya:** `docs/OTURUM-PLAN.md` (OWN), `README.md` / `README.tr.md` / `README.fr.md` / `README.de.md` birer Docs satırı, `docs/HANDOFF.md` append. LED yok.
+
+---
+
+## T-035 — 2026-08-13 — Google/Apple Identity (src; docs already landed)
+
+- **Kim:** Coder (Identity OWN)
+- **Konu:** `docs/GIRIS-SOSYAL.md` + `SENIN-ISLERIN.md` origin/main’de; src’de OAuth yok.
+- **Seçenekler:** 1. Docs only. 2. **AddGoogle/AddApple + giriş/kayıt butonları; secret git’te yok.**
+- **Karar:** **2.** E-posta/şifre durur. Secret yoksa buton durur, challenge “yapılandırılmadı”. 9. ekran yok. `GIRIS-SOSYAL.md` rewrite yok.
+- **Neden:** Kullanıcı Coder src istedi; OAuth hesabı kullanıcıda.
+- **Sonra hangi dosya:** Infrastructure Identity + Web Account + appsettings placeholders + UserSecretsId. Ledger/TASK-06 yok.
+
+---
+
+## T-034 — 2026-08-13 — UI kesin canlı animasyon (kullanıcı: değiştirilsin)
+
+- **Kim:** Coder / Designer (kullanıcı: arayüz kesin değişsin; çok daha iyi; canlı animasyonlu; Cursor eklentisi serbest)
+- **Konu:** T-032 token’ları var ama `motion.css` yalnızca 200ms opacity — kullanıcı hâlâ “zayıf / değiştirilsin” diyor. Carnival mı, yoksa fintech canlı mı?
+- **Seçenekler:**
+  1. T-032’de kal (fade only) — kullanıcı reddetti.
+  2. **Canlı cüzdan:** ambient döngü (orb, mesh, pulse, shimmer 6–14s), bakiye count-up ~700ms, kart stagger + 2px lift, canlı rozet + saat. 8 ekran. Navy+teal. `prefers-reduced-motion` hepsini kapatır. Emoji/confetti/şube yok.
+  3. 9. ekran / Papara mor yağmuru / Bootstrap — yasak.
+- **Karar:** **2.** PageModel ledger math yok. `SqlWalletReader` / Domain dokunulmaz. TASK-06 başlamaz.
+- **Neden:** Kullanıcı “kesin başar” dedi; T-032 görsel bar durur, hareket yetersizdi. Ambient süre 250ms bandının dışında (döngü); tıklama hâlâ 150–250ms.
+- **Sonra hangi dosya:** `wwwroot/css/{site,brand,motion}.css`, `wwwroot/js/site.js`, `_Layout` / `_AuthLayout`, `Index.cshtml` (+ PageModel tutar attribute), `.resx` LiveBadge. `docs/TASARIM.md` motion satırı. `docs/HANDOFF.md` append.
+
+---
+
+## T-036 — 2026-08-13 — Yeni Notion oturum sayfası (önceki ajan fail)
+
+- **Kim:** Orchestrator (kullanıcı: önceki Notion ajanı connection failed; yeni public sayfa; README tıklama; lokal md)
+- **Konu:** T-033 sayfası (`3bb31a8b…`) duruyor; MCP Publish yok; önceki ajan fail. Yeni olgu: VMP özellikleri açıldı, firmware VT zaten ON, **reboot kullanıcıda**; VS F5 = `http` profili (`:5153`); `https` yalnız `:7133`.
+- **Seçenekler:**
+  1. Eski Notion URL’yi README’de bırakmak (kullanıcı **yeni** sayfa istedi).
+  2. **Yeni** Notion sayfası + `docs/OTURUM-PLAN.md` tıklama sırasını VMP/F5 gerçeğiyle yenilemek. README Docs **bir satır** (EN/TR/FR). MCP publish yok → Halil Share → Publish to web.
+  3. Yalnız GitHub md, Notion yok (kullanıcı Notion istedi).
+- **Karar:** **2.** `src/` yok. Azure `azurewebsites.net` iddiası yok. 409 = TASK-06 skip. Eski sayfa silinmez.
+- **Neden:** Kullanıcı “yeni sayfa + herkes linkle + README + lokal kopya + commit/push” dedi. Public kanıt hâlâ GitHub md; Notion logged-out için Halil Publish tıklar.
+- **Sonra hangi dosya:** `docs/OTURUM-PLAN.md`, `README.md` / `README.tr.md` / `README.fr.md` Docs satırı, `docs/HANDOFF.md` append. LED yok.

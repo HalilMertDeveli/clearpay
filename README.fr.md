@@ -1,89 +1,150 @@
 # ClearPay
 
-[English](README.md) | [Türkçe](README.tr.md) | **Français**
+<p align="center">
+  <a href="README.md">English</a>
+  · <a href="README.tr.md">Türkçe</a>
+  · <a href="README.de.md">Deutsch</a>
+  · <b>Français</b>
+</p>
 
-[![CI](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg)](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml)
-[![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <a href="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml"><img src="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet" alt=".NET 8">
+  <img src="https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver" alt="SQL Server">
+  <img src="https://img.shields.io/badge/UI-TR%20%7C%20EN%20%7C%20DE%20%7C%20FR-1B2A4A" alt="Langues UI">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
+</p>
 
-Portefeuille web ASP.NET Core 8 (type WePay). On paie et on envoie de l’argent **sur ce site**. Un seul hôte : Razor Pages pour le site, JSON pour l’API. SQL Server dans Docker. Partie double dans le Domain — pas de colonne `Balance` sur `Wallet`.
+<p align="center"><b>Démo — passerelle fictive pour les recharges.</b> Pas un établissement e-money licencié. Pas Papara / FAST / une fausse banque de détail.</p>
 
-Je suis Halil Mert Develi. J’ai écrit ça pour un entretien .NET (Intertech, Softtech, ce type de boîte), pas pour cloner Papara. L’UI est en turc. Licence MIT.
+Portefeuille web ASP.NET Core 8 **type WePay**. On paie et on envoie de l’argent **sur ce site**. Un seul hôte : Razor Pages pour l’UI, JSON pour l’API. La partie double est dans le Domain — `Wallet` n’a **pas** de colonne `Balance`.
 
-Démo. Pas une fausse appli bancaire (pas d’agence, pas de cœur IBAN, pas d’UI « BankaX »). Le seul mock est `IBankGateway` pour recharger / retirer. Pas de licence e-money, pas de FAST, pas d’acquisition carte, pas d’URL Azure publique. Ce n’est pas une banque ; le pied de page le dit déjà.
+Je suis Halil Mert Develi. J’ai écrit ça pour un entretien .NET (Intertech, Softtech), pas pour cloner Papara. Licence MIT.
 
-## Grand livre
+---
 
-Le portefeuille étudiant classique : `wallet.Balance -= amount; SaveChanges();`. Pas de trace, last-write-wins, rien à inverser pour un remboursement. Le gel devient un booléen collé sur un nombre.
+## Ce qui est construit
 
-Ici chaque mouvement est une paire `LedgerEntry` : débit (−) et crédit (+), même `PairId`, même `CorrelationId`, somme nulle. Le solde est `LedgerPair.NetOf`. `Wallet` n’a pas de champ solde. Un remboursement = paire inverse ; les anciennes lignes restent. Pas d’helper `UPDATE Balance`. C’est volontaire.
+![Couches Clean Architecture](docs/assets/clearpay-layers.svg)
 
-Même `Idempotency-Key` = même intention (double-clic, retry proxy). Premier succès : `201`. Rejeu : `409 Conflict`. Un second `201` débiterait deux fois. Je ne renvoie pas `200` + l’ancien body : le client croirait à un nouveau virement.
+Le Web ne calcule pas le grand livre. La synthèse demande `IWalletReader`. Aujourd’hui l’adaptateur est `SqlWalletReader` : solde = `LedgerPair.NetOf`, mois entrées/sorties, cinq dernières lignes, badge gel. Si SQL Server est down, le site s’ouvre quand même — des zéros, pas un 500.
 
-Débit, crédit, `Transfer`, `IdempotencyRecord`, `AuditLog`, `OutboxMessage` : **un seul commit SQL**. La ligne outbox part avec le grand livre ; un worker publie **après**. Timeout HTTP : l’intention est toujours en base. Hangfire est le worker prévu. Il n’est pas dans le csproj.
+![Paire en partie double](docs/assets/clearpay-ledger.svg)
 
-Les règles sont dans `src/ClearPay.Domain/Ledger`. `LedgerPair` a des tests xUnit. Le mapping EF vers le SQL Compose n’est pas fait. `POST /api/transfers` n’existe pas. Les classes gateway lèvent `NotImplementedException`.
+```mermaid
+flowchart TB
+  subgraph web [ClearPay.Web]
+    razor[Razor Pages TR/EN/DE/FR]
+    api[JSON host]
+  end
+  subgraph app [ClearPay.Application]
+    reader[IWalletReader]
+    exec[ITransferExecutor]
+  end
+  subgraph infra [ClearPay.Infrastructure]
+    sql[SqlWalletReader + EF]
+    id[Identity SQLite]
+  end
+  subgraph domain [ClearPay.Domain]
+    pair[LedgerPair / LedgerEntry]
+  end
+  razor --> reader
+  reader --> sql
+  sql --> pair
+  exec -.->|TASK-06| pair
+```
+
+| Couche | Projet | Contient | Ne contient pas |
+|--------|--------|----------|-----------------|
+| UI + hôte | `ClearPay.Web` | Razor, cookie, culture, `:5153` | Net du ledger, `UPDATE Balance` |
+| Cas d’usage | `ClearPay.Application` | Ports, DTO, FluentValidation | Chaînes de connexion |
+| Adaptateurs | `ClearPay.Infrastructure` | EF SQL Server, Identity SQLite, stubs gateway | Razor / CSS |
+| Règles | `ClearPay.Domain` | `LedgerPair`, `Wallet` (pas de champ solde) | EF, HTTP, ASP.NET |
+
+Les dépendances pointent **vers l’intérieur**. Le Domain ne référence ni EF ni ASP.NET.
+
+---
 
 ## Ce qui s’ouvre aujourd’hui
 
-Identity cookie, SQLite : `App_Data/identity.db`. Inscription, connexion, **0,00 ₺**. Ce chiffre est encore en dur dans le PageModel — ce n’est pas le net du grand livre.
+Identity cookie, SQLite : `App_Data/identity.db`. Langues : **Türkçe (défaut), English, Deutsch, Français** — sélecteur dans le layout, pas un 9ᵉ écran.
 
-| Page | Route | État |
-|------|--------|------|
-| Connexion | `/Account/Login` (`/giris`) | OK |
-| Inscription | `/Account/Register` (`/kayit`) | OK |
-| Özet | `/` | Synthèse vide |
-| Havale | `/havale` | Formulaire ; Gönder désactivé |
-| Yükle / Çek | `/yukle-cek` | Formulaire ; boutons désactivés |
-| Hareketler | `/hareketler` | Table vide ; filtres off |
-| Dekont | — | Pas encore |
+| Écran | Route | État honnête |
+|-------|--------|----------------|
+| Connexion | `/giris` | OK |
+| Inscription | `/kayit` | OK |
+| Synthèse | `/` | **Live** depuis le net du ledger (zéros sans SQL / sans lignes) |
+| Virement | `/havale` | Formulaire ; Envoyer désactivé |
+| Recharger / retirer | `/yukle-cek` | Formulaire ; boutons désactivés |
+| Mouvements | `/hareketler` | Table vide ; filtres off |
+| Reçu | — | Pas encore |
 | Admin | — | Pas encore (menu caché) |
 
-`GET /api/health` → `{ "status": "ok", "product": "ClearPay" }`. Pas de JWT, pas de Swagger, pas de paquet Hangfire, pas de Redis, pas de RabbitMQ.
+`GET /api/health` → `{ "status": "ok", "product": "ClearPay" }`.
 
-`docker compose` lance SQL Server 2022 sur `localhost,1433`. L’app web ne lit pas encore cette base. Identity n’a pas besoin de Docker.
+**Pas encore dans le produit (volontairement) :** `POST /api/transfers` + HTTP **409**, worker Hangfire outbox, JWT/Swagger, Redis/Rabbit dans l’app, URL Azure publique.
+
+La **règle** est déjà verrouillée : même `Idempotency-Key` = même intention → 409, pas un second débit. La clé unique est sur la table. L’endpoint HTTP est TASK-06.
+
+---
 
 ## Lancer
 
-SDK .NET 8. Docker Desktop pour le conteneur SQL.
+SDK .NET 8. Docker Desktop pour la synthèse live depuis SQL.
 
 ```bash
 docker compose up -d
 dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
-[http://localhost:5153](http://localhost:5153)
+[http://localhost:5153](http://localhost:5153). Identity n’a pas besoin de Docker. Sans SQL, la synthèse reste `0,00 ₺`.
 
 ```bash
 dotnet test
 dotnet build ClearPay.slnx
 ```
 
-Mot de passe SA local : `.env.example` (`ClearPay_Dev1!`). Docker uniquement. Ne pas committer `.env`. Ne pas le réutiliser sur Azure.
+Mot de passe SA local : `.env.example`. Docker uniquement. Ne pas committer `.env`. Ne pas le réutiliser sur Azure.
 
-La CI (workflow sur `main`) restore et teste `tests/ClearPay.Tests`.
+Bind des données SQL : `D:\ClearPay\data\mssql` (cette machine). Le grand livre de l’app est **SQL Server seulement**. MySQL/Oracle compose sont des sidecars, pas la base du portefeuille.
 
-## Dépôt
+---
+
+## Carte du dépôt
 
 ```
 src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (pas de Balance)
-src/ClearPay.Application      ports (ITransferExecutor, IBankGateway, …), FluentValidation
-src/ClearPay.Infrastructure   Identity (SQLite), stubs gateway qui throw
-src/ClearPay.Web              Razor + MapControllers, profil http :5153
-tests/ClearPay.Tests          LedgerPair + smoke auth/pages
+src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
+src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity SQLite
+src/ClearPay.Web              Razor + localisation + MapControllers
+tests/ClearPay.Tests          LedgerPair, architecture, SqlWalletReader, culture
 docker-compose.yml            SQL Server 2022 — pas l’app web
 ClearPay.slnx
 ```
 
-Web → Application + Infrastructure. Infrastructure → Application → Domain. Le Domain ne référence ni EF ni ASP.NET.
+---
+
+## Feuille de route (honnête)
+
+| Fait | Ensuite |
+|------|---------|
+| TASK-01…05 — repo, Identity, schéma ledger, synthèse live | **TASK-06** — virement, une transaction SQL, HTTP 409 |
+| TASK-15 — GitHub Actions | TASK-07/08 gateway · TASK-11 outbox · TASK-16 URL Azure |
+
+La CI restore et teste `tests/ClearPay.Tests` sur `main`.
+
+---
 
 ## Docs
 
 - [`docs/SPEC.md`](docs/SPEC.md) — écrans et règles d’argent (409, une transaction, outbox)
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — couches, cookie puis JWT
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — couches onion, cookie puis JWT
 - [`docs/FARK.md`](docs/FARK.md) — rapprochement d’abord ; pas un rival Papara
+- [`docs/SATIS.md`](docs/SATIS.md) — pitch 15 secondes
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
+- Pas à pas : [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (public dans ce dépôt). Même liste sur [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — Share → Publish to web pour les lecteurs sans compte Notion.
 
-Cible live : Azure App Service + Azure SQL (West Europe). C’est moi qui ouvre l’abonnement ; pas d’`azurewebsites.net` à cliquer aujourd’hui.
+Cible live : Azure App Service + Azure SQL (West Europe). Pas d’`azurewebsites.net` à cliquer aujourd’hui.
 
 ## Licence
 
