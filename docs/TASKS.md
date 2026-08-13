@@ -14,7 +14,6 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [ ] TASK-12: Redis cache + RabbitMQ (lokal Compose)
 - [ ] TASK-13: xUnit sertleştirme (ledger, 409, API)
 - [ ] TASK-14: İngilizce README + Swagger + CV maddesi
-- [ ] TASK-15: GitHub remote + GitHub Actions
 - [ ] TASK-16: Azure App Service + Azure SQL (açık URL)
 
 ## Doing
@@ -24,12 +23,13 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [x] TASK-01: Repo + MD sistemi + ajan rolleri
 - [x] TASK-02: Solution iskeleti (.NET 8 Clean Arch, Docker SQL, sol menü layout)
 - [x] TASK-03: Giriş + Kayıt + boş cüzdan özeti
+- [x] TASK-15: GitHub remote + GitHub Actions
 
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»
-- **Öncelik TASK-03** (Coder). Architect Application portları (DIP) para özelliği **kapısı**. PageModel’de ledger/havale yok.
-- TASK-16 Azure **şimdi değil** (`docs/CANLI.md`). Ads harcaması yok.
-- Hosting / DNS kullanıcı hesabı gerektirir
+- **Ürün sırası TASK-04.** Deploy: CI landed; TASK-16 URL kullanıcı `az login` + `infra/deploy.ps1` sonrası.
+- TASK-12: Compose Redis/Rabbit var; uygulama bağlı değil. Ads harcaması yok.
+- Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz
-- Satıcı ödemesi ve canlı Redis/Rabbit Q2; Todo’da yok
+- Satıcı ödemesi ve canlı Redis/Rabbit bağlama Q2; Todo’da TASK-12

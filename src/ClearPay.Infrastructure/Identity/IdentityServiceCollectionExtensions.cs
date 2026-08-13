@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,11 +14,24 @@ public static class IdentityServiceCollectionExtensions
         IConfiguration configuration,
         IHostEnvironment environment)
     {
-        var connectionString = ResolveSqliteConnection(
-            configuration.GetConnectionString("Identity"),
-            environment.ContentRootPath);
+        if (environment.IsProduction())
+        {
+            var sql = configuration.GetConnectionString("ClearPay");
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                throw new InvalidOperationException(
+                    "ConnectionStrings:ClearPay is required in Production (Azure SQL). SQLite App_Data is not used live.");
+            }
 
-        services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlite(connectionString));
+            services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(sql));
+        }
+        else
+        {
+            var connectionString = ResolveSqliteConnection(
+                configuration.GetConnectionString("Identity"),
+                environment.ContentRootPath);
+            services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlite(connectionString));
+        }
 
         services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -34,11 +48,14 @@ public static class IdentityServiceCollectionExtensions
 
         services.ConfigureApplicationCookie(options =>
         {
-            options.LoginPath = "/Account/Login";
+            options.LoginPath = "/giris";
             options.LogoutPath = "/Account/Logout";
-            options.AccessDeniedPath = "/Account/Login";
+            options.AccessDeniedPath = "/giris";
             options.Cookie.Name = "ClearPay.Auth";
             options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = environment.IsDevelopment()
+                ? CookieSecurePolicy.SameAsRequest
+                : CookieSecurePolicy.Always;
             options.SlidingExpiration = true;
         });
 
@@ -58,7 +75,7 @@ public static class IdentityServiceCollectionExtensions
         }
 
         var path = raw[prefix.Length..].Trim().Trim('"');
-        if (!Path.IsPathRooted(path))
+        if (!string.IsNullOrWhiteSpace(path) && !Path.IsPathRooted(path))
         {
             path = Path.GetFullPath(Path.Combine(contentRoot, path));
         }

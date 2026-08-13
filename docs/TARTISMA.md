@@ -184,34 +184,6 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
-## T-016 — 2026-08-13 — Paralel Architect (aynı TASK)
-
-- **Kim:** Orchestrator, Architect, Coder (kullanıcı: birden fazla mimar aynı anda kullanılsın; Coder’a söyle)
-- **Konu:** Tek Architect mı, yoksa aynı TASK’ta birden fazla Architect paralel mi?
-- **Seçenekler:**
-  1. **Tek Architect:** yapı işinde bir ajan sırayla şema + ekran-akış + port yazar; Coder bekler.
-  2. **Paralel Architect, aynı TASK:** ayrı OWN dilimleri (SQL/şema, ekran-akış SPEC uyumu, port/DIP/gateway) aynı anda öneri üretir. TASKS.md hâlâ **tek TASK**. Coder Razor/şemayı kararlardan **sonra** yazar.
-- **Karar:** **2.** Aynı TASK içinde birden fazla Architect paralel çalışır. Architect’ler TARTISMA’da hizalanır; Coder’a **tek** HANDOFF el değiştirme notu düşer. İki Architect aynı dosyayı sessizce ezmez; HANDOFF overwrite yok.
-- **Neden:** Şema, ekran-akış ve DIP ayrı OWN; tek ajan sıraya sokunca TASK-04 gecikir. Çok TASK paralel yasak durur. Coder SPEC ekran listesini şişirmez; PageModel’de ledger yok; portlar Application’da. Kazanan seçimi T-017.
-- **Sonra hangi dosya:** T-017; `.cursor/rules/orchestrator.mdc`, `architect.mdc`, `coder.mdc`; `docs/AGENTS.md` Architect satırı; `docs/HANDOFF.md` append (Coder). `src/` yok. TASKS.md yok.
-
----
-
-## T-017 — 2026-08-13 — Paralel öneriden en robust tek seçim
-
-- **Kim:** Orchestrator, Architect, Coder, Payments (kullanıcı: en robust hangisi ise o seçilsin)
-- **Konu:** Paralel Architect taslaklarından hangisi koda gider?
-- **Seçenekler:**
-  1. Coder her taslağı birleştirir / hepsini yazar.
-  2. İlk biten taslak otomatik kazanır.
-  3. **Paralel üret → Orchestrator TARTISMA’da en robust tek kazananı yazar → Coder yalnızca onu uygular.**
-- **Karar:** **3.** Paralel Architect → **en robust tek seçim** → Coder yalnızca onu yazar. Kaybeden öneri kodlanmaz. Orchestrator seçimi TARTISMA’da (yeni T-NNN) yazar; HANDOFF’ta kazanan OWN glob.
-- **Neden (robust tanımı):** (1) SPEC 8 ekran + para kuralları: çift kayıt, 409, negatif bakiye yok, freeze, iade=ters kayıt, outbox aynı SQL tx. (2) `UPDATE Balance` yok; ledger audit’siz düzeltilmez. (3) DIP: para kuralı PageModel’de değil; port + Domain. (4) Tek host, Clean Arch, sahte gateway; lisans/FAST/Papara/9. ekran yok. (5) Yarış, kısmi commit, timeout kaybı, HANDOFF overwrite, aynı dosyayı iki ajanın ezmesi yok. (6) Tartışmasız `src/` yok. Eşitlikte: Payments/ledger + idempotency/outbox’ı koruyan > “kolay UI”; şema netliği > erken özellik.
-- **Sonra hangi dosya:** `.cursor/rules/orchestrator.mdc`, `architect.mdc`, `coder.mdc`; `docs/AGENTS.md`; `docs/HANDOFF.md` append. Coder TARTISMA kazanan OWN glob. `src/` yok. TASKS sırası TASK-04 (değişmez).
-
-
----
-
 ## T-012 — 2026-08-13 — Azure için ajan ne yapar (hesap yok)
 
 - **Kim:** Deploy, Orchestrator (kullanıcı: «azure için gerekli her şey»)
@@ -316,3 +288,43 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Neden:** Klasik n-tier’da BLL EF görür, PageModel ledger hesabı ve `UPDATE Balance` yolu açılır; 409/çift kayıt UI’ye kilitlenir. Onion’da Domain EF/HTTP bilmez; DIP zaten T-007. Kullanıcı her iki adı istedi; iki app SPEC’i kırar. Hexagonal zaten `IWalletReader` / `IBankGateway`.
 - **Sonra hangi dosya:** `docs/ARCHITECTURE.md`; `Program.cs` (`SqlOptions` Web’den çıksın); PageModels `IWalletReader` (TASK-03 boş özet adapter, ledger SQL yok); `tests/ClearPay.Tests` katman testi; HANDOFF append. README / `docker-compose.databases.yml` / Azure dokunulmaz. TASK-04…16 Done değil.
 
+---
+
+## T-016 — 2026-08-13 — Paralel Architect (aynı TASK)
+
+- **Kim:** Orchestrator, Architect, Coder (kullanıcı: birden fazla mimar aynı anda kullanılsın; Coder’a söyle)
+- **Konu:** Tek Architect mı, yoksa aynı TASK’ta birden fazla Architect paralel mi?
+- **Seçenekler:**
+  1. **Tek Architect:** yapı işinde bir ajan sırayla şema + ekran-akış + port yazar; Coder bekler.
+  2. **Paralel Architect, aynı TASK:** ayrı OWN dilimleri (SQL/şema, ekran-akış SPEC uyumu, port/DIP/gateway) aynı anda öneri üretir. TASKS.md hâlâ **tek TASK**. Coder Razor/şemayı kararlardan **sonra** yazar.
+- **Karar:** **2.** Aynı TASK içinde birden fazla Architect paralel çalışır. Architect’ler TARTISMA’da hizalanır; Coder’a **tek** HANDOFF el değiştirme notu düşer. İki Architect aynı dosyayı sessizce ezmez; HANDOFF overwrite yok.
+- **Neden:** Şema, ekran-akış ve DIP ayrı OWN; tek ajan sıraya sokunca TASK-04 gecikir. Çok TASK paralel yasak durur. Coder SPEC ekran listesini şişirmez; PageModel’de ledger yok; portlar Application’da. Kazanan seçimi T-017.
+- **Sonra hangi dosya:** T-017; `.cursor/rules/orchestrator.mdc`, `architect.mdc`, `coder.mdc`; `docs/AGENTS.md` Architect satırı; `docs/HANDOFF.md` append (Coder). `src/` yok. TASKS.md yok.
+
+---
+
+## T-017 — 2026-08-13 — Paralel öneriden en robust tek seçim
+
+- **Kim:** Orchestrator, Architect, Coder, Payments (kullanıcı: en robust hangisi ise o seçilsin)
+- **Konu:** Paralel Architect taslaklarından hangisi koda gider?
+- **Seçenekler:**
+  1. Coder her taslağı birleştirir / hepsini yazar.
+  2. İlk biten taslak otomatik kazanır.
+  3. **Paralel üret → Orchestrator TARTISMA’da en robust tek kazananı yazar → Coder yalnızca onu uygular.**
+- **Karar:** **3.** Paralel Architect → **en robust tek seçim** → Coder yalnızca onu yazar. Kaybeden öneri kodlanmaz. Orchestrator seçimi TARTISMA’da (yeni T-NNN) yazar; HANDOFF’ta kazanan OWN glob.
+- **Neden (robust tanımı):** (1) SPEC 8 ekran + para kuralları: çift kayıt, 409, negatif bakiye yok, freeze, iade=ters kayıt, outbox aynı SQL tx. (2) `UPDATE Balance` yok; ledger audit’siz düzeltilmez. (3) DIP: para kuralı PageModel’de değil; port + Domain. (4) Tek host, Clean Arch, sahte gateway; lisans/FAST/Papara/9. ekran yok. (5) Yarış, kısmi commit, timeout kaybı, HANDOFF overwrite, aynı dosyayı iki ajanın ezmesi yok. (6) Tartışmasız `src/` yok. Eşitlikte: Payments/ledger + idempotency/outbox’ı koruyan > “kolay UI”; şema netliği > erken özellik.
+- **Sonra hangi dosya:** `.cursor/rules/orchestrator.mdc`, `architect.mdc`, `coder.mdc`; `docs/AGENTS.md`; `docs/HANDOFF.md` append. Coder TARTISMA kazanan OWN glob. `src/` yok. TASKS sırası TASK-04 (değişmez).
+
+---
+
+## T-020 - 2026-08-13 - Lokal SQL Server + MySQL + Oracle (ayri compose)
+
+- **Kim:** Deploy / Orchestrator (kullanici: uc motor lokal + test; cok-DB uygulama sonra)
+- **Konu:** Oracle, SQL Server, MySQL bu PC'de ayaga kalksin; docker-compose.yml Redis/Rabbit ajanina dokunulmasin.
+- **Secenekler:**
+  1. Ucunu mevcut docker-compose.yml'e ekle (Redis/Rabbit/SQL ajanini ezer).
+  2. **Ayri docker-compose.databases.yml:** MySQL :3306 + Oracle XE :1521. SQL Server mevcut compose sql (:1433) ve/veya Windows native instance. Cok-DB uygulama **sonra**; SPEC 8 ekran sabit.
+  3. Native Oracle XE Windows kurucusu (agir, OTN hesap).
+- **Karar:** **2.** SQL ikinci instance yok. Oracle resmi/kolay imaj: gvenzl/oracle-xe:21-slim. WSL2/Hyper-V ozellikleri acildi; Docker daemon reboot sonrasi.
+- **Neden:** Kullanici uc motor + lokal test istedi; urun uygulamasi sonra. Compose carpismasin. Azure hesap / TASK-16 / LED yok. Sifre git'e unique secret olarak yazilmaz; lokal demo .env.example ile ayni.
+- **Sonra hangi dosya:** docker-compose.databases.yml, .env.example, scripts/db-smoke.ps1, docs/DEPLOY.md (lokal motor tablosu), docs/HANDOFF.md append. docker-compose.yml / CANLI / Razor dokunulmaz.

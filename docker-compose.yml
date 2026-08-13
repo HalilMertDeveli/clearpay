@@ -1,8 +1,8 @@
-# SQL Server only for now (TASK-02+).
-# Web is not a Compose service yet — run on the host:
+# SQL Server (ledger + live Identity). Web is not a Compose service:
 #   docker compose up -d
 #   dotnet run --project src/ClearPay.Web --launch-profile http
-# Redis + RabbitMQ: TASK-12 (CALISMA-PLANI Faz 4). Live Azure: docs/CANLI.md (not this file).
+# Redis + RabbitMQ: local TASK-12 stack. App does not use them until TASK-12.
+# Live Azure: docs/CANLI.md (not this file).
 services:
   sql:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -15,5 +15,28 @@ services:
     volumes:
       - clearpay-sql:/var/opt/mssql
 
+  redis:
+    image: redis:7-alpine
+    container_name: clearpay-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - clearpay-redis:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: clearpay-rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER:-guest}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASS:-guest}"
+    volumes:
+      - clearpay-rabbit:/var/lib/rabbitmq
+
 volumes:
   clearpay-sql:
+  clearpay-redis:
+  clearpay-rabbit:

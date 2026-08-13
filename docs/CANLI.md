@@ -1,134 +1,99 @@
 # CANLI — ClearPay Q1 public URL
 
-Kaynak: `docs/CALISMA-PLANI.md` **Faz 5** (Actions + Azure). Bu belge **plan**; şimdi kod publish edilmez. Azure / DNS / ödeme hesabı **kullanıcı** açar; ajan talimat yazar.
+Kaynak: `docs/CALISMA-PLANI.md` **Faz 5**. Azure / DNS / ödeme hesabı **kullanıcı** açar; ajan şablon ve pipeline yazar.
 
-**Orchestrator:** TASK-16 **başlatma** — kullanıcı Azure aboneliği yokken. Sıra: TASK-15 (GitHub Actions `dotnet test`) → abonelik + RG onayı → TASK-16 (açık URL). `dotnet test` kırmızıysa Done yok.
+**Orchestrator:** TASK-16 Done yalnızca tarayıcıda açık URL. Abonelik yokken ajan Portal açmaz. TASK-15 = GitHub Actions `dotnet test`. `dotnet test` kırmızıysa Actions Done yok.
 
 SEO/Ads: canlı URL **sonrası**; demo disclaimer (gerçek banka değil).
 
-İnsan Azure/DNS checklist’i **bu dosyada**. `docs/SENIN-ISLERIN.md` başka ajanın (öğrenme); üzerine yazılmadı.
-
 ## Nerede
 
-| Parça | Q1 | Q2 (sonra) |
-|--------|----|------------|
-| Web | Azure App Service **Linux**, .NET 8 | aynı |
-| Veri | **Azure SQL** (ledger + Identity; SQLite canlıda yok) | aynı |
-| CI/CD | GitHub Actions: `main` → build/test; TASK-16’da publish | aynı |
-| Kuyruk | **Hangfire in-process** + outbox tablosu | Redis + Rabbit / CloudAMQP |
-| Cache | yok | Azure Cache for Redis |
+| Parça | Lokal Compose | Q1 Azure | Q2 (sonra) |
+|--------|----------------|----------|------------|
+| Web | host `dotnet run` :5153 | App Service **Linux**, .NET 8 | aynı |
+| Identity | SQLite `App_Data` | **Azure SQL** (`ConnectionStrings__ClearPay`) | aynı |
+| Ledger | Docker SQL Server | **Azure SQL** (TASK-04+) | aynı |
+| CI/CD | — | GitHub Actions: `main` → build/test; publish `AZURE_WEBAPP_NAME` doluysa | aynı |
+| Kuyruk | RabbitMQ container (bağlı değil) | Hangfire in-process + outbox | CloudAMQP (`ConnectionStrings__RabbitMq`) |
+| Cache | Redis container (bağlı değil) | yok | Azure Cache for Redis |
 
-**Bölge:** **West Europe** (TR gecikmesi düşük). Alternatif: Canada Central (LED sitesi oradaydı; tutarlılık). Tercih West Europe.
-
-Kaynak grubu önerisi: `rg-clearpay-weu`.
+**Bölge:** **West Europe**. Kaynak grubu: `rg-clearpay-weu`. Şablon: `infra/main.bicep`.
 
 ## Güzel URL (üç kademe)
-
-### 1) Q1 ücretsiz / ucuz (şimdilik hedef)
 
 App Service adı sırayla dene (küresel tekil):
 
 1. `clearpay` → **https://clearpay.azurewebsites.net**
-2. Doluysa `clearpay-wallet` → `https://clearpay-wallet.azurewebsites.net`
-3. Doluysa `hm-clearpay` → `https://hm-clearpay.azurewebsites.net`
+2. Doluysa `clearpay-wallet`
+3. Doluysa `hm-clearpay` (Bicep varsayılanı)
 
-Path’ler **küçük harf**, query/path çirkinliği yok:
+Path: `/` özet, `/giris`, `/kayit`, `/havale`, `/yukle-cek`, `/hareketler`, `/admin`, `/api/health`.
 
-| Path | Ne |
-|------|----|
-| `/` | Cüzdan özeti (auth sonrası). Anonim → `/giris` |
-| `/giris` | Giriş |
-| `/kayit` | Kayıt |
-| `/havale` | Havale |
-| `/yukle-cek` | Yükle / çek |
-| `/hareketler` | Hareketler |
-| `/admin` | Admin (rol `Admin`) |
-| `/api/...` | JSON API (`/api/health`, sonra `/api/transfers`) |
-| `/swagger` | Swagger; **prod’da kapatılabilir** |
+Özel domain sonra: sen satın alırsın; CNAME → `<app>.azurewebsites.net`; HTTPS Azure managed cert. Ajan registrar açmaz.
 
-HANDOFF (Coder TASK-03): bugün giriş `/Account/Login`, kayıt `/Account/Register`. Canlı path’ler `/giris` ve `/kayit` olmalı — **Coder** `@page` ekler. Deploy Razor’a dokunmaz. `/havale` `/yukle-cek` `/hareketler` zaten küçük harf.
+## Senin tıklayacakların
 
-### 2) Özel domain (kullanıcı satın alır)
+1. Azure aboneliği (öğrenci veya pay-as-you-go). F1 denemek serbest.
+2. [Azure CLI](https://aka.ms/installazurecliwindows) → `az login`
+3. Repo kökünde: `.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`  
+   İsim doluysa `-WebAppName hm-clearpay`. Q2 Redis: `-IncludeQ2`.
+4. Portal → App Service → **Get publish profile**. GitHub repo → Settings → Secrets → `AZURE_WEBAPP_PUBLISH_PROFILE`. Variables → `AZURE_WEBAPP_NAME`.
+5. GitHub Actions: **Azure deploy** workflow (veya `main` push; değişken boşsa job atlanır).
+6. Tarayıcı: `https://<app>.azurewebsites.net/api/health` sonra `/giris`.
+7. Q2 kuyruk: [CloudAMQP](https://www.cloudamqp.com/) hesabını **sen** açarsın; URL’yi `ConnectionStrings__RabbitMq` olarak yapıştır. Repo’ya yazılmaz.
+8. Domain (isteğe bağlı): DNS CNAME + App Service custom domain.
 
-Öneri sırası:
+## Ajanın hazırladığı (hesap açmaz)
 
-1. `clearpay.app`
-2. `pay.halilm.dev`
-3. `clearpay.<onun-domain>`
-
-DNS (kullanıcı paneli):
-
-- `www` (veya `pay` / `clearpay` alt alanı): **CNAME** → `<app>.azurewebsites.net`
-- Apex (`clearpay.app`): Azure **A / ALIAS** (registrar destekliyorsa ALIAS; değilse Azure’un verdiği IP / Traffic Manager değil, App Service custom domain sihirbazı)
-
-HTTPS: **Azure managed certificate** (App Service TLS). Let’s Encrypt elle gerekmez.
-
-Ajan domain satın almaz, registrar hesabı açmaz.
-
-### 3) Path tasarımı (sabit)
-
-- Site kökü = cüzdan özeti (cookie sonrası).
-- Login `/giris`, kayıt `/kayit`.
-- Admin `/admin` + rol.
-- API `/api/...`. Swagger `/swagger` — Production’da `ASPNETCORE_ENVIRONMENT=Production` ile kapalı tutulabilir (TASK-14/16).
-
-## Senin yapacakların vs ajan
-
-**Kullanıcı (hesap / para / sır):**
-
-1. Azure aboneliği: öğrenci veya pay-as-you-go. **F1** denemek serbest.
-2. Kaynak grubu onayı: West Europe, ad `rg-clearpay-weu`.
-3. Domain (isteğe bağlı kademe 2): satın al + DNS CNAME/ALIAS.
-4. Portal → App Service → **Configuration / App Settings** (veya Connection strings) — sen yapıştırırsın. Repo’ya yazılmaz.
-5. GitHub repo zaten `HalilMertDeveli/clearpay`. Azure’a publish için GitHub bağlantısı / publish profile **sen** onaylarsın (TASK-16).
-
-**Ajan (kod / yaml; hesap açmaz):**
-
-- TASK-15: `.github/workflows/` — `dotnet restore` → `build` → `test`. Secret yok.
-- App Settings **slot isimleri** (aşağıda). TASK-16’da publish workflow + Linux App Service talimatı.
-- Hangfire Q1: aynı process, SQL storage (Azure SQL). Redis/Rabbit canlı bağ **Q2**.
+- `.github/workflows/ci.yml` — restore / build / test
+- `.github/workflows/azure-deploy.yml` — `vars.AZURE_WEBAPP_NAME` doluysa zip deploy
+- `infra/main.bicep` — plan F1 Linux, web .NET 8, Azure SQL Basic, Azure servis firewall
+- `infra/q2.bicep` — Azure Cache for Redis Basic C0
+- `infra/deploy.ps1` — RG + deployment + rastgele `Jwt__SigningKey` (yazdırılmaz)
+- Production Identity: `UseSqlServer(ConnectionStrings:ClearPay)`. SQLite prod değil.
 
 ## App Settings isimleri (değer yok)
 
 Portal’da oluştur; **değerleri git’e koyma**.
 
-| Ad | Ne |
-|----|----|
-| `ConnectionStrings__ClearPay` | Azure SQL (ledger + Identity) |
-| `Jwt__SigningKey` | API JWT (32+ rastgele bayt) |
-| `ASPNETCORE_ENVIRONMENT` | `Production` |
-| `Hangfire__WorkerEnabled` | Q1 `true` (in-process) |
+| Ad | Ne | Ne zaman |
+|----|-----|----------|
+| `ConnectionStrings__ClearPay` | Azure SQL (ledger + Identity) | Q1 (Bicep basar) |
+| `Jwt__SigningKey` | API JWT (32+ rastgele bayt) | Q1 (`deploy.ps1`) |
+| `ASPNETCORE_ENVIRONMENT` | `Production` | Q1 |
+| `Hangfire__WorkerEnabled` | `true` (in-process) | Q1 |
+| `ConnectionStrings__Redis` | `host:6380,ssl=true,password=…` | Q2 |
+| `ConnectionStrings__RabbitMq` | CloudAMQP `amqps://…` | Q2 |
 
-Connection string Azure SQL’den kopyalanır (`...database.windows.net`; `ClearPay_Dev1!` kullanılmaz).
+Lokal Compose eşleri (Azure’da kullanılmaz): SQL `ClearPay_Dev1!`, Redis `localhost:6379`, Rabbit `amqp://guest:guest@localhost:5672/`.
 
 ## Maliyet (uyarı)
 
 | Kaynak | SKU | Not |
 |--------|-----|-----|
-| App Service | **F1** ücretsiz | Always On **yok** — ilk istek soğuk (10–30 sn). Demo için kabul. |
-| App Service | **B1** | Always On var; ücretli. Mülakat demosu F1 yeter. |
-| Azure SQL | **Basic** veya **Serverless** | Serverless idle’da ucuz; ilk sorgu uyanır. |
+| App Service | **F1** ücretsiz | Always On yok — ilk istek 10–30 sn. |
+| App Service | **B1** | Always On; ücretli. |
+| Azure SQL | **Basic** | Bicep varsayılanı. |
+| Redis C0 | Q2 | `-IncludeQ2`; birkaç dolar. |
+| CloudAMQP | Q2 | Azure dışı; sen kaydolursun. |
 
-F1 + soğuk başlama: tarayıcıda ilk açılış yavaş görünebilir; `/api/health` ile ısındır.
+F1 soğuk başlama: `/api/health` ile ısındır.
 
-Aylık kaba (2026, West Europe, F1 + SQL Basic/Serverless düşük kullanım): web **0 ₺**, SQL birkaç dolar mertebesi. Kesin rakam portal fiyatlandırıcıda.
-
-## Sıra (şimdi deploy yok)
+## Sıra
 
 ```
-TASK-03 … TASK-14   site + ledger + test + README/Swagger
-TASK-15             GitHub Actions: restore/build/test (publish yok)
-Kullanıcı           Azure aboneliği + RG onayı
-TASK-16             App Service Linux + Azure SQL + https://….azurewebsites.net
-(isteğe bağlı)      özel domain + managed cert
-Q2                  Redis + Rabbit — ayrı karar; TASK-16 şartı değil
+TASK-15             GitHub Actions restore/build/test (bu şablon)
+Kullanıcı           az login + .\infra\deploy.ps1 + GitHub secret
+TASK-16             açık URL = Done
+Q2                  Redis Bicep + CloudAMQP — TASK-16 şartı değil
+TASK-12             uygulama Redis/Rabbit’e bağlanır (şimdi yalnızca container)
 ```
 
 TASK-16 kabul: tarayıcıda açık URL, giriş, boş/canlı özet. Redis şart değil.
 
 ## Yasak
 
-- Ajan Azure / DNS / domain / ödeme hesabı açmaz.
+- Ajan Azure / DNS / domain / CloudAMQP / ödeme hesabı açmaz.
 - Repo’ya connection string, JWT, SQL SA, publish profile.
-- TASK-16’yı abonelik yokken başlatmak.
 - Canlıda lokal `ClearPay_Dev1!` veya SQLite `App_Data`.
+- AWS, GCP, Kafka, Kubernetes (SPEC dışı).

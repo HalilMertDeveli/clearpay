@@ -1,0 +1,9 @@
+using 'main.bicep'
+
+param webAppName = 'hm-clearpay'
+param location = 'westeurope'
+param sqlAdminLogin = 'clearpayadmin'
+// Pass at deploy time: az ... --parameters sqlAdminPassword=...
+// param sqlAdminPassword = ''
+param deployQ2 = false
+param databaseName = 'ClearPay'
