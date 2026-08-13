@@ -2,8 +2,8 @@ namespace ClearPay.Domain.Ledger;
 
 /// <summary>
 /// One customer purse. Unique <see cref="UserId"/> (1 user = 1 wallet).
-/// Balance is never stored as an independently updated column: it is the net of
-/// <see cref="LedgerEntry"/> amounts (credits positive, debits negative).
+/// Balance is never stored as an independently updated column: it is
+/// <see cref="LedgerPair.NetOf"/> over signed <see cref="LedgerEntry"/> rows.
 /// Frozen wallets cannot send or withdraw; incoming credit may still post.
 /// </summary>
 public sealed class Wallet

@@ -101,6 +101,23 @@ public static class LedgerPair
             throw new InvalidOperationException("Pair must include one debit (−) and one credit (+).");
     }
 
+    /// <summary>
+    /// TASK-04 invariant (test omurgası): bakiye = imzalı <see cref="LedgerEntry"/> toplamı.
+    /// Wallet’ta Balance kolonu yok; <c>UPDATE Balance</c> yok. Tester: EF’siz unit test.
+    /// </summary>
+    public static decimal NetOf(IEnumerable<LedgerEntry> entries, Guid walletId)
+    {
+        ArgumentNullException.ThrowIfNull(entries);
+        decimal net = 0m;
+        foreach (var entry in entries)
+        {
+            if (entry.WalletId == walletId)
+                net += entry.Amount;
+        }
+
+        return net;
+    }
+
     /// <summary>Negatif bakiye yok: currentNet + debitAmount (debitAmount &lt; 0) must stay ≥ 0.</summary>
     public static bool WouldGoNegative(decimal currentNet, decimal debitAmount)
     {
