@@ -49,4 +49,8 @@ TASK-02 skeleton is in the repo. Next: **TASK-03** login, register, empty wallet
 - [AGENTS](docs/AGENTS.md) — roles
 - [DEPLOY](docs/DEPLOY.md) — local / Azure
 - [Öğrenme](docs/OGRENME.md) — neden böyle (Turkish)
+- [Kronik](docs/KRONIK.md) — start-to-now learning chronicle (Turkish)
 - [Senin işlerin](docs/SENIN-ISLERIN.md) — human-only checklist
+- [Ödeme (senin)](docs/ODEME-SENIN.md) — demo payment: what you do / don’t do (Turkish)
+- [SATIS](docs/SATIS.md) — interview pitch / CV (Turkish)
+- [FARK](docs/FARK.md) — reconciliation-first ledger; not a Papara rival (Turkish)

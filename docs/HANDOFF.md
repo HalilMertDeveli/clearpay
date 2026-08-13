@@ -2,6 +2,13 @@
 
 Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanıcı checklist’i: `docs/SENIN-ISLERIN.md`. Bölüm silme / üzerine yazma.
 
+## 2026-08-13 — Architect (SOLID ports)
+
+- **OWN:** `src/ClearPay.Application/Ports|Wallets|Transfers|Banking`, `src/ClearPay.Infrastructure/{DependencyInjection,Time,Persistence,Banking}`. Domain/Ledger ve Razor dokunulmadı. Havale API yok.
+- Portlar: `IWalletReader`, `ITransferExecutor`, `IIdempotencyStore`, `IClock`, `IBankGateway`. Stub’lar `NotImplementedException` (TASK-05/06/07/08). `SystemClock` gerçek. Default gateway: `RestBankGateway`; `SoapBankGateway` kayıtlı, bağlanmamış.
+- **Coder:** `Program.cs` — `using ClearPay.Infrastructure.DependencyInjection;` ve `builder.Services.AddClearPay();` (Architect Program.cs yazmadı). PageModel’e para kuralı koyma; `IWalletReader` / `ITransferExecutor` enjekte et.
+- `docs/ARCHITECTURE.md` SOLID haritası güncellendi.
+
 ## 2026-08-13 — Architect
 
 - `docs/ARCHITECTURE.md` origin/main’de (`62bbddd`): katmanlar, SPEC ekran haritası, tek host, cookie sonra JWT, ledger Web dışında, Q1 Hangfire/outbox vs Q2 Redis/Rabbit.
@@ -149,8 +156,32 @@ Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanı
 
 Yönetici değerlendirmesi: `docs/YONETICI-RAPORU.md`
 
+## 2026-08-13 — Sales (wedge)
+
+- **OWN:** `docs/FARK.md` (asıl), `docs/SATIS.md`, `.cursor/rules/sales.mdc`. Razor yok. Ads yok. FAST lisansı uydurulmadı.
+- **Tek tercih sebebi:** mutabakat-öncelikli defter. Cümle (FARK üstü + SATIS başlık): her kuruşun +/− satırı ve correlation id’si sizin defterinizde — Papara/iyzico/FAST/kart “bakiye güncellendi” der.
+- Kapalı devre (yemek/avans) sahne; pazaryeri TASK yok. Developer API = aynı motorun mülakat cümlesi, FAST yerine ürün değil.
+- **FARK.md:** kimin sorunu / bugün / neden / ne değiliz; tek tablo onlar/biz/mülakat (cüzdan + PSP + FAST + 3DS + CRUD). ininal + Stripe kategoride.
+- **SATIS.md:** 15s pitch wedge ile. Designer/SEO: FARK one-liner. Coder: isteğe bağlı **Neden ClearPay** footer sonra.
+- Tüketici Papara yerini almıyoruz. README Docs’a SATIS/FARK linki bu commit’te.
+
 ## 2026-08-13 — Designer DONE
 
 - Origin `666dd32`: `docs/TASARIM.md`, `docs/MARKA.md`, `wwwroot/css/brand.css`. Relaunch yok.
 - Coder TASK-03: `_Layout` / `_AuthLayout`’a `brand.css` link (tek iş). Razor’u Designer yazmaz.
 - Rapor: Designer **yeşil** (`docs/YONETICI-RAPORU.md`).
+
+## 2026-08-13 — Öğrenme (KRONIK)
+
+- **OWN:** `docs/KRONIK.md` (asıl okuma), `docs/OGRENME.md` (üstte KRONIK link), `docs/SENIN-ISLERIN.md` + `docs/ODEME-SENIN.md` (ödeme nasıl). README/AGENTS birer satır. `src/` yok.
+- Kullanıcı istedi: başından her şey tek dokümanda. KRONIK 13 bölüm (ne/neden/öğren) + okuma sırası. TASK-03 **WIP** diye yazıldı.
+- Ödeme: lisans/Papara/FAST yok; demo akış Docker → 5153 → 409 sonra. Ads “ucuz havale” yok.
+- Commit: yalnızca bu docs.
+
+## 2026-08-13 — Tester (NetOf / TASK-04)
+
+- **OWN:** `tests/ClearPay.Tests/LedgerPairTests.cs`, `tests/ClearPay.Tests/ClearPay.Tests.csproj` (Domain project ref). Domain/Web dokunulmadı.
+- **Geçti:** 8/8 `LedgerPairTests` — `NetOf` bakiye = imzalı satır toplamı (40 − 15 → from −25 / to +25; yabancı cüzdan ve boş liste 0). `Create` +/− toplam 0; `CreateRefund` ters; `WouldGoNegative`; frozen `CanDebit`.
+- **Kanıt:** havale 40 ₺ + ters 15 ₺ → `NetOf(from)=-25`, `NetOf(to)=25`, iki net toplamı 0. `UPDATE Balance` yok.
+- **Kaldı (Web, Coder WIP):** tam `dotnet test` Application Identity + FluentValidation / TestHost `/api/health` PipeWriter (.NET 10 testhost) yüzünden kırmızı olabilir. Ledger unit yeşil. TASK-06 409 skip duruyor.
+- Coder: `appsettings.json` duplicate `ConnectionStrings:Identity` olursa host ayağa kalkmaz (daha önce görüldü; şu an dosya tek key).

@@ -1,0 +1,33 @@
+---
+description: Sales — mülakat pitch, CV, demo copy (lisanslı cüzdan değil)
+globs: docs/{SATIS,FARK}.md
+alwaysApply: false
+---
+
+# Sales
+
+ClearPay **demo / CV ürünüdür**; lisanslı ödeme kuruluşu, e-para veya banka değildir.
+«Satış» = mülakat + GitHub README + demo site copy. Papara ile gerçek para için yarışılmaz.
+
+**Kilit wedge (değiştirme):** mutabakat-öncelikli defter — her kuruş +/− ve correlation id sizin defterinizde. Papara/iyzico/FAST/kart “bakiye güncellendi” der. Tüketici cüzdanı yerine geçmeyiz.
+
+## OWN
+- `docs/SATIS.md` — 15s headline, 2 dk, CV
+- `docs/FARK.md` — tercih sürücüsü + onlar/biz/mülakat
+- Bu kural
+
+## Ses
+- Hiring manager / teknik mülakatçı. Müşteri kazanma, komisyon, kampanya yok.
+- Her genel iddia: **Demo — sahte banka gateway.**
+- Papara / Tosla / Paycell / ininal **rakip pazar** değil; referans kategori.
+- iyzico / PayTR / Stripe **checkout PSP**; ClearPay sanal POS değildir.
+- Banka mobil havale (FAST/EFT) **UX hissi**; gerçek FAST / BOA / IBAN yok.
+
+## Yasak
+- Go-to-market, Google Ads harcaması, “Papara alternatifi”, BDDK / lisans iddiası
+- FAST, BOA, gerçek POS, kart acquiring, satıcı pazaryeri (Q2; Coder’a şimdi söyleme)
+- Sahte özellik uydurma; fark **kodda olan** (veya TASK kuyruğunda kilitli) mühendislik
+- LED teknik destek reposuna dokunma
+
+## Handoff
+Designer / SEO: `docs/FARK.md` one-liner’ları. Coder: isteğe bağlı footer **Neden ClearPay** (sonra). Ads: `docs/ADS.md` — harcama yok.
