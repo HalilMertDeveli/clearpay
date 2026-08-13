@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>  <data name="AccountStatus" xml:space="preserve"><value>Kontostatus</value></data>
+  <data name="Activity" xml:space="preserve"><value>Bewegungen</value></data>
+  <data name="ActivityLede" xml:space="preserve"><value>Überweisungen, Aufladungen und Abhebungen Ihrer Wallet.</value></data>
+  <data name="AmountTry" xml:space="preserve"><value>Betrag (₺)</value></data>
+  <data name="AvailableBalance" xml:space="preserve"><value>Verfügbares Guthaben</value></data>
+  <data name="BackToWallet" xml:space="preserve"><value>Zurück zur Wallet</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="ColAmount" xml:space="preserve"><value>Betrag</value></data>
+  <data name="ColCounterparty" xml:space="preserve"><value>Gegenpartei</value></data>
+  <data name="ColDate" xml:space="preserve"><value>Datum</value></data>
+  <data name="ColRef" xml:space="preserve"><value>Vorgangs-Nr.</value></data>
+  <data name="ColStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="ColTxn" xml:space="preserve"><value>Vorgang</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>Passwort wiederholen</value></data>
+  <data name="CreateAccount" xml:space="preserve"><value>Konto erstellen</value></data>
+  <data name="DemoDisclaimer" xml:space="preserve"><value>Demo — gefälschtes Gateway für Aufladungen</value></data>
+  <data name="DemoWallet" xml:space="preserve"><value>Demo-Wallet</value></data>
+  <data name="Description" xml:space="preserve"><value>Verwendungszweck</value></data>
+  <data name="DestinationAccount" xml:space="preserve"><value>Zielkonto</value></data>
+  <data name="DuplicateEmail" xml:space="preserve"><value>Diese E-Mail ist bereits registriert.</value></data>
+  <data name="Email" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="EmptyMovementsHint" xml:space="preserve"><value>Ihre erste Überweisung oder Aufladung erscheint hier.</value></data>
+  <data name="EmptyMovementsTitle" xml:space="preserve"><value>Noch keine Bewegungen.</value></data>
+  <data name="EmptyPeriodHint" xml:space="preserve"><value>Erweitern Sie Datum oder Art, oder senden Sie die erste Überweisung von der Übersicht.</value></data>
+  <data name="EmptyPeriodTitle" xml:space="preserve"><value>In diesem Zeitraum keine Bewegungen.</value></data>
+  <data name="Error" xml:space="preserve"><value>Fehler</value></data>
+  <data name="ErrorLede" xml:space="preserve"><value>Es ist ein Fehler aufgetreten</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtern</value></data>
+  <data name="FilterAll" xml:space="preserve"><value>Alle</value></data>
+  <data name="FilterFrom" xml:space="preserve"><value>Von</value></data>
+  <data name="FilterStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="FilterType" xml:space="preserve"><value>Art</value></data>
+  <data name="FullName" xml:space="preserve"><value>Name</value></data>
+  <data name="HaveAccount" xml:space="preserve"><value>Bereits ein Konto?</value></data>
+  <data name="HistoryKicker" xml:space="preserve"><value>Verlauf</value></data>
+  <data name="InvalidCredentials" xml:space="preserve"><value>E-Mail oder Passwort ist falsch.</value></data>
+  <data name="InvalidEmail" xml:space="preserve"><value>Geben Sie eine gültige E-Mail ein.</value></data>
+  <data name="Language" xml:space="preserve"><value>Sprache</value></data>
+  <data name="LinkedAccount" xml:space="preserve"><value>Verknüpftes Konto</value></data>
+  <data name="MainMenu" xml:space="preserve"><value>Hauptmenü</value></data>
+  <data name="MetaActivity" xml:space="preserve"><value>Wallet-Bewegungen. Demo — gefälschtes Gateway für Aufladungen.</value></data>
+  <data name="MetaDefault" xml:space="preserve"><value>ASP.NET Core 8 Digital-Wallet-Demo. Demo — gefälschtes Gateway für Aufladungen.</value></data>
+  <data name="MetaOverview" xml:space="preserve"><value>Wallet-Saldo, Zu- und Abgänge in diesem Monat, letzte Bewegungen. Demo — gefälschtes Gateway für Aufladungen.</value></data>
+  <data name="MetaRegister" xml:space="preserve"><value>Kundenkonto für die Portfolio-Wallet eröffnen. Demo — gefälschtes Gateway für Aufladungen.</value></data>
+  <data name="MetaSignIn" xml:space="preserve"><value>ASP.NET Core 8 Digital-Wallet-Demo. Anmelden. Demo — gefälschtes Gateway für Aufladungen.</value></data>
+  <data name="MetaTopUpWithdraw" xml:space="preserve"><value>Wallet aufladen oder Guthaben abheben. Demo — gefälschtes Gateway für Aufladungen.</value></data>
+  <data name="MetaTransfer" xml:space="preserve"><value>Wallet-zu-Wallet-Überweisung (Demo). Demo — gefälschtes Gateway für Aufladungen.</value></data>
+  <data name="MonthIn" xml:space="preserve"><value>Diesen Monat eingehend</value></data>
+  <data name="MonthOut" xml:space="preserve"><value>Diesen Monat ausgehend</value></data>
+  <data name="NavActivity" xml:space="preserve"><value>Bewegungen</value></data>
+  <data name="NavOverview" xml:space="preserve"><value>Übersicht</value></data>
+  <data name="NavTopUpWithdraw" xml:space="preserve"><value>Aufladen / Abheben</value></data>
+  <data name="NavTransfer" xml:space="preserve"><value>Überweisung</value></data>
+  <data name="NoAccount" xml:space="preserve"><value>Noch kein Konto?</value></data>
+  <data name="OpenMenu" xml:space="preserve"><value>Menü öffnen</value></data>
+  <data name="Overview" xml:space="preserve"><value>Übersicht</value></data>
+  <data name="Password" xml:space="preserve"><value>Passwort</value></data>
+  <data name="PasswordHint" xml:space="preserve"><value>Mindestens 8 Zeichen, ein Kleinbuchstabe und eine Ziffer.</value></data>
+  <data name="PasswordRequiresDigit" xml:space="preserve"><value>Das Passwort muss mindestens eine Ziffer enthalten.</value></data>
+  <data name="PasswordRequiresLower" xml:space="preserve"><value>Das Passwort muss mindestens einen Kleinbuchstaben enthalten.</value></data>
+  <data name="PasswordTooShort" xml:space="preserve"><value>Das Passwort muss mindestens 8 Zeichen haben.</value></data>
+  <data name="RecentActivity" xml:space="preserve"><value>Letzte Bewegungen</value></data>
+  <data name="RecipientEmail" xml:space="preserve"><value>Empfänger (E-Mail)</value></data>
+  <data name="Register" xml:space="preserve"><value>Registrierung</value></data>
+  <data name="RegisterLede" xml:space="preserve"><value>Eröffnen Sie ein Kundenkonto mit Name und E-Mail.</value></data>
+  <data name="RemainingBalance" xml:space="preserve"><value>Verbleibendes Guthaben</value></data>
+  <data name="RequestId" xml:space="preserve"><value>Anfrage-Nr.</value></data>
+  <data name="RoleCustomer" xml:space="preserve"><value>Kunde</value></data>
+  <data name="Send" xml:space="preserve"><value>Senden</value></data>
+  <data name="SendTransfer" xml:space="preserve"><value>Überweisung senden</value></data>
+  <data name="SignIn" xml:space="preserve"><value>Anmelden</value></data>
+  <data name="SignInLede" xml:space="preserve"><value>Melden Sie sich mit E-Mail und Passwort an Ihrer Wallet an.</value></data>
+  <data name="SignOut" xml:space="preserve"><value>Abmelden</value></data>
+  <data name="SkipToContent" xml:space="preserve"><value>Zum Inhalt</value></data>
+  <data name="SourceAccount" xml:space="preserve"><value>Quellkonto</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Abgeschlossen</value></data>
+  <data name="StatusFrozen" xml:space="preserve"><value>Gesperrt</value></data>
+  <data name="StatusPending" xml:space="preserve"><value>Ausstehend</value></data>
+  <data name="TopUp" xml:space="preserve"><value>Aufladen</value></data>
+  <data name="TopUpHint" xml:space="preserve"><value>Überträgt Guthaben in die Wallet.</value></data>
+  <data name="TopUpWithdraw" xml:space="preserve"><value>Aufladen / Abheben</value></data>
+  <data name="TopUpWithdrawLede" xml:space="preserve"><value>Laden Sie von Ihrem verknüpften Konto auf oder heben Sie Guthaben ab.</value></data>
+  <data name="Transfer" xml:space="preserve"><value>Überweisung</value></data>
+  <data name="TransferHint" xml:space="preserve"><value>Guthaben {0} — Senden wird freigegeben, sobald das Guthaben reicht.</value></data>
+  <data name="TransferKicker" xml:space="preserve"><value>Transfer</value></data>
+  <data name="TransferLede" xml:space="preserve"><value>Senden Sie Betrag und Verwendungszweck an einen registrierten Empfänger.</value></data>
+  <data name="ViewAll" xml:space="preserve"><value>Alle anzeigen</value></data>
+  <data name="WalletBalance" xml:space="preserve"><value>Wallet-Saldo</value></data>
+  <data name="WalletKicker" xml:space="preserve"><value>Wallet</value></data>
+  <data name="Withdraw" xml:space="preserve"><value>Abheben</value></data>
+  <data name="WithdrawHint" xml:space="preserve"><value>Abhebungen sind nur bis zum verfügbaren Guthaben möglich.</value></data>
+</root>

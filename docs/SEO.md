@@ -1,6 +1,6 @@
 # SEO — ClearPay (demo)
 
-ClearPay lisanslı ödeme kuruluşu **değildir**. Portföy / mülakat demosu. Her genel metin: **Demo — sahte banka gateway.**
+ClearPay lisanslı ödeme kuruluşu **değildir**. Portföy / mülakat **dijital cüzdan** demosu. Footer: **Demo — yükleme için sahte gateway.** Sahte banka uygulaması değil.
 
 Ses: `docs/MARKA.md` (Designer). Dosya yoksa veya çelişirse kilit cümle footer ile aynı kalır. `docs/TASARIM.md` ve CSS’e dokunulmaz.
 
@@ -14,12 +14,12 @@ Placeholder host: `https://clearpay.azurewebsites.net` — App Service adı dolu
 
 | Sayfa | Title | Meta description |
 |-------|--------|------------------|
-| Giriş | Giriş — ClearPay (Demo) | ASP.NET Core 8 cüzdan demosu. Giriş yapın. Demo — sahte banka gateway; lisanslı ödeme kuruluşu değil. |
-| Kayıt | Kayıt — ClearPay (Demo) | Portföy cüzdanına müşteri hesabı açın. Demo — sahte banka gateway. Gerçek banka / Papara değil. |
-| Özet | Cüzdan özeti — ClearPay (Demo) | Bakiye, bu ay giden/gelen, son hareketler. ASP.NET Core ledger demosu. Demo — sahte banka gateway. |
-| Havale | Havale — ClearPay (Demo) | Demo P2P havale (idempotency, 409). Sahte banka gateway. Gerçek FAST / IBAN yok. |
-| Yükle / Çek | Yükle / Çek — ClearPay (Demo) | Sahte banka REST/SOAP gateway. Demo — gerçek POS veya kart yok. |
-| Hareketler | Hareketler — ClearPay (Demo) | Demo hareket listesi ve dekont (correlation id). Lisanslı cüzdan değil. |
+| Giriş | Giriş — ClearPay (Demo) | ASP.NET Core 8 dijital cüzdan demosu. Giriş yapın. Lisanslı ödeme kuruluşu değil. |
+| Kayıt | Kayıt — ClearPay (Demo) | Portföy cüzdanına müşteri hesabı açın. Demo — yükleme için sahte gateway. |
+| Özet | Cüzdan — ClearPay (Demo) | Bakiye, bu ay giden/gelen, son hareketler. ASP.NET Core dijital cüzdan demosu. |
+| Havale | Havale — ClearPay (Demo) | Cüzdandan cüzdana havale (demo). Gerçek banka havalesi yok. |
+| Yükle / Çek | Yükle / Çek — ClearPay (Demo) | Cüzdana yükle veya çek. Demo — yükleme için sahte gateway. |
+| Hareketler | Hareketler — ClearPay (Demo) | Cüzdan hareket listesi. Lisanslı banka / şube değil. |
 
 OG title = sayfa title. OG description = meta description. `og:type` = `website`. `og:locale` = `tr_TR`.
 
@@ -28,7 +28,7 @@ OG title = sayfa title. OG description = meta description. `og:type` = `website`
 - Tek `h1` = ekran adı (Giriş, Hesap oluştur, Cüzdan özeti…).
 - `h2` = kart / bölüm (Bakiye, Son hareketler).
 - Wordmark “ClearPay” `h1` olmasın (layout markası).
-- Footer ve auth altı: **Demo — sahte banka gateway** (Designer / Coder mevcut metin).
+- Footer ve auth altı: **Demo — yükleme için sahte gateway** (Designer / Coder; ürün fake bank değil).
 
 ## Path’ler (CANLI)
 
@@ -81,7 +81,7 @@ Lokalhost’u Search Console’a ekleme.
   "name": "ClearPay",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Web",
-  "description": "ASP.NET Core 8 dijital cüzdan demosu. Demo — sahte banka gateway. Lisanslı ödeme kuruluşu değildir.",
+  "description": "ASP.NET Core 8 dijital cüzdan demosu. Demo — yükleme için sahte gateway. Lisanslı ödeme kuruluşu değildir.",
   "url": "https://clearpay.azurewebsites.net/",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TRY" }
 }
@@ -95,10 +95,10 @@ Coder layout’a koyar (aşağıdaki HANDOFF). URL host ile aynı tutulur.
 `_Layout.cshtml` ve `_AuthLayout.cshtml` **dokunulunca** ekle — SEO Pages/*.cshtml savaşmaz:
 
 ```html
-<meta name="description" content="@(ViewData["MetaDescription"] ?? "ASP.NET Core 8 cüzdan demosu. Demo — sahte banka gateway.")" />
+<meta name="description" content="@(ViewData["MetaDescription"] ?? "ASP.NET Core 8 dijital cüzdan demosu. Demo — yükleme için sahte gateway.")" />
 <link rel="canonical" href="https://clearpay.azurewebsites.net@(ViewContext.HttpContext.Request.Path)" />
 <meta property="og:title" content="@(ViewData["Title"] ?? "ClearPay") — ClearPay (Demo)" />
-<meta property="og:description" content="@(ViewData["MetaDescription"] ?? "Demo — sahte banka gateway.")" />
+<meta property="og:description" content="@(ViewData["MetaDescription"] ?? "Demo — yükleme için sahte gateway.")" />
 <meta name="robots" content="index,follow" />
 ```
 

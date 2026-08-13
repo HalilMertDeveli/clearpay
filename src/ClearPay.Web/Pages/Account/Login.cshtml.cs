@@ -1,10 +1,12 @@
 using ClearPay.Application.Identity;
 using ClearPay.Infrastructure.Identity;
+using ClearPay.Web.Localization;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 
 namespace ClearPay.Web.Pages.Account;
 
@@ -13,11 +15,16 @@ public class LoginModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IValidator<LoginRequest> _validator;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public LoginModel(SignInManager<ApplicationUser> signInManager, IValidator<LoginRequest> validator)
+    public LoginModel(
+        SignInManager<ApplicationUser> signInManager,
+        IValidator<LoginRequest> validator,
+        IStringLocalizer<SharedResource> localizer)
     {
         _signInManager = signInManager;
         _validator = validator;
+        _localizer = localizer;
     }
 
     [BindProperty]
@@ -52,7 +59,7 @@ public class LoginModel : PageModel
             return LocalRedirect(SafeReturnUrl());
         }
 
-        ModelState.AddModelError(string.Empty, "E-posta veya şifre hatalı.");
+        ModelState.AddModelError(string.Empty, _localizer["InvalidCredentials"]);
         return Page();
     }
 

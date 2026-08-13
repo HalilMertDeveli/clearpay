@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>  <data name="AccountStatus" xml:space="preserve"><value>Hesap durumu</value></data>
+  <data name="Activity" xml:space="preserve"><value>Hareketler</value></data>
+  <data name="ActivityLede" xml:space="preserve"><value>Cüzdanınızdaki gönderim, yükleme ve çekimler.</value></data>
+  <data name="AmountTry" xml:space="preserve"><value>Tutar (₺)</value></data>
+  <data name="AvailableBalance" xml:space="preserve"><value>Kullanılabilir bakiye</value></data>
+  <data name="BackToWallet" xml:space="preserve"><value>Cüzdana dön</value></data>
+  <data name="Cancel" xml:space="preserve"><value>İptal</value></data>
+  <data name="ColAmount" xml:space="preserve"><value>Tutar</value></data>
+  <data name="ColCounterparty" xml:space="preserve"><value>Karşı taraf</value></data>
+  <data name="ColDate" xml:space="preserve"><value>Tarih</value></data>
+  <data name="ColRef" xml:space="preserve"><value>İşlem no</value></data>
+  <data name="ColStatus" xml:space="preserve"><value>Durum</value></data>
+  <data name="ColTxn" xml:space="preserve"><value>İşlem</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>Şifre tekrar</value></data>
+  <data name="CreateAccount" xml:space="preserve"><value>Hesap oluştur</value></data>
+  <data name="DemoDisclaimer" xml:space="preserve"><value>Demo — yükleme için sahte gateway</value></data>
+  <data name="DemoWallet" xml:space="preserve"><value>Demo cüzdan</value></data>
+  <data name="Description" xml:space="preserve"><value>Açıklama</value></data>
+  <data name="DestinationAccount" xml:space="preserve"><value>Hedef hesap</value></data>
+  <data name="DuplicateEmail" xml:space="preserve"><value>Bu e-posta zaten kayıtlı.</value></data>
+  <data name="Email" xml:space="preserve"><value>E-posta</value></data>
+  <data name="EmptyMovementsHint" xml:space="preserve"><value>İlk havaleniz veya yüklemeniz burada görünür.</value></data>
+  <data name="EmptyMovementsTitle" xml:space="preserve"><value>Henüz hareket yok.</value></data>
+  <data name="EmptyPeriodHint" xml:space="preserve"><value>Tarih veya tür filtresini genişletin; ya da ilk havaleyi Özet’ten gönderin.</value></data>
+  <data name="EmptyPeriodTitle" xml:space="preserve"><value>Bu dönemde hareket bulunmuyor.</value></data>
+  <data name="Error" xml:space="preserve"><value>Hata</value></data>
+  <data name="ErrorLede" xml:space="preserve"><value>Bir hata oluştu</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrele</value></data>
+  <data name="FilterAll" xml:space="preserve"><value>Tümü</value></data>
+  <data name="FilterFrom" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="FilterStatus" xml:space="preserve"><value>Durum</value></data>
+  <data name="FilterType" xml:space="preserve"><value>Tür</value></data>
+  <data name="FullName" xml:space="preserve"><value>Ad</value></data>
+  <data name="HaveAccount" xml:space="preserve"><value>Zaten hesabınız var mı?</value></data>
+  <data name="HistoryKicker" xml:space="preserve"><value>Geçmiş</value></data>
+  <data name="InvalidCredentials" xml:space="preserve"><value>E-posta veya şifre hatalı.</value></data>
+  <data name="InvalidEmail" xml:space="preserve"><value>Geçerli bir e-posta girin.</value></data>
+  <data name="Language" xml:space="preserve"><value>Dil</value></data>
+  <data name="LinkedAccount" xml:space="preserve"><value>Bağlı hesap</value></data>
+  <data name="MainMenu" xml:space="preserve"><value>Ana menü</value></data>
+  <data name="MetaActivity" xml:space="preserve"><value>Cüzdan hareketleri. Demo — yükleme için sahte gateway.</value></data>
+  <data name="MetaDefault" xml:space="preserve"><value>ASP.NET Core 8 dijital cüzdan demosu. Demo — yükleme için sahte gateway.</value></data>
+  <data name="MetaOverview" xml:space="preserve"><value>Cüzdan bakiyesi, bu ay giden/gelen, son hareketler. Demo — yükleme için sahte gateway.</value></data>
+  <data name="MetaRegister" xml:space="preserve"><value>Portföy cüzdanına müşteri hesabı açın. Demo — yükleme için sahte gateway.</value></data>
+  <data name="MetaSignIn" xml:space="preserve"><value>ASP.NET Core 8 dijital cüzdan demosu. Giriş yapın. Demo — yükleme için sahte gateway.</value></data>
+  <data name="MetaTopUpWithdraw" xml:space="preserve"><value>Cüzdana yükle veya bakiyeyi çek. Demo — yükleme için sahte gateway.</value></data>
+  <data name="MetaTransfer" xml:space="preserve"><value>Cüzdandan cüzdana havale (demo). Demo — yükleme için sahte gateway.</value></data>
+  <data name="MonthIn" xml:space="preserve"><value>Bu ay gelen</value></data>
+  <data name="MonthOut" xml:space="preserve"><value>Bu ay giden</value></data>
+  <data name="NavActivity" xml:space="preserve"><value>Hareketler</value></data>
+  <data name="NavOverview" xml:space="preserve"><value>Özet</value></data>
+  <data name="NavTopUpWithdraw" xml:space="preserve"><value>Yükle / Çek</value></data>
+  <data name="NavTransfer" xml:space="preserve"><value>Havale</value></data>
+  <data name="NoAccount" xml:space="preserve"><value>Hesabınız yok mu?</value></data>
+  <data name="OpenMenu" xml:space="preserve"><value>Menüyü aç</value></data>
+  <data name="Overview" xml:space="preserve"><value>Özet</value></data>
+  <data name="Password" xml:space="preserve"><value>Şifre</value></data>
+  <data name="PasswordHint" xml:space="preserve"><value>En az 8 karakter, bir küçük harf ve bir rakam.</value></data>
+  <data name="PasswordRequiresDigit" xml:space="preserve"><value>Şifre en az bir rakam içermelidir.</value></data>
+  <data name="PasswordRequiresLower" xml:space="preserve"><value>Şifre en az bir küçük harf içermelidir.</value></data>
+  <data name="PasswordTooShort" xml:space="preserve"><value>Şifre en az 8 karakter olmalıdır.</value></data>
+  <data name="RecentActivity" xml:space="preserve"><value>Son hareketler</value></data>
+  <data name="RecipientEmail" xml:space="preserve"><value>Alıcı (e-posta)</value></data>
+  <data name="Register" xml:space="preserve"><value>Kayıt</value></data>
+  <data name="RegisterLede" xml:space="preserve"><value>Adınız ve e-posta adresinizle müşteri hesabı açın.</value></data>
+  <data name="RemainingBalance" xml:space="preserve"><value>Kalan bakiye</value></data>
+  <data name="RequestId" xml:space="preserve"><value>İstek no</value></data>
+  <data name="RoleCustomer" xml:space="preserve"><value>Musteri</value></data>
+  <data name="Send" xml:space="preserve"><value>Gönder</value></data>
+  <data name="SendTransfer" xml:space="preserve"><value>Havale gönder</value></data>
+  <data name="SignIn" xml:space="preserve"><value>Giriş</value></data>
+  <data name="SignInLede" xml:space="preserve"><value>E-posta ve şifrenizle cüzdanınıza bağlanın.</value></data>
+  <data name="SignOut" xml:space="preserve"><value>Çıkış</value></data>
+  <data name="SkipToContent" xml:space="preserve"><value>İçeriğe geç</value></data>
+  <data name="SourceAccount" xml:space="preserve"><value>Kaynak hesap</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Aktif</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Tamamlandı</value></data>
+  <data name="StatusFrozen" xml:space="preserve"><value>Dondurulmuş</value></data>
+  <data name="StatusPending" xml:space="preserve"><value>Beklemede</value></data>
+  <data name="TopUp" xml:space="preserve"><value>Yükle</value></data>
+  <data name="TopUpHint" xml:space="preserve"><value>Bakiyeyi cüzdana aktarır.</value></data>
+  <data name="TopUpWithdraw" xml:space="preserve"><value>Yükle / Çek</value></data>
+  <data name="TopUpWithdrawLede" xml:space="preserve"><value>Bağlı hesabınızdan cüzdana yükleyin veya bakiyenizi çekin.</value></data>
+  <data name="Transfer" xml:space="preserve"><value>Havale</value></data>
+  <data name="TransferHint" xml:space="preserve"><value>Bakiye {0} — gönderim bakiyeniz yeterli olunca açılır.</value></data>
+  <data name="TransferKicker" xml:space="preserve"><value>Transfer</value></data>
+  <data name="TransferLede" xml:space="preserve"><value>Kayıtlı bir alıcıya tutar ve açıklama ile gönderin.</value></data>
+  <data name="ViewAll" xml:space="preserve"><value>Tümünü gör</value></data>
+  <data name="WalletBalance" xml:space="preserve"><value>Cüzdan bakiyesi</value></data>
+  <data name="WalletKicker" xml:space="preserve"><value>Cüzdan</value></data>
+  <data name="Withdraw" xml:space="preserve"><value>Çek</value></data>
+  <data name="WithdrawHint" xml:space="preserve"><value>Çekim, kullanılabilir bakiyeniz kadar yapılabilir.</value></data>
+</root>

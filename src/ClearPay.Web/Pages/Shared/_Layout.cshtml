@@ -1,12 +1,12 @@
-﻿@{
+﻿@using ClearPay.Web.Localization
+@{
     var page = ViewContext.RouteData.Values["page"]?.ToString();
     string NavClass(string target) => page == target ? "nav-link is-active" : "nav-link";
-    var meta = ViewData["MetaDescription"] as string
-        ?? "ASP.NET Core 8 dijital cüzdan demosu. Demo — yükleme için sahte gateway.";
-    var title = ViewData["Title"] as string ?? "Özet";
+    var meta = ViewData["MetaDescription"] as string ?? L["MetaDefault"].Value;
+    var title = ViewData["Title"] as string ?? L["Overview"].Value;
 }
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="@AppCultures.HtmlLang">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,7 +17,7 @@
     <meta property="og:title" content="@title — ClearPay (Demo)" />
     <meta property="og:description" content="@meta" />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:locale" content="@AppCultures.OgLocale" />
     <meta name="robots" content="noindex,nofollow" />
     <link rel="icon" href="~/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,41 +28,49 @@
     <link rel="stylesheet" href="~/css/motion.css" asp-append-version="true" />
 </head>
 <body>
-    <a class="skip-link" href="#main">İçeriğe geç</a>
+    <a class="skip-link" href="#main">@L["SkipToContent"]</a>
     <div class="app-shell">
         <aside class="sidebar" id="sidebar">
             <a class="brand" asp-page="/Index">
                 <span class="brand-mark" aria-hidden="true">C</span>
                 <span class="brand-name wordmark">ClearPay</span>
             </a>
-            <nav class="side-nav" aria-label="Ana menü">
-                <a class="@NavClass("/Index")" asp-page="/Index">Özet</a>
-                <a class="@NavClass("/Havale")" asp-page="/Havale">Havale</a>
-                <a class="@NavClass("/YukleCek")" asp-page="/YukleCek">Yükle / Çek</a>
-                <a class="@NavClass("/Hareketler")" asp-page="/Hareketler">Hareketler</a>
+            <nav class="side-nav" aria-label="@L["MainMenu"]">
+                <a class="@NavClass("/Index")" asp-page="/Index">@L["NavOverview"]</a>
+                <a class="@NavClass("/Havale")" asp-page="/Havale">@L["NavTransfer"]</a>
+                <a class="@NavClass("/YukleCek")" asp-page="/YukleCek">@L["NavTopUpWithdraw"]</a>
+                <a class="@NavClass("/Hareketler")" asp-page="/Hareketler">@L["NavActivity"]</a>
             </nav>
-            <p class="sidebar-note">Demo — yükleme için sahte gateway</p>
+            <div class="sidebar-foot">
+                <div class="lang-picker-on-navy">
+                    <partial name="_LanguagePicker" />
+                </div>
+                <p class="sidebar-note">@L["DemoDisclaimer"]</p>
+            </div>
         </aside>
         <div class="nav-backdrop" id="nav-backdrop" hidden></div>
         <div class="workspace">
             <header class="topbar">
-                <button class="nav-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Menüyü aç">
+                <button class="nav-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="@L["OpenMenu"]">
                     <span></span><span></span>
                 </button>
                 <p class="topbar-title">@title</p>
+                <div class="topbar-lang">
+                    <partial name="_LanguagePicker" />
+                </div>
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <span class="pill">Musteri</span>
+                    <span class="pill">@L["RoleCustomer"]</span>
                     <span class="topbar-user">@User.Identity.Name</span>
                     <form asp-page="/Account/Logout" method="post" class="topbar-form">
-                        <button type="submit" class="btn-text">Çıkış</button>
+                        <button type="submit" class="btn-text">@L["SignOut"]</button>
                     </form>
                 }
             </header>
             <main id="main" class="content">
                 @RenderBody()
             </main>
-            <footer class="page-footer">Demo — yükleme için sahte gateway</footer>
+            <footer class="page-footer">@L["DemoDisclaimer"]</footer>
         </div>
     </div>
     <script src="~/js/site.js" asp-append-version="true"></script>

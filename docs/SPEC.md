@@ -36,7 +36,7 @@ Kurumsal .NET mülakatında anlatılır, internette açılan demo. Kapı: Intert
 
 Sol menü her sitede aynı: **Özet, Havale, Yükle/Çek, Hareketler, Admin** (Admin yalnızca role göre).
 
-Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Dil: Türkçe. Görsel: navy `#1B2A4A`, beyaz zemin, gölge/gradient yok.
+Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Diller: **Türkçe (varsayılan), English, Deutsch, Français** — cookie `c=tr|en|de|fr`. Dil seçici **layout chrome** (sol menü / üst çubuk); 9. ekran değil. Ads/Papara metni çevrilmez. Görsel: navy `#1B2A4A`, beyaz zemin, gölge/gradient yok.
 
 ## Para kuralları (bozulmaz)
 1. **Çift kayıt defteri:** her harekette + ve − satırı (`LedgerEntry`)
@@ -60,7 +60,6 @@ Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Dil: Türkçe
 - Gerçek banka / POS / 3D Secure
 - Satıcı ödemesi ekranı (Q2 adayı)
 - Kafka, Kubernetes, Java ikizi
-- Çok dilli UI
 - LED teknik destek sitesine özellik eklemek
 
 ## Başarı kriteri

@@ -1,0 +1,15 @@
+@using ClearPay.Web.Localization
+@using System.Globalization
+@{
+    var current = AppCultures.HtmlLang;
+    var returnUrl = $"{Context.Request.PathBase}{Context.Request.Path}{Context.Request.QueryString}";
+}
+<nav class="lang-picker" aria-label="@L["Language"]">
+    <form asp-page="/SetCulture" method="post" class="lang-picker-form">
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        <button type="submit" name="culture" value="tr" class="lang-btn @(current == "tr" ? "is-active" : null)" lang="tr" aria-current="@(current == "tr" ? "true" : null)">Türkçe</button>
+        <button type="submit" name="culture" value="en" class="lang-btn @(current == "en" ? "is-active" : null)" lang="en" aria-current="@(current == "en" ? "true" : null)">English</button>
+        <button type="submit" name="culture" value="de" class="lang-btn @(current == "de" ? "is-active" : null)" lang="de" aria-current="@(current == "de" ? "true" : null)">Deutsch</button>
+        <button type="submit" name="culture" value="fr" class="lang-btn @(current == "fr" ? "is-active" : null)" lang="fr" aria-current="@(current == "fr" ? "true" : null)">Français</button>
+    </form>
+</nav>

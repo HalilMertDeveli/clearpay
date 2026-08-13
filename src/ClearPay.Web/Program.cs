@@ -2,11 +2,13 @@ using ClearPay.Application;
 using ClearPay.Infrastructure.DependencyInjection;
 using ClearPay.Infrastructure.Identity;
 using ClearPay.Infrastructure.Persistence;
+using ClearPay.Web.Localization;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddProblemDetails();
+builder.Services.AddClearPayLocalization();
 builder.Services.AddClearPayIdentity(builder.Configuration, builder.Environment);
 builder.Services.AddClearPay(builder.Configuration);
 builder.Services.AddValidatorsFromAssembly(typeof(ApplicationAssembly).Assembly);
@@ -15,9 +17,10 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AuthorizeFolder("/");
     options.Conventions.AllowAnonymousToFolder("/Account");
     options.Conventions.AllowAnonymousToPage("/Error");
+    options.Conventions.AllowAnonymousToPage("/SetCulture");
     options.Conventions.AddPageRoute("/Account/Login", "/giris");
     options.Conventions.AddPageRoute("/Account/Register", "/kayit");
-});
+}).AddViewLocalization();
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -35,6 +38,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseRequestLocalization();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();

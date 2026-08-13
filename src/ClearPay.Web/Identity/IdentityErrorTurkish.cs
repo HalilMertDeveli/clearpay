@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 
 namespace ClearPay.Web.Identity;
 
 internal static class IdentityErrorTurkish
 {
-    public static string Localize(IdentityError error) => error.Code switch
+    public static string Localize(IdentityError error, IStringLocalizer localizer) => error.Code switch
     {
-        "DuplicateEmail" or "DuplicateUserName" => "Bu e-posta zaten kayıtlı.",
-        "PasswordTooShort" => "Şifre en az 8 karakter olmalıdır.",
-        "PasswordRequiresDigit" => "Şifre en az bir rakam içermelidir.",
-        "PasswordRequiresLower" => "Şifre en az bir küçük harf içermelidir.",
-        "InvalidEmail" => "Geçerli bir e-posta girin.",
+        "DuplicateEmail" or "DuplicateUserName" => localizer["DuplicateEmail"],
+        "PasswordTooShort" => localizer["PasswordTooShort"],
+        "PasswordRequiresDigit" => localizer["PasswordRequiresDigit"],
+        "PasswordRequiresLower" => localizer["PasswordRequiresLower"],
+        "InvalidEmail" => localizer["InvalidEmail"],
         _ => error.Description
     };
 }

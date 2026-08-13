@@ -1,52 +1,52 @@
 @page "/yukle-cek"
 @model YukleCekModel
 @{
-    ViewData["Title"] = "Yükle / Çek";
-    ViewData["MetaDescription"] = "Cüzdana yükle veya bakiyeyi çek. Demo — yükleme için sahte gateway.";
+    ViewData["Title"] = L["TopUpWithdraw"].Value;
+    ViewData["MetaDescription"] = L["MetaTopUpWithdraw"].Value;
 }
 
-<p class="page-kicker">Cüzdan</p>
-<h1 class="page-title">Yükle / Çek</h1>
-<p class="lede">Bağlı hesabınızdan cüzdana yükleyin veya bakiyenizi çekin.</p>
+<p class="page-kicker">@L["WalletKicker"]</p>
+<h1 class="page-title">@L["TopUpWithdraw"]</h1>
+<p class="lede">@L["TopUpWithdrawLede"]</p>
 
 <div class="remain panel-inline">
-    <span class="stat-label">Cüzdan bakiyesi</span>
+    <span class="stat-label">@L["WalletBalance"]</span>
     <strong>@Html.Raw(Model.BalanceText)</strong>
 </div>
 
 <div class="split-2">
     <section class="panel" id="yukle">
-        <h2 class="panel-title">Yükle</h2>
-        <p class="field-hint">Demo — yükleme için sahte gateway. Bakiyeyi cüzdana aktarır.</p>
+        <h2 class="panel-title">@L["TopUp"]</h2>
+        <p class="field-hint">@L["DemoDisclaimer"] @L["TopUpHint"]</p>
         <form method="post" class="stack-form" novalidate>
             <div class="field">
-                <label class="field-label" for="yukle-tutar">Tutar (₺)</label>
+                <label class="field-label" for="yukle-tutar">@L["AmountTry"]</label>
                 <input class="field-input" id="yukle-tutar" name="yukleTutar" inputmode="decimal" />
             </div>
             <div class="field">
-                <label class="field-label" for="yukle-hesap">Kaynak hesap</label>
-                <input class="field-input" id="yukle-hesap" name="yukleHesap" placeholder="Bağlı hesap" />
+                <label class="field-label" for="yukle-hesap">@L["SourceAccount"]</label>
+                <input class="field-input" id="yukle-hesap" name="yukleHesap" placeholder="@L["LinkedAccount"]" />
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn" disabled>Yükle</button>
+                <button type="submit" class="btn" disabled>@L["TopUp"]</button>
             </div>
         </form>
     </section>
     <section class="panel" id="cek">
-        <h2 class="panel-title">Çek</h2>
-        <p class="field-hint">Çekim, kullanılabilir bakiyeniz kadar yapılabilir.</p>
+        <h2 class="panel-title">@L["Withdraw"]</h2>
+        <p class="field-hint">@L["WithdrawHint"]</p>
         <form method="post" class="stack-form" novalidate>
             <div class="field">
-                <label class="field-label" for="cek-tutar">Tutar (₺)</label>
+                <label class="field-label" for="cek-tutar">@L["AmountTry"]</label>
                 <input class="field-input" id="cek-tutar" name="cekTutar" inputmode="decimal" />
             </div>
             <div class="field">
-                <label class="field-label" for="cek-hesap">Hedef hesap</label>
-                <input class="field-input" id="cek-hesap" name="cekHesap" placeholder="Bağlı hesap" />
+                <label class="field-label" for="cek-hesap">@L["DestinationAccount"]</label>
+                <input class="field-input" id="cek-hesap" name="cekHesap" placeholder="@L["LinkedAccount"]" />
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn" disabled>Çek</button>
-                <a class="btn btn-ghost" asp-page="/Index">İptal</a>
+                <button type="submit" class="btn" disabled>@L["Withdraw"]</button>
+                <a class="btn btn-ghost" asp-page="/Index">@L["Cancel"]</a>
             </div>
         </form>
     </section>

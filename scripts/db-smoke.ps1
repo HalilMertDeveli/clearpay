@@ -1,6 +1,6 @@
 # Infra connectivity smoke for local SQL Server / MySQL / Oracle.
 # Not part of `dotnet test` (CI has no engines). Re-run:
-#   powershell -File scripts/db-smoke.ps1
+#   powershell -ExecutionPolicy Bypass -File scripts/db-smoke.ps1
 $ErrorActionPreference = "Continue"
 $fail = 0
 function Pass($n, $d) { Write-Host "PASS  $n  $d" -ForegroundColor Green }
@@ -34,6 +34,8 @@ if ($sqlcmd) {
 }
 
 # MySQL 3306
+$mysqlBin = "C:\Program Files\MySQL\MySQL Server 8.4\bin"
+if (Test-Path $mysqlBin) { $env:Path = "$mysqlBin;" + $env:Path }
 $mysql = Get-Command mysql -ErrorAction SilentlyContinue
 $mysqladmin = Get-Command mysqladmin -ErrorAction SilentlyContinue
 $mp = $env:MYSQL_ROOT_PASSWORD
@@ -72,7 +74,7 @@ if ($docker) {
 } else {
   $tn = Test-NetConnection -ComputerName 127.0.0.1 -Port 1521 -WarningAction SilentlyContinue
   if ($tn.TcpTestSucceeded) { Pass "oracle" "TCP 1521 open"; $oraOk = $true }
-  else { Fail "oracle" "port 1521 closed — Oracle image needs Docker Desktop (WSL2 reboot)" }
+  else { Fail "oracle" "port 1521 closed -- Oracle image needs Docker Desktop (WSL2 reboot)" }
 }
 
 Write-Host "=== summary: fail=$fail sql=$sqlOk mysql=$mysqlOk oracle=$oraOk ==="

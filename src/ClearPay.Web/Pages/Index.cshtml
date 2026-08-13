@@ -1,52 +1,52 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Özet";
-    ViewData["MetaDescription"] = "Cüzdan bakiyesi, bu ay giden/gelen, son hareketler. Demo — yükleme için sahte gateway.";
+    ViewData["Title"] = L["Overview"].Value;
+    ViewData["MetaDescription"] = L["MetaOverview"].Value;
 }
 
-<p class="page-kicker">Cüzdan</p>
-<h1 class="page-title">Özet</h1>
+<p class="page-kicker">@L["WalletKicker"]</p>
+<h1 class="page-title">@L["Overview"]</h1>
 @if (!string.IsNullOrWhiteSpace(Model.GreetingName))
 {
     <p class="lede">@Model.GreetingName</p>
 }
 
 <article class="balance-hero">
-    <p class="stat-label">Kullanılabilir bakiye</p>
+    <p class="stat-label">@L["AvailableBalance"]</p>
     <p class="stat-value stat-value-xl">@Html.Raw(Model.BalanceText)</p>
-    <p class="status-line">Hesap durumu: @(Model.IsFrozen ? "Dondurulmuş" : "Aktif")</p>
+    <p class="status-line">@L["AccountStatus"]: <span class="@(Model.IsFrozen ? "badge-frozen" : "badge-active")">@(Model.IsFrozen ? L["StatusFrozen"] : L["StatusActive"])</span></p>
 </article>
 
 <div class="stat-row">
     <article class="stat-card">
-        <p class="stat-label">Bu ay giden</p>
+        <p class="stat-label">@L["MonthOut"]</p>
         <p class="stat-value">@Html.Raw(Model.MonthOutText)</p>
     </article>
     <article class="stat-card">
-        <p class="stat-label">Bu ay gelen</p>
+        <p class="stat-label">@L["MonthIn"]</p>
         <p class="stat-value">@Html.Raw(Model.MonthInText)</p>
     </article>
 </div>
 
 <div class="actions">
-    <a class="btn" asp-page="/Havale">Havale gönder</a>
-    <a class="btn btn-ghost" asp-page="/YukleCek" asp-fragment="yukle">Yükle</a>
-    <a class="btn btn-ghost" asp-page="/YukleCek" asp-fragment="cek">Çek</a>
+    <a class="btn" asp-page="/Havale">@L["SendTransfer"]</a>
+    <a class="btn btn-ghost" asp-page="/YukleCek" asp-fragment="yukle">@L["TopUp"]</a>
+    <a class="btn btn-ghost" asp-page="/YukleCek" asp-fragment="cek">@L["Withdraw"]</a>
 </div>
 
 <section class="panel">
     <div class="panel-head">
-        <p class="stat-label">Son hareketler</p>
-        <a class="text-link" asp-page="/Hareketler">Tümünü gör</a>
+        <p class="stat-label">@L["RecentActivity"]</p>
+        <a class="text-link" asp-page="/Hareketler">@L["ViewAll"]</a>
     </div>
     <table class="data-table">
         <thead>
             <tr>
-                <th>Tarih</th>
-                <th>İşlem</th>
-                <th class="num">Tutar</th>
-                <th>Durum</th>
+                <th>@L["ColDate"]</th>
+                <th>@L["ColTxn"]</th>
+                <th class="num">@L["ColAmount"]</th>
+                <th>@L["ColStatus"]</th>
             </tr>
         </thead>
         <tbody>
@@ -55,8 +55,8 @@
                 <tr>
                     <td colspan="4" class="empty-cell">
                         <div class="empty-block">
-                            <p class="empty-title">Henüz hareket yok.</p>
-                            <p class="empty-hint">İlk havaleniz veya yüklemeniz burada görünür.</p>
+                            <p class="empty-title">@L["EmptyMovementsTitle"]</p>
+                            <p class="empty-hint">@L["EmptyMovementsHint"]</p>
                         </div>
                     </td>
                 </tr>
@@ -69,7 +69,7 @@
                         <td>@movement.At.ToLocalTime().ToString("g")</td>
                         <td>@movement.Kind</td>
                         <td class="num">@ClearPay.Web.Presentation.MoneyDisplay.FormatTry(movement.Amount)</td>
-                        <td>Tamamlandı</td>
+                        <td>@L["StatusCompleted"]</td>
                     </tr>
                 }
             }

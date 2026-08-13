@@ -3,6 +3,8 @@
 #   dotnet run --project src/ClearPay.Web --launch-profile http
 # Redis + RabbitMQ: local TASK-12 stack. App does not use them until TASK-12.
 # Live Azure: docs/CANLI.md (not this file).
+# SQL data: D:\ClearPay\data\mssql bind (T-021). App connection = MSSQL only.
+# Do not delete the old named volume clearpay-sql on C:; it is unused after this bind.
 services:
   sql:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -13,7 +15,7 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - clearpay-sql:/var/opt/mssql
+      - D:/ClearPay/data/mssql:/var/opt/mssql
 
   redis:
     image: redis:7-alpine
@@ -37,6 +39,5 @@ services:
       - clearpay-rabbit:/var/lib/rabbitmq
 
 volumes:
-  clearpay-sql:
   clearpay-redis:
   clearpay-rabbit:

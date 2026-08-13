@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>  <data name="AccountStatus" xml:space="preserve"><value>Account status</value></data>
+  <data name="Activity" xml:space="preserve"><value>Activity</value></data>
+  <data name="ActivityLede" xml:space="preserve"><value>Transfers, top-ups and withdrawals on your wallet.</value></data>
+  <data name="AmountTry" xml:space="preserve"><value>Amount (₺)</value></data>
+  <data name="AvailableBalance" xml:space="preserve"><value>Available balance</value></data>
+  <data name="BackToWallet" xml:space="preserve"><value>Back to wallet</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="ColAmount" xml:space="preserve"><value>Amount</value></data>
+  <data name="ColCounterparty" xml:space="preserve"><value>Counterparty</value></data>
+  <data name="ColDate" xml:space="preserve"><value>Date</value></data>
+  <data name="ColRef" xml:space="preserve"><value>Reference</value></data>
+  <data name="ColStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="ColTxn" xml:space="preserve"><value>Transaction</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>Confirm password</value></data>
+  <data name="CreateAccount" xml:space="preserve"><value>Create account</value></data>
+  <data name="DemoDisclaimer" xml:space="preserve"><value>Demo — fake gateway for top-ups</value></data>
+  <data name="DemoWallet" xml:space="preserve"><value>Demo wallet</value></data>
+  <data name="Description" xml:space="preserve"><value>Description</value></data>
+  <data name="DestinationAccount" xml:space="preserve"><value>Destination account</value></data>
+  <data name="DuplicateEmail" xml:space="preserve"><value>This email is already registered.</value></data>
+  <data name="Email" xml:space="preserve"><value>Email</value></data>
+  <data name="EmptyMovementsHint" xml:space="preserve"><value>Your first transfer or top-up will appear here.</value></data>
+  <data name="EmptyMovementsTitle" xml:space="preserve"><value>No activity yet.</value></data>
+  <data name="EmptyPeriodHint" xml:space="preserve"><value>Widen the date or type filter, or send a first transfer from Overview.</value></data>
+  <data name="EmptyPeriodTitle" xml:space="preserve"><value>No activity in this period.</value></data>
+  <data name="Error" xml:space="preserve"><value>Error</value></data>
+  <data name="ErrorLede" xml:space="preserve"><value>Something went wrong</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="FilterAll" xml:space="preserve"><value>All</value></data>
+  <data name="FilterFrom" xml:space="preserve"><value>From</value></data>
+  <data name="FilterStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="FilterType" xml:space="preserve"><value>Type</value></data>
+  <data name="FullName" xml:space="preserve"><value>Name</value></data>
+  <data name="HaveAccount" xml:space="preserve"><value>Already have an account?</value></data>
+  <data name="HistoryKicker" xml:space="preserve"><value>History</value></data>
+  <data name="InvalidCredentials" xml:space="preserve"><value>Email or password is incorrect.</value></data>
+  <data name="InvalidEmail" xml:space="preserve"><value>Enter a valid email.</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="LinkedAccount" xml:space="preserve"><value>Linked account</value></data>
+  <data name="MainMenu" xml:space="preserve"><value>Main menu</value></data>
+  <data name="MetaActivity" xml:space="preserve"><value>Wallet activity. Demo — fake gateway for top-ups.</value></data>
+  <data name="MetaDefault" xml:space="preserve"><value>ASP.NET Core 8 digital wallet demo. Demo — fake gateway for top-ups.</value></data>
+  <data name="MetaOverview" xml:space="preserve"><value>Wallet balance, this month in/out, recent activity. Demo — fake gateway for top-ups.</value></data>
+  <data name="MetaRegister" xml:space="preserve"><value>Create a customer account for the portfolio wallet. Demo — fake gateway for top-ups.</value></data>
+  <data name="MetaSignIn" xml:space="preserve"><value>ASP.NET Core 8 digital wallet demo. Sign in. Demo — fake gateway for top-ups.</value></data>
+  <data name="MetaTopUpWithdraw" xml:space="preserve"><value>Top up or withdraw wallet balance. Demo — fake gateway for top-ups.</value></data>
+  <data name="MetaTransfer" xml:space="preserve"><value>Wallet-to-wallet transfer (demo). Demo — fake gateway for top-ups.</value></data>
+  <data name="MonthIn" xml:space="preserve"><value>In this month</value></data>
+  <data name="MonthOut" xml:space="preserve"><value>Out this month</value></data>
+  <data name="NavActivity" xml:space="preserve"><value>Activity</value></data>
+  <data name="NavOverview" xml:space="preserve"><value>Overview</value></data>
+  <data name="NavTopUpWithdraw" xml:space="preserve"><value>Top up / Withdraw</value></data>
+  <data name="NavTransfer" xml:space="preserve"><value>Transfer</value></data>
+  <data name="NoAccount" xml:space="preserve"><value>Don&apos;t have an account?</value></data>
+  <data name="OpenMenu" xml:space="preserve"><value>Open menu</value></data>
+  <data name="Overview" xml:space="preserve"><value>Overview</value></data>
+  <data name="Password" xml:space="preserve"><value>Password</value></data>
+  <data name="PasswordHint" xml:space="preserve"><value>At least 8 characters, one lowercase letter and one digit.</value></data>
+  <data name="PasswordRequiresDigit" xml:space="preserve"><value>Password must contain at least one digit.</value></data>
+  <data name="PasswordRequiresLower" xml:space="preserve"><value>Password must contain at least one lowercase letter.</value></data>
+  <data name="PasswordTooShort" xml:space="preserve"><value>Password must be at least 8 characters.</value></data>
+  <data name="RecentActivity" xml:space="preserve"><value>Recent activity</value></data>
+  <data name="RecipientEmail" xml:space="preserve"><value>Recipient (email)</value></data>
+  <data name="Register" xml:space="preserve"><value>Register</value></data>
+  <data name="RegisterLede" xml:space="preserve"><value>Open a customer account with your name and email.</value></data>
+  <data name="RemainingBalance" xml:space="preserve"><value>Remaining balance</value></data>
+  <data name="RequestId" xml:space="preserve"><value>Request id</value></data>
+  <data name="RoleCustomer" xml:space="preserve"><value>Customer</value></data>
+  <data name="Send" xml:space="preserve"><value>Send</value></data>
+  <data name="SendTransfer" xml:space="preserve"><value>Send transfer</value></data>
+  <data name="SignIn" xml:space="preserve"><value>Sign in</value></data>
+  <data name="SignInLede" xml:space="preserve"><value>Sign in to your wallet with email and password.</value></data>
+  <data name="SignOut" xml:space="preserve"><value>Sign out</value></data>
+  <data name="SkipToContent" xml:space="preserve"><value>Skip to content</value></data>
+  <data name="SourceAccount" xml:space="preserve"><value>Source account</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Active</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="StatusFrozen" xml:space="preserve"><value>Frozen</value></data>
+  <data name="StatusPending" xml:space="preserve"><value>Pending</value></data>
+  <data name="TopUp" xml:space="preserve"><value>Top up</value></data>
+  <data name="TopUpHint" xml:space="preserve"><value>Moves funds into the wallet.</value></data>
+  <data name="TopUpWithdraw" xml:space="preserve"><value>Top up / Withdraw</value></data>
+  <data name="TopUpWithdrawLede" xml:space="preserve"><value>Top up from your linked account or withdraw your balance.</value></data>
+  <data name="Transfer" xml:space="preserve"><value>Transfer</value></data>
+  <data name="TransferHint" xml:space="preserve"><value>Balance {0} — sending unlocks when your balance is enough.</value></data>
+  <data name="TransferKicker" xml:space="preserve"><value>Transfer</value></data>
+  <data name="TransferLede" xml:space="preserve"><value>Send an amount and a note to a registered recipient.</value></data>
+  <data name="ViewAll" xml:space="preserve"><value>View all</value></data>
+  <data name="WalletBalance" xml:space="preserve"><value>Wallet balance</value></data>
+  <data name="WalletKicker" xml:space="preserve"><value>Wallet</value></data>
+  <data name="Withdraw" xml:space="preserve"><value>Withdraw</value></data>
+  <data name="WithdrawHint" xml:space="preserve"><value>Withdrawals cannot exceed your available balance.</value></data>
+</root>

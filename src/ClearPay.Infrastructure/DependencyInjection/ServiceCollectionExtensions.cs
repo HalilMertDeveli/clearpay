@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<ClearPayDbContext>(options => options.UseSqlServer(ledgerConnection));
 
         services.AddSingleton<IClock, SystemClock>();
-        services.AddScoped<IWalletReader, EmptyWalletReader>();
+        services.AddScoped<IWalletReader, SqlWalletReader>();
         services.AddScoped<ITransferExecutor, NotImplementedTransferExecutor>();
         services.AddScoped<IIdempotencyStore, NotImplementedIdempotencyStore>();
 

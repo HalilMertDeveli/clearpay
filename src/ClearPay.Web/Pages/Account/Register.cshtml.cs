@@ -2,11 +2,13 @@ using ClearPay.Application.Identity;
 using ClearPay.Domain.Identity;
 using ClearPay.Infrastructure.Identity;
 using ClearPay.Web.Identity;
+using ClearPay.Web.Localization;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 
 namespace ClearPay.Web.Pages.Account;
 
@@ -16,15 +18,18 @@ public class RegisterModel : PageModel
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IValidator<RegisterRequest> _validator;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
     public RegisterModel(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        IValidator<RegisterRequest> validator)
+        IValidator<RegisterRequest> validator,
+        IStringLocalizer<SharedResource> localizer)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _validator = validator;
+        _localizer = localizer;
     }
 
     [BindProperty]
@@ -58,7 +63,7 @@ public class RegisterModel : PageModel
         {
             foreach (var error in created.Errors)
             {
-                ModelState.AddModelError(string.Empty, IdentityErrorTurkish.Localize(error));
+                ModelState.AddModelError(string.Empty, IdentityErrorTurkish.Localize(error, _localizer));
             }
 
             return Page();

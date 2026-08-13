@@ -2,6 +2,7 @@
 # (that file owns SQL :1433 + Redis + RabbitMQ).
 # Start: docker compose -f docker-compose.databases.yml up -d
 # Oracle XE needs ~2GB RAM and 5-15 min on first start (EULA accepted via ORACLE_PASSWORD).
+# Data on D: (T-021). App does not use MySQL/Oracle; ledger stays MSSQL.
 services:
   mysql:
     image: mysql:8.4
@@ -12,7 +13,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-ClearPay_Dev1!}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-ClearPay}
     volumes:
-      - clearpay-mysql:/var/lib/mysql
+      - D:/ClearPay/data/mysql:/var/lib/mysql
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -30,14 +31,10 @@ services:
       APP_USER: ${ORACLE_APP_USER:-clearpay}
       APP_USER_PASSWORD: ${ORACLE_APP_USER_PASSWORD:-ClearPay_Dev1!}
     volumes:
-      - clearpay-oracle:/opt/oracle/oradata
+      - D:/ClearPay/data/oracle:/opt/oracle/oradata
     healthcheck:
       test: ["CMD", "healthcheck.sh"]
       interval: 30s
       timeout: 10s
       retries: 40
       start_period: 180s
-
-volumes:
-  clearpay-mysql:
-  clearpay-oracle:

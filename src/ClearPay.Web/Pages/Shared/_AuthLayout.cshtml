@@ -1,10 +1,10 @@
+@using ClearPay.Web.Localization
 @{
-    var meta = ViewData["MetaDescription"] as string
-        ?? "ASP.NET Core 8 dijital cüzdan demosu. Giriş yapın. Demo — yükleme için sahte gateway.";
-    var title = ViewData["Title"] as string ?? "Giriş";
+    var meta = ViewData["MetaDescription"] as string ?? L["MetaSignIn"].Value;
+    var title = ViewData["Title"] as string ?? L["SignIn"].Value;
 }
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="@AppCultures.HtmlLang">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,7 +15,7 @@
     <meta property="og:title" content="@title — ClearPay (Demo)" />
     <meta property="og:description" content="@meta" />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:locale" content="@AppCultures.OgLocale" />
     <meta name="robots" content="index,follow" />
     <link rel="icon" href="~/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,17 +26,20 @@
     <link rel="stylesheet" href="~/css/motion.css" asp-append-version="true" />
 </head>
 <body class="auth-body">
-    <a class="skip-link" href="#main">İçeriğe geç</a>
+    <a class="skip-link" href="#main">@L["SkipToContent"]</a>
     <div class="auth-shell">
+        <div class="auth-lang">
+            <partial name="_LanguagePicker" />
+        </div>
         <main id="main" class="auth-card">
             <a class="brand brand-on-light" asp-page="/Account/Login">
                 <span class="brand-mark" aria-hidden="true">C</span>
                 <span class="brand-name wordmark">ClearPay</span>
             </a>
-            <p class="brand-tagline">Demo cüzdan</p>
+            <p class="brand-tagline">@L["DemoWallet"]</p>
             @RenderBody()
         </main>
-        <p class="auth-footer">Demo — yükleme için sahte gateway</p>
+        <p class="auth-footer">@L["DemoDisclaimer"]</p>
     </div>
 </body>
 </html>

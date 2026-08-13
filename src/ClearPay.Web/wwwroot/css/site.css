@@ -102,8 +102,15 @@ a {
   border-left-color: #fff;
 }
 
-.sidebar-note {
+.sidebar-foot {
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sidebar-note {
+  margin: 0;
   color: rgba(255, 255, 255, 0.55);
   font-size: 0.75rem;
 }
@@ -268,6 +275,45 @@ select {
 
 .topbar-form {
   margin: 0;
+}
+
+.topbar-lang {
+  flex-shrink: 0;
+}
+
+.lang-picker-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.lang-btn {
+  border: 1px solid var(--navy);
+  background: var(--paper);
+  color: var(--navy);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.45rem;
+  cursor: pointer;
+}
+
+.lang-btn.is-active {
+  background: var(--navy);
+  color: #fff;
+}
+
+.lang-picker-on-navy .lang-btn {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: transparent;
+  color: #fff;
+}
+
+.lang-picker-on-navy .lang-btn.is-active {
+  background: #fff;
+  color: #1b2a4a;
+  border-color: #fff;
 }
 
 .btn-text {
@@ -471,12 +517,19 @@ select {
 }
 
 .auth-shell {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2.5rem 1.25rem;
+}
+
+.auth-lang {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
 }
 
 .auth-card {

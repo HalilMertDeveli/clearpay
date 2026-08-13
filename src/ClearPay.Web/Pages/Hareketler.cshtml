@@ -1,60 +1,60 @@
 @page "/hareketler"
 @model HareketlerModel
 @{
-    ViewData["Title"] = "Hareketler";
-    ViewData["MetaDescription"] = "Cüzdan hareketleri. Demo — yükleme için sahte gateway.";
+    ViewData["Title"] = L["Activity"].Value;
+    ViewData["MetaDescription"] = L["MetaActivity"].Value;
 }
 
-<p class="page-kicker">Geçmiş</p>
-<h1 class="page-title">Hareketler</h1>
-<p class="lede">Cüzdanınızdaki gönderim, yükleme ve çekimler.</p>
+<p class="page-kicker">@L["HistoryKicker"]</p>
+<h1 class="page-title">@L["Activity"]</h1>
+<p class="lede">@L["ActivityLede"]</p>
 
 <section class="panel">
     <form method="get" class="stack-form filter-bar" novalidate>
         <div class="filter-row">
             <div class="field">
-                <label class="field-label" for="baslangic">Başlangıç</label>
+                <label class="field-label" for="baslangic">@L["FilterFrom"]</label>
                 <input class="field-input" id="baslangic" name="baslangic" type="date" disabled />
             </div>
             <div class="field">
-                <label class="field-label" for="tur">Tür</label>
+                <label class="field-label" for="tur">@L["FilterType"]</label>
                 <select class="field-input" id="tur" name="tur" disabled>
-                    <option>Tümü</option>
-                    <option>Havale</option>
-                    <option>Yükle</option>
-                    <option>Çek</option>
+                    <option>@L["FilterAll"]</option>
+                    <option>@L["NavTransfer"]</option>
+                    <option>@L["TopUp"]</option>
+                    <option>@L["Withdraw"]</option>
                 </select>
             </div>
             <div class="field">
-                <label class="field-label" for="durum">Durum</label>
+                <label class="field-label" for="durum">@L["FilterStatus"]</label>
                 <select class="field-input" id="durum" name="durum" disabled>
-                    <option>Tümü</option>
-                    <option>Tamamlandı</option>
-                    <option>Beklemede</option>
+                    <option>@L["FilterAll"]</option>
+                    <option>@L["StatusCompleted"]</option>
+                    <option>@L["StatusPending"]</option>
                 </select>
             </div>
             <div class="field">
-                <button type="submit" class="btn" disabled>Filtrele</button>
+                <button type="submit" class="btn" disabled>@L["Filter"]</button>
             </div>
         </div>
     </form>
     <table class="data-table">
         <thead>
             <tr>
-                <th>Tarih</th>
-                <th>İşlem no</th>
-                <th>Tür</th>
-                <th>Karşı taraf</th>
-                <th class="num">Tutar</th>
-                <th>Durum</th>
+                <th>@L["ColDate"]</th>
+                <th>@L["ColRef"]</th>
+                <th>@L["FilterType"]</th>
+                <th>@L["ColCounterparty"]</th>
+                <th class="num">@L["ColAmount"]</th>
+                <th>@L["ColStatus"]</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td colspan="6" class="empty-cell">
                     <div class="empty-block">
-                        <p class="empty-title">Bu dönemde hareket bulunmuyor.</p>
-                        <p class="empty-hint">Tarih veya tür filtresini genişletin; ya da ilk havaleyi Özet’ten gönderin.</p>
+                        <p class="empty-title">@L["EmptyPeriodTitle"]</p>
+                        <p class="empty-hint">@L["EmptyPeriodHint"]</p>
                     </div>
                 </td>
             </tr>

@@ -19,22 +19,29 @@ Lokal SA şifresi varsayılanı `ClearPay_Dev1!` (yalnızca Docker; Azure’da k
 
 ## Lokal ek motorlar (MySQL / Oracle)
 
-ClearPay ledger SQL Server kalir. Asagidaki motorlar **lokal test** icindir; cok-veritabani uygulamasi **sonra** (SPEC 8 ekran sabit, yeni urun ekrani yok).
+ClearPay ledger **yalnizca SQL Server** kalir (SPEC). MySQL ve Oracle lokal Compose yan servistir; Web/Identity tasinmaz. Cok-veritabani uygulamasi **sonra** (8 ekran sabit).
 
-| Motor | Nasil | Port | Kullanici (lokal demo) |
-|-------|--------|------|-------------------------|
-| SQL Server | docker compose up -d servis sql **veya** Windows native (MSSQLSERVER) | 1433 | sa / .env MSSQL_SA_PASSWORD (Docker). Native: Windows auth (sqlcmd -S localhost -E) |
-| MySQL 8 | docker compose -f docker-compose.databases.yml up -d | 3306 | oot / MYSQL_ROOT_PASSWORD, DB ClearPay |
-| Oracle XE 21 | ayni databases compose (gvenzl/oracle-xe:21-slim) | 1521 | APP_USER clearpay, service XEPDB1. Ilk acilis 5-15 dk, ~2 GB RAM. |
+Veri bind mount (T-021), C: named volume silinmez:
 
-`ash
+| Motor | Compose | Port | Data |
+|-------|---------|------|------|
+| SQL Server | `docker compose up -d` (servis sql) | 1433 | `D:\ClearPay\data\mssql` |
+| MySQL 8.4 | `docker compose -f docker-compose.databases.yml up -d` | 3306 | `D:\ClearPay\data\mysql` |
+| Oracle XE 21 | ayni databases compose (`gvenzl/oracle-xe:21-slim`) | 1521 | `D:\ClearPay\data\oracle` |
+
+Sifreler `.env` (gitignore). `.env.example` placeholder. App connection string **MSSQL only** (`localhost,1433`, SA). Identity lokal: SQLite `App_Data`.
+
+```bash
+docker compose up -d
 docker compose -f docker-compose.databases.yml up -d
+docker compose ps
+docker compose -f docker-compose.databases.yml ps
 powershell -File scripts/db-smoke.ps1
-dotnet test ClearPay.slnx
-`
+```
 
-Docker Desktop ilk kurulumda WSL2 + VirtualMachinePlatform + Hyper-V (cikis 3010) **reboot** ister. Oracle EULA imaj degiskeni ORACLE_PASSWORD ile kabul edilir; pirated imaj yok. docker-compose.yml (SQL/Redis/Rabbit) bu dosyaya dokunulmaz.
+Windows native MySQL84 zaten `:3306` dinliyorsa Compose MySQL icin o servisi durdur (veriyi silme). Native MSSQLSERVER data C: Program Files'da kalir; Compose SQL D: bind kullanir.
 
+Docker Desktop Linux motoru Virtual Machine Platform ister. `wsl --install --no-distribution` sonrasi **reboot** sart (CBS pending). Oracle EULA `ORACLE_PASSWORD` ile kabul; pirated imaj yok. Redis/Rabbit `docker-compose.yml` icinde durur (TASK-12).
 ## CI (TASK-15)
 
 `.github/workflows/ci.yml`: `dotnet restore` → `build` → `test`. Secret yok.

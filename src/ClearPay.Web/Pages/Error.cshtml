@@ -1,16 +1,16 @@
 ﻿@page
 @model ErrorModel
 @{
-    ViewData["Title"] = "Hata";
+    ViewData["Title"] = L["Error"].Value;
 }
 
-<h1 class="page-title">Bir hata oluştu</h1>
+<h1 class="page-title">@L["ErrorLede"]</h1>
 <section class="panel">
     @if (Model.ShowRequestId)
     {
-        <p class="empty">İstek no: <code>@Model.RequestId</code></p>
+        <p class="empty">@L["RequestId"]: <code>@Model.RequestId</code></p>
     }
     <div class="actions">
-        <a class="btn" asp-page="/Index">Cüzdana dön</a>
+        <a class="btn" asp-page="/Index">@L["BackToWallet"]</a>
     </div>
 </section>

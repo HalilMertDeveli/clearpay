@@ -22,7 +22,7 @@ Anonim: yalnızca giriş ve kayıt. Cookie sonrası sol menü: **Özet, Havale, 
 
 ## Dilim (kullanıcı)
 
-Türkçe UI. Para `0,00 ₺`. Navy `#1B2A4A`. Piksel Figma yok.
+UI: TR/EN/DE/FR (varsayılan Türkçe; dil seçici layout chrome, 9. ekran değil). Para kültüre göre `0,00 ₺` / `0.00 ₺`. Navy `#1B2A4A`. Piksel Figma yok.
 
 Canlı path (hedef): `/` `/giris` `/kayit` `/havale` `/yukle-cek` `/hareketler` `/admin`. Dekont menüde yok — hareketten açılır (ekran 7; path TASK-09).
 
@@ -152,7 +152,7 @@ Bunlar hikâye, ekran, kabul **değildir**. Coder’a TASK açılmaz.
 | Gerçek banka, FAST, BOA, EFT, gerçek IBAN | UX hissi (alıcı, tutar, dekont) SPEC’ten; mesaj protokolü yok. |
 | Satıcı paneli / pazaryeri tahsilatı | Rol `Satici` Q2; ekran listesinde yok. |
 | Papara / iyzico / PayTR SDK, lisans, BDDK iddiası | Demo. Sales: `FARK.md`. |
-| Kafka UI, Kubernetes konsolu, FIDS, çok dilli UI | SPEC yasak. |
+| Kafka UI, Kubernetes konsolu, FIDS | SPEC yasak. |
 | LED teknik destek sitesine cüzdan | Ayrı repo. |
 | Google Ads harcaması, “ucuz havale” | SEO/Ads; canlı URL sonrası, Demo başlıkta. |
 
