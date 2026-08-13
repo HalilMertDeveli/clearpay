@@ -279,3 +279,12 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Kapsam dışı:** gerçek POS / 3DS / kart, FAST/BOA, satıcı paneli. Sahte BankGateway var.
 - **Coder:** TASK-03 = US-01/02/03; PageModel’de ledger yok. **Payments:** US-04/05. **Tester:** 0,00 ₺; sonra 409. TASK-03 kesilmedi.
 
+## 2026-08-13 — Pazarlama (kanallar)
+
+- **OWN:** `docs/PAZARLAMA.md`, `.cursor/rules/pazarlama.mdc`. `docs/AGENTS.md` / `src/` / SEO.md / ADS.md / PR.md **dokunulmadı** (kopyalama yok).
+- Üç kanal: **GitHub** (About + Website TASK-16’da + topics PR’de), **LinkedIn** (taslak A repo / B launch), **demo URL** (yalnızca TASK-16 tarayıcıda açık). Papara rakibi ads yok.
+- Koordine: title/SC → SEO.md; Search metin → ADS.md; dürüst sıra → PR.md; pitch → SATIS/FARK. Launch sırası PR §3; Pazarlama atlamaz.
+- **Kullanıcı tıklar:** GitHub Settings, LinkedIn yayın, Azure/SC/Ads. Ajan hesap/harcama yok. TASK-16 yokken “yayındayız” yok.
+- **Coder:** TASK-03 kesilmedi; meta `SEO.md`. **Orchestrator:** AGENTS Pazarlama satırı (bu ajan AGENTS yazmadı). RAG: Pazarlama **yeşil** (kanal playbook); org grubundan ayır.
+- ORGANIZASYON’daki “PAZARLAMA.md henüz yok” **eski**; dosya bu commit’te.
+
