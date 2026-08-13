@@ -84,6 +84,7 @@ Ledger yazıldı, HTTP timeout oldu, client tekrar dener. Mesajı commit’ten *
 |-------|----------------|
 | `docs/SPEC.md` | Ürün, ekran listesi, para kuralları — bozulmaz |
 | `docs/PLAN.md` | Fazlar, TASK kabul kriteri |
+| `docs/CALISMA-PLANI.md` | Tüm ajanların sıra + test kapısı (yönetici planı) |
 | `docs/TASKS.md` | Kuyruk (Todo / Done) — ajan buradan iş alır |
 | `docs/AGENTS.md` | Orchestrator / Architect / Coder / Payments / Tester / Deploy |
 | `docs/DEPLOY.md` | Lokal Compose, Azure talimatı; hesap açma yok |

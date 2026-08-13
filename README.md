@@ -43,6 +43,8 @@ TASK-02 skeleton is in the repo. Next: **TASK-03** login, register, empty wallet
 
 - [SPEC](docs/SPEC.md) — product, screens, money rules
 - [PLAN](docs/PLAN.md) — phased work plan
+- [Çalışma planı](docs/CALISMA-PLANI.md) — agent sequence + test gates (Turkish)
+- [Yönetici raporu](docs/YONETICI-RAPORU.md) — status / RAG (Turkish)
 - [TASKS](docs/TASKS.md) — queue
 - [AGENTS](docs/AGENTS.md) — roles
 - [DEPLOY](docs/DEPLOY.md) — local / Azure

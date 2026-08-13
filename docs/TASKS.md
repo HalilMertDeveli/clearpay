@@ -26,8 +26,10 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [x] TASK-02: Solution iskeleti (.NET 8 Clean Arch, Docker SQL, sol menü layout)
 
 ## Notlar
+- Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»
-- İlk ekran işi TASK-03: giriş + boş cüzdan özeti (TASK-02 iskeleti açar)
+- **Öncelik TASK-03** (Coder). Architect Application portları (DIP) para özelliği **kapısı**. PageModel’de ledger/havale yok.
+- TASK-16 Azure **şimdi değil** (`docs/CANLI.md`). Ads harcaması yok.
 - Hosting / DNS kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz
 - Satıcı ödemesi ve canlı Redis/Rabbit Q2; Todo’da yok

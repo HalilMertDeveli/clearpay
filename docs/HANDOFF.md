@@ -135,3 +135,16 @@ Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanı
 - **MARKA.md:** landed. One-liner: **ClearPay — demo cüzdan, sahte banka.** Disclaimer duruyor. FARK/SATIS’ten 2 çizgi fold (çift kayıt+409; outbox+REST/SOAP). Papara rakibi yok.
 - **brand.css:** additive tokens `wwwroot/css/brand.css`. `site.css` / Razor dokunulmadı. Coder: layout’a link (yukarıdaki Designer HANDOFF).
 - Coder status’taki “TASARIM / brand.css henüz yok” **eski**; dosyalar diskte. Identity silinmedi. Google Ads yok.
+
+## 2026-08-13 — Orchestrator (yönetici)
+
+- Kaynak: `docs/CALISMA-PLANI.md`. Değerlendirme: `docs/YONETICI-RAPORU.md`.
+- **Sales wedge (FARK):** Çift kayıt, 409, outbox. Demo — sahte banka gateway.
+- **SEO Done:** `docs/SEO.md` + `docs/ADS.md`. Ads yalnızca canlı URL. SC/GA4/Ads kullanıcı. Coder `_Layout` düzenlerken meta + canonical (yeni TASK değil).
+- **Payments yeşil:** Domain + `LedgerPair.NetOf` (`e2a5320`). Rewrite yok. Havale TASK-06.
+- **Architect kapısı:** Application portları (`IBankGateway`, `IWalletReader`, `ITransferExecutor`, DIP). Canvas + SOLID. Coder TASK-03 Identity/UI devam; **PageModel’de ledger/transfer yok.** Domain durur.
+- Kritik yol: **TASK-03**. TASK-16 / Azure / Ads harcama yok.
+
+## 2026-08-13 — Yönetici değerlendirmesi
+
+Yönetici değerlendirmesi: `docs/YONETICI-RAPORU.md`
