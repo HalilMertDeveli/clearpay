@@ -9,7 +9,20 @@ public sealed class PlaceholderPagesTests : IClassFixture<ClearPayWebFactory>
 
     public PlaceholderPagesTests(ClearPayWebFactory factory)
     {
-        _client = factory.CreateClient();
+        _client = factory.CreateClient(new() { AllowAutoRedirect = false });
+    }
+
+    [Theory]
+    [InlineData("/giris")]
+    [InlineData("/kayit")]
+    [InlineData("/Account/Login")]
+    [InlineData("/Account/Register")]
+    [InlineData("/api/health")]
+    public async Task Anonymous_routes_return_200(string path)
+    {
+        var response = await _client.GetAsync(path);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Theory]
@@ -17,11 +30,12 @@ public sealed class PlaceholderPagesTests : IClassFixture<ClearPayWebFactory>
     [InlineData("/havale")]
     [InlineData("/yukle-cek")]
     [InlineData("/hareketler")]
-    [InlineData("/api/health")]
-    public async Task Placeholder_routes_return_200(string path)
+    public async Task Wallet_routes_redirect_to_login(string path)
     {
         var response = await _client.GetAsync(path);
 
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+        response.Headers.Location.Should().NotBeNull();
+        response.Headers.Location!.ToString().Should().Contain("/Account/Login");
     }
 }

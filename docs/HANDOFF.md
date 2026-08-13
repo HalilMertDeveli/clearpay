@@ -193,9 +193,43 @@ Yönetici değerlendirmesi: `docs/YONETICI-RAPORU.md`
 - Coder **TASK-03** durmaz. SEO.md ile çakışma: PR yayın hikâyesi, SEO title şablonları.
 - Rapor: PR **sarı** (`docs/YONETICI-RAPORU.md`).
 
+## 2026-08-13 — PR (playbook landed)
+
+- **OWN:** `docs/PR.md` (asıl), `.cursor/rules/pr.mdc`. `src/` / Razor / CSS / TASKS / SEO.md / ADS.md **dokunulmadı**. Google/Azure hesabı açılmadı.
+- **Dürüst sıra:** “havale” / “Papara” #1 **yok** (ücretli tüketici araması + lisans). Kazanılır: canlı URL, `ClearPay ASP.NET`, `idempotent wallet .NET`, repo, isim+ClearPay.
+- **Beş kapı:** (1) `https://clearpay.azurewebsites.net` + HTTPS, TASK-15→16 kullanıcı Azure (`CANLI.md`) (2) SC/sitemap/robots/title/GA4 — ayrıntı `SEO.md` (3) README EN + 1 LinkedIn/Medium + GitHub topics (4) GitHub, LinkedIn aday, isteğe Ads yalnızca URL sonrası başlıkta Demo (`ADS.md`; “ucuz havale” yok) (5) checklist: SC **kullanıcı** doğrular; meta/sitemap ajan; Coder layout meta.
+- **Launch günü:** 1 yeşil build 2 Azure URL 3 Search Console 4 LinkedIn 5 isteğe Ads.
+- **AGENTS.md** PR satırı güncellendi. `SENIN-ISLERIN.md` “Canlı + Google” maddeleri. README Docs’a PR link.
+- Coder: Razor yok; meta hâlâ `SEO.md` HANDOFF. Deploy: TASK-16 hesap yokken başlama. SEO ajanı: SEO.md yeniden yazılmadı.
+
 ## 2026-08-13 — Sales DONE / Tester DONE (yönetici)
 
 - **Sales:** wedge origin `FARK.md` / `SATIS.md` — her kuruşun +/− satırı ve correlation id sizin defterinizde; onlar bakiye güncellendi der. Papara tüketici yerine geçmiyoruz. Relaunch yok.
 - **Tester:** 8/8 `LedgerPairTests` `NetOf` origin. Tam solution Coder Identity derlenene kadar kırmızı olabilir. Relaunch yok.
 - Coder **TASK-03 only** — ekstra iş yok.
 - Rapor RAG güncellendi: `docs/YONETICI-RAPORU.md`.
+
+## 2026-08-13 — Organizasyon (kullanıcı)
+
+Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış, Pazarlama, İK, Finans.
+
+| Org | Ajanlar | Owns (beklenen) |
+|-----|---------|-----------------|
+| **Yönetim** | Orchestrator | HANDOFF, TASKS, CALISMA-PLANI, YONETICI-RAPORU |
+| **Ürün** | Product (yeni) | `docs/ORGANIZASYON.md` / ürün notu — SPEC ekranı eklemez |
+| **Yazılım** | Coder, Architect, Payments | Web / ARCHITECTURE+ports / Domain Ledger |
+| **Tasarım** | Designer | TASARIM, MARKA, brand.css — **Done** |
+| **Kalite** | Tester | tests — LedgerPair 8/8 origin |
+| **Destek** | Destek (yeni) | destek docs; lisanslı banka değil |
+| **Satış** | Sales | FARK, SATIS — **Done** (wedge origin) |
+| **Pazarlama** | SEO, PR, Pazarlama (yeni) | SEO/ADS, PR.md; Ads harcama yok |
+| **İK** | IK (yeni) | IK docs; Coder’a iş açmaz |
+| **Finans** | Finans (yeni) | finans docs; gerçek PSP değil |
+| **Öğrenme** | Öğrenme | OGRENME, SENIN-ISLERIN, KRONIK |
+
+`docs/ORGANIZASYON.md` henüz diskte yok — land edince bu tablo oraya işaret eder. Coder **TASK-03** kesilmedi. Deploy mevcut (CANLI). Yeni ajanlar kendi glob’unda; aynı cshtml yok.
+
+## 2026-08-13 — Sales / Tester RAG (yönetici)
+
+- Sales **yeşil**: wedge origin — her kuruşun +/− satırı ve correlation id sizin defterinizde; onlar bakiye güncellendi der. Relaunch yok.
+- Tester **yeşil (ledger)**: 8 `LedgerPairTests` origin. Tam solution Coder Identity sonrası. Relaunch yok.

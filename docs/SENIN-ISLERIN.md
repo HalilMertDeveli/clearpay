@@ -22,6 +22,17 @@ Kod ve TASK sırası ajanın işi. Sen hesap, makine ve sırları tutarsın.
 
 ---
 
+## Canlı + Google (PR)
+
+Playbook: [`PR.md`](PR.md). **Dürüst:** “havale” / “Papara”da #1 olmayız (ücretli tüketici araması + lisans).
+
+- **Canlı URL** — Azure’u **sen** açarsın ([`CANLI.md`](CANLI.md)). Hedef `https://clearpay.azurewebsites.net`, sonra özel domain, HTTPS. TASK-15 Actions yeşil → TASK-16.
+- **Google** — Search Console doğrulaması **sen**; sitemap/robots/meta ajan ([`SEO.md`](SEO.md)). Title: `ClearPay — ASP.NET Core cüzdan demo`. `/giris` ince kopya indeks olmasın.
+- **Üst sıra (gerçekçi)** — `ClearPay ASP.NET`, `idempotent wallet .NET`, repo, senin adın + ClearPay. README İngilizce, bir LinkedIn/Medium, GitHub topics.
+- **Launch sırası** — 1 yeşil build 2 Azure URL 3 Search Console 4 LinkedIn 5 isteğe Ads ([`ADS.md`](ADS.md); başlıkta Demo, “ucuz havale” yok).
+
+---
+
 ## Ödeme yöntemi — senin işin
 
 ClearPay’de ödeme **Papara başvurusu değil**. Sahte banka + çift kayıt. Adımlar: [`ODEME-SENIN.md`](ODEME-SENIN.md).

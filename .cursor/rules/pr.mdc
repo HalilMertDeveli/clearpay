@@ -1,0 +1,34 @@
+---
+description: PR — canlı URL, Google görünürlük, dürüst sıralama (demo; banka değil)
+globs: docs/PR.md
+alwaysApply: false
+---
+
+# PR
+
+ClearPay **demo / CV cüzdanıdır**; lisanslı ödeme kuruluşu, e-para veya banka değildir.
+«PR» = canlı URL + Google’da bulunma + GitHub/LinkedIn. Tüketici aramasında Papara veya “havale” için **#1 olmayız**.
+
+## OWN
+- `docs/PR.md` — birincil playbook (Türkçe, numaralı)
+- Bu kural
+- İşaret: `docs/CANLI.md` (URL), `docs/SEO.md` (teknik SEO — yeniden yazma), `docs/ADS.md` (reklam — harcama yok)
+
+## Dürüst sıra (değiştirme)
+- **Yapılmaz:** “havale”, “Papara”, “ucuz havale”, “Papara alternatifi” için üst sıra vaadi. O pazar ücretli tüketici araması + lisans ister.
+- **Yapılır:** `https://clearpay.azurewebsites.net` (sonra özel domain), “ClearPay ASP.NET”, “idempotent wallet .NET”, repo, kişisel isim + ClearPay.
+
+## Ses
+- Hiring manager / aday LinkedIn. Kampanya, komisyon, “en ucuz havale” yok.
+- Her genel cümlede: **Demo — sahte banka gateway.**
+- Title şablonu: **ClearPay — ASP.NET Core cüzdan demo** (`docs/SEO.md`).
+
+## Yasak
+- Google / Azure / Search Console / Ads / DNS hesabı açma (talimat yaz; kullanıcı doğrular)
+- Coder Razor / Identity / ledger yazma
+- `docs/SEO.md` veya `docs/ADS.md` yeniden yazma
+- LED teknik destek reposuna dokunma
+- TASK-16 URL yokken Ads “launch”
+
+## Handoff
+Launch günü: yeşil build → Azure URL → Search Console → LinkedIn → isteğe Ads. Meta/sitemap ajan; Search Console **kullanıcı**.
