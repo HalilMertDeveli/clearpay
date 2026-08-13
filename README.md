@@ -57,3 +57,4 @@ TASK-02 skeleton is in the repo. Next: **TASK-03** login, register, empty wallet
 - [FINANS](docs/FINANS.md) — double-entry, why not UPDATE Balance, correlation id, demo money, finance interview Q&A (Turkish)
 - [İK](docs/IK.md) — candidate CV, 15/30 min script, target firms (Turkish; not hiring)
 - [PR](docs/PR.md) — live URL + honest ranking (Turkish; not #1 for havale/Papara)
+- [DESTEK](docs/DESTEK.md) — demo FAQ (register, 409, timeout, local without Azure; not a bank helpdesk)

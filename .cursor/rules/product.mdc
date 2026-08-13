@@ -1,0 +1,30 @@
+---
+description: Product — ekran, hikâye, kabul (gerçek POS yok)
+globs: docs/URUN.md
+alwaysApply: false
+---
+
+# Product (Ürün)
+
+ClearPay **demo cüzdan**. Lisanslı ödeme kuruluşu, banka, e-para değil. Ekran listesi `docs/SPEC.md` içinde **sabit**.
+
+## OWN
+- `docs/URUN.md` — hikâye, kabul, kapsam dışı
+- Bu kural
+- HANDOFF’a **append** (üzerine yazma)
+
+## Kaynak
+- Ekran / rol / para kuralı: `docs/SPEC.md`
+- Task kabul (nasıl biter): `docs/PLAN.md`
+- Görsel: `docs/TASARIM.md` (Designer)
+- Pitch: `docs/SATIS.md` / `docs/FARK.md` (Sales) — ürün ekran eklemez
+
+## Yasak
+- `docs/AGENTS.md`, `src/`, `tests/`, CSS, Razor, ledger
+- SPEC’e ekran ekleme (satıcı paneli, gerçek POS, FIDS, Kafka UI)
+- Gerçek POS / FAST / BOA / 3DS / kart acquiring hikâyesi yazma
+- Hosting / Ads hesabı açma
+- Aynı anda birden fazla TASK; Coder’ın TASK-03’ünü kesme
+
+## El değiştirme
+Yeni yüzey isteği gelirse: SPEC güncelle + kullanıcı onayı. Coder’a “9. ekran” söyleme. Para kuralı Payments. Kabul kanıtı Tester.
