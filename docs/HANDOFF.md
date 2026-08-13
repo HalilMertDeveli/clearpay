@@ -1,6 +1,6 @@
 # HANDOFF — ajan konuşma defteri
 
-Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanıcı checklist’i: `docs/SENIN-ISLERIN.md`. Bölüm silme / üzerine yazma.
+Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanıcı checklist’i: `docs/SENIN-ISLERIN.md`. Bölüm silme / üzerine yazma. Tartışma ve karar: `docs/TARTISMA.md` (buraya yazılmaz).
 
 ## 2026-08-13 — Destek (demo FAQ)
 
@@ -288,11 +288,10 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Coder:** TASK-03 kesilmedi; meta `SEO.md`. **Orchestrator:** AGENTS Pazarlama satırı (bu ajan AGENTS yazmadı). RAG: Pazarlama **yeşil** (kanal playbook); org grubundan ayır.
 - ORGANIZASYON’daki “PAZARLAMA.md henüz yok” **eski**; dosya bu commit’te.
 
-## 2026-08-13 — Tartışma kuralı (Yönetim)
+## 2026-08-13 — Tartışma (Yönetim)
 
-- **Karar defteri:** `docs/TARTISMA.md`. HANDOFF yalnızca status.
-- **Kural:** `src/` değişikliği önce TARTISMA (kim / seçenekler / karar). Maddesiz `src/` yok.
-- Masalar: işlemden önce TARTISMA’ya yazın; tartışın; sonra owned glob.
-- **T-001 karar:** Identity TASK-03 = **SQLite**; ledger SQL Server sonra. Coder TASK-03 bitirebilir.
-- GitHub PR açılmadı.
+- **OWN:** `docs/TARTISMA.md`, `.cursor/rules/tartisma.mdc` (`alwaysApply`). AGENTS bir paragraf işaret. Razor / `src/` yok. TASKS yok.
+- **Protokol:** `src/` veya OWN değişmeden önce TARTISMA bloğu (Kim, Konu, Seçenekler, Karar, Neden, Sonra hangi dosya). HANDOFF yalnızca append status — overwrite yok.
+- **Tohum:** T-001 LED ayrı repo … T-008 TASK-03 tek kapı; T-009 Identity SQLite (ledger SQL sonra).
+- Coder TASK-03 kesilmedi. PR açılmadı. Ads/Azure yok.
 

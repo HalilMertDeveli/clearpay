@@ -1,0 +1,28 @@
+---
+description: Tartışma — önce tartış, sonra yaz; karar günlüğü TARTISMA.md
+alwaysApply: true
+---
+
+# Tartışma (discuss-then-act)
+
+Ekipler fikirleri kendi aralarında **burada** değiştirir, **sonra** işler. Sessiz `src/` veya OWN rewrite yok.
+
+## OWN
+- `docs/TARTISMA.md` — karar günlüğü (şablon üstte)
+- Bu kural (`alwaysApply`)
+
+## Protokol
+1. `src/` veya bir masanın kaynak dosyasını (OWN) değiştirmeden **önce** `docs/TARTISMA.md` sonuna blok ekle: Kim, Konu, Seçenekler, Karar, Neden, Sonra hangi dosya.
+2. Karar orada durur. İş o maddeden sonra gelir.
+3. `docs/HANDOFF.md` yalnızca **append** durum defteridir (landed / blok / sıradaki). Tartışmayı HANDOFF’a yazma; eski HANDOFF bölümünü silme / üzerine yazma.
+4. Aynı kararı yeni olgu yokken yeniden açma; düzeltme = yeni T-NNN bloğu.
+
+## Yasak
+- Maddesiz `src/` değişikliği
+- HANDOFF overwrite (Deploy/Architect çatışmasında olduğu gibi sessiz silme)
+- SPEC ekran listesini tartışmadan genişletme
+- LED teknik destek reposuna dokunma
+- Razor’u Coder dışında yazma (tartışma Coder’a bırakır)
+
+## El değiştirme
+Tartışma bitince HANDOFF’a **bir** status satırı (OWN + T-NNN işaret). Kararın kendisi TARTISMA’da kalır.
