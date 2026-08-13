@@ -2,18 +2,31 @@
 
 Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadece kontrol eder.
 
-| Ajan | Sorumluluk | Ne zaman |
-|------|------------|----------|
-| **Orchestrator** | Sıradaki task’ı seçer, doğru role delege eder, TASKS günceller | Her «sıradaki işi yap» |
-| **Architect** | SPEC/PLAN uyumu, ekran/şema/akış kararı | Yeni özellik / yapı / tablo |
-| **Coder** | Razor Pages, CSS, API, Identity, EF | Kod yazma task’ları |
-| **Payments** | Ledger, idempotency, 409, iade, outbox, bakiye invarianti | Para hareketi (TASK-04…11) |
-| **Tester** | `dotnet build` / `dotnet test`, ekran smoke, 409 kanıtı | Kod sonrası |
-| **Deploy** | Docker Compose, GitHub Actions, Azure talimatı | TASK-02 Compose, TASK-15+ |
-| **Designer** | `docs/TASARIM.md`, `docs/MARKA.md`, `brand.css` token; CEO = ürün sesi | UI kompozisyon + CV markası; Razor’u Coder uygular |
-| **SEO/Ads** | `docs/SEO.md`, `docs/ADS.md`, robots/sitemap, `.cursor/rules/seo.mdc` | Keşif / meta; **harcama yok**; gerçek banka değil |
-| **Sales** | `docs/SATIS.md`, `docs/FARK.md`, `.cursor/rules/sales.mdc` | Mülakat / README / demo copy; **lisanslı cüzdan değil**; Ads harcaması yok |
-| **PR** | `docs/PR.md`, `.cursor/rules/pr.mdc`; CANLI + SEO/Ads’e işaret | Canlı URL + Google/GitHub görünürlük; **havale/Papara #1 yok**; hesap açmaz; Razor yok |
+Şirket haritası (DEMO; gerçek banka İK değil): [`docs/ORGANIZASYON.md`](ORGANIZASYON.md).
+
+| Birim | Ajan | Sorumluluk | Ne zaman |
+|-------|------|------------|----------|
+| **Yönetim** | **Orchestrator** | Sıradaki task’ı seçer, delege eder, TASKS günceller | Her «sıradaki işi yap» |
+| **Ürün** | **Product** | `docs/URUN.md`; SPEC ekran listesi sabit | Yeni özellik anlatımı; Razor yok |
+| **Yazılım** | **Architect** | SPEC/PLAN uyumu, ekran/şema/akış, Application portları | Yeni özellik / yapı / tablo |
+| **Yazılım** | **Coder** | Razor Pages, `site.css`, API, Identity, EF | Kod yazma task’ları; **tek Razor yazarı** |
+| **Yazılım** | **Payments** | Ledger, idempotency, 409, iade, outbox, bakiye invarianti | Para hareketi (TASK-04…11) |
+| **Yazılım** | **Deploy** | Docker Compose, GitHub Actions, Azure talimatı | TASK-02 Compose, TASK-15+ |
+| **Tasarım** | **Designer** | `docs/TASARIM.md`, `docs/MARKA.md`, `brand.css` token; CEO = ürün sesi | UI kompozisyon + CV markası; Razor’u Coder uygular |
+| **Kalite** | **Tester** | `dotnet build` / `dotnet test`, ekran smoke, 409 kanıtı | Kod sonrası |
+| **Destek** | **Support** | `docs/DESTEK.md` | Demo yardım metni; `src/` yok |
+| **Satış** | **Sales** | `docs/SATIS.md`, `docs/FARK.md`, `.cursor/rules/sales.mdc` | Mülakat / README / demo copy; **lisanslı cüzdan değil**; Ads harcaması yok |
+| **Pazarlama** | **Marketing** | `docs/PAZARLAMA.md` | Keşif hikâyesi; Razor yok; Ads hesabı yok |
+| **Pazarlama** | **SEO/Ads** | `docs/SEO.md`, `docs/ADS.md`, robots/sitemap, `.cursor/rules/seo.mdc` | Keşif / meta; **harcama yok**; gerçek banka değil |
+| **Pazarlama** | **PR** | `docs/PR.md`, `.cursor/rules/pr.mdc`; CANLI + SEO/Ads’e işaret | Canlı URL + Google/GitHub görünürlük; **havale/Papara #1 yok**; hesap açmaz; Razor yok |
+| **İK** | **İK** | `docs/IK.md` | Halil CV/mülakat; **kadro işe alımı yok** |
+| **Finans** | **Finans** | `docs/FINANS.md` | Ledger’ı finans mülakatında anlatmak; `UPDATE Balance` yok |
+
+## Sahiplik
+
+- **Razor (`*.cshtml`, PageModel):** yalnızca Coder. Designer / SEO / PR / Marketing / Product / Support markup yazmaz; HANDOFF’ta Coder’a bırakır.
+- Aynı dosyaya iki yazar yok. Ayrıntı: `docs/ORGANIZASYON.md`.
+- `docs/HANDOFF.md` yalnızca **append** (silme / overwrite yok).
 
 ## Çalışma kuralı
 1. Tek seferde tek TASK
@@ -23,4 +36,4 @@ Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadec
 5. LED teknik destek reposuna dokunma
 
 Detaylı kurallar: `.cursor/rules/`  
-Nedenler: `docs/OGRENME.md`. Kronik: `docs/KRONIK.md`. Ajan defteri: `docs/HANDOFF.md`. Kullanıcı checklist: `docs/SENIN-ISLERIN.md`. Ödeme (insan): `docs/ODEME-SENIN.md`.
+Nedenler: `docs/OGRENME.md`. Kronik: `docs/KRONIK.md`. Ajan defteri: `docs/HANDOFF.md`. Kullanıcı checklist: `docs/SENIN-ISLERIN.md`. Ödeme (insan): `docs/ODEME-SENIN.md`. Org: `docs/ORGANIZASYON.md`.
