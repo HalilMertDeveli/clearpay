@@ -2,200 +2,89 @@
 
 **English** | [Türkçe](README.tr.md) | [Français](README.fr.md)
 
-[![.NET 8](https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/download/dotnet/8.0)
-[![C# 12](https://img.shields.io/badge/C%23-12-239120?logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Build](https://img.shields.io/badge/build-placeholder-lightgrey?logo=githubactions&logoColor=white)](#status)
+[![CI](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg)](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml)
+[![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-ASP.NET Core 8 demo wallet: idempotent P2P transfers, a double-entry ledger on SQL Server, and a mock bank gateway (REST + SOAP) with an outbox so an HTTP timeout cannot drop a payment.
+ASP.NET Core 8 wallet. One host: Razor Pages for the site, JSON for the API. SQL Server in Docker. Double-entry in the domain, not a `Balance` column on `Wallet`.
 
-> [!WARNING]
-> **Demo — not a real bank.** No live POS, FAST, card acquiring, or e-money licence. ClearPay is **not** a Papara (or Tosla / Paycell / ininal) competitor. The UI is Turkish. Screenshots will be added when the eight screens are stable; none are faked here.
+I am Halil Mert Develi. I wrote this as the .NET interview repo I actually want to defend — Intertech, Softtech, that kind of shop — not as a Papara clone. The UI is Turkish. Licence is MIT.
 
-## Table of contents
+Demo. Mock `IBankGateway` for top-up and withdraw. No e-money licence, no FAST, no card acquiring, no public Azure URL. If someone sells this as a bank, they did not read the footer.
 
-- [Product](#product)
-- [Eight screens](#eight-screens)
-- [Architecture](#architecture)
-- [Stack](#stack)
-- [Why 409, transactions, and the outbox](#why-409-transactions-and-the-outbox)
-- [Run locally](#run-locally)
-- [Repository layout](#repository-layout)
-- [Status](#status)
-- [Docs](#docs)
-- [License](#license)
+## Ledger
 
-## Product
+The usual student wallet does `wallet.Balance -= amount; SaveChanges();`. That loses the trail, races on last-write-wins, and has nothing to reverse on refund. Freeze becomes a flag taped onto a number.
 
-Registered users see a TL balance, send money to another user, top up or withdraw through a **mock** bank, and open history plus a receipt. An admin can freeze a wallet and search the audit trail.
+Here each movement is a `LedgerEntry` pair: debit (−) and credit (+), same `PairId`, same `CorrelationId`, amounts sum to zero. Balance is `LedgerPair.NetOf`. `Wallet` has no balance field. Refund is a reverse pair; old rows stay. There is no `UPDATE Balance` helper, on purpose.
 
-The interview story this repo is built to prove: every kuruş has a `+` and a `−` line on **your** ledger, the same `Idempotency-Key` never debits twice, and a timeout does not erase the intent. Balance is never “fixed” with a silent `UPDATE`.
+Same `Idempotency-Key` = same intent (double-click, proxy retry). First success is `201`. Replay is `409 Conflict`. A second `201` would cut the purse twice. I do not return `200` + the old body: the client then thinks a new transfer happened.
 
-## Eight screens
+Debit, credit, `Transfer`, `IdempotencyRecord`, `AuditLog`, and `OutboxMessage` go in **one SQL commit**. The outbox row is written with the ledger; a worker publishes **after**. If HTTP times out, the intent is still in the database. Hangfire is the planned worker. It is not in the csproj yet.
 
-Fixed product list ([`docs/SPEC.md`](docs/SPEC.md)). No merchant panel, no real POS.
+That rule set lives in `src/ClearPay.Domain/Ledger`. `LedgerPair` is covered by xUnit. EF onto the Compose SQL instance is not done. `POST /api/transfers` is not an endpoint yet. Gateway classes throw `NotImplementedException`.
 
-| # | Screen | What you see |
-|---|--------|----------------|
-| 1 | Login | Email, password, link to create an account |
-| 2 | Register | Name, email, password, confirm |
-| 3 | Wallet summary | Balance, this month in/out, last 5 movements |
-| 4 | Transfer (Havale) | Recipient, amount, description, remaining balance |
-| 5 | Top up / withdraw | Mock bank, amount, IBAN-like field; success or timeout |
-| 6 | Movements | Date, id, type, counterparty, amount, status; filter + page |
-| 7 | Receipt (Dekont) | Parties, amount, correlation id, time |
-| 8 | Admin | Freeze user, failed queue, audit search |
+## What you can click today
 
-Left nav (same on every page): **Özet**, **Havale**, **Yükle/Çek**, **Hareketler**. **Admin** is role-only (hidden until TASK-10).
+Cookie Identity, SQLite at `App_Data/identity.db`. Register, log in, see **0,00 ₺**. That number is still hardcoded on the summary PageModel — it is not ledger net.
 
-No screenshot gallery yet — when those eight screens are stable, real captures go here. Mockups are not published as product photos.
+| Page | Route | Honest state |
+|------|--------|----------------|
+| Login | `/Account/Login` (`/giris`) | Works |
+| Register | `/Account/Register` (`/kayit`) | Works |
+| Özet | `/` | Empty summary |
+| Havale | `/havale` | Form shell; Gönder is disabled |
+| Yükle / Çek | `/yukle-cek` | Form shell; buttons disabled |
+| Hareketler | `/hareketler` | Empty table; filters disabled |
+| Dekont | — | Not built |
+| Admin | — | Not built (nav hides it) |
 
-## Architecture
+`GET /api/health` → `{ "status": "ok", "product": "ClearPay" }`. No JWT, no Swagger, no Hangfire package, no Redis, no RabbitMQ.
 
-One ASP.NET Core 8 host (Razor Pages + JSON API). Clean Architecture, four projects. Domain does not depend on HTTP or EF.
+`docker compose` runs SQL Server 2022 on `localhost,1433`. The web app does not open that database yet. Identity does not need Docker.
 
-```mermaid
-flowchart TB
-  subgraph web ["ClearPay.Web"]
-    razor[Razor Pages]
-    api[JSON API]
-  end
-  subgraph app ["ClearPay.Application"]
-    ports[Use cases and ports]
-  end
-  subgraph infra ["ClearPay.Infrastructure"]
-    identity[Identity]
-    data[SQL Server / EF]
-    gw[IBankGateway]
-  end
-  subgraph domain ["ClearPay.Domain"]
-    ledger[Ledger rules]
-  end
-  razor --> ports
-  api --> ports
-  infra --> ports
-  ports --> ledger
-  web --> infra
-```
+## Run
 
-| Project | Holds | Does not hold |
-|---------|--------|----------------|
-| `ClearPay.Domain` | Roles, money rules, `LedgerEntry` meaning | HTTP, EF, Razor |
-| `ClearPay.Application` | Use cases, DTOs, FluentValidation, ports | Connection strings, cookies |
-| `ClearPay.Infrastructure` | Identity, SQL, EF/Dapper, Hangfire, bank gateway | Razor, CSS |
-| `ClearPay.Web` | Pages + JSON API, cookie/JWT host | Ledger math, balance “fixes” |
-
-Dependencies: Web → Application + Infrastructure; Infrastructure → Application → Domain.
-
-## Stack
-
-| Layer | Now | Planned |
-|-------|-----|---------|
-| Language / runtime | C# 12, **.NET 8** | — |
-| Web | ASP.NET Core: Razor Pages + Web API, one host | JWT + OpenAPI/Swagger (TASK-06 / TASK-14) |
-| Data | Docker **SQL Server** (Compose); Identity **SQLite** (`App_Data`) | EF Core on SQL Server for the ledger (TASK-04); Dapper / T-SQL for lists |
-| Identity | ASP.NET Identity **cookie** (site) | **JWT** for `POST /api/transfers` |
-| Validation / tests | FluentValidation, **xUnit**, FluentAssertions, WebApplicationFactory | Hardened 409 + ledger invariant tests (TASK-13) |
-| Ops | Docker Compose (SQL only) | Hangfire + outbox worker (TASK-11); Redis + RabbitMQ (TASK-12) |
-| CI / live | — | GitHub Actions (TASK-15); **Azure App Service** Linux + Azure SQL, West Europe (TASK-16) |
-
-Serilog correlation, Hangfire, Redis, and RabbitMQ are in the plan, not yet package references. The build badge above is a **placeholder** until TASK-15 adds Actions.
-
-## Why 409, transactions, and the outbox
-
-| Why | What the code is meant to do |
-|-----|------------------------------|
-| **409 Conflict** | The same `Idempotency-Key` is the same intent. A second `201` would debit twice. Replay returns **409**; no second cut. |
-| **One SQL transaction** | Debit, credit, transfer row, idempotency, audit, and outbox insert commit together or not at all. |
-| **Outbox** | The ledger write is the source of truth. The message is published **after** commit so an HTTP timeout cannot lose it. |
-
-HTTP 409 is **TASK-06**. The outbox worker is **TASK-11**. Domain rules for double-entry already live under `ClearPay.Domain/Ledger`. There is no `UPDATE Balance` helper.
-
-## Run locally
-
-**Need**
-
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Docker](https://docs.docker.com/get-docker/) for SQL Server (Compose). Login and register can run without Docker until TASK-04 (Identity is SQLite).
+.NET 8 SDK. Docker Desktop if you want the SQL container.
 
 ```bash
 docker compose up -d
 dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
-Open [http://localhost:5153](http://localhost:5153) — login `/Account/Login`, register `/Account/Register`, then the empty wallet summary (`0,00 ₺`).
+Open [http://localhost:5153](http://localhost:5153).
 
 ```bash
 dotnet test
 dotnet build ClearPay.slnx
 ```
 
-SQL listens on `localhost,1433`. The web app does **not** read SQL Server yet (TASK-04). Default local SA password is in `.env.example` (`ClearPay_Dev1!`) — Docker only; never use it on Azure. Do not commit `.env`.
+Local SA password is in `.env.example` (`ClearPay_Dev1!`). Docker only. Do not commit `.env`. Do not put that password on Azure.
 
-## Repository layout
+CI (when the workflow is on `main`) restores and tests `tests/ClearPay.Tests`.
+
+## Layout
 
 ```
-clearpay/
-├── src/
-│   ├── ClearPay.Domain/          # money rules, roles
-│   ├── ClearPay.Application/     # use cases, ports, validators
-│   ├── ClearPay.Infrastructure/  # Identity, persistence, gateways
-│   └── ClearPay.Web/             # Razor + API host (:5153)
-├── tests/
-│   └── ClearPay.Tests/           # xUnit
-├── docs/                         # SPEC, PLAN, architecture, desks
-├── docker-compose.yml            # SQL Server 2022
-└── ClearPay.slnx
+src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (no Balance)
+src/ClearPay.Application      ports (ITransferExecutor, IBankGateway, …), FluentValidation
+src/ClearPay.Infrastructure   Identity (SQLite), gateway stubs that throw
+src/ClearPay.Web              Razor + MapControllers, http profile :5153
+tests/ClearPay.Tests          LedgerPair + auth/page smoke
+docker-compose.yml            SQL Server 2022 — not the web app
+ClearPay.slnx
 ```
 
-## Status
-
-| Done | Next |
-|------|------|
-| TASK-01 docs + agent roles | **TASK-04** SQL model + ledger skeleton |
-| TASK-02 solution, layout, Compose SQL | TASK-05 live wallet summary |
-| TASK-03 login, register, empty summary | TASK-06 havale + **409** |
-
-TASK-03 (login, register, empty `0,00 ₺` summary) is marked Done; cookie Identity on SQLite is in this tree. If `/Account/Login` 404s, the clone is behind that commit. JWT, ledger-on-SQL, mock bank HTTP, Hangfire, CI, and a public Azure URL are **not** shipped. Queue: [`docs/TASKS.md`](docs/TASKS.md). Live plan (no publish until you open Azure): [`docs/CANLI.md`](docs/CANLI.md).
-
-**CV lines (target, not a claim that every line is already proven in HTTP):**
-
-- Built ClearPay, an ASP.NET Core 8 wallet with idempotent P2P transfers, JWT/cookie auth, and a double-entry ledger on SQL Server.
-- Integrated a mock bank gateway over REST and SOAP; used an outbox + queue so payment completion is not lost on timeout.
-- Shipped Docker Compose, xUnit tests, Serilog correlation, and CI/CD to Azure App Service.
-
-Until TASK-06 / TASK-11 / TASK-16 land, say the **rules are locked** and the HTTP proof is still on the queue.
+Web → Application + Infrastructure. Infrastructure → Application → Domain. Domain does not reference EF or ASP.NET.
 
 ## Docs
 
-| Doc | What it is |
-|-----|------------|
-| [SPEC](docs/SPEC.md) | Product, eight screens, money rules |
-| [PLAN](docs/PLAN.md) | Phased work; one TASK at a time |
-| [ARCHITECTURE](docs/ARCHITECTURE.md) | Layers, routes, cookie then JWT |
-| [TASKS](docs/TASKS.md) | Todo / Doing / Done |
-| [CANLI](docs/CANLI.md) | Q1 Azure App Service + Azure SQL (you open the account) |
-| [DEPLOY](docs/DEPLOY.md) | Local Compose + `dotnet run` |
-| [FARK](docs/FARK.md) | Reconciliation-first ledger; not a Papara rival |
-| [URUN](docs/URUN.md) | Who sees what; acceptance |
-| [KRONIK](docs/KRONIK.md) | Learning chronicle (Turkish) |
-| [İK](docs/IK.md) | Candidate CV / interview script (not hiring) |
-| [FINANS](docs/FINANS.md) | Double-entry, correlation id |
-| [TARTISMA](docs/TARTISMA.md) | Discuss-then-act log |
-| [AGENTS](docs/AGENTS.md) | Orchestrator, Coder, Payments, … |
-| [Çalışma planı](docs/CALISMA-PLANI.md) | Agent sequence + test gates |
-| [Yönetici raporu](docs/YONETICI-RAPORU.md) | Status / RAG |
-| [Öğrenme](docs/OGRENME.md) | Why it is built this way |
-| [Senin işlerin](docs/SENIN-ISLERIN.md) | Human-only checklist |
-| [Ödeme (senin)](docs/ODEME-SENIN.md) | Demo money: what you do / don’t |
-| [SATIS](docs/SATIS.md) | Interview pitch |
-| [PR](docs/PR.md) | Honest ranking (not #1 vs Papara) |
-| [PAZARLAMA](docs/PAZARLAMA.md) | GitHub / LinkedIn / demo URL |
-| [DESTEK](docs/DESTEK.md) | Demo FAQ (not a bank helpdesk) |
-| [ORGANIZASYON](docs/ORGANIZASYON.md) | Demo “desks” (not a real bank org chart) |
-| [MARKA](docs/MARKA.md) / [TASARIM](docs/TASARIM.md) | Wordmark, navy `#1B2A4A` |
-| [SEO](docs/SEO.md) / [ADS](docs/ADS.md) | Meta / ads drafts after a live URL |
+- [`docs/SPEC.md`](docs/SPEC.md) — screens and money rules (409, one transaction, outbox)
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — layers, cookie then JWT
+- [`docs/FARK.md`](docs/FARK.md) — reconciliation-first; not a Papara rival
+- [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
+
+Azure App Service + Azure SQL (West Europe) is the live target. I open the subscription; there is no `azurewebsites.net` to click today.
 
 ## License
 
-[MIT](LICENSE). Contributions should follow [`docs/SPEC.md`](docs/SPEC.md) (screen list is fixed) and [`docs/TARTISMA.md`](docs/TARTISMA.md) before changing `src/`.
+[MIT](LICENSE) © 2026 Halil Mert Develi
