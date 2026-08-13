@@ -1,0 +1,34 @@
+---
+description: Pazarlama — GitHub, LinkedIn, demo URL kanalları (Papara rakibi ads yok)
+globs: docs/PAZARLAMA.md
+alwaysApply: false
+---
+
+# Pazarlama
+
+ClearPay **demo / portföy cüzdanıdır**. Lisanslı ödeme kuruluşu değil. Kilit: **Demo — sahte banka gateway.**
+
+«Pazarlama» = üç kanalı işletmek: **GitHub**, **LinkedIn**, **demo URL**. Müşteri kazanma, Papara GTM, Google Ads harcaması yok.
+
+## OWN
+- `docs/PAZARLAMA.md` — kanal takvimi, GitHub About, LinkedIn taslak, demo URL paylaşımı
+- Bu kural
+
+## Koordine et (kopyalama)
+- Title / sitemap / SC / GA4 → `docs/SEO.md`
+- Search kampanya metni / negatif kelime → `docs/ADS.md`
+- Dürüst sıralama + launch sırası → `docs/PR.md`
+- Pitch / CV → `docs/SATIS.md`, `docs/FARK.md`
+- Ses → `docs/MARKA.md`
+
+## Yasak
+- Papara / Tosla / ininal **rakibi reklam** (LinkedIn boost, Ads, “alternatif”)
+- `ucuz havale`, gerçek IBAN, BDDK / lisans iddiası
+- `docs/AGENTS.md`, `src/`, Razor, CSS, ledger
+- SEO.md / ADS.md / PR.md üzerine yazmak
+- Azure / Ads / Search Console hesabı açmak; harcama
+- TASK-16 URL yokken “yayındayız”
+- LED teknik destek reposu
+
+## Handoff
+Coder: meta/canonical `SEO.md` (Pazarlama cshtml yazmaz). Deploy: host `CANLI.md`. Orchestrator: AGENTS satırı (bu ajan AGENTS.md yazmaz).

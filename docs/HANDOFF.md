@@ -2,6 +2,13 @@
 
 Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanıcı checklist’i: `docs/SENIN-ISLERIN.md`. Bölüm silme / üzerine yazma.
 
+## 2026-08-13 — Destek (demo FAQ)
+
+- **OWN:** `docs/DESTEK.md`, `.cursor/rules/destek.mdc`. `docs/AGENTS.md` ve `src/` dokunulmadı. TASKS yok (ürün TASK değil).
+- **DESTEK.md:** dürüst — banka yardım masası değil. FAQ: nasıl kayıt, demo para (gerçek TL yok), 409 (TASK-06’da HTTP), timeout (TASK-07/11), Azure yokken lokal (`:5153`).
+- README Docs’a DESTEK satırı. Coder/Payments’a iş emri yok; FAQ kodu takip eder.
+- LED teknik destek reposuna dokunulmadı. Ads/Azure hesabı yok.
+
 ## 2026-08-13 — İK (aday Halil)
 
 - **OWN:** `docs/IK.md`, `.cursor/rules/ik.mdc`. `docs/AGENTS.md` ve `src/` dokunulmadı.
@@ -263,4 +270,12 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - Kod gerçeği: `Wallet` bakiye kolonu yok; `LedgerPair.Create` / `CreateRefund` / `MoneyTransaction.RequiredInserts`. Payments `UPDATE Balance` helper eklemez.
 - **Coder:** TASK-09 dekontta correlation id (yeni TASK değil). **Payments:** Domain durur. Sales wedge aynı: her kuruş +/− ve correlation defterde.
 - ORGANIZASYON’daki “FINANS.md henüz yok” **eski**; dosya bu commit’te. Ads/lisans/PSP yok.
+
+## 2026-08-13 — Product (Ürün landed)
+
+- **OWN:** `docs/URUN.md`, `.cursor/rules/product.mdc`. `docs/AGENTS.md` / `src/` / `tests/` / TASKS / SPEC **dokunulmadı**.
+- ORGANIZASYON’daki “URUN.md henüz yok” **eski** — ürün notu bu commit. SPEC ekranı eklenmedi (8 sabit).
+- US-01…08 + kabul. Path: `/giris` `/kayit` `/` `/havale` `/yukle-cek` `/hareketler` `/admin`. Dekont menüde yok.
+- **Kapsam dışı:** gerçek POS / 3DS / kart, FAST/BOA, satıcı paneli. Sahte BankGateway var.
+- **Coder:** TASK-03 = US-01/02/03; PageModel’de ledger yok. **Payments:** US-04/05. **Tester:** 0,00 ₺; sonra 409. TASK-03 kesilmedi.
 
