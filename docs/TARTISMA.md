@@ -328,3 +328,17 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Karar:** **2.** SQL ikinci instance yok. Oracle resmi/kolay imaj: gvenzl/oracle-xe:21-slim. WSL2/Hyper-V ozellikleri acildi; Docker daemon reboot sonrasi.
 - **Neden:** Kullanici uc motor + lokal test istedi; urun uygulamasi sonra. Compose carpismasin. Azure hesap / TASK-16 / LED yok. Sifre git'e unique secret olarak yazilmaz; lokal demo .env.example ile ayni.
 - **Sonra hangi dosya:** docker-compose.databases.yml, .env.example, scripts/db-smoke.ps1, docs/DEPLOY.md (lokal motor tablosu), docs/HANDOFF.md append. docker-compose.yml / CANLI / Razor dokunulmaz.
+
+---
+
+## T-021 — 2026-08-13 — TASK-04 ledger EF: SQL Server, Identity SQLite kalır
+
+- **Kim:** Yazılım (Coder, Architect, Payments), Yönetim
+- **Konu:** TASK-03 bitti. Ledger tabloları nereye, Identity nereye? Havale API şimdi mi?
+- **Seçenekler:**
+  1. Identity + ledger tek SQL Server şimdi (T-009’u bozar; cookie’yi Compose’a kilitler).
+  2. **Ledger EF SQL Server** (`ClearPay` DB): `Wallet`, `LedgerEntry`, `Transfer`, `IdempotencyRecord`, `AuditLog`, `OutboxMessage`. Unique `Wallet.UserId`, unique `IdempotencyRecord.Key`, indeks `LedgerEntry(WalletId, CreatedAt)`. Identity **SQLite** (T-009). **Havale API yok** (TASK-06).
+  3. Domain POCO rewrite + yeni bakiye kolonu.
+- **Karar:** **2.** Payments Domain POCOs durur (`UPDATE Balance` yok). Coder Infrastructure DbContext + migration. PageModel’de ledger yok. `POST /api/transfers` yok.
+- **Neden:** T-009 kilit ayrı, para motoru ayrı. TASK-04 kabul: şema + indeks; çift kayıt Domain’de zaten var. 409 HTTP TASK-06.
+- **Sonra hangi dosya:** Coder `src/ClearPay.Infrastructure` (EF, migration), Web `AddDbContext` SQL connection. Domain/Ledger **dokunulmaz**. Tester sonra migration smoke.

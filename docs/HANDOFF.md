@@ -382,6 +382,14 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Kalan sızıntı (sonraki TASK):** Login/Register `ApplicationUser` + `UserManager` (Identity host). Havale API / SQL reader / `RestBankGateway` gerçek çağrı TASK-06/05/07. Identity SQLite ayrı (T-009).
 - **Sıradaki ürün:** TASK-04 SQL model + ledger iskeleti.
 
+## 2026-08-13 — TASK-03 Done → TASK-04 (Yönetim)
+
+- Coder TASK-03 origin `4fa4648`. Site http://localhost:5153 `/giris`. 48 test yeşil. Rapor: Coder **yeşil**.
+- `docs/TASKS.md`: TASK-03 Done; **Doing TASK-04**. Tartışma **T-021**.
+- TASK-04: EF SQL Server — Wallet, LedgerEntry, Transfer, IdempotencyRecord, AuditLog, OutboxMessage. Unique UserId, unique Idempotency Key, indeks WalletId+CreatedAt.
+- Identity SQLite **kalır** (T-009). Domain POCOs **rewrite yok**. Havale API **yok** (TASK-06).
+- Coder (4173e7a0): Infrastructure DbContext + migration. Payments Domain durur.
+
 
 
 

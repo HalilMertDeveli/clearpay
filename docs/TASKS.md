@@ -3,7 +3,6 @@
 Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a taşır.
 
 ## Todo
-- [ ] TASK-04: SQL model + ledger iskeleti (Wallet, LedgerEntry, indeks)
 - [ ] TASK-05: Cüzdan özeti canlı (bakiye, ay giden/gelen, son 5 hareket)
 - [ ] TASK-06: Havale (idempotency, transaction, 409)
 - [ ] TASK-07: Yükle / çek + sahte BankGateway REST
@@ -17,7 +16,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [ ] TASK-16: Azure App Service + Azure SQL (açık URL)
 
 ## Doing
-- (boş)
+- [ ] TASK-04: SQL model + ledger iskeleti (Wallet, LedgerEntry, indeks)
 
 ## Done
 - [x] TASK-01: Repo + MD sistemi + ajan rolleri
@@ -28,8 +27,9 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»
-- **Ürün sırası TASK-04.** Deploy: CI landed; TASK-16 URL kullanıcı `az login` + `infra/deploy.ps1` sonrası.
+- **Ürün sırası TASK-04** (EF SQL Server ledger). TASK-03 Done (`4fa4648`). Havale API (TASK-06) yok. Identity SQLite (T-009); ledger SQL.
 - TASK-12: Compose Redis/Rabbit var; uygulama bağlı değil. Ads harcaması yok.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz
 - Satıcı ödemesi ve canlı Redis/Rabbit bağlama Q2; Todo’da TASK-12
+- T-019: kod mimarisi Onion/Clean; n-tier aynı dört projenin adı (ikinci BLL/DAL yok). TASK-04 sırası değişmez.
