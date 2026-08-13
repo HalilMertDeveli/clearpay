@@ -148,3 +148,9 @@ Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanı
 ## 2026-08-13 — Yönetici değerlendirmesi
 
 Yönetici değerlendirmesi: `docs/YONETICI-RAPORU.md`
+
+## 2026-08-13 — Designer DONE
+
+- Origin `666dd32`: `docs/TASARIM.md`, `docs/MARKA.md`, `wwwroot/css/brand.css`. Relaunch yok.
+- Coder TASK-03: `_Layout` / `_AuthLayout`’a `brand.css` link (tek iş). Razor’u Designer yazmaz.
+- Rapor: Designer **yeşil** (`docs/YONETICI-RAPORU.md`).
