@@ -453,3 +453,56 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Karar:** **3.** En robust: invariant Domain’de; HTTP/Razor ledger math yok; `UPDATE Balance` yok.
 - **Neden:** PLAN TASK-05; T-003/T-007. 1 SQL down kullanıcı deneyimi TASK-04 HANDOFF ile aynı. Havale API yok (TASK-06).
 - **Sonra hangi dosya:** `SqlWalletReader`, `AddClearPay` kayıt, `WalletReaderPortTests` + `SqlWalletReaderTests`. `EmptyWalletReader` kaydı kalkar. Razor Index zaten port bağlı.
+
+---
+
+## T-029 — 2026-08-13 — TASK-05 Coder applies T-028 (`SqlWalletReader` live özet; no havale POST)
+
+- **Kim:** Coder / Payments / Tester
+- **Konu:** T-028 kararını koda geçirmek.
+- **Seçenekler:** 1. EmptyWalletReader bırakmak. 2. **SqlWalletReader + canlı özet.**
+- **Karar:** **2.** Havale POST yok.
+- **Neden:** T-028.
+- **Sonra hangi dosya:** `SqlWalletReader`, testler, TASKS TASK-05 Done.
+
+---
+
+## T-030 — 2026-08-13 — Görsel çok dilli README (TASK-05 gerçeği)
+
+- **Kim:** Orchestrator, Coder (README OWN T-010)
+- **Konu:** Kullanıcı, işlemler bittikten sonra daha görsel, yapıyı daha iyi açıklayan, birden fazla dil seçeneği olan README istiyor. Eski README hâlâ EmptyWalletReader / “UI Türkçe” diyor.
+- **Seçenekler:**
+  1. Tek `README.md` içinde EN+TR+FR+DE (T-010 reddi; GitHub varsayılan katlanır).
+  2. **T-010 durur:** `README.md` İngilizce varsayılan; `README.tr.md` + `README.de.md` + `README.fr.md`; üstte dil çubuğu. Mermaid + SVG (`docs/assets/`) + güncel ekran tablosu (TASK-05 canlı özet). TASK-14 Swagger ayrı.
+  3. Ekran görüntüsü için tarayıcı otomasyonu / Edge (kullanıcı LinkedIn’de iptal; PC kilidi yok).
+- **Karar:** **2.** DE eklenir (UI T-027 ile aynı dört dil). 409 HTTP / Azure URL / havale “çalışır” iddiası yok. Birinci şahıs ses T-010 korunur; diyagram eklenir.
+- **Neden:** Standard-readme: varsayılan İngilizce. Kullanıcı görsel + dil seçeneği istedi; T-010 dosya ayrımı bozulmaz. SVG GitHub’da render olur; sahte ekran görüntüsü uydurulmaz.
+- **Sonra hangi dosya:** `README.md`, `README.tr.md`, `README.de.md`, `README.fr.md`, `docs/assets/clearpay-layers.svg`. `src/` yok. TASK-14 Done değil. `docs/HANDOFF.md` append.
+
+---
+
+## T-031 — 2026-08-13 — VS F5 vs :5153 (MSB3027 / address in use)
+
+- **Kim:** Tester / error-fixer, Coder (Web launch)
+- **Konu:** Kullanıcı VS Error List + site. `dotnet build` Debug: `MSB3027` locked by `ClearPay.Web`. `https` profili `5153` + `7133` bağlıyor; F5 ikinci Kestrel’i kırar.
+- **Seçenekler:**
+  1. İkinci process’i öldürüp bırakmak (site düşer).
+  2. **`http` = yalnızca `:5153`.** `https` = yalnızca `:7133` (5153 paylaşılmaz). Temiz durdur → Debug build → `dotnet run --launch-profile http`.
+  3. Portu 5154’e taşımak (kullanıcı / health / HANDOFF kırılır).
+- **Karar:** **2.** Site kanonu `http://localhost:5153`. Onion/PageModel değişmez.
+- **Neden:** SO [address already in use](https://stackoverflow.com/questions/55143246/unable-to-start-kestrel-system-io-ioexception-failed-to-bind-to-address-http), [MSB3027 lock](https://stackoverflow.com/questions/47977927/error-the-process-cannot-access-the-file-because-it-is-being-used-by-another-pro). VS F5 `https` seçiliyse 5153’ü çalmaz. SetCultureModel artık diskte (CS0234 race bitti).
+- **Sonra hangi dosya:** `src/ClearPay.Web/Properties/launchSettings.json`. Persistence / Domain / compose yok.
+
+---
+
+## T-032 — 2026-08-13 — UI canlı görsel yenileme (WePay/Papara hissi, sahte banka değil)
+
+- **Kim:** Designer + Coder (kullanıcı: UI zayıf, daha canlı; dijital cüzdan sitesi)
+- **Konu:** Mevcut flat navy/beyaz iskelet (T-014/T-018: gölge yok, gradient yok, kart lift yok) mülakat demosu için soluk. Canlı fintech cüzdan mı, yoksa bar durur mu?
+- **Seçenekler:**
+  1. TASARIM barı durur: gölge/gradient/lift yok; yalnızca kopya cilası (kullanıcı “zayıf” dedi; yetmez).
+  2. **Kurumsal canlı:** navy `#1B2A4A` + teal `#0F766E` / `#14B8A6` + ılık vurgu `#C2782A`. Kart elevation, hero/özet’te hafif gradient + cam (glass), 12px radius, daha keskin tip. Motion 150–250ms (fade-up + 2px hover; bounce/confetti yok). Boş cüzdan: `empty-mark` + mevcut CTA’lar. 8 ekran; menü aynı; footer demo one-liner. Google/Apple butonları varsa silinmez, stillenir.
+  3. Carnival / sahte banka: emoji, şube, IBAN-as-product, 9. ekran, Papara mor yağmuru — yasak (T-011/T-015).
+- **Karar:** **2.** SPEC ekran listesi durur; görsel cümle “gölge/gradient yok” bu maddeyle gevşer (yalnızca chrome). Identity, ledger, `SqlWalletReader` dokunulmaz.
+- **Neden:** Kullanıcı canlı WePay/Papara **cüzdan** istedi, fake retail bank değil. Eşitlikte ledger > UI; burada UI isteği açık. Reduced-motion kapatır. T-014 kurumsal hareket durur, lift yasağı 2px’e açılır.
+- **Sonra hangi dosya:** `docs/TASARIM.md`, `.cursor/rules/designer.mdc`, `docs/SPEC.md` (görsel bir satır). Coder/Designer: `wwwroot/css/{site,brand,motion}.css`, `_Layout` / `_AuthLayout`, wallet Razor (Index, Havale, YukleCek, Hareketler). Login/Register markup’a sosyal buton eklenmez; CSS kancaları hazır. `docs/HANDOFF.md` append. Domain / Persistence yok.

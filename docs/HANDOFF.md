@@ -487,8 +487,22 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - Tester: `dotnet test -c Release` 62 geçti, 1 skip (409 = TASK-06). Debug kilitli (ClearPay.Web PID); process öldürülmedi.
 - `docs/TASKS.md` TASK-05 Done. **Sıradaki:** TASK-06 havale + 409.
 
+## 2026-08-13 — README görsel + DE (T-030)
+
+- **OWN:** T-030. `README.md` (EN varsayılan), `README.tr.md`, `README.de.md` (yeni), `README.fr.md`. SVG: `docs/assets/clearpay-layers.svg`, `docs/assets/clearpay-ledger.svg`. `src/` yok. TASK-14 Swagger **Done değil**.
+- İçerik TASK-05 gerçeğine çekildi: canlı özet, TR/EN/DE/FR UI, SqlWalletReader; 409 HTTP / Azure URL iddiası yok.
+- **Sıradaki ürün:** TASK-06. README push kullanıcı isterse.
+
 ## 2026-08-13 — Öğrenme (Google/Apple OAuth insan)
 
 - **OWN:** `docs/GIRIS-SOSYAL.md` (yeni; Coder yazmamıştı), `docs/SENIN-ISLERIN.md` bölüm, OGRENME/AGENTS/README birer satır. `src/` yok.
 - Kullanıcının tek işi: Google Cloud OAuth Web client + redirect `http://localhost:5153/signin-google`; secret **user-secrets** (`Authentication:Google:*`). Git yok. Apple isteğe bağlı (ücretli Developer).
 - Coder buton/callback yazar; ajan Client ID üretmez.
+
+## 2026-08-13 — Error-fixer (T-031, VS MSB3027)
+
+- **OWN:** `launchSettings.json` + TARTISMA **T-031**. Domain / Persistence / compose yok.
+- VS Error List: `MSB3027` locked by `ClearPay.Web (29448)`. `https` artık yalnız `:7133` (5153 paylaşılmaz).
+- SO: https://stackoverflow.com/questions/47977927 https://stackoverflow.com/questions/55143246
+- Temiz restart: stop → Debug build → `dotnet run --launch-profile http`. Site `http://localhost:5153`.
+- CI latest yeşil (31702028873). 409 skip = TASK-06. Oracle/VMP kullanıcı reboot.
