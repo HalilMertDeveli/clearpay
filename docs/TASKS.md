@@ -15,19 +15,20 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [ ] TASK-16: Azure App Service + Azure SQL (açık URL)
 
 ## Doing
-- [ ] TASK-05: Cüzdan özeti canlı (bakiye, ay giden/gelen, son 5 hareket)
+- (boş)
 
 ## Done
 - [x] TASK-01: Repo + MD sistemi + ajan rolleri
 - [x] TASK-02: Solution iskeleti (.NET 8 Clean Arch, Docker SQL, sol menü layout)
 - [x] TASK-03: Giriş + Kayıt + boş cüzdan özeti
 - [x] TASK-04: SQL model + ledger iskeleti (Wallet, LedgerEntry, indeks)
+- [x] TASK-05: Cüzdan özeti canlı (bakiye, ay giden/gelen, son 5 hareket)
 - [x] TASK-15: GitHub remote + GitHub Actions
 
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»
-- **Ürün sırası TASK-05** (T-028: `SqlWalletReader` + `LedgerPair.NetOf`). TASK-04 Done (`a4755a1`). Havale API yok. Identity SQLite. SQL yoksa `docker compose up -d` veya sıfır özet.
+- **Ürün sırası TASK-06.** TASK-05 Done: `SqlWalletReader` + `LedgerPair.NetOf`. Havale API yok. Identity SQLite. SQL yoksa sıfır özet.
 - TASK-12: Compose Redis/Rabbit var; uygulama bağlı değil. Ads harcaması yok.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz

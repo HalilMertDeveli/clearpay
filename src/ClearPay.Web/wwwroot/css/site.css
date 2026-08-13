@@ -354,6 +354,14 @@ select {
   font-size: 0.85rem;
 }
 
+.badge-active,
+.badge-frozen {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid #1B2A4A;
+  font-size: 0.8rem;
+}
+
 .btn {
   cursor: pointer;
   min-height: 2.75rem;

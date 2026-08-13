@@ -387,7 +387,7 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
-## T-021 - 2026-08-13 - Lokal MSSQL/MySQL/Oracle veri D: bind mount
+## T-029 - 2026-08-13 - Lokal MSSQL/MySQL/Oracle veri D: bind mount
 
 - **Kim:** Deploy (kullanici: D: bos alana kur; MSSQL + MySQL + Oracle; app ledger SQL Server kalsin)
 - **Konu:** Compose SQL data C: named volume'da siser (~20 GB bos). Uc motor D: uzerinde mi, yoksa Docker data-root mu tasinir?

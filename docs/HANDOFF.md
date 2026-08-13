@@ -464,3 +464,8 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Blok:** Docker Linux engine kalkmadi: Virtual Machine Platform. `wsl --install --no-distribution` OK; CBS reboot pending. `docker compose up` reboot sonrasi. Native MySQL84 su an 127.0.0.1:3306 (C:\ProgramData\MySQL\...); Compose 3306 icin durdur, data silme. Native MSSQLSERVER calisiyor (TCP 1433 kayitli).
 - **Site:** http://localhost:5153. Azure/DNS/LED yok.
 - **Siradaki:** TASK-04 ledger iskeleti (o ajan). Deploy: reboot -> `docker compose up -d` + databases compose; `docker compose ps`.
+
+## 2026-08-13 - Deploy (T-029 numarasi; T-021 carpismasi)
+
+- TARTISMA bind-mount maddesi **T-029** (T-021 ledger EF / Identity SQLite diger ajana ait). Compose D: path ayni.
+- TASK-04 o ajan bitirdi. Bu Deploy TASK-05 koduna dokunmadi; `src/` yok.
