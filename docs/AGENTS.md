@@ -39,4 +39,4 @@ Bu projede ajanlar `docs/TASKS.md` üzerinden el değiştirir. Kullanıcı sadec
 Tartışma protokolü: ekipler `src/` veya bir masanın OWN dosyasını değiştirmeden önce [`docs/TARTISMA.md`](TARTISMA.md) içine blok yazar (Kim, Konu, Seçenekler, Karar, Neden, Sonra hangi dosya); karar orada durur, işlem sonra gelir. [`docs/HANDOFF.md`](HANDOFF.md) yalnızca **append** durum defteridir — tartışmayı silip üzerine yazma.
 
 Detaylı kurallar: `.cursor/rules/`  
-Nedenler: `docs/OGRENME.md`. Kronik: `docs/KRONIK.md`. Ajan defteri: `docs/HANDOFF.md`. Kullanıcı checklist: `docs/SENIN-ISLERIN.md`. Ödeme (insan): `docs/ODEME-SENIN.md`. Org: `docs/ORGANIZASYON.md`.
+Nedenler: `docs/OGRENME.md`. Kronik: `docs/KRONIK.md`. Ajan defteri: `docs/HANDOFF.md`. Kullanıcı checklist: `docs/SENIN-ISLERIN.md`. Ödeme (insan): `docs/ODEME-SENIN.md`. Sosyal giriş (OAuth insan): `docs/GIRIS-SOSYAL.md`. Org: `docs/ORGANIZASYON.md`.

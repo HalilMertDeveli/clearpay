@@ -5,6 +5,7 @@ Kod ve TASK sırası ajanın işi. Sen hesap, makine ve sırları tutarsın.
 - Baştan oku: [`KRONIK.md`](KRONIK.md)
 - Nedenler: [`OGRENME.md`](OGRENME.md)
 - Ödeme nasıl: [`ODEME-SENIN.md`](ODEME-SENIN.md)
+- Google/Apple giriş (OAuth sen, kod Coder): [`GIRIS-SOSYAL.md`](GIRIS-SOSYAL.md)
 - Azure (şimdi hesap açma): [`CANLI.md`](CANLI.md)
 
 ## Operasyon kimliği
@@ -64,3 +65,29 @@ Gerçek banka / Papara / iyzico / FAST başvurusu. POS, 3D Secure, lisans. Gerç
 6. Mülakat: 15/30 dk script + 409/tx/outbox + hangi firma (`IK.md`). Kısa üçlü: `OGRENME.md` / `FARK.md` / `KRONIK.md` §13.
 7. Google Ads’te “ucuz havale / Papara alternatif” **yazma**.
 8. **Banka / iş yeri sunumu** — pitch, rota, gelir mertebesi: [`GELIR.md`](GELIR.md) (T-013). Lisans başvurusu yok. Kapıya soğuk girme.
+
+---
+
+## Google / Apple ile giriş — senin işin
+
+Ayrıntı: [`GIRIS-SOSYAL.md`](GIRIS-SOSYAL.md). **Kod yazmazsın.** Buton Coder’da.
+
+### Sen yapmazsın
+
+Razor / Identity kodu. Secret’ı `appsettings.json` veya git. Yeni Google hesabı. Apple Developer’ı ajanın açması.
+
+### Sen yaparsın (nasıl)
+
+1. **Google Cloud** (mevcut Gmail) → OAuth **Web** client. Origin: `http://localhost:5153`. Redirect: `http://localhost:5153/signin-google`.
+2. Client ID + secret’ı **yalnızca user-secrets**’a yapıştır:
+
+```powershell
+cd C:\Users\clt\Projects\clearpay\src\ClearPay.Web
+dotnet user-secrets init
+dotnet user-secrets set "Authentication:Google:ClientId" "..."
+dotnet user-secrets set "Authentication:Google:ClientSecret" "..."
+```
+
+3. `git status` bu değerleri **göstermez**. Gösterirse dur; commit etme.
+4. **Apple** isteğe bağlı (ücretli Developer). Yoksa atla. Varsa `GIRIS-SOSYAL.md` §2.
+5. Canlıda aynı anahtarlar Azure App Settings (`Authentication__Google__...`); canlı redirect URI ekle. TASK-16’dan önce şart değil.

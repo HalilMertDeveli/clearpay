@@ -4,7 +4,7 @@
 
 Bu dosya SPEC/PLAN’ı tekrar etmez; kısa “neden böyle”. Ürün: `docs/SPEC.md`. Sıra: `docs/PLAN.md` / `docs/TASKS.md` / `docs/CALISMA-PLANI.md`.
 
-Ajan defteri: `docs/HANDOFF.md` (senin işin değil). Checklist: [`SENIN-ISLERIN.md`](SENIN-ISLERIN.md). Ödeme nasıl: [`ODEME-SENIN.md`](ODEME-SENIN.md).
+Checklist: [`SENIN-ISLERIN.md`](SENIN-ISLERIN.md). Ödeme nasıl: [`ODEME-SENIN.md`](ODEME-SENIN.md). Google/Apple OAuth (sen): [`GIRIS-SOSYAL.md`](GIRIS-SOSYAL.md).
 
 ---
 

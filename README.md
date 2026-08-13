@@ -82,6 +82,7 @@ Web → Application + Infrastructure. Infrastructure → Application → Domain.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — layers, cookie then JWT
 - [`docs/FARK.md`](docs/FARK.md) — reconciliation-first; not a Papara rival
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
+- [`docs/GIRIS-SOSYAL.md`](docs/GIRIS-SOSYAL.md) — Google/Apple OAuth: you create clients; secrets never git
 
 Azure App Service + Azure SQL (West Europe) is the live target. I open the subscription; there is no `azurewebsites.net` to click today.
 

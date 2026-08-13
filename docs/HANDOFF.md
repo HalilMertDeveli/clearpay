@@ -465,7 +465,30 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Site:** http://localhost:5153. Azure/DNS/LED yok.
 - **Siradaki:** TASK-04 ledger iskeleti (o ajan). Deploy: reboot -> `docker compose up -d` + databases compose; `docker compose ps`.
 
+---
+
+## 2026-08-13 — Coder UI dilleri TR/EN/DE/FR (T-027)
+
+- **OWN:** TARTISMA **T-027**. `src/ClearPay.Web/**` (RequestLocalization, cookie `.AspNetCore.Culture` `c=tr|uic=tr`, `.resx`, `_Layout` / `_AuthLayout` dil seçici). SPEC dar: kapsam dışı «çok dilli UI» kalktı; varsayılan Türkçe; 9. ekran yok. Domain / Infrastructure Persistence **ezilmedi**. TASKS.md yeni TASK yok. TASK-05 **başlamadı** (bu ajan).
+- Diller: Türkçe, English, Deutsch, Français. Chrome: sol menü + üst çubuk + giriş kartı üstü. Ads/Papara çevrilmez; demo disclaimer her dilde.
+- Para: `MoneyDisplay` kültüre göre `0,00 ₺` / `0.00 ₺`; çift kayıt / 409 / ₺ kuralı durur. PageModel ledger yok.
+- Tester: `dotnet build` + `LocalizationTests` (seçici dil değiştirir). Site: http://localhost:5153 `/giris` → Türkçe / English / Deutsch / Français.
+- **Sıradaki ürün:** TASK-05 (ayrı ajan). Bu iş dil chrome.
+
 ## 2026-08-13 - Deploy (T-029 numarasi; T-021 carpismasi)
 
 - TARTISMA bind-mount maddesi **T-029** (T-021 ledger EF / Identity SQLite diger ajana ait). Compose D: path ayni.
 - TASK-04 o ajan bitirdi. Bu Deploy TASK-05 koduna dokunmadi; `src/` yok.
+
+## 2026-08-13 — TASK-05 Done (Coder / Payments / Tester)
+
+- **OWN:** T-028. `SqlWalletReader` + `AddClearPay` kaydı. Bakiye `LedgerPair.NetOf`; ay giden/gelen; son 5; freeze rozeti. `EmptyWalletReader` silindi. PageModel math yok. Havale API yok.
+- SQL yoksa CanConnect → 0,00 ₺ (500 yok). İlk okumada 1 user = 1 wallet.
+- Tester: `dotnet test -c Release` 62 geçti, 1 skip (409 = TASK-06). Debug kilitli (ClearPay.Web PID); process öldürülmedi.
+- `docs/TASKS.md` TASK-05 Done. **Sıradaki:** TASK-06 havale + 409.
+
+## 2026-08-13 — Öğrenme (Google/Apple OAuth insan)
+
+- **OWN:** `docs/GIRIS-SOSYAL.md` (yeni; Coder yazmamıştı), `docs/SENIN-ISLERIN.md` bölüm, OGRENME/AGENTS/README birer satır. `src/` yok.
+- Kullanıcının tek işi: Google Cloud OAuth Web client + redirect `http://localhost:5153/signin-google`; secret **user-secrets** (`Authentication:Google:*`). Git yok. Apple isteğe bağlı (ücretli Developer).
+- Coder buton/callback yazar; ajan Client ID üretmez.
