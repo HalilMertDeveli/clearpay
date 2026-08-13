@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Designer
 
-ClearPay **demo cüzdan**. CEO burada ürün sesi / CV konumlandırmasıdır; gerçek şirket yöneticisi değil.
+ClearPay **demo dijital cüzdan** (WePay benzeri). CEO burada ürün sesi / CV konumlandırmasıdır; gerçek şirket yöneticisi değil. Sahte banka uygulaması değil.
 
 ## OWN
 - `docs/TASARIM.md` — layout, tipografi, renk, giriş/özet/havale kompozisyon, mobil
@@ -17,11 +17,11 @@ ClearPay **demo cüzdan**. CEO burada ürün sesi / CV konumlandırmasıdır; ge
 ## Görsel bar (bozulmaz)
 Navy `#1B2A4A`, beyaz zemin, Inter. Bootstrap yok. Gölge yok. Emoji yok. Gradient “şeker” yok.
 
-Yaratıcılık **banka disiplini içinde**: keskin hiyerarşi, boş durum, wordmark, form. Parti landing sayfası değil.
+Yaratıcılık **cüzdan / havale disiplini içinde**: keskin hiyerarşi, boş durum, wordmark, form. Parti landing ve sahte banka şubesi yok.
 
 ## CEO / marka
-One-liner: **ClearPay — demo cüzdan, sahte banka.**  
-Kapı: Intertech / Softtech mülakatı. Papara rakibi reklamı yok.
+One-liner: **ClearPay — demo dijital cüzdan (WePay benzeri).** Sahte banka uygulaması değil.  
+Footer: **Demo — yükleme için sahte gateway** (BankGateway stub; ürün kimliği değil).
 
 ## Yasak
 - Coder Razor / Identity / havale iş mantığı yazma

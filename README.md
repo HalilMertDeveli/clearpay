@@ -5,11 +5,11 @@
 [![CI](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg)](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-ASP.NET Core 8 wallet. One host: Razor Pages for the site, JSON for the API. SQL Server in Docker. Double-entry in the domain, not a `Balance` column on `Wallet`.
+ASP.NET Core 8 digital wallet website (WePay-like). People pay and send money **on this site**. One host: Razor Pages for the site, JSON for the API. SQL Server in Docker. Double-entry in the domain, not a `Balance` column on `Wallet`.
 
 I am Halil Mert Develi. I wrote this as the .NET interview repo I actually want to defend — Intertech, Softtech, that kind of shop — not as a Papara clone. The UI is Turkish. Licence is MIT.
 
-Demo. Mock `IBankGateway` for top-up and withdraw. No e-money licence, no FAST, no card acquiring, no public Azure URL. If someone sells this as a bank, they did not read the footer.
+Demo. Not a fake retail bank (no branch, no IBAN core, no “BankaX” UI). The only mock is `IBankGateway` for top-up and withdraw. No e-money licence, no FAST, no card acquiring, no public Azure URL. If someone sells this as a bank, they did not read the footer.
 
 ## Ledger
 

@@ -5,11 +5,11 @@
 [![CI](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg)](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-ASP.NET Core 8 cüzdan. Tek host: site Razor Pages, API JSON. SQL Server Docker’da. Çift kayıt Domain’de — `Wallet` üzerinde `Balance` kolonu yok.
+ASP.NET Core 8 dijital cüzdan **sitesi** (WePay benzeri). İnsanlar para gönderir / öder **bu sitede**. Tek host: site Razor Pages, API JSON. SQL Server Docker’da. Çift kayıt Domain’de — `Wallet` üzerinde `Balance` kolonu yok.
 
 Ben Halil Mert Develi. Bunu Papara klonu diye değil, .NET mülakatında (Intertech / Softtech kapısı) savunabileceğim repo diye yazdım. Arayüz Türkçe. Lisans MIT.
 
-Demo. Yükle/çek için sahte `IBankGateway`. E-para lisansı yok, FAST yok, kart tahsilatı yok, açık Azure URL yok. Bunu banka diye anlatmayın; footer zaten söylüyor.
+Demo. Sahte banka uygulaması değil (şube, IBAN çekirdeği, “BankaX” yok). Sahte olan yalnızca yükle/çek `IBankGateway`. E-para lisansı yok, FAST yok, kart tahsilatı yok, açık Azure URL yok. Bunu banka diye anlatmayın; footer zaten söylüyor.
 
 ## Defter
 

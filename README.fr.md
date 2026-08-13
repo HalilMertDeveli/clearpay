@@ -5,11 +5,11 @@
 [![CI](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg)](https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Portefeuille ASP.NET Core 8. Un seul hôte : Razor Pages pour le site, JSON pour l’API. SQL Server dans Docker. Partie double dans le Domain — pas de colonne `Balance` sur `Wallet`.
+Portefeuille web ASP.NET Core 8 (type WePay). On paie et on envoie de l’argent **sur ce site**. Un seul hôte : Razor Pages pour le site, JSON pour l’API. SQL Server dans Docker. Partie double dans le Domain — pas de colonne `Balance` sur `Wallet`.
 
 Je suis Halil Mert Develi. J’ai écrit ça pour un entretien .NET (Intertech, Softtech, ce type de boîte), pas pour cloner Papara. L’UI est en turc. Licence MIT.
 
-Démo. `IBankGateway` fictif pour recharger / retirer. Pas de licence e-money, pas de FAST, pas d’acquisition carte, pas d’URL Azure publique. Ce n’est pas une banque ; le pied de page le dit déjà.
+Démo. Pas une fausse appli bancaire (pas d’agence, pas de cœur IBAN, pas d’UI « BankaX »). Le seul mock est `IBankGateway` pour recharger / retirer. Pas de licence e-money, pas de FAST, pas d’acquisition carte, pas d’URL Azure publique. Ce n’est pas une banque ; le pied de page le dit déjà.
 
 ## Grand livre
 

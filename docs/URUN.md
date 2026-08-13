@@ -2,19 +2,19 @@
 
 Kaynak ekran: [`docs/SPEC.md`](SPEC.md). İş sırası: [`docs/PLAN.md`](PLAN.md). Bu belge **kim neyi neden görür** ve **bitti sayılır mı**. Ekran eklenmez. Pitch: [`SATIS.md`](SATIS.md). Görsel: [`TASARIM.md`](TASARIM.md).
 
-**ClearPay — demo cüzdan, sahte banka.** Footer her yüzeyde: **Demo — sahte banka gateway.** Gerçek POS / FAST / kart yok.
+**ClearPay — demo dijital cüzdan (WePay benzeri).** Sahte banka uygulaması değil (şube, IBAN çekirdeği, “BankaX” yok). Footer: **Demo — yükleme için sahte gateway** (yalnızca BankGateway stub). Gerçek POS / FAST / kart yok.
 
 ---
 
 ## Ürün (tek cümle)
 
-Kayıtlı kullanıcı TL bakiyesini görür, başka kullanıcıya havale eder, sahte bankadan yükler/çeker, geçmişi ve dekontu açar; admin dondurur ve iz sürer. Hedef: kurumsal .NET mülakatında açılan demo — lisanslı cüzdan değil.
+Kayıtlı kullanıcı TL bakiyesini görür, başka kullanıcıya **bu sitede** havale eder, BankGateway stub ile yükler/çeker, geçmişi ve dekontu açar; admin dondurur ve iz sürer. Hedef: kurumsal .NET mülakatında açılan WePay benzeri cüzdan demosu — lisanslı cüzdan değil, sahte banka uygulaması değil.
 
 ## Kim
 
 | Rol | Ne yapar | Ne yapmaz |
 |-----|----------|-----------|
-| **Musteri** | Giriş, kayıt, özet, havale, yükle/çek, hareketler, dekont | Admin, başka cüzdan dondurma, gerçek banka |
+| **Musteri** | Giriş, kayıt, özet, havale, yükle/çek, hareketler, dekont | Admin, başka cüzdan dondurma, gerçek banka, şube / BankaX UI |
 | **Admin** | Kullanıcı dondur, başarısız kuyruk, audit ara | Müşteri yerine havale; POS tahsilatı |
 | **Satici** | — | **Q2.** Ayrı ekran yok. Şimdi hikâye yok. |
 
@@ -36,12 +36,12 @@ Canlı path (hedef): `/` `/giris` `/kayit` `/havale` `/yukle-cek` `/hareketler` 
 | 2 | Kayıt | `/kayit` | Musteri hesabı aç | Hesap oluştur |
 | 3 | Cüzdan özeti | `/` | Bakiye + bu ay + son 5 | Havale gönder, Yükle, Çek |
 | 4 | Havale | `/havale` | P2P gönder | Gönder, İptal |
-| 5 | Yükle / Çek | `/yukle-cek` | Sahte banka ile bakiye al/ver | Yükle, Çek, İptal |
+| 5 | Yükle / Çek | `/yukle-cek` | BankGateway stub ile bakiye al/ver | Yükle, Çek, İptal |
 | 6 | Hareketler | `/hareketler` | Liste + filtre | Filtrele, Dekont |
 | 7 | Dekont | hareketten | Tek işlem kanıtı | Geri |
 | 8 | Admin | `/admin` | Dondur, kuyruk, audit | Kuyruğa al, Dondur, Ara |
 
-Dokuzuncu satır yok. Satıcı paneli, gerçek POS, kampanya landing’i yok.
+Dokuzuncu satır yok. Satıcı paneli, gerçek POS, kampanya landing’i, şube / BankaX yok.
 
 ---
 
@@ -92,13 +92,13 @@ Kabul **ürün dilinde**. Teknik 409 / ledger: SPEC + Payments. Task bitişi: PL
 
 ### US-05 — Yükle / çek (ekran 5, TASK-07/08)
 
-**Olarak** Musteri, **istiyorum** sahte banka üzerinden cüzdana yüklemek veya çekmek, **ki** başarı ve timeout’u göreyim.
+**Olarak** Musteri, **istiyorum** sahte **BankGateway** (REST/SOAP stub) üzerinden cüzdana yüklemek veya çekmek, **ki** başarı ve timeout’u göreyim.
 
 **Kabul**
 - İki kolon: Yükle | Çek. Tutar + IBAN **benzeri** (gerçek IBAN doğrulaması / EFT yok).
 - Durum: başarı veya timeout. Timeout’ta ledger **kesinleşmez**; kuyruk/outbox kaydı kalır.
 - REST sonra SOAP; kullanıcı aynı sonucu görür (`IBankGateway`).
-- Dondurulmuş cüzdan çekemez. Gerçek POS, kart, 3DS, OTP **yok**.
+- Dondurulmuş cüzdan çekemez. Gerçek POS, kart, 3DS, OTP **yok**. Şube / BankaX ekranı **yok**.
 
 ### US-06 — Hareketler (ekran 6, TASK-09)
 
@@ -147,6 +147,7 @@ Bunlar hikâye, ekran, kabul **değildir**. Coder’a TASK açılmaz.
 
 | Dışarıda | Neden |
 |----------|--------|
+| **Sahte banka uygulaması** (şube, IBAN çekirdeği, BankaX) | Ürün WePay benzeri cüzdan sitesi. Sahte olan yalnızca `BankGateway`. |
 | **Gerçek POS / sanal POS / kart / 3D Secure** | Acquiring, ACS, PCI. ClearPay checkout PSP değil. Sahte `BankGateway` var. |
 | Gerçek banka, FAST, BOA, EFT, gerçek IBAN | UX hissi (alıcı, tutar, dekont) SPEC’ten; mesaj protokolü yok. |
 | Satıcı paneli / pazaryeri tahsilatı | Rol `Satici` Q2; ekran listesinde yok. |
@@ -165,11 +166,11 @@ Q2 (satıcı, canlı Redis/Rabbit) ürün kararı **sonra**; Todo’da yok.
 |-----|------|----------------|
 | Görünen site | 03 | Giriş, kayıt, özet 0,00 ₺ |
 | Para | 04–06 | Defter + canlı özet + havale 409 |
-| Banka + geçmiş | 07–09 | Yükle/çek, SOAP aynı sözleşme, hareket, dekont |
+| Gateway + geçmiş | 07–09 | Yükle/çek (BankGateway stub), SOAP aynı sözleşme, hareket, dekont |
 | Ops | 10–12 | Admin, outbox işler, lokal Redis/Rabbit |
 | Kanıt | 13–16 | Test, README, CI, Azure URL |
 
-Şimdi kritik yol: **TASK-03**. Havale/POS/Azure ürün olarak açılmaz.
+Şimdi kritik yol: **TASK-03**. Havale/POS/Azure ürün olarak açılmaz. Coder TASK-03 = cüzdan login + boş özet (banka teması yok).
 
 ---
 
@@ -178,10 +179,10 @@ Q2 (satıcı, canlı Redis/Rabbit) ürün kararı **sonra**; Todo’da yok.
 | Kime | Ne |
 |------|-----|
 | **Architect** | 9. ekran yok. Path `/giris` `/kayit` CANLI ile; dekont menüye eklenmez. |
-| **Coder** | Hikâye alanları + buton adları. PageModel’de ledger yok. Identity TASK-03. |
-| **Payments** | US-04/05 para; 409 ve timeout kabulü kodda. |
+| **Coder** | Hikâye alanları + buton adları. PageModel’de ledger yok. Identity TASK-03. Razor’u banka temasına çevirme. |
+| **Payments** | US-04/05 para; 409 ve timeout kabulü kodda. Domain ledger durur. |
 | **Tester** | Bu kabul + PLAN. TASK-03: kayıt → 0,00 ₺. TASK-06: aynı key 409. |
-| **Designer** | Kompozisyon `TASARIM.md`; yeni sayfa yok. |
-| **Sales / SEO / PR** | Demo kelimesi. POS / Papara alternatif yok. |
+| **Designer** | Kompozisyon `TASARIM.md`; yeni sayfa yok. One-liner cüzdan/WePay. |
+| **Sales / SEO / PR** | Demo kelimesi. WePay/cüzdan; “sahte banka uygulaması” yok. POS / Papara alternatif yok. |
 
 Çatışma: SPEC ekran listesi kazanır. Bu dosya hikâye uydurarak listeyi genişletmez.

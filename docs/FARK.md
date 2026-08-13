@@ -2,7 +2,7 @@
 
 **Bizi tercih sebebi: her kuruşun +/− satırı ve correlation id’si sizin defterinizde kalır — Papara, iyzico, FAST ve kart “bakiye güncellendi” der.**
 
-Tüketici parasında Papara’nın yerini **almayız** (lisans yok). Wedge gerçek: parayı **açıklamak** zorunda olan taraf kara kutu istemez. Demo: **sahte banka gateway.** FAST katılımcısı, POS, BDDK iddiası yok.
+Tüketici parasında Papara’nın yerini **almayız** (lisans yok). Wedge: **cüzdan/ledger UX** — her kuruş +/− ve correlation id sizin defterinizde. “Biz sahte bankayız” değil. Sahte olan yalnızca **BankGateway** (yükle/çek stub). FAST katılımcısı, POS, BDDK, sahte perakende banka uygulaması yok.
 
 ---
 
@@ -30,11 +30,11 @@ Finans, iç kontrol, kampüs/şirket operasyonu, banka/.NET ekibi — “bu 17,4
 
 ### Neden ClearPay
 
-Kapalı devre **açıklanabilir para**: her harekette + ve −; bakiye = ledger net; aynı `Idempotency-Key` → **409**; outbox ledger ile **aynı SQL transaction**; dekontta correlation id; admin freeze; sahte banka REST **ve** SOAP (aynı sözleşme).
+Kapalı devre **açıklanabilir para** (WePay benzeri cüzdan sitesi): her harekette + ve −; bakiye = ledger net; aynı `Idempotency-Key` → **409**; outbox ledger ile **aynı SQL transaction**; dekontta correlation id; admin freeze; yükle/çek için sahte **BankGateway** REST **ve** SOAP (aynı sözleşme).
 
 ### Ne değiliz
 
-Lisanslı tüketici cüzdanı. Papara rakibi. FAST/BOA. Sanal POS / 3DS. Satıcı pazaryeri. “Onlardan ucuzuz.”
+Lisanslı tüketici cüzdanı. Papara rakibi. FAST/BOA. Sanal POS / 3DS. Satıcı pazaryeri. “Onlardan ucuzuz.” Sahte perakende banka uygulaması (şube, IBAN çekirdeği, BankaX).
 
 ---
 
@@ -44,7 +44,7 @@ Lisanslı tüketici cüzdanı. Papara rakibi. FAST/BOA. Sanal POS / 3DS. Satıc�
 |-------|----------|--------|-----------|
 | Papara, Tosla, Paycell, ininal | Lisanslı cüzdan, gerçek bakiye, kart/IBAN/P2P | Demo kapalı devre; defter **bizde** (çift kayıt) | Onlar ürün; ben izlenebilir kuruş gösteriyorum. Yerlerini almıyorum. |
 | iyzico, PayTR, Stripe | Checkout PSP: 3DS, taksit, settlement | PSP değiliz; kart çekmiyoruz | Ledger’ı gizlerler. Ben her satırı gösterebilirim. |
-| Banka FAST / EFT | TCMB anlık/EFT; IBAN; banka dekontu | Sahte gateway; FAST yok | Timeout’ta outbox + 409. FAST lisansı yok. |
+| Banka FAST / EFT | TCMB anlık/EFT; IBAN; banka dekontu | Sahte **BankGateway** (yükle/çek); FAST yok; ürün banka değil | Timeout’ta outbox + 409. FAST lisansı yok. |
 | Kart 3DS POS | Acquiring, ACS, PCI | Yok | İç bakiye kart rayına çıkmaz. |
 | ASP.NET CRUD | `UPDATE Balance` | `LedgerEntry` +/−, unique idempotency | Bakiye güncellendi demiyoruz; defter net. |
 

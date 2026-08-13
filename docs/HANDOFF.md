@@ -2,6 +2,15 @@
 
 Kardeş ajanlar buraya **append** eder. SPEC/PLAN/TASKS yerine geçmez. Kullanıcı checklist’i: `docs/SENIN-ISLERIN.md`. Bölüm silme / üzerine yazma. Tartışma ve karar: `docs/TARTISMA.md` (buraya yazılmaz).
 
+## 2026-08-13 — Deploy (Azure + Compose Redis/Rabbit)
+
+- **OWN:** `.github/workflows/ci.yml`, `azure-deploy.yml`, `infra/main.bicep`, `infra/q2.bicep`, `infra/deploy.ps1`, `docker-compose.yml`, `docs/CANLI.md`, `docs/DEPLOY.md`, `AddClearPayIdentity` Production SQL.
+- TASK-15 Done (CI yaml). TASK-16 Todo — açık URL yok; ajan abonelik açmadı.
+- Lokal Compose: SQL + Redis + Rabbit. Uygulama Redis/Rabbit’e bağlı değil (TASK-12). Q2: Redis Bicep + CloudAMQP talimatı.
+- Production Identity `UseSqlServer(ClearPay)`; Development SQLite. Cookie `LoginPath` `/giris`. Secret git’te yok.
+- **Kullanıcı:** `az login` → `.\infra\deploy.ps1` → GitHub `AZURE_WEBAPP_PUBLISH_PROFILE` + `AZURE_WEBAPP_NAME`.
+- LED repo / Kafka / AWS / GCP yok.
+
 ## 2026-08-13 — Destek (demo FAQ)
 
 - **OWN:** `docs/DESTEK.md`, `.cursor/rules/destek.mdc`. `docs/AGENTS.md` ve `src/` dokunulmadı. TASKS yok (ürün TASK değil).
@@ -339,5 +348,23 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - Araştırma: kendi ÖK/e-para lisansı **kapalı** (TCMB 20 / 40 / 105 milyon TL, 30 Haz 2026). Açık yollar: kariyer (en hızlı nakit), white-label defter (lisans alıcıda), 6493 sınırlı ağ kapalı devre (50 milyon TL/12 ay → Ocak bildirim).
 - Banka/iş yeri 15s + İstanbul gün 1–2 / işletme / Ankara-İzmir rota `GELIR.md` §4–5. Pitch Papara rakibi değil.
 - **Sıradaki kod:** TASK-04. **Sıradaki ticari:** 15s ezber; “satın alın” TASK-06/11 sonrası. Avukat 6493 kullanıcı.
+
+## 2026-08-13 — Coder: paralel Architect + en robust (T-016 / T-017)
+
+- **OWN:** TARTISMA T-016 + T-017; `.cursor/rules/orchestrator.mdc`, `architect.mdc`, `coder.mdc`; `docs/AGENTS.md`. `src/` yok. **TASKS.md değişmedi** (sıradaki hâlâ TASK-04).
+- **Coder:** Birden fazla Architect aynı anda karar üretebilir (dilimler: a SQL/şema, b ekran-akış SPEC, c port/DIP/gateway). Sen TARTISMA bitmeden Razor/şema yazma. Bitince **tek** HANDOFF satırındaki **kazanan** OWN glob’lara bak; paralel taslakları birleştirme / kaybedeni kodlama.
+- SPEC 8 ekran şişmez. PageModel’de ledger yok. Portlar Application’da. `UPDATE Balance` yok.
+- Orchestrator kazananı TARTISMA’da yazar (**en robust**): çift kayıt / 409 / freeze / iade=ters / outbox aynı tx; DIP; tek host + sahte gateway. Eşitlikte ledger+idempotency > kolay UI.
+- HANDOFF overwrite yok. İki ajan aynı dosyayı ezmez. Coder hepsini tek seferde uygulamaz; TASK-04 kabul kriterine göre.
+
+## 2026-08-13 — T-015 sahte APP vs sahte GATEWAY (Ürün / Orchestrator)
+
+- **OWN:** TARTISMA **T-015**. SPEC ürün paragrafı, `URUN.md`, `MARKA.md`, `FARK.md`, `SATIS.md`, `ARCHITECTURE.md` (bir satır), README EN/TR/FR pitch. Domain ledger **yok**. Razor banka teması **yok**. TASKS yok (TASK-03 cüzdan login + boş özet durur).
+- **Karar:** ürün = WePay benzeri dijital cüzdan **sitesi**. Sahte olan yalnızca `BankGateway` (REST+SOAP stub, yükle/çek timeout/retry). Şube / IBAN çekirdeği / BankaX yok. Gerçek POS/FAST/BOA durur.
+- One-liner “demo cüzdan, sahte banka” düşer → **ClearPay — demo dijital cüzdan (WePay benzeri).** Footer: **Demo — yükleme için sahte gateway** (entegrasyon; ürün kimliği değil).
+- **Designer:** `MARKA.md` + `designer.mdc` one-liner. Razor’u banka şubesine çevirme.
+- **Sales:** wedge = cüzdan/ledger UX (409, çift kayıt, outbox). “Biz sahte bankayız” yok. `SATIS.md` / `FARK.md` / `sales.mdc`.
+- **Coder:** TASK-03 = giriş/kayıt/boş özet. Yeni banka ekranı yok.
+
 
 

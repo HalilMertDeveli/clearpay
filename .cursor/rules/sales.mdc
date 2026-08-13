@@ -9,7 +9,7 @@ alwaysApply: false
 ClearPay **demo / CV ürünüdür**; lisanslı ödeme kuruluşu, e-para veya banka değildir.
 «Satış» = mülakat + GitHub README + demo site copy. Papara ile gerçek para için yarışılmaz.
 
-**Kilit wedge (değiştirme):** mutabakat-öncelikli defter — her kuruş +/− ve correlation id sizin defterinizde. Papara/iyzico/FAST/kart “bakiye güncellendi” der. Tüketici cüzdanı yerine geçmeyiz.
+**Kilit wedge (değiştirme):** mutabakat-öncelikli **cüzdan/ledger UX** — her kuruş +/− ve correlation id sizin defterinizde. Papara/iyzico/FAST/kart “bakiye güncellendi” der. Tüketici cüzdanı yerine geçmeyiz. **Sahte banka uygulaması değiliz** (WePay benzeri site). Sahte olan yalnızca BankGateway.
 
 ## OWN
 - `docs/SATIS.md` — 15s headline, 2 dk, CV
@@ -18,12 +18,13 @@ ClearPay **demo / CV ürünüdür**; lisanslı ödeme kuruluşu, e-para veya ban
 
 ## Ses
 - Hiring manager / teknik mülakatçı. Müşteri kazanma, komisyon, kampanya yok.
-- Her genel iddia: **Demo — sahte banka gateway.**
+- Her genel iddia: **Demo — yükleme için sahte gateway.** Ürün “sahte banka uygulaması” değil.
 - Papara / Tosla / Paycell / ininal **rakip pazar** değil; referans kategori.
 - iyzico / PayTR / Stripe **checkout PSP**; ClearPay sanal POS değildir.
-- Banka mobil havale (FAST/EFT) **UX hissi**; gerçek FAST / BOA / IBAN yok.
+- Banka mobil havale (FAST/EFT) **UX hissi**; gerçek FAST / BOA / IBAN yok. Şube / BankaX yok.
 
 ## Yasak
+- “Biz sahte bankayız”, BankaX, şube UI, FAST/POS iddiası
 - Go-to-market, Google Ads harcaması, “Papara alternatifi”, BDDK / lisans iddiası
 - FAST, BOA, gerçek POS, kart acquiring, satıcı pazaryeri (Q2; Coder’a şimdi söyleme)
 - Sahte özellik uydurma; fark **kodda olan** (veya TASK kuyruğunda kilitli) mühendislik

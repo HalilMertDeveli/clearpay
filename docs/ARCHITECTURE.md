@@ -2,6 +2,8 @@
 
 Kaynak: `SPEC.md`, `PLAN.md`. Kod LED reposuna yazılmaz. Ekran listesi sabittir.
 
+Ürün: WePay benzeri dijital cüzdan **sitesi**. Sahte banka uygulaması değil; sahte olan yalnızca `IBankGateway` (yükle/çek REST+SOAP stub).
+
 ## Katmanlar (Clean Architecture, tek process)
 
 | Proje | Ne tutar | Ne tutmaz |

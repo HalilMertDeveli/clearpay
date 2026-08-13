@@ -168,3 +168,151 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Karar:** **2.** Lisanslı banka / e-para / PSP değiliz. Sahte BankGateway = yükle/çek mock; ürün “fake bank app” değil.
 - **Neden:** Canvas ve SPEC cüzdan. Banka uygulaması 9. ekran ve lisans iddiası açar. Footer “Demo — sahte banka gateway” entegrasyonu anlatır, şube bankasını değil.
 - **Sonra hangi dosya:** Product `docs/SPEC.md` / `docs/URUN.md`. Coder TASK-03 UI: navy, Özet/Havale/Yükle-Çek — retail bank layout yok. Architect port `IBankGateway` yükle/çek stub. Sales/SEO “banka uygulaması” demez.
+
+---
+
+## T-012 — 2026-08-13 — Azure Q1 + Redis/Rabbit şablon (hesap yok)
+
+- **Kim:** Deploy, Orchestrator (kullanıcı: Azure her şey + diğer altyapı/veritabanı sistemleri)
+- **Konu:** Yalnızca App Service+SQL mü, yoksa SPEC’teki cache/kuyruk da şablonlansın mı?
+- **Seçenekler:**
+  1. Yalnızca Q1: App Service Linux + Azure SQL. Redis/Rabbit’i TASK-12 ürün koduna bırak.
+  2. **TASK-15 CI + Bicep Q1 + lokal Compose SQL/Redis/Rabbit + Q2 Redis Bicep + CloudAMQP talimatı.** Ödeme kodu Redis/Rabbit’e bağlanmaz. AWS/GCP/Kafka/K8s yok.
+- **Karar:** **2.** Ajan abonelik/DNS açmaz, secret git’e koymaz. TASK-16 Done yalnızca açık URL. Identity: Development SQLite (T-009), Production Azure SQL. Cookie `LoginPath` `/giris`.
+- **Neden:** CANLI/PLAN Q1 Hangfire+SQL; Q2 Redis + CloudAMQP. Compose TASK-12 yığını lokal. İkinci bulut SPEC dışı.
+- **Sonra hangi dosya:** `.github/workflows/ci.yml`, `azure-deploy.yml`, `infra/main.bicep`, `infra/q2.bicep`, `infra/deploy.ps1`, `docker-compose.yml`, `docs/CANLI.md`, `docs/DEPLOY.md`, `AddClearPayIdentity` Production `UseSqlServer`.
+
+---
+
+## T-016 — 2026-08-13 — Paralel Architect (aynı TASK)
+
+- **Kim:** Orchestrator, Architect, Coder (kullanıcı: birden fazla mimar aynı anda kullanılsın; Coder’a söyle)
+- **Konu:** Tek Architect mı, yoksa aynı TASK’ta birden fazla Architect paralel mi?
+- **Seçenekler:**
+  1. **Tek Architect:** yapı işinde bir ajan sırayla şema + ekran-akış + port yazar; Coder bekler.
+  2. **Paralel Architect, aynı TASK:** ayrı OWN dilimleri (SQL/şema, ekran-akış SPEC uyumu, port/DIP/gateway) aynı anda öneri üretir. TASKS.md hâlâ **tek TASK**. Coder Razor/şemayı kararlardan **sonra** yazar.
+- **Karar:** **2.** Aynı TASK içinde birden fazla Architect paralel çalışır. Architect’ler TARTISMA’da hizalanır; Coder’a **tek** HANDOFF el değiştirme notu düşer. İki Architect aynı dosyayı sessizce ezmez; HANDOFF overwrite yok.
+- **Neden:** Şema, ekran-akış ve DIP ayrı OWN; tek ajan sıraya sokunca TASK-04 gecikir. Çok TASK paralel yasak durur. Coder SPEC ekran listesini şişirmez; PageModel’de ledger yok; portlar Application’da. Kazanan seçimi T-017.
+- **Sonra hangi dosya:** T-017; `.cursor/rules/orchestrator.mdc`, `architect.mdc`, `coder.mdc`; `docs/AGENTS.md` Architect satırı; `docs/HANDOFF.md` append (Coder). `src/` yok. TASKS.md yok.
+
+---
+
+## T-017 — 2026-08-13 — Paralel öneriden en robust tek seçim
+
+- **Kim:** Orchestrator, Architect, Coder, Payments (kullanıcı: en robust hangisi ise o seçilsin)
+- **Konu:** Paralel Architect taslaklarından hangisi koda gider?
+- **Seçenekler:**
+  1. Coder her taslağı birleştirir / hepsini yazar.
+  2. İlk biten taslak otomatik kazanır.
+  3. **Paralel üret → Orchestrator TARTISMA’da en robust tek kazananı yazar → Coder yalnızca onu uygular.**
+- **Karar:** **3.** Paralel Architect → **en robust tek seçim** → Coder yalnızca onu yazar. Kaybeden öneri kodlanmaz. Orchestrator seçimi TARTISMA’da (yeni T-NNN) yazar; HANDOFF’ta kazanan OWN glob.
+- **Neden (robust tanımı):** (1) SPEC 8 ekran + para kuralları: çift kayıt, 409, negatif bakiye yok, freeze, iade=ters kayıt, outbox aynı SQL tx. (2) `UPDATE Balance` yok; ledger audit’siz düzeltilmez. (3) DIP: para kuralı PageModel’de değil; port + Domain. (4) Tek host, Clean Arch, sahte gateway; lisans/FAST/Papara/9. ekran yok. (5) Yarış, kısmi commit, timeout kaybı, HANDOFF overwrite, aynı dosyayı iki ajanın ezmesi yok. (6) Tartışmasız `src/` yok. Eşitlikte: Payments/ledger + idempotency/outbox’ı koruyan > “kolay UI”; şema netliği > erken özellik.
+- **Sonra hangi dosya:** `.cursor/rules/orchestrator.mdc`, `architect.mdc`, `coder.mdc`; `docs/AGENTS.md`; `docs/HANDOFF.md` append. Coder TARTISMA kazanan OWN glob. `src/` yok. TASKS sırası TASK-04 (değişmez).
+
+
+---
+
+## T-012 — 2026-08-13 — Azure için ajan ne yapar (hesap yok)
+
+- **Kim:** Deploy, Orchestrator (kullanıcı: «azure için gerekli her şey»)
+- **Konu:** Abonelik yokken TASK-16 URL mi, yoksa pipeline + şablon + Production Identity mi?
+- **Seçenekler:**
+  1. Portalda abonelik/RG/App Service ajan açsın (hesap yoksa imkânsız / yasak).
+  2. **TASK-15 CI + Bicep + deploy workflow + Production’da Identity Azure SQL.** URL kullanıcı `az login` / Portal sonrası. SQLite prod değil (T-009).
+- **Karar:** **2.** Ajan hesap/DNS açmaz, secret git’e koymaz. `dotnet test` kırmızıysa Actions Done yok.
+- **Neden:** T-005 West Europe + azurewebsites.net durur. Kullanıcı isteği hazırlığı ister, hesabı vermez. Q1 Redis yok.
+- **Sonra hangi dosya:** `.github/workflows/ci.yml`, `.github/workflows/azure-deploy.yml`, `infra/main.bicep`, `infra/deploy.ps1`, `docs/CANLI.md`, `docs/DEPLOY.md`, `AddClearPayIdentity` Production `UseSqlServer`. Cookie `LoginPath` `/giris`.
+
+---
+
+## T-012 — 2026-08-13 — UI kopyası: cüzdan, fake bank app değil
+
+- **Kim:** Ürün, Coder, Designer (ses)
+- **Konu:** Görünen metin WePay benzeri cüzdan mı, yoksa “sahte banka uygulaması” mı?
+- **Seçenekler:**
+  1. Footer/kopya “Demo — sahte banka gateway” / “Banka hesabı” / IBAN çekirdek — ürünü fake bank gibi okutur.
+  2. **Cüzdan dili:** menü Özet–Havale–Yükle/Çek–Hareketler (SPEC). Kicker/CTA: Cüzdan, Havale, Yükle/Çek. Asla BankaX, şube, IBAN core. Footer: **Demo — yükleme için sahte gateway** (top-up stub; “bu bir sahte banka” değil).
+- **Karar:** **2.** `IBankGateway` kod adı kalır; kullanıcıya banka uygulaması denmez.
+- **Neden:** Canvas ve T-011 cüzdan. “Sahte banka” cümlesi entegrasyonu değil ürün kimliğini çalıyor. IBAN/şube 9. ekran ve lisans iddiası açar.
+- **Sonra hangi dosya:** Coder `src/ClearPay.Web/Pages/**`, `_Layout` / `_AuthLayout`. Ses: `docs/MARKA.md`, `docs/TASARIM.md` footer. Product: `docs/SPEC.md` ekran 5, `docs/URUN.md` yüzey. Tester: kayıt → `0,00 ₺`.
+
+---
+
+## T-013 — 2026-08-13 — Para kazanma: lisans mı, yazılım mı, kariyer mi
+
+- **Kim:** Satış, Ürün, Orchestrator (araştırma; kullanıcı banka/iş yeri sunumu istedi)
+- **Konu:** ClearPay bugün nasıl para getirir — kendi e-para lisansı, B2B yazılım, kapalı devre, yoksa kariyer kapısı mı?
+- **Seçenekler:**
+  1. Papara/Tosla gibi lisanslı tüketici cüzdanı: TCMB ödeme kuruluşu (40 milyon TL özkaynak, 30 Haz 2026) veya e-para (105 milyon TL). SPEC ekranı ve Ads yasağı bozulur.
+  2. **Üç kademe, lisans yok:** (a) kariyer — Intertech/Softtech/Bileşim/TAV/İGA .NET maaşı; (b) lisanslı ÖK’ye white-label defter; (c) 6493 sınırlı ağ kapalı devre (kampüs/yemekhane/OSB) — 50 milyon TL/12 ay üstü TCMB bildirimi. Satıcı paneli Q2; SPEC 8 ekran kilit.
+- **Karar:** **2.** Kendi lisansımız yok ve şimdi açılmıyor. Banka/iş yeri sunumu: “FAST/Papara yerini almıyoruz; her kuruş +/− ve correlation id sizin defterinizde.” İlk nakit: mülakat. İlk ticari konuşma: kapalı devre (üniversite BT / fabrika yemekhane), avukat 6493 teyidi sonrası.
+- **Neden:** T-004 wedge durur. 40/105 milyon TL özkaynak + MASAK bu repo’nun Q1’i değil. Firisbe/PayKit/Kampüs Kart zaten white-label satıyor; farkımız mutabakat motoru, tam PSP değil. TASK-06/11 bitmeden “satın alın” yalan.
+- **Sonra hangi dosya:** `docs/GELIR.md` (OWN). Canvas sunum. `docs/SENIN-ISLERIN.md` işaret. `src/` ve SPEC ekran listesi yok. Sales pitch `SATIS.md` mülakat durur; banka cümlesi GELIR’de.
+
+---
+
+## T-014 — 2026-08-13 — Canlı UI hareketi (kurumsal, parti değil)
+
+- **Kim:** Coder, Designer, Ürün (kullanıcı: canlı animasyon + arayüze ekstra çalışma)
+- **Konu:** Site durağan mı kalsın, yoksa WePay hissi için ölçülü CSS hareketi mi?
+- **Seçenekler:**
+  1. Hareketsiz iskelet; veya Bootstrap / gölge / gradient / emoji “carnival”.
+  2. **Evet hareket, kurumsal:** sidebar kayma, buton basışı, kart giriş, bakiye fade, nav active, form focus. `prefers-reduced-motion` kapatır. Sahte şube / BankaX yok.
+- **Karar:** **2.** `wwwroot/css/motion.css` layout’tan `brand.css` sonrası. Identity + boş `0,00 ₺` özet durur. Havale API yok.
+- **Neden:** Kullanıcı canlı sistem istedi; SPEC navy/Inter ve T-011 cüzdan kilit. Parti animasyonu mülakat demosunu ucuzlatır; reduced-motion erişim.
+- **Sonra hangi dosya:** Coder `src/ClearPay.Web/wwwroot/css/motion.css`, `site.css` / `brand.css` cilası, `_Layout` / `_AuthLayout` link, Pages Razor (ledger yok). Tester: build + `:5153`.
+
+---
+
+## T-014 — 2026-08-13 — Q1 Azure + lokal Redis/Rabbit + Q2 şablon (hesap yok)
+
+- **Kim:** Deploy, Orchestrator (kullanıcı: Azure her şey + diğer altyapı/veritabanı sistemleri)
+- **Konu:** Yalnızca App Service+SQL mü, yoksa SPEC’teki diğer veri/kuyruk sistemleri de şablonlansın mı?
+- **Seçenekler:**
+  1. Yalnızca Q1: App Service Linux + Azure SQL. Redis/Rabbit’i TASK-12 ürün koduna bırak.
+  2. **Q1 şablon + lokal Compose SQL/Redis/Rabbit + Q2 Bicep Redis + CloudAMQP talimatı.** Ödeme kodu Redis/Rabbit’e bağlanmaz (TASK-12). AWS/GCP/Kafka/K8s yok.
+- **Karar:** **2.** Ajan abonelik açmaz, secret git’e koymaz. TASK-16 Done yalnızca açık URL. Identity: Development SQLite (T-009), Production Azure SQL.
+- **Neden:** CANLI/PLAN Q1 Hangfire+SQL; Q2 Redis + CloudAMQP. Compose TASK-12 yığını lokal kanıt için. İkinci bulut ve broker SPEC dışı.
+- **Sonra hangi dosya:** `.github/workflows/ci.yml`, `azure-deploy.yml`, `infra/main.bicep`, `infra/q2.bicep`, `infra/deploy.ps1`, `docker-compose.yml`, `docs/CANLI.md`, `docs/DEPLOY.md`, `AddClearPayIdentity` Production `UseSqlServer`. Cookie `LoginPath` `/giris`.
+
+---
+
+## T-015 — 2026-08-13 — Sahte banka APP vs sahte GATEWAY
+
+- **Kim:** Ürün, Orchestrator, Designer, Sales (kullanıcı: canvas kilit — WePay gibi; sahte banka uygulaması yapmıyoruz)
+- **Konu:** Sahte olan nedir — kullanıcının gördüğü uygulama mı, yoksa yalnızca yükle/çek entegrasyonu mu?
+- **Seçenekler:**
+  1. **Sahte banka APP:** şube, IBAN çekirdeği, “BankaX” perakende banka UI, core-banking ekranları. Footer “biz sahte bankayız.”
+  2. **Sahte GATEWAY only:** ürün = WePay benzeri dijital cüzdan **sitesi** (kayıt/giriş, özet, havale, yükle/çek, hareketler/dekont, admin; sol menü SPEC). Sahte olan yalnızca `BankGateway` (REST+SOAP stub) — yükle/çek timeout/retry stand-in. Kullanıcının gördüğü uygulama banka değil. Gerçek POS/FAST/BOA yok (durur).
+- **Karar:** **2. GATEWAY only.** Canvas: Papara / banka mobil **havale hissi**, sahte core-banking app yok. One-liner “demo cüzdan, sahte banka” düşer.
+- **Neden:** Kullanıcı: “WePay gibi bir uygulama olacak, sahte bir banka uygulaması yapmıyoruz.” İnsanlar PARA’yı BİZİM sitede gönderir. T-011 cüzdan durur; T-004 wedge ledger UX’tir, “biz fake bank’ız” değil. Domain ledger ve SPEC 8 ekran değişmez. Coder TASK-03 = cüzdan login + boş özet.
+- **Sonra hangi dosya:** `docs/SPEC.md` ürün, `docs/URUN.md`, `docs/MARKA.md`, `docs/FARK.md`, `docs/SATIS.md`, `docs/ARCHITECTURE.md` (bir satır), `README.md` / `README.tr.md` / `README.fr.md`. HANDOFF Designer/Sales. Razor banka teması yok; Domain ledger yok.
+
+---
+
+## T-018 — 2026-08-13 — TASARIM tariflerini Razor+CSS’e yaz
+
+- **Kim:** Coder (Designer e73e2df tarifler + motion)
+- **Konu:** Tarifler dokümanda mı kalsın, yoksa layout/CSS şimdi mi uygulansın?
+- **Seçenekler:**
+  1. Yalnızca docs; UI iskelet.
+  2. **Uygula:** giriş kartı 420px, özet hero, havale stack-form, hareket tablosu, `--motion: 180ms ease`, reduced-motion. Cüzdan; şube yok. Identity durur.
+- **Karar:** **2.** `brand.css` + `motion.css` (opacity fade ≤250ms, lift/scale yok). PageModel’de ledger yok.
+- **Neden:** Kullanıcı tariflerin uygulanmasını ve `:5153` canlı siteyi istedi. T-011/T-014/T-015 cüzdan + kurumsal hareket.
+- **Sonra hangi dosya:** `src/ClearPay.Web/wwwroot/css/{brand,motion,site}.css`, `_Layout` / `_AuthLayout`, Pages. Tester: build + run.
+
+---
+
+## T-019 — 2026-08-13 — Onion/Clean derleme kuralı + n-tier isim eşlemesi
+
+- **Kim:** Architect, Payments, Coder (kullanıcı: en iyi mimari seçilsin ve kullanılsın — onion veya n-tier; mümkünse birden fazla)
+- **Konu:** Kod hangi mimariyi derleme kuralı olarak tutar; n-tier ayrıca nasıl “kullanılır” — ikinci uygulama mı, yoksa aynı projelerin adı mı?
+- **Seçenekler:**
+  1. Klasik n-tier: UI → BLL → DAL, EF/SQL BLL’de, çift yönlü referans, ayrı `BLL`/`DAL` ağacı. Onion bırakılır.
+  2. Yalnızca Onion/Clean; n-tier adı yok sayılır (kullanıcı “birden fazla” demesine rağmen).
+  3. İki rakip uygulama / çift Domain (SPEC tek host’u bozar).
+  4. **Tek host, iki ad:** derleme kuralı Onion/Clean (Domain merkez, bağımlılık içeri; Application port; Infrastructure adapter; Web composition root). Aynı dört proje n-tier diline eşlenir (Web = sunum, Application = iş, Infrastructure = veri). Hexagonal port/adapter aynı soğanın yüzeyi — üçüncü proje ağacı değil.
+- **Karar:** **4.** Ledger + idempotency + 409 için klasik n-tier’a geçilmez. “Birden fazla mimari” = aynı csproj grafiği, iki (üç) kelime; ikinci BLL/DAL yok.
+- **Neden:** Klasik n-tier’da BLL EF görür, PageModel ledger hesabı ve `UPDATE Balance` yolu açılır; 409/çift kayıt UI’ye kilitlenir. Onion’da Domain EF/HTTP bilmez; DIP zaten T-007. Kullanıcı her iki adı istedi; iki app SPEC’i kırar. Hexagonal zaten `IWalletReader` / `IBankGateway`.
+- **Sonra hangi dosya:** `docs/ARCHITECTURE.md`; `Program.cs` (`SqlOptions` Web’den çıksın); PageModels `IWalletReader` (TASK-03 boş özet adapter, ledger SQL yok); `tests/ClearPay.Tests` katman testi; HANDOFF append. README / `docker-compose.databases.yml` / Azure dokunulmaz. TASK-04…16 Done değil.
+

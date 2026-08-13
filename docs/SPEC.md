@@ -1,7 +1,11 @@
 # SPEC — ClearPay
 
 ## Ürün
-Dijital cüzdan sitesi (Papara / banka mobil havale hissi). Kullanıcı para gönderir, yükler, çeker, geçmişi görür. Admin iz sürer. **Sahte banka gateway** vardır; gerçek POS / FAST / BOA yoktur.
+Dijital cüzdan **sitesi** (WePay benzeri). İnsanlar para gönderir / öder **bu sitede**. Sahte perakende banka uygulaması değil: şube, IBAN çekirdeği, “BankaX” UI yok.
+
+Canvas kilit: Papara / banka mobil **havale hissi** (navy; sol menü **Özet, Havale, Yükle/Çek, Hareketler, Admin**). Kayıt/giriş, cüzdan özeti, havale, yükle/çek, hareketler/dekont, admin.
+
+**Sahte olan yalnızca BankGateway** (REST+SOAP stub): yükle/çek timeout/retry entegrasyon stand-in’i. Kullanıcının gördüğü uygulama banka değildir. Gerçek POS / FAST / BOA yoktur.
 
 ## Dil ve stack (kilit)
 - Dil: **C# 12**
@@ -25,7 +29,7 @@ Kurumsal .NET mülakatında anlatılır, internette açılan demo. Kapı: Intert
 | 2 | Kayıt | Ad, e-posta, şifre, şifre tekrar | Hesap oluştur |
 | 3 | Cüzdan özeti | Bakiye, bu ay giden/gelen, son 5 hareket | Havale gönder, Yükle, Çek |
 | 4 | Havale | Alıcı, tutar, açıklama, kalan bakiye | Gönder, İptal |
-| 5 | Yükle / Çek | Sahte banka, tutar, IBAN benzeri. Durum: başarı / timeout | Yükle, Çek, İptal |
+| 5 | Yükle / Çek | BankGateway stub, tutar, IBAN benzeri. Durum: başarı / timeout | Yükle, Çek, İptal |
 | 6 | Hareketler | Tarih, işlem no, tür, karşı taraf, tutar, durum. Filtre + sayfa | Filtrele, Dekont |
 | 7 | Dekont | Tek işlem: taraflar, tutar, correlation id, zaman | Geri |
 | 8 | Admin | Kullanıcı dondur. Başarısız kuyruk. Audit arama | Kuyruğa al, Dondur, Ara |
@@ -52,6 +56,7 @@ Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Dil: Türkçe
 - Havale: `POST /api/transfers` + `Idempotency-Key` → başarı 201, tekrar 409
 
 ## Kapsam dışı (şimdi değil)
+- Sahte banka uygulaması (şube, IBAN çekirdeği, “BankaX” perakende UI)
 - Gerçek banka / POS / 3D Secure
 - Satıcı ödemesi ekranı (Q2 adayı)
 - Kafka, Kubernetes, Java ikizi
@@ -62,6 +67,6 @@ Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Dil: Türkçe
 1. Lokal: Docker Compose ile site + SQL açılır
 2. Giriş → boş/dolu cüzdan → havale → hareket → dekont çalışır
 3. Çift tıklama tek kayıt; 409 anlatılır
-4. Sahte banka timeout → kuyruk tekrar dener
+4. BankGateway timeout → kuyruk tekrar dener
 5. Testler yeşil; İngilizce README + Swagger
 6. Azure’da açık URL
