@@ -64,6 +64,6 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
 
         response.StatusCode.Should().Be(HttpStatusCode.Redirect);
         response.Headers.Location.Should().NotBeNull();
-        response.Headers.Location!.ToString().Should().Contain("/Account/Login");
+        response.Headers.Location!.ToString().Should().Contain("/giris");
     }
 }
