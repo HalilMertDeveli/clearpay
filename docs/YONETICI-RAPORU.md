@@ -26,7 +26,7 @@ Lokal: http://localhost:5153 — TASK-03 commit + `dotnet run --project src/Clea
 | **Designer** | **Yeşil** | TASARIM/MARKA/`brand.css` `666dd32`. Relaunch yok. |
 | **Tester** | **Yeşil (ledger)** | 8/8 `LedgerPairTests` origin. Tam solution Coder Identity derlenene kadar kırmızı olabilir. Relaunch yok. |
 | **PR** | **Sarı** | `docs/PR.md` yazılıyor. Demo kelimeler; Papara/havale #1 yok. |
-| **Ürün / Destek / Pazarlama / İK / Finans** | **Sarı** | Yeni; `ORGANIZASYON.md` henüz yok. Coder’a iş yok. |
+| **Ürün / Destek / Pazarlama / İK / Finans** | **Sarı** | Org haritası: `docs/ORGANIZASYON.md`. Coder’a iş yok. |
 | **Çalışma planı** | **Yeşil** | `docs/CALISMA-PLANI.md` yazıldı. |
 
 ---

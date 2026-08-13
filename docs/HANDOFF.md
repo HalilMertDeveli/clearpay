@@ -234,12 +234,20 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 | **Finans** | Finans (yeni) | finans docs; gerçek PSP değil |
 | **Öğrenme** | Öğrenme | OGRENME, SENIN-ISLERIN, KRONIK |
 
-`docs/ORGANIZASYON.md` henüz diskte yok — land edince bu tablo oraya işaret eder. Coder **TASK-03** kesilmedi. Deploy mevcut (CANLI). Yeni ajanlar kendi glob’unda; aynı cshtml yok.
+`docs/ORGANIZASYON.md` **landed** — harita orada. Coder **TASK-03** kesilmedi. Deploy mevcut (CANLI). Yeni ajanlar kendi glob’unda; aynı cshtml yok.
 
 ## 2026-08-13 — Sales / Tester RAG (yönetici)
 
 - Sales **yeşil**: wedge origin — her kuruşun +/− satırı ve correlation id sizin defterinizde; onlar bakiye güncellendi der. Relaunch yok.
 - Tester **yeşil (ledger)**: 8 `LedgerPairTests` origin. Tam solution Coder Identity sonrası. Relaunch yok.
+
+## 2026-08-13 — Product (Ürün)
+
+- **OWN:** `docs/URUN.md`, `.cursor/rules/product.mdc`. `docs/AGENTS.md` / `src/` / `tests/` / TASKS / SPEC **dokunulmadı**. ORGANIZASYON.md yazılmadı (Yönetim).
+- **URUN.md:** SPEC’teki 8 ekran kilitli. US-01…08 + kabul (giriş/kayıt/özet/havale/yükle-çek/hareket/dekont/admin). Path CANLI: `/giris` `/kayit` `/havale` `/yukle-cek` `/hareketler` `/admin`. Dekont menüde yok.
+- **Kapsam dışı:** gerçek POS / 3DS / kart, FAST/BOA, satıcı paneli (Q2), Kafka UI. Sahte BankGateway var; sanal POS yok.
+- **Architect:** 9. ekran yok. **Coder:** TASK-03 hikâyesi US-01/02/03; PageModel’de ledger yok. **Payments:** US-04/05. **Tester:** kayıt → 0,00 ₺; TASK-06 409.
+- Coder TASK-03 kesilmedi. Ads/POS/Azure ürün olarak açılmadı.
 
 ## 2026-08-13 — Org (ORGANIZASYON landed)
 
