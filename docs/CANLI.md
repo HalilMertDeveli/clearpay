@@ -2,7 +2,7 @@
 
 Kaynak: `docs/CALISMA-PLANI.md` **Faz 5**. Azure / DNS / ödeme hesabı **kullanıcı** açar; ajan şablon ve pipeline yazar.
 
-**Orchestrator:** TASK-16 Done yalnızca tarayıcıda açık URL. Abonelik yokken ajan Portal açmaz. TASK-15 = GitHub Actions `dotnet test`. `dotnet test` kırmızıysa Actions Done yok.
+**Orchestrator:** TASK-16 Done yalnızca tarayıcıda açık URL. Ajan Portal / `az login` / DNS açmaz. Infra (`infra/main.bicep`, `deploy.ps1`, App Setting adları) T-051 ile hazır. Abonelik yokken URL uydurulmaz. TASK-15 = GitHub Actions `dotnet test`. Secret git’e yok.
 
 **Operasyon kimliği (T-025):** `halilmertdeveliii@gmail.com`. Azure / GitHub / Search Console / Ads bu kutudan. Ajan yeni hesap açmaz. Bu makinede `az` CLI **yok** — abonelik listesi doğrulanmadı, uydurulmadı. Gmail’de 2026-05-11 “Your new Azure account is ready” var; 2025-04 ücretsiz deneme uyarı maili de var (PAYG yükseltme / silinme). **TASK-16 şimdi değil** — deploy TASK-16 ajanına. Secret git’e yok.
 
@@ -16,8 +16,8 @@ SEO/Ads: canlı URL **sonrası**; demo disclaimer (gerçek banka değil).
 | Identity | SQLite `App_Data` | **Azure SQL** (`ConnectionStrings__ClearPay`) | aynı |
 | Ledger | Docker SQL Server | **Azure SQL** (TASK-04+) | aynı |
 | CI/CD | — | GitHub Actions: `main` → build/test; publish `AZURE_WEBAPP_NAME` doluysa | aynı |
-| Kuyruk | RabbitMQ container (bağlı değil) | Hangfire in-process + outbox | CloudAMQP (`ConnectionStrings__RabbitMq`) |
-| Cache | Redis container (bağlı değil) | yok | Azure Cache for Redis |
+| Kuyruk | RabbitMQ container (T-048 bağlı) | Hangfire in-process + outbox (`Hangfire__Enabled=true`) | CloudAMQP (`ConnectionStrings__RabbitMq`) |
+| Cache | Redis container (T-041 bağlı) | yok (SQL özet) | Azure Cache for Redis |
 
 **Bölge:** **West Europe**. Kaynak grubu: `rg-clearpay-weu`. Şablon: `infra/main.bicep`.
 
@@ -33,17 +33,23 @@ Path: `/` özet, `/giris`, `/kayit`, `/havale`, `/yukle-cek`, `/hareketler`, `/a
 
 Özel domain sonra: sen satın alırsın; CNAME → `<app>.azurewebsites.net`; HTTPS Azure managed cert. Ajan registrar açmaz.
 
-## Senin tıklayacakların
+## Senin tıklayacakların (sırayla)
 
-1. Azure aboneliği (öğrenci veya pay-as-you-go). F1 denemek serbest.
-2. [Azure CLI](https://aka.ms/installazurecliwindows) → `az login`
-3. Repo kökünde: `.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`  
-   İsim doluysa `-WebAppName hm-clearpay`. Q2 Redis: `-IncludeQ2`.
-4. Portal → App Service → **Get publish profile**. GitHub repo → Settings → Secrets → `AZURE_WEBAPP_PUBLISH_PROFILE`. Variables → `AZURE_WEBAPP_NAME`.
-5. GitHub Actions: **Azure deploy** workflow (veya `main` push; değişken boşsa job atlanır).
-6. Tarayıcı: `https://<app>.azurewebsites.net/api/health` sonra `/giris`.
-7. Q2 kuyruk: [CloudAMQP](https://www.cloudamqp.com/) hesabını **sen** açarsın; URL’yi `ConnectionStrings__RabbitMq` olarak yapıştır. Repo’ya yazılmaz.
-8. Domain (isteğe bağlı): DNS CNAME + App Service custom domain.
+1. Azure aboneliği (öğrenci veya pay-as-you-go). F1 denemek serbest. Ajan hesap açmaz.
+2. [Azure CLI](https://aka.ms/installazurecliwindows) kur → PowerShell: **`az login`** (tarayıcı; `halilmertdeveliii@gmail.com`).
+3. Repo kökünde: **`.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`**  
+   İsim doluysa `-WebAppName hm-clearpay`. Q2 Redis: `-IncludeQ2`. Script RG + Bicep + rastgele `Jwt__SigningKey` basar (yazdırılmaz).
+4. Portal → App Service → **Configuration** kontrol:
+   - `ConnectionStrings__ClearPay` (Bicep SQL Azure — ledger + Identity)
+   - `Jwt__SigningKey` (`deploy.ps1` basmış olmalı)
+   - `ASPNETCORE_ENVIRONMENT` = `Production`
+   - `Hangfire__Enabled` = `true`
+   - `Hangfire__UseMemoryStorage` = `false`
+5. Portal → App Service → **Get publish profile**. GitHub repo → Settings → Secrets → `AZURE_WEBAPP_PUBLISH_PROFILE`. Settings → Variables → `AZURE_WEBAPP_NAME` = web app adı.
+6. GitHub Actions: workflow **Azure deploy** (veya `main` push; değişken boşsa job atlanır). Ajan push etmez.
+7. Tarayıcı: script’in yazdığı `https://<app>.azurewebsites.net/api/health` sonra `/giris`. URL’yi ajan uydurmaz.
+8. Q2 (şart değil): Portal `ConnectionStrings__Redis`. CloudAMQP hesabını **sen** açarsın; `ConnectionStrings__RabbitMq` yapıştır. Repo’ya yazılmaz.
+9. Domain (isteğe bağlı): sen satın alırsın; CNAME → `<app>.azurewebsites.net`.
 
 ## Ajanın hazırladığı (hesap açmaz)
 
@@ -63,7 +69,8 @@ Portal’da oluştur; **değerleri git’e koyma**.
 | `ConnectionStrings__ClearPay` | Azure SQL (ledger + Identity) | Q1 (Bicep basar) |
 | `Jwt__SigningKey` | API JWT (32+ rastgele bayt) | Q1 (`deploy.ps1`) |
 | `ASPNETCORE_ENVIRONMENT` | `Production` | Q1 |
-| `Hangfire__WorkerEnabled` | `true` (in-process) | Q1 |
+| `Hangfire__Enabled` | `true` (in-process worker) | Q1 (Bicep) |
+| `Hangfire__UseMemoryStorage` | `false` (Azure SQL storage) | Q1 (Bicep) |
 | `ConnectionStrings__Redis` | `host:6380,ssl=true,password=…` | Q2 |
 | `ConnectionStrings__RabbitMq` | CloudAMQP `amqps://…` | Q2 |
 
@@ -84,11 +91,10 @@ F1 soğuk başlama: `/api/health` ile ısındır.
 ## Sıra
 
 ```
-TASK-15             GitHub Actions restore/build/test (bu şablon)
-Kullanıcı           az login + .\infra\deploy.ps1 + GitHub secret
-TASK-16             açık URL = Done
+TASK-15             GitHub Actions restore/build/test (hazır)
+Kullanıcı           az login + .\infra\deploy.ps1 + GitHub secret + publish
+TASK-16             açık URL = Done (şimdi blok: sen tıklarsın)
 Q2                  Redis Bicep + CloudAMQP — TASK-16 şartı değil
-TASK-12             uygulama Redis/Rabbit’e bağlanır (şimdi yalnızca container)
 ```
 
 TASK-16 kabul: tarayıcıda açık URL, giriş, boş/canlı özet. Redis şart değil.

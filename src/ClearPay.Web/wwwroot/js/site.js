@@ -1,24 +1,4 @@
 ﻿(() => {
-  const toggle = document.querySelector(".nav-toggle");
-  const sidebar = document.getElementById("sidebar");
-  const backdrop = document.getElementById("nav-backdrop");
-
-  if (toggle && sidebar) {
-    const setOpen = (open) => {
-      sidebar.classList.toggle("is-open", open);
-      toggle.setAttribute("aria-expanded", String(open));
-      if (backdrop) {
-        backdrop.hidden = !open;
-        backdrop.classList.toggle("is-visible", open);
-      }
-    };
-
-    toggle.addEventListener("click", () => {
-      setOpen(!sidebar.classList.contains("is-open"));
-    });
-    backdrop?.addEventListener("click", () => setOpen(false));
-  }
-
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const lang = document.documentElement.lang || "tr";
   const locale = { tr: "tr-TR", en: "en-US", de: "de-DE", fr: "fr-FR" }[lang] || "tr-TR";
@@ -32,7 +12,7 @@
       if (!Number.isFinite(target)) {
         return;
       }
-      const duration = 720;
+      const duration = 240;
       const start = performance.now();
       const tick = (now) => {
         const t = Math.min(1, (now - start) / duration);

@@ -51,7 +51,7 @@ flowchart TB
   razor --> reader
   reader --> sql
   sql --> pair
-  exec -.->|TASK-06| pair
+  exec --> pair
 ```
 
 | Katman | Proje | Ne tutar | Ne tutmaz |
@@ -74,17 +74,23 @@ Cookie Identity, SQLite: `App_Data/identity.db`. Site dilleri: **Türkçe (varsa
 | Giriş | `/giris` | Çalışır |
 | Kayıt | `/kayit` | Çalışır |
 | Özet | `/` | **Canlı** ledger net (SQL / satır yoksa sıfır) |
-| Havale | `/havale` | Form kabuğu; Gönder kapalı |
-| Yükle / Çek | `/yukle-cek` | Form kabuğu; butonlar kapalı |
-| Hareketler | `/hareketler` | Boş tablo; filtre kapalı |
-| Dekont | — | Yok |
-| Admin | — | Yok (menü gizler) |
+| Havale | `/havale` | Cookie form → `ITransferExecutor`. API ile aynı kurallar |
+| Yükle / Çek | `/yukle-cek` | Sahte REST/SOAP gateway (`TIMEOUT` kuyruğa yazar, ledger’a değil) |
+| Hareketler | `/hareketler` | Filtre + sayfa; dekont linki |
+| Dekont | `/dekont/{correlationId}` | Yalnız kendi cüzdan |
+| Admin | `/admin` | Rol Admin. Freeze, başarısız outbox, audit. Dev `admin@clearpay.test` / `Deneme123` |
 
-`GET /api/health` → `{ "status": "ok", "product": "ClearPay" }`.
+`GET /api/health` → `{ "status": "ok", "product": "ClearPay", "redis": "up|down|off", "rabbit": "up|down|off" }`.
 
-**Henüz üründe yok (kasten):** `POST /api/transfers` + HTTP **409**, Hangfire outbox worker, JWT/Swagger, uygulamada Redis/Rabbit, açık Azure URL.
+JSON: `POST /api/token` sonra `POST /api/transfers` + `Idempotency-Key` → **201** / **409**. OpenAPI: [http://localhost:5153/swagger](http://localhost:5153/swagger).
 
-**Kural kilitli:** aynı `Idempotency-Key` = aynı niyet → 409, ikinci kesinti yok. Unique key tabloda durur. HTTP uç TASK-06.
+Redis yalnızca özet DTO (~60s; para hareketinde invalidate). Kasa SQL Server. Rabbit `clearpay.outbox` (`ConnectionStrings:RabbitMq` varsa). **Açık Azure URL yok** — sen `az login` tıklarsın (`docs/CANLI.md`).
+
+## Mülakat (üç cümle)
+
+1. Aynı `Idempotency-Key` aynı niyet: ikinci HTTP **409 Conflict**; timeout retry ikinci kez kesmez.
+2. Debit, credit, transfer, idempotency, audit ve outbox **tek SQL transaction**; `UPDATE Balance` yok — bakiye `LedgerPair.NetOf`.
+3. Outbox satırı aynı transaction’da yazılır; timeout mesajı kaybettirmez. Hangfire (ve bağlıysa Rabbit) commit’ten sonra yayınlar.
 
 ---
 
@@ -128,8 +134,7 @@ ClearPay.slnx
 
 | Bitti | Sıradaki |
 |-------|----------|
-| TASK-01…05 — repo, Identity, ledger şema, canlı özet | **TASK-06** — havale, tek SQL transaction, HTTP 409 |
-| TASK-15 — GitHub Actions | TASK-07/08 gateway · TASK-11 outbox · TASK-16 Azure URL |
+| TASK-01…15 — ekranlar, ledger, 409, gateway, outbox, Redis/Rabbit, test, Swagger | **TASK-16** — Azure App Service + Azure SQL (`az login` sen tıklarsın; URL uydurulmaz) |
 
 CI `main` üzerinde `tests/ClearPay.Tests` restore + test eder.
 

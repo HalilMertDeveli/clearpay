@@ -5,6 +5,7 @@ using ClearPay.Infrastructure.Identity;
 using ClearPay.Web.Presentation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ClearPay.Web.Pages;
@@ -30,9 +31,11 @@ public class IndexModel : PageModel
     public decimal MonthInAmount { get; private set; }
     public bool IsFrozen { get; private set; }
     public IReadOnlyList<WalletMovement> LastMovements { get; private set; } = [];
+    public string? Flash { get; private set; }
 
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
+        Flash = TempData["Flash"] as string;
         var user = await _users.GetUserAsync(User);
         GreetingName = user?.FullName ?? user?.Email ?? User.Identity?.Name ?? string.Empty;
 

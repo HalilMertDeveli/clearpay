@@ -573,3 +573,249 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Karar:** **2.** Reboot ajan yapmaz. MySQL native `:3306` durur; Compose MySQL çakıştırılmaz. Oracle reboot+Docker ister.
 - **Neden:** DISM 3010 = reboot şart. Shared memory ledger’ı şimdi açar; 1433 boş kalsın ki reboot sonrası `clearpay-sql` bağlansın.
 - **Sonra hangi dosya:** `appsettings.Development.json`, `scripts/docker-up.ps1`, `docs/DEPLOY.md` bir paragraf, `docs/HANDOFF.md` append. `docker-compose.yml` ezilmez.
+
+---
+
+## T-038 — 2026-08-13 — Alipay cüzdan *düzeni* (marka kopyası değil)
+
+- **Kim:** Designer, Coder (kullanıcı: «alipay'in sitesine git ve arayüzü ona benzer yap»)
+- **Konu:** ClearPay UI, Alipay tüketici cüzdan evine benzer *yapı* alsın; Alipay olmadığımızı iddia etmeyelim; logo / QR markası / ticari ikon asset yok.
+- **Kaynak (yapı, piksel screenshot repo’ya yok):**
+  - https://www.alipay.com/ — web: «hesabım var, hızlı giriş»; ortalı form, banka portalı değil
+  - https://global.alipay.com/platform/site/ihome — global merchant (ev cüzdanı değil; mavi+beyaz güven paleti)
+  - https://miniprogram.alipay.com/docs/miniprogram/design/service-center — ev üstü **dokuz kare ızgara**; Scan/Pay/Collect çekirdek
+  - https://chinability.vercel.app/guides/alipay-ui.html — Home: Pay / Scan / Collect / Card; My: Balance + Bills
+  - https://oh-my-design.kr/design-systems/alipay — Ant/Alipay token: Daybreak `#1677FF`, beyaz kart, 6–8px radius, `#F5F5F5` zemin (palet **kopyalanmaz**)
+  - https://missjaya0817.github.io/project2.html — Alipay dört çekirdek: scan, pay, collect, pocket; marka mavi `#1091E8`
+- **Seçenekler:**
+  1. Paleti Alipay `#1677FF` yapmak + ızgara (MARKA navy kilitini kırar; «Alipay klonu» okunur).
+  2. **Yapı kopyala, palet MARKA:** navy `#1B2A4A` + teal; ev = büyük TL bakiye + 4 işlem (Gönder / Yükle / Çek / Hareketler) mavi bantta; altta örtüşen beyaz kart (ay özeti + son hareketler). Auth: üst navy şerit + ortalı opak beyaz kart (e-posta/şifre). Sidebar SPEC sırası durur.
+  3. Piksel-perfect Alipay screenshot / logo SVG (telif + marka; yasak).
+- **Karar:** **2.** Ürün adı **ClearPay**. Footer **Demo — yükleme için sahte gateway**. 8 ekran. POS/satıcı/QR markası yok. PageModel’de ledger yok. Docker reboot hikâyesi durur.
+- **Neden:** Kullanıcı Alipay *hissi* istedi; MARKA navy kilitli; 1 ve 3 marka/telif. Eşitlikte ledger > UI — bu madde yalnız kompozisyon.
+- **Sonra hangi dosya:** Designer `docs/TASARIM.md`, `docs/MARKA.md` (Alipay değiliz), `wwwroot/css/brand.css`. Coder Razor: `_Layout`, `_AuthLayout`, `Index.cshtml`, Login/Register iskelet; `site.css` iskelet; `motion.css` ızgara. `HANDOFF.md` append. Domain / SqlWalletReader yok.
+
+---
+
+## T-039 — 2026-08-13 — Alipay özellik envanteri SPEC ekranı açmaz
+
+- **Kim:** Yönetici / Orchestrator-doc (kullanıcı: Alipay’deki bütün özelliklere bak, yönetici çalışma listesi yapsın)
+- **Konu:** Alipay tüketici + web ürünleri tarandı. ClearPay SPEC 8 ekran genişler mi? Layout benzerliği (T-038) ürün kopyası mı?
+- **Seçenekler:**
+  1. Alipay’de olan her şeyi (Yu’e Bao, Huabei, mini program, QR POS, Antom kasa…) Q1 ekran/TASK yapmak.
+  2. **Envanter + boşluk listesi; SPEC durur.** Q1 = mevcut 8 ekran / TASKS. Q2 = satıcı + onaylı eklenti. never = lisans / POS / gerçek banka / 9. ekran / Papara-Alipay rakip GTM.
+  3. “Alipay rakibiyiz” pazarlama metni (`FARK.md` / Ads).
+- **Karar:** **2.** Layout benzerliği ≠ Alipay ürünlerini kopyalamak. T-038 Coder Razor OWN; bu madde `src/` yok. 409 skip = TASK-06; Azure URL yok.
+- **Neden:** 1 lisans yalanı ve 9. ekran. 3 T-004’ü bozar. Demo cüzdan boşluk listesi, süper-app yarışı değil.
+- **Sonra hangi dosya:** `docs/YONETICI-CALISMA.md` (yeni), `docs/YONETICI-RAPORU.md` bir satır, `docs/HANDOFF.md` append. README dokunulmadı (uzman ton). `brand.css` / `_Layout` yok.
+
+---
+
+## T-040 — 2026-08-14 — UI sıkılaştırma + CSS motion (kütüphane yok)
+
+- **Kim:** Designer + Coder (kullanıcı: arayüzü beğenmedi; arayüz geliştirilsin **ve** animasyon eklensin; gölge/gradient yok)
+- **Konu:** Mevcut 8 ekran kurumsal okunaklı olsun. T-032/T-034 chrome (elevation, hero gradient, ambient orb/shimmer/pulse) kullanıcı kilidini bozuyor. Bootstrap mı, yoksa mevcut CSS + kısa motion mı?
+- **Seçenekler:**
+  1. Bootstrap CDN / UI kit — hayır (SPEC Bootstrap yok; CDN ağır).
+  2. **Mevcut CSS’i hiyerarşi / ritim / tipografi ile sıkılaştır** + `motion.css` 150–250ms opacity/translate; buton/menü/dil color-border transition; özet kahramanı / stat / tablo hover **gölgesiz**. `prefers-reduced-motion: reduce` kapatır. Sonsuz flashy loop / emoji / rainbow yok. 8 ekran. Dil TR/EN/DE/FR durur.
+  3. T-034 ambient + gradient/gölge durur — bu turdaki kilit: yok.
+- **Karar:** **2.** PageModel / ledger / `SqlWalletReader` / EF yok. TASK-06 başlamaz. npm / GSAP / Framer yok. T-038 **yapı** (navy bant + 4 işlem + örtüşen tabaka) durur; chrome düz navy + 1px çizgi.
+- **Neden:** Kullanıcı “mevcut CSS sıkılaştır” + “animasyonu CSS/layout’tan ekle, kütüphane yok, gradient olmasın” dedi. 1 Bootstrap. 3 yeni kilit ile çelişir.
+- **Sonra hangi dosya:** Coder `wwwroot/css/{site,brand,motion}.css`, gerekirse `wwwroot/js/site.js`, `_Layout` / `_AuthLayout`, Index/Havale/YukleCek/Hareketler sınıf. Designer `docs/TASARIM.md` görsel bar. `docs/HANDOFF.md` append. `resx` ezilmez. Domain yok.
+
+---
+
+## T-041 — 2026-08-14 — Redis özet cache (TASK-12 kısmi; kasa SQL)
+
+- **Kim:** Architect + Coder (kullanıcı: add redis; para SQL’de kalsın; MySQL giriş / Azure yedek / canlı Azure / Rabbit **şimdi değil**)
+- **Konu:** Compose Redis (`localhost:6379`) var; uygulama bağlı değil. Özet bakiyesi cache mi, Redis kasa mı, yoksa TASK-06 bitene kadar dokunmama mı?
+- **Seçenekler:**
+  1. TASK-12’yi atlama; önce TASK-06 havale/409 — ürün sırası durur; kullanıcı bu turda Redis istedi.
+  2. **`IWalletSummaryCache` + `CachedWalletReader` dekoratör.** Kaynak ledger SQL (`SqlWalletReader` / `LedgerPair.NetOf`). Redis yok/düşer → SQL. `WalletId == Guid.Empty` (SQL yok) cache’lenmez. Identity SQLite durur. Havale invalidate portu hazır; `POST /api/transfers` yok. Rabbit / MySQL Identity / Azure hesap **yok**.
+  3. Bakiyeyi Redis’te tut / MySQL giriş / Azure’u yedek kasa yap — hayır (SPEC kasa = SQL Server lokal, Azure SQL canlı; cache ≠ kasa).
+  4. TASK-12 tam (Redis + Rabbit) — Rabbit bu turda değil; kullanıcı sonra hatırlatılacak.
+- **Karar:** **2.** TASK-12 Todo kalır (Rabbit). TASK-06 sıradaki ürün işi durur. `UPDATE Balance` yok. PageModel Redis/ledger yok. Azure Redis hesabı açılmaz.
+- **Neden:** Kullanıcı Redis bağını daralttı. 3 güvenlik/sağlık ve SPEC’e aykırı. 4 kapsam şişirir. 1 kullanıcı isteğini ezer.
+- **Sonra hangi dosya:** Coder `src/ClearPay.Application/Ports/IWalletSummaryCache.cs`; Infrastructure `Caching/*`, `ServiceCollectionExtensions`, StackExchange.Redis; `Program.cs` health `redis`; Tester `CachedWalletReaderTests` + WebFactory Redis boş. `docs/HANDOFF.md` append. `docs/TASKS.md` not (Done değil). `docs/ARCHITECTURE.md` cache satırı. Compose servisi ezilmez. Domain / Razor yok.
+
+---
+
+## T-042 — 2026-08-14 — TASK-06 Havale (üç Architect; en robust)
+
+- **Kim:** Architect a (şema), b (ekran-akış), c (port/DIP); Orchestrator kilit; Payments+Coder uygular
+- **Konu:** Ekran 4 + `POST /api/transfers` + `Idempotency-Key` 201/409. Şema? Razor vs API? Executor / 409 / cache invalidate?
+- **Seçenekler:**
+  1. Yeni tablo/migration + treasury cüzdan şimdi + cookie ile API — hayır (şema TASK-04 tam; treasury TASK-07; ARCHITECTURE cookie≠JWT).
+  2. Yalnız Razor POST, HTTP 409 yok — SPEC API ve mülakat kanıtı düşer.
+  3. **Mevcut şema; `TransferResultKind`; çift giriş tek motor; unique Key 409 otoritesi; test ledger SQLite double; alıcı e-posta; Redis invalidate commit sonrası iki userId.**
+- **Karar:** **3.** Kazanan (a+b+c birleşik):
+  - Migration yok. `MoneyTransaction.RequiredInserts` tek SQL tx. Treasury yok (TASK-07).
+  - `TransferOutcome.Kind`: Created / Replay / KeyPayloadMismatch / InsufficientFunds / FrozenSender / SelfTransfer / RecipientNotFound / InvalidAmount / MissingKey. Created→201; Replay|mismatch→409; diğer 4xx; 4xx’te insert yok.
+  - Razor `[Authorize]` form POST → `ITransferExecutor` (cookie + anti-forgery). GET hidden `IdempotencyKey` = sunucu Guid. `POST /api/transfers` **JWT** + header `Idempotency-Key`. Sayfa fetch/JWT taşımaz. Swagger TASK-14.
+  - `SqlTransferExecutor` + ayrı `IIdempotencyStore` (ISP). `IUserDirectory` e-posta→userId (PageModel Identity/ledger yok). `FindAsync` hızlı yol; **otorite** unique `UX_IdempotencyRecord_Key` (`SaveChanges` 2627/2601 veya SQLite 19) → 409. Serializable tx; negatif yok. Commit sonrası `InvalidateAsync(actor)` ve `InvalidateAsync(recipient)`. 4xx/rollback invalidate yok.
+  - CI 409: `ClearPay:UseSqliteLedger=true` + `EnsureCreated` (kasa üretimde SQL Server; MySQL/Oracle yok). Skip kalkar.
+- **Neden:** T-002 409, T-003 çift kayıt, T-007 DIP, T-041 cache. Unique index TOCTOU’suz. EF InMemory unique tutmaz. Cookie-API ARCHITECTURE’ı bozar. 9. ekran yok.
+- **Sonra hangi dosya:** Payments `SqlTransferExecutor`, `SqlIdempotencyStore`, `IUserDirectory`/`IdentityUserDirectory`, `TransferResultKind`. Coder `Havale.cshtml(.cs)`, `TransfersController`, `TokenController`, JWT, `SharedResource*.resx`. Tester `TransferExecutorTests` + `TransferApiTests` (409). `NotImplemented*` silinir. Domain POCO/migration yok. `docs/HANDOFF.md` append. `docs/TASKS.md` TASK-06 Done.
+
+---
+
+## T-043 — 2026-08-14 — TASK-07 Yükle/çek REST gateway
+
+- **Kim:** Orchestrator + Payments + Coder (Architect a/b/c TASK-06 şeması durur)
+- **Konu:** Ekran 5 + sahte REST BankGateway. Timeout’ta ledger yok, outbox kalır. Treasury?
+- **Seçenekler:**
+  1. Müşteri cüzdanına tek satır credit / `UPDATE Balance` — yasak.
+  2. **Clearing cüzdan `UserId=clearpay-treasury`:** yükle = treasury − / müşteri +; çek = müşteri − / treasury +. Treasury `WouldGoNegative` muaf (dış para); müşteri negatif yok. Migration yok.
+  3. Treasury’yi TASK-06 Transfer tablosuna yaz — hayır (P2P değil).
+- **Karar:** **2.** `IFundingExecutor` + `SqlFundingExecutor`. `RestBankGateway`: hesap ipucunda `TIMEOUT` veya `BankGateway:SimulateTimeout` → `TimedOut`. Başarı: LedgerPair (`TopUp`/`Withdraw`) + Idempotency + Audit + Outbox **aynı tx**; Transfer satırı yok. Timeout: **ledger yok**; `OutboxMessage` Pending + Idempotency (aynı key replay timeout). Freeze: çekemez, yükleme (credit) olabilir. Cache invalidate başarıda. SOAP TASK-08. PageModel gateway/ledger yok. Sahte gateway; FAST/Papara yok.
+- **Neden:** Çift kayıt kilitli. Timeout SPEC madde 4. Unique key ikinci yüklemeyi çiftlemez. 9. ekran yok.
+- **Sonra hangi dosya:** Payments `RestBankGateway`, `SqlFundingExecutor`, `IFundingExecutor`. Coder `YukleCek.cshtml(.cs)`, resx. Tester `FundingExecutorTests`. `docs/HANDOFF.md` append. `docs/TASKS.md` TASK-07 Done.
+
+---
+
+## T-044 — 2026-08-14 — TASK-08 SOAP aynı IBankGateway
+
+- **Kim:** Orchestrator + Coder (OCP; Payments sözleşmesi durur)
+- **Konu:** SOAP strategy REST ile aynı sonuç modeli. Yeni ekran? Ayrı executor?
+- **Seçenekler:**
+  1. SOAP için ikinci executor / ikinci ekran — 9. ekran, DIP şişer.
+  2. **`SoapBankGateway` aynı `IBankGateway`.** Timeout/`FAIL`/başarı REST ile aynı. `BankGateway:Strategy=SOAP|REST` (varsayılan REST). `SqlFundingExecutor` Web `switch` yazmaz.
+- **Karar:** **2.** Reference öneki `SOAP-`. PageModel/ledger yok. Sahte stub; gerçek SOAP stack/WCF yok.
+- **Neden:** PLAN OCP/LSP. T-043 timeout kuralı durur.
+- **Sonra hangi dosya:** Coder `SoapBankGateway`, `AddClearPay` strategy bind. Tester `BankGatewayStrategyTests`. `docs/HANDOFF.md` append. TASK-08 Done.
+
+---
+
+## T-045 — 2026-08-14 — TASK-09 Hareketler + dekont
+
+- **Kim:** Orchestrator + Coder (Payments şema durur)
+- **Konu:** Ekran 6–7 filtre/sayfa + dekont correlation id. Dapper vs EF? Yeni tablo?
+- **Seçenekler:**
+  1. Yeni hareket tablosu / 9. ekran — hayır.
+  2. **`IActivityReader` EF:** kullanıcının `LedgerEntry` + çiftin karşı `Wallet.UserId`. Filtre tarih/tür. Sayfa 20. Dekont `/dekont/{correlationId}` — taraflar, tutar, correlation id, zaman. Yalnız kendi cüzdanının id’si. Treasury etiketi `clearpay-treasury`. PageModel ledger net yok.
+- **Karar:** **2.** Dapper şart değil (PLAN “veya SP”); EF mevcut bağlam. Status Completed (timeout ledger’da yok). `IUserDirectory.FindEmailByUserIdAsync` isteğe bağlı etiket.
+- **Neden:** SPEC ekran 6–7. Correlation id mülakat. Migration yok.
+- **Sonra hangi dosya:** Coder `IActivityReader`, `SqlActivityReader`, `Hareketler.cshtml(.cs)`, `Dekont.cshtml(.cs)`. Tester `ActivityReaderTests`. HANDOFF append. TASK-09 Done.
+
+---
+
+## T-046 — 2026-08-14 — TASK-10 Admin freeze/kuyruk/audit
+
+- **Kim:** Orchestrator + Coder
+- **Konu:** Ekran 8 Admin. Freeze nasıl? Seed admin?
+- **Seçenekler:**
+  1. 9. ekran / PageModel’de ledger — hayır.
+  2. **`IAdminPanel` port.** Freeze = `Wallet.IsFrozen` + AuditLog (bakiye UPDATE yok). Başarısız kuyruk = `OutboxMessage.Failed`; “kuyruğa al” → Pending. Audit ara: actor / correlation id / tarih. Rol `Admin`. Dev seed `admin@clearpay.test` / `Deneme123` (Production seed yok). Menü role gizli.
+- **Karar:** **2.**
+- **Neden:** SPEC ekran 8. Freeze kuralı Domain’de durur.
+- **Sonra hangi dosya:** Coder `IAdminPanel`, `SqlAdminPanel`, `Admin.cshtml(.cs)`, `_Layout` Admin link, `IdentitySeeder`. Tester `AdminPanelTests`. HANDOFF. TASK-10 Done.
+
+---
+
+## T-047 — 2026-08-14 — TASK-11 Outbox + Hangfire
+
+- **Kim:** Payments + Coder
+- **Konu:** Pending outbox worker. SQL Hangfire vs memory? Dashboard 9. ekran mı?
+- **Seçenekler:**
+  1. HTTP sonrası kuyruğa elde bas — timeout kaybettirir.
+  2. **Hangfire in-process.** `IOutboxProcessor` Pending → publisher → Sent/Failed. Ledger zaten commit. Dashboard yok (8 ekran). Test/SQLite: `Hangfire:Enabled=false` + MemoryStorage; canlı SQL: Hangfire.SqlServer aynı ClearPay bağlantısı. Publisher TASK-11 log no-op; Rabbit TASK-12.
+- **Karar:** **2.**
+- **Neden:** SPEC outbox. Mesaj DB’de bekler.
+- **Sonra hangi dosya:** Payments `SqlOutboxProcessor`. Coder Hangfire DI. Tester `OutboxProcessorTests`. HANDOFF. TASK-11 Done.
+
+---
+
+## T-048 — 2026-08-14 — TASK-12 RabbitMQ bind (Redis landed)
+
+- **Kim:** Coder (T-041 Redis durur)
+- **Konu:** Compose Rabbit var; uygulama bağlı değil. Kasa SQL mi?
+- **Seçenekler:**
+  1. Rabbit’i kasa yapmak / Azure CloudAMQP hesabı açmak — hayır.
+  2. **`IOutboxPublisher` → Rabbit queue `clearpay.outbox` when `ConnectionStrings:RabbitMq` var.** Yok/düşer → log publisher (Hangfire yedek). Redis özet cache T-041 durur. Canlı hesap açılmaz.
+- **Karar:** **2.** Health `rabbit`: up/down/off. PageModel yok. Ledger SQL.
+- **Neden:** PLAN lokal Compose bind; canlı Q2.
+- **Sonra hangi dosya:** Coder `RabbitOutboxPublisher`, DI, health. Tester factory Rabbit boş = off. HANDOFF. TASK-12 Done.
+
+---
+
+## T-049 — 2026-08-14 — TASK-13 test sertleştirme
+
+- **Kim:** Tester
+- **Konu:** 409 kanıtı var; PLAN ledger invariant / freeze API / yetersiz bakiye HTTP eksik mi?
+- **Seçenekler:**
+  1. Yeni ekran veya ledger rewrite — hayır.
+  2. **Mevcut executor’a HTTP kanıt ekle.** 409 replay + aynı key farklı payload 409 (ikinci kesinti yok). Freeze → 403. Idempotency-Key yok → 400. Ledger: çift kayıt toplamı 0; `Wallet`’ta `Balance` kolonu yok. PageModel/ledger kuralı durur.
+- **Karar:** **2.** Ürün davranışı değişmez; boşluk varsa yalnızca test.
+- **Neden:** PLAN TASK-13. 8 ekran. `UPDATE Balance` yok.
+- **Sonra hangi dosya:** Tester `TransferApiTests`, `LedgerInvariantTests`. TASKS/HANDOFF. `src/` yok unless a real hole.
+
+---
+
+## T-050 — 2026-08-14 — TASK-14 README + Swagger + CV
+
+- **Kim:** Coder
+- **Konu:** SPEC CV üçlüsü + OpenAPI. Ads? 9. ekran?
+- **Seçenekler:**
+  1. Ads harcama / Papara GTM / 9. ekran Swagger-only UI — hayır.
+  2. **Swashbuckle `/swagger`.** `POST /api/transfers` 201/409 + `Idempotency-Key` header. JWT bearer. README EN (ve TR/DE/FR eş) güncel ekran tablosu + PLAN’daki 3 mülakat cümlesi. Canlı URL uydurma yok.
+- **Karar:** **2.** Razor ekran listesi değişmez. Secret yok.
+- **Neden:** SPEC başarı 5; PLAN TASK-14.
+- **Sonra hangi dosya:** Coder Web Swagger + `README*.md`. Tester swagger.json 409. HANDOFF. TASK-14 Done.
+
+---
+
+## T-051 — 2026-08-14 — TASK-16 Azure talimat (URL yok)
+
+- **Kim:** Deploy
+- **Konu:** Canlı URL ajan mı açar? Hangfire App Setting adı?
+- **Seçenekler:**
+  1. Ajan `az login` / abonelik / DNS / canlı URL uydurur — hayır.
+  2. **Infra + tıklama listesi.** Bicep/App Setting `Hangfire__Enabled=true` (eski `Hangfire__WorkerEnabled` kodda yok). Production Identity = Azure SQL (`ConnectionStrings:ClearPay`). Redis/Rabbit Q2 sen yapıştırırsın. TASK-16 Done = tarayıcıda URL; şimdi blok Halil.
+- **Karar:** **2.** Secret git’e yok. 8 ekran.
+- **Neden:** PLAN TASK-16; SPEC Azure açık URL kullanıcı işi.
+- **Sonra hangi dosya:** Deploy `infra/main.bicep`, `docs/CANLI.md`, `docs/DEPLOY.md`, Production Hangfire. HANDOFF tıklama. TASK-16 Todo kalır (URL).
+
+---
+
+## T-052 — 2026-08-14 — Havale asılı kalmasın (Hangfire + Redis + SQL)
+
+- **Kim:** Payments + Coder (Orchestrator bugfix; 8 ekran değişmez)
+- **Konu:** `/havale` çalışmıyor veya uzun sürüyor. İlk `dotnet run` Hangfire `JobStorage` ile düştü; site `Hangfire__Enabled=false` ile ayağa kalktı. Redis/Rabbit Docker kapalıyken transfer asılı kalabilir.
+- **Seçenekler:**
+  1. Havale’yi Hangfire/Redis/Rabbit’e bağlamak — hayır; kasa SQL, outbox aynı tx Pending kalır.
+  2. **Degrade + kısa timeout.** Hangfire: `IRecurringJobManager` (statik `RecurringJob` yok — JobStorage.Current boot’ta yok). Redis down → cache atla, SQL devam (T-041). SQL unreachable → kullanıcıya net hata, asılı kalma yok (`Connect Timeout`/`CommandTimeout` birkaç saniye). Ledger `UPDATE Balance` yok. PageModel ledger yok.
+- **Karar:** **2.** Transfer Redis/Rabbit/Hangfire düşse de SQL’e karşı biter veya hızlı fail eder.
+- **Neden:** Hangfire 1.8 statik `RecurringJob` `JobStorage.Current` ister; DI `IRecurringJobManager` boot’u kırmaz. SE.Redis `AbortOnConnectFail=false` iken GET/SET/DEL AsyncTimeout kadar bekler (havale POST ~20s). SPEC 409/çift kayıt durur.
+- **Sonra hangi dosya:** Payments `SqlTransferExecutor`, Redis cache/factory, Hangfire DI. Coder `Havale.cshtml.cs` + resx + API 503. Tester transfer/409. HANDOFF append. Razor markup yok.
+
+---
+
+## T-053 — 2026-08-14 — Mobil bankacılık düzeni (T-040 derinlik maddesi güncellenir)
+
+- **Kim:** Designer + Coder (kullanıcı: “Papara gibi sanal bankacılık uygulaması, gerçekçi arayüz”; seçim: mobil-önce düzen + derinlik serbest)
+- **Konu:** Bugünkü kabuk masaüstü paneli (sol menü + geniş 920px kolon). Mobil bankacılık hissi için alt sekme çubuğu ve kart yığını gerekir. T-040 “gölge/gradient yok” dediği için gerçekçi kart yükseltmesi bloke.
+- **Seçenekler:**
+  1. Masaüstü panosu kalsın, yalnız tipografi rötuşu — kullanıcı “gerçekçi arayüz” dedi; hiss değişmez.
+  2. Masaüstünde de telefon çerçevesi (mockup içinde uygulama) — gerçek ürün değil, demo maketi gibi durur; 4 dil + admin geniş tablosu sığmaz.
+  3. **Mobil-önce kabuk:** `max-width: 800px` altında alt sekme çubuğu (`.tabbar`, mevcut rotalar), üstte ince topbar, kart yığını; masaüstünde sol menü **durur** ve içerik ortalanmış dar kolon (`560px`) olur, Hareketler/Admin geniş kalır. Derinlik: yumuşak gölge ölçeği (`--elev-1..3`) ve **yalnız bakiye kartında** navy gradient (`--navy` → `--navy-mid`). Motion 150–250ms sınırı durur.
+  4. Papara markası birebir (mor kimlik, logo) — hayır: marka hakkı + MARKA.md “Papara rakibi/alternatifi değiliz”.
+- **Karar:** **3.** T-040’ın “gölge / gradient yok” maddesi bu blokla güncellenir; T-040’ın geri kalanı (Bootstrap yok, npm/GSAP yok, emoji yok, 150–250ms, `prefers-reduced-motion`) aynen durur. T-038 yapı (navy bant + 4 işlem + örtüşen tabaka) korunur. SPEC 8 ekran, rotalar, footer **Demo — yükleme için sahte gateway**, wordmark **ClearPay** değişmez. Ledger / PageModel / resx anahtar şeması dokunulmaz — alt çubuk mevcut `NavOverview / NavTransfer / NavTopUpWithdraw / NavActivity / NavAdmin` anahtarlarını yeniden kullanır.
+- **Neden:** Kullanıcı bu turda “gerçekçi” istedi ve derinlik gevşetmesini açıkça seçti; 1 hissi değiştirmez, 2 ürünü maket gibi gösterir, 4 hem yasak hem yanlış iddia. Gölge kart hiyerarşisi için; gradient tek yerde kalırsa T-032/T-034’teki karnaval geri gelmez. Şube / BankaX / IBAN çekirdeği yine yok.
+- **Sonra hangi dosya:** Designer `wwwroot/css/brand.css` (elevation / gradient / radius / tabbar token), `docs/TASARIM.md`, `docs/MARKA.md`. Coder `Pages/Shared/_Layout.cshtml` (+`_AuthLayout`), `wwwroot/css/site.css`, `wwwroot/css/motion.css`, `Pages/{Index,Havale,YukleCek,Hareketler,Dekont,Admin}.cshtml`, `Pages/Account/{Login,Register}.cshtml`. `docs/TASKS.md` satır, `docs/HANDOFF.md` append. Domain / Application / Infrastructure / migration yok.
+
+---
+
+## T-054 — 2026-08-14 — Giriş hero + vendored anime.js (Yapı Kredi hissi, marka kopyası değil)
+
+- **Kim:** Designer + Coder (kullanıcı: anime.js; giriş sayfası yapikredi.com.tr gibi olsun; git push)
+- **Konu:** Auth bugün tek kolon kart. Kullanıcı banka ana sayfası hissi (sol hero + sağ giriş) ve anime.js istedi. T-040/T-053 “npm / GSAP / Framer yok” ve motion 150–250ms. CDN mi, npm mi, vendor dosya mı?
+- **Seçenekler:**
+  1. npm + GSAP/Framer — hayır; T-040 paket yöneticisi ve karnaval yasak.
+  2. CDN’den anime.js — hayır; gizlilik/CI/offline; üçüncü parti script runtime’da.
+  3. **Vendor `wwwroot/js/vendor/anime.min.js` (anime.js 3.2.2, MIT) + `auth-hero.js` yalnız `_AuthLayout`.** Split sahne: sol navy hero (geometrik orb, ClearPay navy/teal), sağ mevcut kart. Yapı Kredi **düzeni** (hero + sağ panel); logo, mavi kimlik, Worldcard, fotoğraf **yok**. `prefers-reduced-motion: reduce` → JS no-op, içerik görünür kalır. Giriş animasyonu tek sefer: 180–240ms stagger (toplam ~600ms); sonsuz loop / pulse / bounce yok. 8 ekran; Register aynı layout.
+  4. Yalnız CSS — kullanıcı anime.js istedi.
+- **Karar:** **3.** T-040 “npm/GSAP yok” maddesi **yalnız auth layout + vendored anime.js** için bu blokla gevşer; uygulama kabuğu / cüzdan ekranları CSS motion durur. Papara/YK marka kopyası yok.
+- **Neden:** Kullanıcı açıkça anime.js + YK hissi istedi. 1 kuralı ezer ve ağır. 2 runtime CDN. 4 isteği karşılamaz. Vendor dosya offline/CI-güvenli; MIT.
+- **Sonra hangi dosya:** Coder `_AuthLayout.cshtml`, `wwwroot/js/vendor/anime.min.js`, `wwwroot/js/auth-hero.js`, `wwwroot/css/site.css` (auth-stage), `wwwroot/css/brand.css` (hero token), `wwwroot/css/motion.css` (auth-motion override). `docs/TASARIM.md` bir paragraf. `docs/HANDOFF.md` append. Domain / ledger / resx yok.
+
+---

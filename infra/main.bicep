@@ -82,8 +82,12 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
           value: 'Production'
         }
         {
-          name: 'Hangfire__WorkerEnabled'
+          name: 'Hangfire__Enabled'
           value: 'true'
+        }
+        {
+          name: 'Hangfire__UseMemoryStorage'
+          value: 'false'
         }
       ]
       connectionStrings: [

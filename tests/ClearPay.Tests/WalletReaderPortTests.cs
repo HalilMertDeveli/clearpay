@@ -14,11 +14,15 @@ public sealed class WalletReaderPortTests : IClassFixture<ClearPayWebFactory>
     }
 
     [Fact]
-    public async Task Registered_wallet_reader_is_sql_and_returns_zero_when_ledger_unreachable()
+    public async Task Registered_wallet_reader_is_cached_sql_and_returns_zero_when_ledger_unreachable()
     {
         using var scope = _factory.Services.CreateScope();
         var reader = scope.ServiceProvider.GetRequiredService<IWalletReader>();
-        reader.Should().BeOfType<ClearPay.Infrastructure.Persistence.SqlWalletReader>();
+        reader.Should().BeOfType<ClearPay.Infrastructure.Caching.CachedWalletReader>();
+        scope.ServiceProvider.GetRequiredService<ClearPay.Infrastructure.Persistence.SqlWalletReader>()
+            .Should().NotBeNull();
+        scope.ServiceProvider.GetRequiredService<IWalletSummaryCache>()
+            .Should().BeOfType<ClearPay.Infrastructure.Caching.NoOpWalletSummaryCache>();
 
         scope.ServiceProvider.GetRequiredService<ClearPay.Infrastructure.Persistence.ClearPayDbContext>()
             .Should().NotBeNull();

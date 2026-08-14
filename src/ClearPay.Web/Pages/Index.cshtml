@@ -5,82 +5,101 @@
     ViewData["MetaDescription"] = L["MetaOverview"].Value;
 }
 
-<p class="page-kicker">@L["WalletKicker"]</p>
-<h1 class="page-title">@L["Overview"]</h1>
-@if (!string.IsNullOrWhiteSpace(Model.GreetingName))
-{
-    <p class="lede">@Model.GreetingName</p>
-}
-
-<article class="balance-hero">
-    <p class="live-pill"><span class="live-dot" aria-hidden="true"></span>@L["LiveBadge"]</p>
-    <p class="stat-label">@L["AvailableBalance"]</p>
-    <p class="stat-value stat-value-xl" data-count="@Model.BalanceAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.BalanceText)</p>
-    <p class="status-line">@L["AccountStatus"]: <span class="@(Model.IsFrozen ? "badge-frozen" : "badge-active")">@(Model.IsFrozen ? L["StatusFrozen"] : L["StatusActive"])</span></p>
-</article>
-
-<div class="stat-row">
-    <article class="stat-card stat-card--out">
-        <p class="stat-label">@L["MonthOut"]</p>
-        <p class="stat-value" data-count="@Model.MonthOutAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.MonthOutText)</p>
-        <svg class="spark" viewBox="0 0 120 36" aria-hidden="true"><path d="M0 26 20 22 40 24 60 16 80 18 100 10 120 12" /></svg>
+<div class="wallet-home">
+    @if (!string.IsNullOrWhiteSpace(Model.Flash))
+    {
+        <p class="flash-ok">@Model.Flash</p>
+    }
+    <article class="balance-hero wallet-band">
+        <p class="page-kicker kicker-on-dark">@L["WalletKicker"]</p>
+        <h1 class="page-title title-on-dark">@L["Overview"]</h1>
+        @if (!string.IsNullOrWhiteSpace(Model.GreetingName))
+        {
+            <p class="lede lede-on-dark">@Model.GreetingName</p>
+        }
+        <p class="live-pill"><span class="live-dot" aria-hidden="true"></span>@L["LiveBadge"]</p>
+        <div class="hero-balance">
+            <p class="stat-label">@L["AvailableBalance"]</p>
+            <p class="stat-value stat-value-xl" data-count="@Model.BalanceAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.BalanceText)</p>
+            <p class="status-line">@L["AccountStatus"]: <span class="@(Model.IsFrozen ? "badge-frozen" : "badge-active")">@(Model.IsFrozen ? L["StatusFrozen"] : L["StatusActive"])</span></p>
+        </div>
+        <nav class="action-grid" aria-label="@L["WalletActions"]">
+            <a class="action-tile" asp-page="/Havale">
+                <span class="action-ico action-ico--send" aria-hidden="true"></span>
+                <span class="action-label">@L["Send"]</span>
+            </a>
+            <a class="action-tile" asp-page="/YukleCek" asp-fragment="yukle">
+                <span class="action-ico action-ico--topup" aria-hidden="true"></span>
+                <span class="action-label">@L["TopUp"]</span>
+            </a>
+            <a class="action-tile" asp-page="/YukleCek" asp-fragment="cek">
+                <span class="action-ico action-ico--withdraw" aria-hidden="true"></span>
+                <span class="action-label">@L["Withdraw"]</span>
+            </a>
+            <a class="action-tile" asp-page="/Hareketler">
+                <span class="action-ico action-ico--activity" aria-hidden="true"></span>
+                <span class="action-label">@L["NavActivity"]</span>
+            </a>
+        </nav>
     </article>
-    <article class="stat-card stat-card--in">
-        <p class="stat-label">@L["MonthIn"]</p>
-        <p class="stat-value" data-count="@Model.MonthInAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.MonthInText)</p>
-        <svg class="spark" viewBox="0 0 120 36" aria-hidden="true"><path d="M0 28 18 24 36 20 54 22 72 14 90 10 120 8" /></svg>
-    </article>
-</div>
 
-<div class="actions">
-    <a class="btn" asp-page="/Havale">@L["SendTransfer"]</a>
-    <a class="btn btn-ghost" asp-page="/YukleCek" asp-fragment="yukle">@L["TopUp"]</a>
-    <a class="btn btn-ghost" asp-page="/YukleCek" asp-fragment="cek">@L["Withdraw"]</a>
-</div>
+    <div class="wallet-sheet">
+        <div class="stat-row stat-row-in-sheet">
+            <article class="stat-card stat-card--out">
+                <p class="stat-label">@L["MonthOut"]</p>
+                <p class="stat-value" data-count="@Model.MonthOutAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.MonthOutText)</p>
+            </article>
+            <article class="stat-card stat-card--in">
+                <p class="stat-label">@L["MonthIn"]</p>
+                <p class="stat-value" data-count="@Model.MonthInAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.MonthInText)</p>
+            </article>
+        </div>
 
-<section class="panel">
-    <div class="panel-head">
-        <p class="stat-label">@L["RecentActivity"]</p>
-        <a class="text-link" asp-page="/Hareketler">@L["ViewAll"]</a>
-    </div>
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>@L["ColDate"]</th>
-                <th>@L["ColTxn"]</th>
-                <th class="num">@L["ColAmount"]</th>
-                <th>@L["ColStatus"]</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.LastMovements.Count == 0)
-            {
-                <tr>
-                    <td colspan="4" class="empty-cell">
-                        <div class="empty-block">
-                            <div class="empty-mark" aria-hidden="true"></div>
-                            <p class="empty-title">@L["EmptyMovementsTitle"]</p>
-                            <p class="empty-hint">@L["EmptyMovementsHint"]</p>
-                            <div class="empty-actions">
-                                <a class="btn" asp-page="/Havale">@L["SendTransfer"]</a>
-                                <a class="btn btn-ghost" asp-page="/YukleCek">@L["TopUp"]</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            }
-            else
-            {
-                foreach (var movement in Model.LastMovements)
-                {
+        <section class="sheet-activity">
+            <div class="panel-head">
+                <p class="stat-label">@L["RecentActivity"]</p>
+                <a class="text-link" asp-page="/Hareketler">@L["ViewAll"]</a>
+            </div>
+            <table class="data-table data-cards data-cards--mv">
+                <thead>
                     <tr>
-                        <td>@movement.At.ToLocalTime().ToString("g")</td>
-                        <td>@movement.Kind</td>
-                        <td class="num">@ClearPay.Web.Presentation.MoneyDisplay.FormatTry(movement.Amount)</td>
-                        <td>@L["StatusCompleted"]</td>
+                        <th>@L["ColDate"]</th>
+                        <th>@L["ColTxn"]</th>
+                        <th class="num">@L["ColAmount"]</th>
+                        <th>@L["ColStatus"]</th>
                     </tr>
-                }
-            }
-        </tbody>
-    </table>
-</section>
+                </thead>
+                <tbody>
+                    @if (Model.LastMovements.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4" class="empty-cell">
+                                <div class="empty-block">
+                                    <div class="empty-mark" aria-hidden="true"></div>
+                                    <p class="empty-title">@L["EmptyMovementsTitle"]</p>
+                                    <p class="empty-hint">@L["EmptyMovementsHint"]</p>
+                                    <div class="empty-actions">
+                                        <a class="btn" asp-page="/Havale">@L["SendTransfer"]</a>
+                                        <a class="btn btn-ghost" asp-page="/YukleCek">@L["TopUp"]</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var movement in Model.LastMovements)
+                        {
+                            <tr>
+                                <td>@movement.At.ToLocalTime().ToString("g")</td>
+                                <td>@movement.Kind</td>
+                                <td class="num @(movement.Amount > 0m ? "amount-in" : null)">@ClearPay.Web.Presentation.MoneyDisplay.FormatTry(movement.Amount)</td>
+                                <td>@L["StatusCompleted"]</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>

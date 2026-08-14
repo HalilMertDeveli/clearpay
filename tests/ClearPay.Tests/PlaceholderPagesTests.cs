@@ -30,6 +30,8 @@ public sealed class PlaceholderPagesTests : IClassFixture<ClearPayWebFactory>
     [InlineData("/havale")]
     [InlineData("/yukle-cek")]
     [InlineData("/hareketler")]
+    [InlineData("/admin")]
+    [InlineData("/dekont/00000000-0000-0000-0000-000000000000")]
     public async Task Wallet_routes_redirect_to_login(string path)
     {
         var response = await _client.GetAsync(path);

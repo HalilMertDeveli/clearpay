@@ -1,5 +1,7 @@
 # Yönetici raporu — 2026-08-13
 
+Alipay özellik envanteri (SPEC 8 durur): [`YONETICI-CALISMA.md`](YONETICI-CALISMA.md).
+
 **Kritik yol:** **TASK-05** — canlı özet (`SqlWalletReader` / `LedgerPair.NetOf`). TASK-04 **Done** (`a4755a1`). Havale API yok.
 
 **T-028:** DI `EmptyWalletReader` → `SqlWalletReader`. SQL yoksa 0,00 ₺ (500 yok). Identity SQLite.

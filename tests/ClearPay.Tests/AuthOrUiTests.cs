@@ -27,6 +27,8 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var body = await response.Content.ReadAsStringAsync();
         body.Should().Contain("ClearPay");
+        body.Should().Contain("\"redis\":\"off\"");
+        body.Should().Contain("\"rabbit\":\"off\"");
     }
 
     [Fact]
@@ -152,10 +154,6 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         html.Should().Contain("Şifre");
     }
 
-    [Fact(Skip = "TASK-06: Idempotency-Key 409 henüz yok; ledger gelince aç.")]
-    public void Duplicate_transfer_returns_409()
-    {
-    }
 
     private HttpClient CreateClient(bool allowAutoRedirect = true)
     {

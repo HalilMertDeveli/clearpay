@@ -562,3 +562,130 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Kullanıcı:** Google Cloud OAuth + user-secrets (`docs/GIRIS-SOSYAL.md`). Apple isteğe bağlı. TASK-16 URL yok.
 - **Sıradaki ürün:** TASK-06.
 
+## 2026-08-13 — Yönetici (T-039 Alipay envanter, SPEC genişlemez)
+
+- **OWN:** `docs/YONETICI-CALISMA.md` (yeni), TARTISMA **T-039**, `docs/YONETICI-RAPORU.md` bir satır. `src/` / `brand.css` / `_Layout` yok (T-038 Coder). README dokunulmadı.
+- Katalog **57** Alipay tüketici+web özelliği: **9 Q1** (SPEC 8 analog + admin freeze), **5 Q2**, **43 never**. Papara/Alipay rakip GTM yok. 409 skip = TASK-06. Azure URL yok.
+- **Sıradaki ürün:** TASK-06. İnsan listesi: «sıradaki işi yap» → havale; Docker reboot kullanıcıda; TASK-16 şimdi değil.
+
+## 2026-08-13 — Alipay cüzdan düzeni (T-038)
+
+- **OWN:** T-038. Designer `docs/TASARIM.md` + `docs/MARKA.md` (Alipay değiliz) + `brand.css`. Coder Razor: `_Layout`, `_AuthLayout`, `Index.cshtml`. `site.css` / `motion.css`. Domain / SqlWalletReader / compose yok. Docker reboot hikâyesi durur.
+- Kopyalanan **yapı** (marka değil): Alipay ev = navy bant + büyük bakiye + 4 işlem dairesi (Gönder / Yükle / Çek / Hareketler) + örtüşen beyaz tabaka (ay özeti + son hareketler). Auth = üst navy şerit + ortalı opak kart (e-posta/şifre). Logo / QR / `#1677FF` yok. Ürün **ClearPay**. Footer **Demo — yükleme için sahte gateway**. 8 ekran.
+- **Sen tıklarsın:** `http://localhost:5153/giris` → giriş → Özet. Kaynak: https://www.alipay.com/ (hızlı giriş), miniprogram ızgara, Chinability home sözlüğü.
+- **Sıradaki ürün:** TASK-06.
+
+## 2026-08-14 — Coder/Designer (T-040 UI sıkılaştırma + CSS motion)
+
+- **OWN:** T-040. Coder `wwwroot/css/{site,brand,motion}.css`, `wwwroot/js/site.js`, `_Layout` / `_AuthLayout`, `Index.cshtml`. Designer `docs/TASARIM.md` görsel bar. SPEC görsel satırı. `resx` ezilmedi. PageModel / ledger / `SqlWalletReader` / EF yok. TASK-06 başlamadı. npm/GSAP/Framer yok.
+- **Karar:** Bootstrap yok. Mevcut 8 ekran: tipografi/ritim/hiyerarşi sıkı; navy `#1B2A4A` düz zemin; **gölge/gradient yok**. T-038 yapı (bant + 4 işlem + örtüşen tabaka) durur. Dil TR/EN/DE/FR. Footer **Demo — yükleme için sahte gateway**.
+- **Animasyon:** `motion.css` 150–250ms opacity/translate giriş; buton/menü/dil color-border; stat/tablo hover gölgesiz. `prefers-reduced-motion` kapatır. Sonsuz orb/shimmer/pulse yok. `site.js` count-up ~240ms + menü drawer.
+- **Sen tıklarsın:** `http://localhost:5153/giris` → giriş → Özet; Havale / Yükle-Çek / Hareketler. Mobil: hamburger (dil sol menüde).
+- **Sıradaki ürün:** TASK-06.
+
+## 2026-08-14 — Coder (T-041 Redis özet cache; kasa SQL)
+
+- **OWN:** TARTISMA **T-041**. Application `IWalletSummaryCache`; Infrastructure `CachedWalletReader` + Redis/NoOp; `AddClearPay` bağlar. PageModel / Domain / Razor yok. `UPDATE Balance` yok. Compose Redis servisi ezilmedi.
+- **Karar:** Özet DTO cache (`clearpay:wallet-summary:{userId}`, TTL 60s). Kaynak `SqlWalletReader` / `LedgerPair.NetOf`. Redis yok veya düşer → SQL. SQL-down `WalletId == Guid.Empty` cache’lenmez. Identity SQLite durur.
+- **Kanıt:** `GET /api/health` → `redis`: `up` / `down` / `off`. Test host Redis boş = `off`. Havale invalidate portu hazır; `POST /api/transfers` yok.
+- **Ertelendi:** RabbitMQ (TASK-12), MySQL Identity, Azure yedek/canlı, TASK-06 havale/409.
+- **Sen tıklarsın:** Docker Desktop → `docker compose up -d` → Redis `:6379` → site `:5153` → `/api/health` `redis=up`.
+- **Sıradaki ürün:** TASK-06. TASK-12 Todo (Rabbit).
+
+## 2026-08-14 — TASK-06 Done (Payments + Coder + Tester; T-042)
+
+- **OWN:** TARTISMA **T-042**. `SqlTransferExecutor` + `SqlIdempotencyStore` + `IUserDirectory`. `POST /api/transfers` JWT + `Idempotency-Key` → **201 / 409**. Razor `/havale` cookie form → aynı executor. Unique `UX_IdempotencyRecord_Key` otorite. Tek SQL tx: −/+ `LedgerEntry`, Transfer, Idempotency, Audit, Outbox. `UPDATE Balance` yok. Redis `InvalidateAsync` gönderen+alıcı. Treasury yok (TASK-07). PageModel ledger yok.
+- **Kanıt:** `dotnet test -c Release` **78 geçti**, 0 skip. `Duplicate_transfer_returns_409`: aynı key ikinci POST **409**, bakiye bir kez düşer.
+- **Sen tıklarsın:** `http://localhost:5153/giris` → iki Musteri kayıt → (bakiye TASK-07 yükleme) → `/havale` veya `POST /api/token` + `POST /api/transfers` aynı `Idempotency-Key`. Debug `ClearPay.Web` kilitliyse Release kullan.
+- **Sıradaki ürün:** TASK-07 yükle/çek + sahte REST BankGateway.
+
+## 2026-08-14 — TASK-07 Done (Payments + Coder + Tester; T-043)
+
+- **OWN:** TARTISMA **T-043**. `IFundingExecutor` / `SqlFundingExecutor` + `RestBankGateway`. Yükle: treasury − / müşteri +. Çek: müşteri − / treasury +. Hesap alanında `TIMEOUT` → ledger yok, `OutboxMessage` Pending. Freeze çekemez, yükleme olabilir. `UPDATE Balance` yok. Transfer satırı yok. SOAP TASK-08.
+- **Kanıt:** `dotnet test -c Release` **81 geçti**. Timeout testi: 0 ledger satırı, 1 Pending outbox.
+- **Sen tıklarsın:** `/yukle-cek` tutar + hesap (ör. TR00) → Özet bakiyesi artar. `TIMEOUT` yaz → ledger değişmez.
+- **Sıradaki ürün:** TASK-08 SOAP aynı `IBankGateway`.
+
+## 2026-08-14 — TASK-08 Done (Coder + Tester; T-044)
+
+- **OWN:** TARTISMA **T-044**. `SoapBankGateway` aynı timeout/FAIL/başarı modeli. `BankGateway:Strategy=SOAP|REST` (varsayılan REST). WCF/gerçek banka yok. 8 ekran.
+- **Kanıt:** `dotnet test -c Release` **83 geçti**. REST ve SOAP `TIMEOUT` → TimedOut, başarıda `REST-` / `SOAP-` referans.
+- **Sıradaki ürün:** TASK-09 hareketler + dekont.
+
+## 2026-08-14 — TASK-09 Done (Coder + Tester; T-045)
+
+- **OWN:** TARTISMA **T-045**. `IActivityReader` / `SqlActivityReader`. `/hareketler` filtre+sayfa. `/dekont/{correlationId}` taraflar, tutar, correlation id, zaman. Yalnız kendi cüzdan. Treasury etiketi. PageModel ledger yok.
+- **Kanıt:** `dotnet test -c Release` **85 geçti**. Receipt stranger → null.
+- **Sen tıklarsın:** yükle/havale sonrası `/hareketler` → Dekont.
+- **Sıradaki ürün:** TASK-10 Admin.
+
+## 2026-08-14 — TASK-10 Done (Coder + Tester; T-046)
+
+- **OWN:** TARTISMA **T-046**. `IAdminPanel` / `SqlAdminPanel`. `/admin` rol Admin. Freeze = `IsFrozen` + audit (`UPDATE Balance` yok). Failed outbox → kuyruğa al = Pending. Dev seed `admin@clearpay.test` / `Deneme123`. Production seed yok. Menü role gizli.
+- **Kanıt:** `dotnet test -c Release` **88 geçti**.
+- **Sen tıklarsın:** Development giriş `admin@clearpay.test` / `Deneme123` → `/admin`.
+- **Sıradaki ürün:** TASK-11 Hangfire outbox.
+
+## 2026-08-14 — TASK-11 Done (Payments + Coder + Tester; T-047)
+
+- **OWN:** TARTISMA **T-047**. `SqlOutboxProcessor` + Hangfire recurring (minutely). Publisher TASK-11 log. Dashboard yok. Test `Hangfire:Enabled=false`. Dev MemoryStorage. Production SQL storage (`Hangfire:Enabled=true`, memory false). Timeout satırı DB’de kalır, worker Failed işaretler.
+- **Kanıt:** `dotnet test -c Release` **90 geçti**. Pending → Sent; publisher fail → Failed, satır durur.
+- **Sıradaki ürün:** TASK-12 Rabbit bind (Redis T-041 landed).
+
+## 2026-08-14 — TASK-12 Done (Coder + Tester; T-048)
+
+- **OWN:** TARTISMA **T-048**. `RabbitOutboxPublisher` queue `clearpay.outbox` when `ConnectionStrings:RabbitMq` set. Yok veya düşer → `LoggingOutboxPublisher` (Hangfire yedek). Redis T-041 durur. Ledger SQL. CloudAMQP hesabı açılmaz. `docker-compose.yml` ezilmedi.
+- **Kanıt:** `dotnet test -c Release` **91 geçti**. Test host Redis+Rabbit boş → `/api/health` `redis=off` `rabbit=off`. Null connection publish throw etmez.
+- **Sen tıklarsın:** Docker Desktop → `docker compose up -d` → site `:5153` → `GET /api/health` `redis=up` `rabbit=up`. Rabbit düşerse `rabbit=down`, Hangfire hâlâ outbox işler.
+- **Sıradaki ürün:** TASK-13 xUnit sertleştirme (409 API, freeze, yetersiz bakiye, ledger invariant).
+
+## 2026-08-14 — TASK-13 Done (Tester; T-049)
+
+- **OWN:** TARTISMA **T-049**. `src/` yok. `TransferApiTests`: 409 replay, aynı key farklı tutar 409 (ikinci kesinti yok), freeze **403**, Idempotency-Key yok **400**, dual-entry toplam 0. `TransferExecutorTests` payload mismatch. `LedgerInvariantTests`: `Wallet.Balance` yok, çift kayıt, freeze debit.
+- **Kanıt:** `dotnet test -c Release` **98 geçti**, 0 skip. `Duplicate_transfer_returns_409`.
+- **Sıradaki ürün:** TASK-14 İngilizce README + Swagger + CV üç cümle.
+
+## 2026-08-14 — TASK-14 Done (Coder + Tester; T-050)
+
+- **OWN:** TARTISMA **T-050**. Swashbuckle `/swagger` + `/swagger/v1/swagger.json`. `POST /api/transfers` **409** örneği + `Idempotency-Key` header. JWT bearer. README EN/TR/DE/FR ekran tablosu güncel; PLAN 3 mülakat cümlesi. Ads yok. 9. ekran yok. Canlı URL yok.
+- **Kanıt:** `dotnet test -c Release` **99 geçti**. `OpenApi_documents_transfer_409_and_idempotency_key`.
+- **Sen tıklarsın:** `http://localhost:5153/swagger` → Try POST `/api/transfers` (önce `/api/token`).
+- **Sıradaki ürün:** TASK-16 Azure — sen tıklarsın.
+
+## 2026-08-14 — TASK-16 infra hazır, açık URL **blok Halil** (Deploy; T-051)
+
+- **OWN:** TARTISMA **T-051**. Ajan Azure/DNS/hesap açmaz, `azurewebsites.net` uydurmaz. `infra/main.bicep` App Setting **`Hangfire__Enabled=true`** + `Hangfire__UseMemoryStorage=false` (eski `Hangfire__WorkerEnabled` kodda yoktu). Production Identity = Azure SQL. `docs/CANLI.md` tıklama sırası.
+- **Sen tıklarsın (sırayla):**
+  1. Azure CLI kur → **`az login`**
+  2. Repo kökü: **`.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`** (isim doluysa `-WebAppName hm-clearpay`)
+  3. Portal App Settings: `ConnectionStrings__ClearPay`, `Jwt__SigningKey`, `ASPNETCORE_ENVIRONMENT=Production`, `Hangfire__Enabled=true`, `Hangfire__UseMemoryStorage=false`
+  4. Publish profile → GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` + variable `AZURE_WEBAPP_NAME`
+  5. Actions **Azure deploy** (ajan `git push` etmez)
+  6. Script’in yazdığı `https://<app>.azurewebsites.net/api/health` → `/giris`
+- **Q2 (şart değil):** `ConnectionStrings__Redis`, CloudAMQP `ConnectionStrings__RabbitMq` — sen yapıştırırsın.
+- **Sıradaki ürün:** yok (büyüme yolu ajan tarafı bitti). TASK-16 Done = sen URL’yi açınca.
+
+## 2026-08-14 — Havale asılı kalmasın (T-052; Payments + Coder + Tester)
+
+- **OWN:** TARTISMA **T-052**. Kök: Hangfire statik `RecurringJob` boot’ta `JobStorage.Current` yok → site düştü (`Hangfire__Enabled=false` yama). Redis Docker kapalıyken `AbortOnConnectFail=false` GET/SET/DEL havale POST’unu saniyelerce bekletiyordu. Ledger SQL; Redis/Rabbit/Hangfire düşse de transfer SQL’e karşı biter veya hızlı fail.
+- **Landed:** `IRecurringJobManager` (boot kırılmaz). Redis `IsConnected` yoksa atla + 1s connect / 2s op bütçesi. SQL `CommandTimeout=8`; ulaşılamaz → `TransferResultKind.Unavailable` (sayfa mesajı / API 503). `UPDATE Balance` yok. PageModel ledger yok. Razor markup yok.
+- **Kanıt:** `dotnet test -c Release` filter Transfer/cache/outbox/degrade **21 geçti**, 0 fail. `Duplicate_transfer_returns_409` durur. `MapClearPayHangfire_without_JobStorage_does_not_throw`.
+- **Sen tıklarsın:** `http://localhost:5153/giris` → `/havale`. Docker Desktop engine şu an yanıt vermiyor (`:1433`/`:6379`/`:5672` kapalı); Development ledger `lpc:localhost` native SQL. Redis/Rabbit down → SQL devam. SQL de yoksa sayfada net hata, asılı kalmaz.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil). Compose için Docker Desktop’ı sen açarsın.
+
+## 2026-08-14 — Mobil bankacılık arayüzü (T-053; Designer + Coder + Tester)
+
+- **OWN:** TARTISMA **T-053** (T-040 derinlik maddesi güncellendi; blok silinmedi). Designer `wwwroot/css/brand.css` + `docs/TASARIM.md` + `docs/MARKA.md`. Coder `Pages/Shared/_Layout.cshtml`, `_AuthLayout.cshtml`, `wwwroot/css/{site,motion}.css`, `wwwroot/js/site.js`, `Pages/{Index,Havale,YukleCek,Hareketler,Dekont,Admin}.cshtml`. Domain / Application / Infrastructure / migration / resx **yok**. 8 ekran, rotalar, footer **Demo — yükleme için sahte gateway** aynı.
+- **Landed:** ≤800px sabit alt sekme çubuğu (`.tabbar`, mevcut `Nav*` resx anahtarları); sidebar drawer + hamburger + backdrop **kaldırıldı** (JS sadeleşti). Masaüstü içerik ortalanmış 560px; Hareketler/Admin `ViewData["Wide"]` ile 1040px. Derinlik token’ları `--elev-1..3`, bakiye kartı `--hero-grad`, tabaka `--radius-lg`. İşlem tabloları mobilde `.data-cards--mv` / `--tx` kart satırı, masaüstünde tablo; gelen tutar `.amount-in` teal. Havale/Yükle-Çek büyük tutar girişi + `.form-actions--sticky`. Yükle|Çek `:target` sekmesi (JS yok, `#yukle`/`#cek` durur). Dekont fiş düzeni. Admin tabloları `.table-scroll`. Dil seçici mobilde footer’a taşındı. Admin için ayrı `nav-ico--admin` glifi.
+- **Kanıt:** `dotnet build -c Release` 0 uyarı; `dotnet test -c Release` **101 geçti**, 0 skip. Giriş sonrası `/`, `/havale`, `/yukle-cek`, `/hareketler`, `/admin` **200** ve tabbar render ediyor; `/api/health` 200 (`redis`/`rabbit` down — Docker kapalı).
+- **Sen tıklarsın:** `http://localhost:5153/giris` → tarayıcı penceresini daralt (≤800px) → alt sekme çubuğu, işlem kartları, Yükle|Çek sekmesi. Geniş ekranda sol menü + ortalanmış kolon durur.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-14 — Giriş hero + anime.js (T-054; Coder)
+
+- **OWN:** TARTISMA **T-054**. `_AuthLayout.cshtml` split sahne; `wwwroot/js/vendor/anime.min.js` (3.2.2 MIT, CDN runtime yok); `wwwroot/js/auth-hero.js`; `site.css` `.auth-stage` / `.auth-hero`; `motion.css` `.auth-motion`. Yapı Kredi **düzeni**; logo/mavi kimlik/fotoğraf yok. 8 ekran. Footer **Demo — yükleme için sahte gateway**. Ledger yok.
+- **Landed:** Sol navy hero + sağ giriş kartı. anime.js tek sefer 180–240ms stagger. `prefers-reduced-motion` JS no-op. npm/GSAP yok.
+- **Sen tıklarsın:** http://localhost:5153/giris
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+

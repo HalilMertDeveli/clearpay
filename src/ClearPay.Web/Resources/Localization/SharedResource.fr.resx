@@ -4,6 +4,17 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>  <data name="AccountStatus" xml:space="preserve"><value>État du compte</value></data>
+  <data name="Admin" xml:space="preserve"><value>Admin</value></data>
+  <data name="NavAdmin" xml:space="preserve"><value>Admin</value></data>
+  <data name="AdminFreeze" xml:space="preserve"><value>Geler le portefeuille</value></data>
+  <data name="AdminFreezeMiss" xml:space="preserve"><value>Aucun portefeuille pour cet e-mail.</value></data>
+  <data name="AdminFreezeOk" xml:space="preserve"><value>Portefeuille gelé. Envoi et retrait bloqués.</value></data>
+  <data name="AuditSearch" xml:space="preserve"><value>Recherche d&apos;audit</value></data>
+  <data name="EmptyQueue" xml:space="preserve"><value>File d&apos;échec vide.</value></data>
+  <data name="FailedQueue" xml:space="preserve"><value>File d&apos;échec</value></data>
+  <data name="Freeze" xml:space="preserve"><value>Geler</value></data>
+  <data name="MetaAdmin" xml:space="preserve"><value>Admin : gel, file, audit. Démo — passerelle fictive pour les recharges.</value></data>
+  <data name="Requeue" xml:space="preserve"><value>Remettre en file</value></data>
   <data name="Activity" xml:space="preserve"><value>Mouvements</value></data>
   <data name="ActivityLede" xml:space="preserve"><value>Virements, recharges et retraits de votre portefeuille.</value></data>
   <data name="AmountTry" xml:space="preserve"><value>Montant (₺)</value></data>
@@ -18,6 +29,10 @@
   <data name="ColTxn" xml:space="preserve"><value>Opération</value></data>
   <data name="ConfirmPassword" xml:space="preserve"><value>Confirmer le mot de passe</value></data>
   <data name="CreateAccount" xml:space="preserve"><value>Créer un compte</value></data>
+  <data name="CreditParty" xml:space="preserve"><value>Crédit</value></data>
+  <data name="DebitParty" xml:space="preserve"><value>Débit</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Reçu</value></data>
+  <data name="MetaReceipt" xml:space="preserve"><value>Reçu avec identifiant de corrélation. Démo — passerelle fictive pour les recharges.</value></data>
   <data name="DemoDisclaimer" xml:space="preserve"><value>Démo — passerelle fictive pour les recharges</value></data>
   <data name="DemoWallet" xml:space="preserve"><value>Portefeuille démo</value></data>
   <data name="Description" xml:space="preserve"><value>Libellé</value></data>
@@ -31,6 +46,12 @@
   <data name="Error" xml:space="preserve"><value>Erreur</value></data>
   <data name="ErrorLede" xml:space="preserve"><value>Une erreur s&apos;est produite</value></data>
   <data name="Filter" xml:space="preserve"><value>Filtrer</value></data>
+  <data name="FundingGatewayFailed" xml:space="preserve"><value>La passerelle bancaire fictive a refusé la demande.</value></data>
+  <data name="FundingReplay" xml:space="preserve"><value>Cette opération a déjà été traitée ; le solde n&apos;a pas changé une seconde fois.</value></data>
+  <data name="FundingTimeout" xml:space="preserve"><value>La banque n&apos;a pas répondu (délai). Le grand livre n&apos;est pas figé ; le travail est en file.</value></data>
+  <data name="WithdrawFrozen" xml:space="preserve"><value>Votre compte est gelé ; retrait impossible.</value></data>
+  <data name="TopUpSuccess" xml:space="preserve"><value>Recharge terminée. Le solde est le net du grand livre.</value></data>
+  <data name="WithdrawSuccess" xml:space="preserve"><value>Retrait terminé. Le solde est le net du grand livre.</value></data>
   <data name="FilterAll" xml:space="preserve"><value>Tous</value></data>
   <data name="FilterFrom" xml:space="preserve"><value>Début</value></data>
   <data name="FilterStatus" xml:space="preserve"><value>Statut</value></data>
@@ -90,16 +111,26 @@
   <data name="StatusFrozen" xml:space="preserve"><value>Gelé</value></data>
   <data name="StatusPending" xml:space="preserve"><value>En attente</value></data>
   <data name="TopUp" xml:space="preserve"><value>Recharger</value></data>
-  <data name="TopUpHint" xml:space="preserve"><value>Transfère des fonds vers le portefeuille.</value></data>
+  <data name="TopUpHint" xml:space="preserve"><value>Transfère des fonds vers le portefeuille. Démo : saisissez TIMEOUT — le grand livre n&apos;est pas figé ; une ligne de file reste.</value></data>
   <data name="TopUpWithdraw" xml:space="preserve"><value>Recharger / Retirer</value></data>
   <data name="TopUpWithdrawLede" xml:space="preserve"><value>Rechargez depuis le compte lié ou retirez votre solde.</value></data>
   <data name="Transfer" xml:space="preserve"><value>Virement</value></data>
+  <data name="TransferFrozen" xml:space="preserve"><value>Votre compte est gelé ; envoi impossible.</value></data>
   <data name="TransferHint" xml:space="preserve"><value>Solde {0} — l&apos;envoi s&apos;ouvre lorsque le solde est suffisant.</value></data>
+  <data name="TransferInsufficient" xml:space="preserve"><value>Votre solde ne suffit pas pour ce montant.</value></data>
+  <data name="TransferInvalidAmount" xml:space="preserve"><value>Le montant doit être supérieur à zéro (deux décimales au plus).</value></data>
+  <data name="TransferMissingKey" xml:space="preserve"><value>Clé d&apos;envoi manquante. Actualisez la page et réessayez.</value></data>
+  <data name="TransferRecipientMissing" xml:space="preserve"><value>Aucun destinataire n&apos;est inscrit avec cet e-mail.</value></data>
+  <data name="TransferReplay" xml:space="preserve"><value>Ce virement a déjà été traité ; le solde n&apos;a pas été débité une seconde fois.</value></data>
+  <data name="TransferSelf" xml:space="preserve"><value>Vous ne pouvez pas vous virer à vous-même.</value></data>
+  <data name="TransferSuccess" xml:space="preserve"><value>Virement terminé. Le solde est le net du grand livre.</value></data>
+  <data name="TransferUnavailable" xml:space="preserve"><value>Le grand livre est injoignable pour le moment. Rien n&apos;a été débité. Réessayez dans quelques secondes.</value></data>
   <data name="TransferKicker" xml:space="preserve"><value>Virement</value></data>
   <data name="TransferLede" xml:space="preserve"><value>Envoyez un montant et un libellé à un destinataire inscrit.</value></data>
   <data name="ViewAll" xml:space="preserve"><value>Tout voir</value></data>
   <data name="WalletBalance" xml:space="preserve"><value>Solde du portefeuille</value></data>
   <data name="WalletKicker" xml:space="preserve"><value>Portefeuille</value></data>
+  <data name="WalletActions" xml:space="preserve"><value>Actions du portefeuille</value></data>
   <data name="Withdraw" xml:space="preserve"><value>Retirer</value></data>
   <data name="WithdrawHint" xml:space="preserve"><value>Les retraits ne peuvent pas dépasser le solde disponible.</value></data>
 </root>

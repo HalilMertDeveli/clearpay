@@ -9,45 +9,55 @@
 <h1 class="page-title">@L["TopUpWithdraw"]</h1>
 <p class="lede">@L["TopUpWithdrawLede"]</p>
 
+<div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
 <div class="remain panel-inline">
     <span class="stat-label">@L["WalletBalance"]</span>
     <strong>@Html.Raw(Model.BalanceText)</strong>
 </div>
 
+<div class="tabset">
+<nav class="tab-switch" aria-label="@L["TopUpWithdraw"]">
+    <a href="#yukle">@L["TopUp"]</a>
+    <a href="#cek">@L["Withdraw"]</a>
+</nav>
 <div class="split-2">
-    <section class="panel" id="yukle">
+    <section class="panel tab-panel" id="yukle">
         <h2 class="panel-title">@L["TopUp"]</h2>
         <p class="field-hint">@L["DemoDisclaimer"] @L["TopUpHint"]</p>
-        <form method="post" class="stack-form" novalidate>
+        <form method="post" asp-page-handler="TopUp" class="stack-form" novalidate>
+            <input type="hidden" asp-for="TopUp.IdempotencyKey" />
             <div class="field">
-                <label class="field-label" for="yukle-tutar">@L["AmountTry"]</label>
-                <input class="field-input" id="yukle-tutar" name="yukleTutar" inputmode="decimal" />
+                <label class="field-label" asp-for="TopUp.Amount">@L["AmountTry"]</label>
+                <input class="field-input field-input--amount" asp-for="TopUp.Amount" inputmode="decimal" />
             </div>
             <div class="field">
-                <label class="field-label" for="yukle-hesap">@L["SourceAccount"]</label>
-                <input class="field-input" id="yukle-hesap" name="yukleHesap" placeholder="@L["LinkedAccount"]" />
+                <label class="field-label" asp-for="TopUp.Account">@L["SourceAccount"]</label>
+                <input class="field-input" asp-for="TopUp.Account" placeholder="@L["LinkedAccount"]" />
             </div>
-            <div class="form-actions">
-                <button type="submit" class="btn" disabled>@L["TopUp"]</button>
+            <div class="form-actions form-actions--sticky">
+                <button type="submit" class="btn">@L["TopUp"]</button>
             </div>
         </form>
     </section>
-    <section class="panel" id="cek">
+    <section class="panel tab-panel" id="cek">
         <h2 class="panel-title">@L["Withdraw"]</h2>
         <p class="field-hint">@L["WithdrawHint"]</p>
-        <form method="post" class="stack-form" novalidate>
+        <form method="post" asp-page-handler="Withdraw" class="stack-form" novalidate>
+            <input type="hidden" asp-for="Withdraw.IdempotencyKey" />
             <div class="field">
-                <label class="field-label" for="cek-tutar">@L["AmountTry"]</label>
-                <input class="field-input" id="cek-tutar" name="cekTutar" inputmode="decimal" />
+                <label class="field-label" asp-for="Withdraw.Amount">@L["AmountTry"]</label>
+                <input class="field-input field-input--amount" asp-for="Withdraw.Amount" inputmode="decimal" />
             </div>
             <div class="field">
-                <label class="field-label" for="cek-hesap">@L["DestinationAccount"]</label>
-                <input class="field-input" id="cek-hesap" name="cekHesap" placeholder="@L["LinkedAccount"]" />
+                <label class="field-label" asp-for="Withdraw.Account">@L["DestinationAccount"]</label>
+                <input class="field-input" asp-for="Withdraw.Account" placeholder="@L["LinkedAccount"]" />
             </div>
-            <div class="form-actions">
-                <button type="submit" class="btn" disabled>@L["Withdraw"]</button>
+            <div class="form-actions form-actions--sticky">
+                <button type="submit" class="btn">@L["Withdraw"]</button>
                 <a class="btn btn-ghost" asp-page="/Index">@L["Cancel"]</a>
             </div>
         </form>
     </section>
+</div>
 </div>

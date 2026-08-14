@@ -68,6 +68,9 @@ public sealed class ArchitectureTests
             text.Should().NotContain("ClearPayDbContext");
             text.Should().NotContain("UseSqlServer");
             text.Should().NotContain("SqlOptions");
+            text.Should().NotContain("StackExchange.Redis");
+            text.Should().NotContain("IConnectionMultiplexer");
+            text.Should().NotContain("RabbitMQ.Client");
         }
 
         var program = File.ReadAllText(Path.Combine(Root, "src", "ClearPay.Web", "Program.cs"));

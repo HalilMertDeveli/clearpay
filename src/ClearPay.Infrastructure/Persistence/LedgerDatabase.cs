@@ -25,6 +25,12 @@ public static class LedgerDatabase
         var db = scope.ServiceProvider.GetRequiredService<ClearPayDbContext>();
         try
         {
+            if (configuration?.GetValue("ClearPay:UseSqliteLedger", false) == true)
+            {
+                await db.Database.EnsureCreatedAsync();
+                return;
+            }
+
             var connection = db.Database.GetConnectionString();
             if (!string.IsNullOrWhiteSpace(connection))
             {

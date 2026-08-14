@@ -24,23 +24,47 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/motion.css" asp-append-version="true" />
+    <script>
+        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            document.documentElement.classList.add("auth-motion");
+        }
+    </script>
 </head>
 <body class="auth-body">
     <a class="skip-link" href="#main">@L["SkipToContent"]</a>
-    <div class="auth-shell">
+    <header class="auth-top">
+        <a class="brand" asp-page="/Account/Login">
+            <span class="brand-mark" aria-hidden="true">C</span>
+            <span class="brand-name wordmark">ClearPay</span>
+        </a>
         <div class="auth-lang">
             <partial name="_LanguagePicker" />
         </div>
-        <main id="main" class="auth-card">
-            <a class="brand brand-on-light" asp-page="/Account/Login">
-                <span class="brand-mark" aria-hidden="true">C</span>
-                <span class="brand-name wordmark">ClearPay</span>
-            </a>
-            <p class="brand-tagline">@L["DemoWallet"]</p>
-            @RenderBody()
-        </main>
-        <p class="auth-footer">@L["DemoDisclaimer"]</p>
+    </header>
+    <div class="auth-stage">
+        <aside class="auth-hero" aria-label="@L["DemoWallet"]">
+            <div class="auth-hero-shapes" aria-hidden="true">
+                <span class="auth-orb auth-orb--a"></span>
+                <span class="auth-orb auth-orb--b"></span>
+                <span class="auth-orb auth-orb--c"></span>
+            </div>
+            <div class="auth-hero-copy">
+                <p class="auth-hero-kicker">ClearPay</p>
+                <p class="auth-hero-title">@L["DemoWallet"]</p>
+                <p class="auth-hero-lede">@L["DemoDisclaimer"]</p>
+            </div>
+        </aside>
+        <div class="auth-shell">
+            <main id="main" class="auth-card">
+                <span class="brand-mark auth-mark" aria-hidden="true">C</span>
+                <p class="brand-tagline">@L["DemoWallet"]</p>
+                @RenderBody()
+            </main>
+            <p class="auth-footer">@L["DemoDisclaimer"]</p>
+        </div>
     </div>
+    <script src="~/js/vendor/anime.min.js" asp-append-version="true"></script>
+    <script src="~/js/auth-hero.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

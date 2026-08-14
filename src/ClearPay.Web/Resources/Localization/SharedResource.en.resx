@@ -4,6 +4,17 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>  <data name="AccountStatus" xml:space="preserve"><value>Account status</value></data>
+  <data name="Admin" xml:space="preserve"><value>Admin</value></data>
+  <data name="NavAdmin" xml:space="preserve"><value>Admin</value></data>
+  <data name="AdminFreeze" xml:space="preserve"><value>Freeze wallet</value></data>
+  <data name="AdminFreezeMiss" xml:space="preserve"><value>No wallet found for that email.</value></data>
+  <data name="AdminFreezeOk" xml:space="preserve"><value>Wallet frozen. Send and withdraw are blocked.</value></data>
+  <data name="AuditSearch" xml:space="preserve"><value>Search audit</value></data>
+  <data name="EmptyQueue" xml:space="preserve"><value>Failed queue is empty.</value></data>
+  <data name="FailedQueue" xml:space="preserve"><value>Failed queue</value></data>
+  <data name="Freeze" xml:space="preserve"><value>Freeze</value></data>
+  <data name="MetaAdmin" xml:space="preserve"><value>Admin: freeze, queue, audit. Demo — fake gateway for top-ups.</value></data>
+  <data name="Requeue" xml:space="preserve"><value>Requeue</value></data>
   <data name="Activity" xml:space="preserve"><value>Activity</value></data>
   <data name="ActivityLede" xml:space="preserve"><value>Transfers, top-ups and withdrawals on your wallet.</value></data>
   <data name="AmountTry" xml:space="preserve"><value>Amount (₺)</value></data>
@@ -18,6 +29,10 @@
   <data name="ColTxn" xml:space="preserve"><value>Transaction</value></data>
   <data name="ConfirmPassword" xml:space="preserve"><value>Confirm password</value></data>
   <data name="CreateAccount" xml:space="preserve"><value>Create account</value></data>
+  <data name="CreditParty" xml:space="preserve"><value>Credit party</value></data>
+  <data name="DebitParty" xml:space="preserve"><value>Debit party</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Receipt</value></data>
+  <data name="MetaReceipt" xml:space="preserve"><value>Transaction receipt with correlation id. Demo — fake gateway for top-ups.</value></data>
   <data name="DemoDisclaimer" xml:space="preserve"><value>Demo — fake gateway for top-ups</value></data>
   <data name="DemoWallet" xml:space="preserve"><value>Demo wallet</value></data>
   <data name="Description" xml:space="preserve"><value>Description</value></data>
@@ -31,6 +46,12 @@
   <data name="Error" xml:space="preserve"><value>Error</value></data>
   <data name="ErrorLede" xml:space="preserve"><value>Something went wrong</value></data>
   <data name="Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="FundingGatewayFailed" xml:space="preserve"><value>The fake bank gateway rejected the request.</value></data>
+  <data name="FundingReplay" xml:space="preserve"><value>This top-up/withdraw was already processed; the balance did not change again.</value></data>
+  <data name="FundingTimeout" xml:space="preserve"><value>The bank did not respond (timeout). Ledger did not settle; the job is queued.</value></data>
+  <data name="WithdrawFrozen" xml:space="preserve"><value>Your account is frozen; you cannot withdraw.</value></data>
+  <data name="TopUpSuccess" xml:space="preserve"><value>Top-up completed. Balance is the ledger net.</value></data>
+  <data name="WithdrawSuccess" xml:space="preserve"><value>Withdrawal completed. Balance is the ledger net.</value></data>
   <data name="FilterAll" xml:space="preserve"><value>All</value></data>
   <data name="FilterFrom" xml:space="preserve"><value>From</value></data>
   <data name="FilterStatus" xml:space="preserve"><value>Status</value></data>
@@ -90,16 +111,26 @@
   <data name="StatusFrozen" xml:space="preserve"><value>Frozen</value></data>
   <data name="StatusPending" xml:space="preserve"><value>Pending</value></data>
   <data name="TopUp" xml:space="preserve"><value>Top up</value></data>
-  <data name="TopUpHint" xml:space="preserve"><value>Moves funds into the wallet.</value></data>
+  <data name="TopUpHint" xml:space="preserve"><value>Moves funds into the wallet. Demo: type TIMEOUT in the account field — ledger does not settle; a queue row remains.</value></data>
   <data name="TopUpWithdraw" xml:space="preserve"><value>Top up / Withdraw</value></data>
   <data name="TopUpWithdrawLede" xml:space="preserve"><value>Top up from your linked account or withdraw your balance.</value></data>
   <data name="Transfer" xml:space="preserve"><value>Transfer</value></data>
+  <data name="TransferFrozen" xml:space="preserve"><value>Your account is frozen; you cannot send.</value></data>
   <data name="TransferHint" xml:space="preserve"><value>Balance {0} — sending unlocks when your balance is enough.</value></data>
+  <data name="TransferInsufficient" xml:space="preserve"><value>Your balance is not enough for this amount.</value></data>
+  <data name="TransferInvalidAmount" xml:space="preserve"><value>Amount must be greater than zero (at most two decimals).</value></data>
+  <data name="TransferMissingKey" xml:space="preserve"><value>Missing send key. Refresh the page and try again.</value></data>
+  <data name="TransferRecipientMissing" xml:space="preserve"><value>No recipient is registered with that email.</value></data>
+  <data name="TransferReplay" xml:space="preserve"><value>This transfer was already processed; your balance was not charged again.</value></data>
+  <data name="TransferSelf" xml:space="preserve"><value>You cannot send a transfer to yourself.</value></data>
+  <data name="TransferSuccess" xml:space="preserve"><value>Transfer completed. Balance is the ledger net.</value></data>
+  <data name="TransferUnavailable" xml:space="preserve"><value>The ledger is unreachable right now. Nothing was charged. Try again in a few seconds.</value></data>
   <data name="TransferKicker" xml:space="preserve"><value>Transfer</value></data>
   <data name="TransferLede" xml:space="preserve"><value>Send an amount and a note to a registered recipient.</value></data>
   <data name="ViewAll" xml:space="preserve"><value>View all</value></data>
   <data name="WalletBalance" xml:space="preserve"><value>Wallet balance</value></data>
   <data name="WalletKicker" xml:space="preserve"><value>Wallet</value></data>
+  <data name="WalletActions" xml:space="preserve"><value>Wallet actions</value></data>
   <data name="Withdraw" xml:space="preserve"><value>Withdraw</value></data>
   <data name="WithdrawHint" xml:space="preserve"><value>Withdrawals cannot exceed your available balance.</value></data>
 </root>

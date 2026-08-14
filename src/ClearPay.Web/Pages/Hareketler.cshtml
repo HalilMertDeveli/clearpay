@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = L["Activity"].Value;
     ViewData["MetaDescription"] = L["MetaActivity"].Value;
+    ViewData["Wide"] = true;
 }
 
 <p class="page-kicker">@L["HistoryKicker"]</p>
@@ -14,31 +15,23 @@
         <div class="filter-row">
             <div class="field">
                 <label class="field-label" for="baslangic">@L["FilterFrom"]</label>
-                <input class="field-input" id="baslangic" name="baslangic" type="date" disabled />
+                <input class="field-input" id="baslangic" name="Baslangic" type="date" value="@(Model.Baslangic?.ToString("yyyy-MM-dd"))" />
             </div>
             <div class="field">
                 <label class="field-label" for="tur">@L["FilterType"]</label>
-                <select class="field-input" id="tur" name="tur" disabled>
-                    <option>@L["FilterAll"]</option>
-                    <option>@L["NavTransfer"]</option>
-                    <option>@L["TopUp"]</option>
-                    <option>@L["Withdraw"]</option>
+                <select class="field-input" id="tur" name="Tur">
+                    <option value="">@L["FilterAll"]</option>
+                    <option value="Transfer" selected="@(Model.Tur == "Transfer" ? "selected" : null)">@L["NavTransfer"]</option>
+                    <option value="TopUp" selected="@(Model.Tur == "TopUp" ? "selected" : null)">@L["TopUp"]</option>
+                    <option value="Withdraw" selected="@(Model.Tur == "Withdraw" ? "selected" : null)">@L["Withdraw"]</option>
                 </select>
             </div>
             <div class="field">
-                <label class="field-label" for="durum">@L["FilterStatus"]</label>
-                <select class="field-input" id="durum" name="durum" disabled>
-                    <option>@L["FilterAll"]</option>
-                    <option>@L["StatusCompleted"]</option>
-                    <option>@L["StatusPending"]</option>
-                </select>
-            </div>
-            <div class="field">
-                <button type="submit" class="btn" disabled>@L["Filter"]</button>
+                <button type="submit" class="btn">@L["Filter"]</button>
             </div>
         </div>
     </form>
-    <table class="data-table">
+    <table class="data-table data-cards data-cards--tx">
         <thead>
             <tr>
                 <th>@L["ColDate"]</th>
@@ -47,18 +40,51 @@
                 <th>@L["ColCounterparty"]</th>
                 <th class="num">@L["ColAmount"]</th>
                 <th>@L["ColStatus"]</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td colspan="6" class="empty-cell">
-                    <div class="empty-block">
-                        <div class="empty-mark" aria-hidden="true"></div>
-                        <p class="empty-title">@L["EmptyPeriodTitle"]</p>
-                        <p class="empty-hint">@L["EmptyPeriodHint"]</p>
-                    </div>
-                </td>
-            </tr>
+            @if (Model.Result.Items.Count == 0)
+            {
+                <tr>
+                    <td colspan="7" class="empty-cell">
+                        <div class="empty-block">
+                            <div class="empty-mark" aria-hidden="true"></div>
+                            <p class="empty-title">@L["EmptyPeriodTitle"]</p>
+                            <p class="empty-hint">@L["EmptyPeriodHint"]</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var row in Model.Result.Items)
+                {
+                    <tr>
+                        <td>@row.At.ToLocalTime().ToString("g")</td>
+                        <td><code>@row.CorrelationId.ToString("N").Substring(0, 8)</code></td>
+                        <td>@row.Kind</td>
+                        <td>@row.Counterparty</td>
+                        <td class="num @(row.SignedAmount > 0m ? "amount-in" : null)">@ClearPay.Web.Presentation.MoneyDisplay.FormatTry(row.SignedAmount)</td>
+                        <td>@L["StatusCompleted"]</td>
+                        <td><a class="text-link" asp-page="/Dekont" asp-route-correlationId="@row.CorrelationId">@L["Receipt"]</a></td>
+                    </tr>
+                }
+            }
         </tbody>
     </table>
+    @if (Model.Result.TotalCount > Model.Result.PageSize)
+    {
+        <p class="field-hint">
+            @if (Model.Result.Page > 1)
+            {
+                <a class="text-link" asp-page="/Hareketler" asp-route-Baslangic="@Model.Baslangic?.ToString("yyyy-MM-dd")" asp-route-Tur="@Model.Tur" asp-route-Sayfa="@(Model.Result.Page - 1)">←</a>
+            }
+            @Model.Result.Page
+            @if (Model.Result.Page * Model.Result.PageSize < Model.Result.TotalCount)
+            {
+                <a class="text-link" asp-page="/Hareketler" asp-route-Baslangic="@Model.Baslangic?.ToString("yyyy-MM-dd")" asp-route-Tur="@Model.Tur" asp-route-Sayfa="@(Model.Result.Page + 1)">→</a>
+            }
+        </p>
+    }
 </section>

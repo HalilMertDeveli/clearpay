@@ -4,7 +4,7 @@ Hesap açma ajanın işi değildir. Ajan kodu ve şablonu hazırlar.
 
 ## Lokal
 
-Compose: SQL Server + Redis + RabbitMQ. Web imajı yok; site host’ta `dotnet run` ile açılır (`http` profili, port 5153). Uygulama Redis/Rabbit’e **TASK-12’de** bağlanır; container’lar şimdiden ayağa kalkar.
+Compose: SQL Server + Redis + RabbitMQ. Web imajı yok; site host’ta `dotnet run` ile açılır (`http` profili, port 5153). Uygulama Redis özet cache + Rabbit `clearpay.outbox` (T-041 / T-048). Connection string boş veya broker düşer → SQL / log yedek.
 
 ```bash
 docker compose up -d
@@ -58,7 +58,7 @@ Oracle EULA `ORACLE_PASSWORD` ile kabul; pirated imaj yok. Redis/Rabbit `docker-
 
 Tam tıklama: **`docs/CANLI.md`**. Özet:
 
-- West Europe, App Service Linux + Azure SQL. Hangfire in-process.
+- West Europe, App Service Linux + Azure SQL. Hangfire in-process (`Hangfire__Enabled=true`, SQL storage).
 - Şablon: `infra/main.bicep`. Kullanıcı: `az login` sonra `.\infra\deploy.ps1`.
 - Publish: GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` + variable `AZURE_WEBAPP_NAME`. Workflow `azure-deploy.yml` değişken boşsa atlar.
 - Path: `/`, `/giris`, `/kayit`, `/havale`, `/yukle-cek`, `/hareketler`, `/admin`, `/api/health`.
@@ -68,7 +68,7 @@ Tam tıklama: **`docs/CANLI.md`**. Özet:
 
 - Azure Cache for Redis: `infra/q2.bicep` (`deploy.ps1 -IncludeQ2`). Anahtarı portalden `ConnectionStrings__Redis`.
 - CloudAMQP: kullanıcı kaydı; `ConnectionStrings__RabbitMq`. Ajan hesap açmaz.
-- Uygulama bağlantısı TASK-12.
+- Uygulama bağlandı (T-041 / T-048). Portal’e `ConnectionStrings__Redis` / `ConnectionStrings__RabbitMq` sen yapıştırırsın.
 
 ## Yasak
 

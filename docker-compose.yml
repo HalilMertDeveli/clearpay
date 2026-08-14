@@ -1,7 +1,8 @@
 # SQL Server (ledger + live Identity). Web is not a Compose service:
 #   docker compose up -d
 #   dotnet run --project src/ClearPay.Web --launch-profile http
-# Redis + RabbitMQ: local TASK-12 stack. App does not use them until TASK-12.
+# Redis: özet cache T-041 binds localhost:6379 (ledger stays SQL).
+# RabbitMQ: still TASK-12. App does not publish to Rabbit yet.
 # Live Azure: docs/CANLI.md (not this file).
 # SQL data: D:\ClearPay\data\mssql bind (T-021). App connection = MSSQL only.
 # Do not delete the old named volume clearpay-sql on C:; it is unused after this bind.

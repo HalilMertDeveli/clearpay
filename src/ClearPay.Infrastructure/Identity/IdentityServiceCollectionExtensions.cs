@@ -1,5 +1,7 @@
 using AspNet.Security.OAuth.Apple;
+using ClearPay.Application.Ports;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +63,25 @@ public static class IdentityServiceCollectionExtensions
             options.SlidingExpiration = true;
         });
 
+        services.AddScoped<IUserDirectory, IdentityUserDirectory>();
+        return services;
+    }
+
+    public static IServiceCollection AddClearPayJwt(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(environment);
+
+        var parameters = JwtTokenIssuer.CreateValidationParameters(configuration, environment);
+        services.AddAuthentication()
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters = parameters;
+            });
         return services;
     }
 

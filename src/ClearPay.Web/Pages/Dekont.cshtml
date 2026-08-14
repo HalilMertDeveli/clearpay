@@ -1,0 +1,50 @@
+@page "/dekont/{correlationId}"
+@model DekontModel
+@{
+    ViewData["Title"] = L["Receipt"].Value;
+    ViewData["MetaDescription"] = L["MetaReceipt"].Value;
+    var r = Model.Receipt!;
+}
+
+<p class="page-kicker">@L["Receipt"]</p>
+<h1 class="page-title">@L["Receipt"]</h1>
+
+<section class="panel">
+    <div class="receipt-amount">
+        <p class="stat-label">@L["AmountTry"]</p>
+        <p class="stat-value stat-value-xl">@ClearPay.Web.Presentation.MoneyDisplay.FormatTry(r.Amount)</p>
+        <p class="status-line"><span class="badge-active">@L["StatusCompleted"]</span></p>
+    </div>
+    <dl class="receipt-list">
+        <div class="receipt-row">
+            <dt>@L["ColDate"]</dt>
+            <dd>@r.At.ToLocalTime().ToString("g")</dd>
+        </div>
+        <div class="receipt-row">
+            <dt>@L["FilterType"]</dt>
+            <dd>@r.Kind</dd>
+        </div>
+        <div class="receipt-row">
+            <dt>@L["DebitParty"]</dt>
+            <dd>@r.DebitParty</dd>
+        </div>
+        <div class="receipt-row">
+            <dt>@L["CreditParty"]</dt>
+            <dd>@r.CreditParty</dd>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(r.Description))
+        {
+            <div class="receipt-row">
+                <dt>@L["Description"]</dt>
+                <dd>@r.Description</dd>
+            </div>
+        }
+        <div class="receipt-row">
+            <dt>@L["ColRef"]</dt>
+            <dd class="mono">@r.CorrelationId</dd>
+        </div>
+    </dl>
+    <div class="form-actions">
+        <a class="btn btn-ghost" asp-page="/Hareketler">@L["BackToWallet"]</a>
+    </div>
+</section>

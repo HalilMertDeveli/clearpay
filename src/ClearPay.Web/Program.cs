@@ -1,8 +1,11 @@
 using ClearPay.Application;
+using ClearPay.Infrastructure.Caching;
 using ClearPay.Infrastructure.DependencyInjection;
+using ClearPay.Infrastructure.Messaging;
 using ClearPay.Infrastructure.Identity;
 using ClearPay.Infrastructure.Persistence;
 using ClearPay.Web.Localization;
+using ClearPay.Web.OpenApi;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +14,9 @@ builder.Services.AddProblemDetails();
 builder.Services.AddClearPayLocalization();
 builder.Services.AddClearPayIdentity(builder.Configuration, builder.Environment);
 builder.Services.AddClearPayExternalLogin(builder.Configuration);
+builder.Services.AddClearPayJwt(builder.Configuration, builder.Environment);
 builder.Services.AddClearPay(builder.Configuration);
+builder.Services.AddClearPayHangfire(builder.Configuration);
 builder.Services.AddValidatorsFromAssembly(typeof(ApplicationAssembly).Assembly);
 builder.Services.AddRazorPages(options =>
 {
@@ -23,6 +28,7 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AddPageRoute("/Account/Register", "/kayit");
 }).AddViewLocalization();
 builder.Services.AddControllers();
+builder.Services.AddClearPaySwagger();
 
 var app = builder.Build();
 
@@ -45,9 +51,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapClearPaySwagger();
 app.MapRazorPages();
 app.MapControllers();
-app.MapGet("/api/health", () => Results.Ok(new { status = "ok", product = "ClearPay" }));
+app.Services.MapClearPayHangfire(app.Configuration);
+app.MapGet("/api/health", (RedisRuntimeStatus redis, RabbitRuntimeStatus rabbit) =>
+    Results.Ok(new { status = "ok", product = "ClearPay", redis = redis.Value, rabbit = rabbit.Value }));
 
 app.Run();
 

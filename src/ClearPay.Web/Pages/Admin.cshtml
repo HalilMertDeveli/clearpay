@@ -1,0 +1,106 @@
+@page "/admin"
+@model AdminModel
+@{
+    ViewData["Title"] = L["Admin"].Value;
+    ViewData["MetaDescription"] = L["MetaAdmin"].Value;
+    ViewData["Wide"] = true;
+}
+
+<p class="page-kicker">@L["Admin"]</p>
+<h1 class="page-title">@L["Admin"]</h1>
+@if (TempData["Flash"] is string flash)
+{
+    <p class="flash-ok">@flash</p>
+}
+<div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+<section class="panel">
+    <h2 class="panel-title">@L["AdminFreeze"]</h2>
+    <form method="post" asp-page-handler="Freeze" class="stack-form">
+        <div class="field">
+            <label class="field-label" asp-for="FreezeEmail">@L["Email"]</label>
+            <input class="field-input" asp-for="FreezeEmail" type="email" />
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn">@L["Freeze"]</button>
+        </div>
+    </form>
+</section>
+
+<section class="panel">
+    <h2 class="panel-title">@L["FailedQueue"]</h2>
+    <div class="table-scroll">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>@L["ColDate"]</th>
+                <th>@L["FilterType"]</th>
+                <th>@L["ColRef"]</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Failed.Count == 0)
+            {
+                <tr><td colspan="4" class="empty-cell">@L["EmptyQueue"]</td></tr>
+            }
+            else
+            {
+                foreach (var item in Model.Failed)
+                {
+                    <tr>
+                        <td>@item.OccurredAt.ToLocalTime().ToString("g")</td>
+                        <td>@item.Type</td>
+                        <td><code>@item.CorrelationId</code></td>
+                        <td>
+                            <form method="post" asp-page-handler="Requeue" asp-route-id="@item.Id">
+                                <button type="submit" class="btn btn-ghost">@L["Requeue"]</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    </div>
+</section>
+
+<section class="panel">
+    <h2 class="panel-title">@L["AuditSearch"]</h2>
+    <form method="get" class="stack-form filter-bar">
+        <div class="filter-row">
+            <div class="field">
+                <label class="field-label" asp-for="AuditActor">@L["Email"]</label>
+                <input class="field-input" asp-for="AuditActor" />
+            </div>
+            <div class="field">
+                <label class="field-label" asp-for="AuditCorrelation">@L["ColRef"]</label>
+                <input class="field-input" asp-for="AuditCorrelation" />
+            </div>
+            <div class="field">
+                <button type="submit" class="btn">@L["Filter"]</button>
+            </div>
+        </div>
+    </form>
+    <div class="table-scroll">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>@L["ColDate"]</th>
+                <th>@L["FilterType"]</th>
+                <th>@L["ColRef"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.Audits)
+            {
+                <tr>
+                    <td>@row.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td>@row.Action</td>
+                    <td><code>@row.CorrelationId</code></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+</section>

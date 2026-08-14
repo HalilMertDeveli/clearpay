@@ -51,7 +51,7 @@ flowchart TB
   razor --> reader
   reader --> sql
   sql --> pair
-  exec -.->|TASK-06| pair
+  exec --> pair
 ```
 
 | Couche | Projet | Contient | Ne contient pas |
@@ -74,17 +74,23 @@ Identity cookie, SQLite : `App_Data/identity.db`. Langues : **Türkçe (défaut)
 | Connexion | `/giris` | OK |
 | Inscription | `/kayit` | OK |
 | Synthèse | `/` | **Live** depuis le net du ledger (zéros sans SQL / sans lignes) |
-| Virement | `/havale` | Formulaire ; Envoyer désactivé |
-| Recharger / retirer | `/yukle-cek` | Formulaire ; boutons désactivés |
-| Mouvements | `/hareketler` | Table vide ; filtres off |
-| Reçu | — | Pas encore |
-| Admin | — | Pas encore (menu caché) |
+| Virement | `/havale` | Formulaire cookie → `ITransferExecutor`. Mêmes règles que l’API |
+| Recharger / retirer | `/yukle-cek` | Fausse passerelle REST/SOAP (`TIMEOUT` file, pas de ledger) |
+| Mouvements | `/hareketler` | Filtre + page ; lien reçu |
+| Reçu | `/dekont/{correlationId}` | Uniquement son portefeuille |
+| Admin | `/admin` | Rôle Admin. Gel, outbox en échec, audit. Dev `admin@clearpay.test` / `Deneme123` |
 
-`GET /api/health` → `{ "status": "ok", "product": "ClearPay" }`.
+`GET /api/health` → `{ "status": "ok", "product": "ClearPay", "redis": "up|down|off", "rabbit": "up|down|off" }`.
 
-**Pas encore dans le produit (volontairement) :** `POST /api/transfers` + HTTP **409**, worker Hangfire outbox, JWT/Swagger, Redis/Rabbit dans l’app, URL Azure publique.
+JSON : `POST /api/token` puis `POST /api/transfers` + `Idempotency-Key` → **201** / **409**. OpenAPI : [http://localhost:5153/swagger](http://localhost:5153/swagger).
 
-La **règle** est déjà verrouillée : même `Idempotency-Key` = même intention → 409, pas un second débit. La clé unique est sur la table. L’endpoint HTTP est TASK-06.
+Redis cache uniquement le DTO résumé (~60 s). La caisse reste SQL Server. Rabbit `clearpay.outbox` si `ConnectionStrings:RabbitMq`. **Pas d’URL Azure publique** — tu cliques `az login` (`docs/CANLI.md`).
+
+## Entretien (trois phrases)
+
+1. La même `Idempotency-Key` est la même intention : le second HTTP est **409 Conflict**, un retry après timeout ne débite pas deux fois.
+2. Débit, crédit, transfert, idempotence, audit et outbox dans **une transaction SQL** ; pas d’`UPDATE Balance` — le solde est `LedgerPair.NetOf`.
+3. La ligne outbox est écrite dans cette transaction ; un timeout ne perd pas le message. Hangfire (et Rabbit s’il est lié) publie après le commit.
 
 ---
 
@@ -128,8 +134,7 @@ ClearPay.slnx
 
 | Fait | Ensuite |
 |------|---------|
-| TASK-01…05 — repo, Identity, schéma ledger, synthèse live | **TASK-06** — virement, une transaction SQL, HTTP 409 |
-| TASK-15 — GitHub Actions | TASK-07/08 gateway · TASK-11 outbox · TASK-16 URL Azure |
+| TASK-01…15 — écrans, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — Azure App Service + Azure SQL (`az login` à toi ; pas d’URL inventée) |
 
 La CI restore et teste `tests/ClearPay.Tests` sur `main`.
 

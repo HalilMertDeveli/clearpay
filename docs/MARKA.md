@@ -45,6 +45,8 @@ Asıl iddia ürün değil motor. “Onlardan ucuzuz / onları geçeriz” yok.
 - Sahte banka uygulaması, şube, IBAN çekirdeği, “BankaX” perakende UI
 - Gerçek IBAN, FAST, havale EFT, POS, 3D Secure, kart
 - Papara / Tosla / ininal rakibi, “daha ucuz havale”
+- **Alipay / 支付宝 değiliz.** Ev düzeni (büyük bakiye + 4 işlem ızgarası) esinlenme; logo, QR markası, “Alipay” ürün adı yok
+- **Papara görünümü kopyalanmaz (T-053).** Mobil bankacılık *düzeni* (alt sekme çubuğu, kart yığını, işlem listesi) serbest; mor kimlik, logo, “Papara gibi” metni yok. Renk MARKA navy/teal kalır
 - Üretim SLA, “paranız güvende”, yatırım tavsiyesi
 - Google Ads’te Demo cümlesi olmadan kampanya (SEO/Ads ajanı; harcama yok)
 

@@ -1,94 +1,9 @@
-/* ClearPay live motion (T-034). Ambient loops 6–14s. Clicks 150–250ms. */
+/* T-040 — CSS motion only. No library. No gradient. No infinite loop. 150–250ms. */
 
-.sidebar::before {
-  animation: cp-orb 12s ease-in-out infinite;
-}
-
-.sidebar::after {
-  content: "";
-  position: absolute;
-  left: -30%;
-  bottom: -10%;
-  width: 14rem;
-  height: 14rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(194, 120, 42, 0.22), transparent 70%);
-  pointer-events: none;
-  animation: cp-orb-2 14s ease-in-out infinite;
-}
-
-@keyframes cp-orb {
-  0%,
-  100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
-  50% { transform: translate(-18%, 22%) scale(1.18); opacity: 1; }
-}
-
-@keyframes cp-orb-2 {
-  0%,
-  100% { transform: translate(0, 0); }
-  50% { transform: translate(24%, -16%); }
-}
-
-.auth-shell::before,
-.auth-shell::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(8px);
-}
-
-.auth-shell::before {
-  width: 22rem;
-  height: 22rem;
-  top: -6rem;
-  right: -4rem;
-  background: radial-gradient(circle, rgba(20, 184, 166, 0.35), transparent 68%);
-  animation: cp-orb 10s ease-in-out infinite;
-}
-
-.auth-shell::after {
-  width: 18rem;
-  height: 18rem;
-  bottom: -5rem;
-  left: -3rem;
-  background: radial-gradient(circle, rgba(27, 42, 74, 0.22), transparent 68%);
-  animation: cp-orb-2 13s ease-in-out infinite;
-}
-
-.auth-card {
-  position: relative;
-  z-index: 1;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(14px);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  animation: cp-rise 420ms ease both;
-}
-
-.balance-hero {
-  animation: cp-rise 480ms ease both;
-}
-
-.balance-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.14) 50%, transparent 60%);
-  background-size: 220% 100%;
-  animation: cp-shimmer 5.5s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes cp-shimmer {
-  0% { background-position: 120% 0; }
-  100% { background-position: -40% 0; }
-}
-
-@keyframes cp-rise {
+@keyframes cp-enter {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -96,144 +11,211 @@
   }
 }
 
-.stat-card,
-.panel,
-.actions .btn {
-  animation: cp-rise 500ms ease both;
+html.auth-motion .auth-orb,
+html.auth-motion .auth-hero-kicker,
+html.auth-motion .auth-hero-title,
+html.auth-motion .auth-hero-lede,
+html.auth-motion .auth-card,
+html.auth-motion .auth-footer {
+  opacity: 0;
 }
 
-.stat-card:nth-child(1) { animation-delay: 80ms; }
-.stat-card:nth-child(2) { animation-delay: 140ms; }
-.actions .btn:nth-child(1) { animation-delay: 180ms; }
-.actions .btn:nth-child(2) { animation-delay: 220ms; }
-.actions .btn:nth-child(3) { animation-delay: 260ms; }
-.panel { animation-delay: 300ms; }
+html.auth-motion .auth-card {
+  animation: none;
+}
+
+.auth-card {
+  animation: cp-enter 200ms ease both;
+}
+
+.balance-hero {
+  animation: cp-enter 200ms ease both;
+}
+
+.wallet-sheet {
+  animation: cp-enter 220ms ease both;
+  animation-delay: 60ms;
+}
+
+.content > .page-kicker {
+  animation: cp-enter 180ms ease both;
+}
+
+.content > .page-title {
+  animation: cp-enter 180ms ease both;
+  animation-delay: 40ms;
+}
+
+.content > .lede {
+  animation: cp-enter 180ms ease both;
+  animation-delay: 70ms;
+}
+
+.content > .panel,
+.content > .split-2,
+.content > .remain,
+.content > .panel-inline {
+  animation: cp-enter 200ms ease both;
+  animation-delay: 90ms;
+}
+
+.stat-card:nth-child(1) {
+  animation: cp-enter 200ms ease both;
+  animation-delay: 100ms;
+}
+
+.stat-card:nth-child(2) {
+  animation: cp-enter 200ms ease both;
+  animation-delay: 140ms;
+}
+
+.action-tile:nth-child(1) { animation: cp-enter 180ms ease both; animation-delay: 80ms; }
+.action-tile:nth-child(2) { animation: cp-enter 180ms ease both; animation-delay: 110ms; }
+.action-tile:nth-child(3) { animation: cp-enter 180ms ease both; animation-delay: 140ms; }
+.action-tile:nth-child(4) { animation: cp-enter 180ms ease both; animation-delay: 170ms; }
+
+.split-2 > .panel:nth-child(1) {
+  animation: cp-enter 200ms ease both;
+  animation-delay: 110ms;
+}
+
+.split-2 > .panel:nth-child(2) {
+  animation: cp-enter 200ms ease both;
+  animation-delay: 150ms;
+}
+
+.btn,
+.btn-ghost,
+.btn-social,
+.btn-text,
+.lang-btn {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.nav-link {
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.field-input {
+  transition: border-color 160ms ease;
+}
+
+.tab-link,
+.tab-switch a {
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.tabbar {
+  animation: cp-enter 180ms ease both;
+}
+
+.data-cards tbody tr {
+  animation: cp-enter 160ms ease both;
+}
+
+.stat-card,
+.panel {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
 
 .stat-card:hover,
 .panel:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow);
+  border-color: var(--teal);
+  background: #f7fafc;
 }
 
-.btn:hover:not(:disabled),
-.btn-ghost:hover:not(:disabled) {
-  transform: translateY(-1px);
+.wallet-sheet .stat-card:hover {
+  background: #eef3f8;
+  border-color: transparent;
 }
 
-.live-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin: 0 0 0.85rem;
-  padding: 0.2rem 0.65rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  color: #fff;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.action-tile {
+  transition: color 160ms ease;
 }
 
-.live-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: #14b8a6;
-  box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7);
-  animation: cp-pulse 1.8s ease-out infinite;
-}
-
-@keyframes cp-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.65); }
-  70% { box-shadow: 0 0 0 0.55rem rgba(20, 184, 166, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
-}
-
-.live-clock {
-  font-variant-numeric: tabular-nums;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--teal);
-  letter-spacing: 0.02em;
-}
-
-.spark {
-  display: block;
-  width: 100%;
-  height: 2.4rem;
-  margin-top: 0.65rem;
-  color: var(--navy);
-}
-
-.stat-card--in .spark {
+.action-tile:hover {
   color: var(--teal-bright);
 }
 
-.spark path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 180;
-  stroke-dashoffset: 180;
-  animation: cp-draw 1.1s ease forwards 0.35s;
+.action-ico {
+  transition: border-color 160ms ease, background-color 160ms ease;
 }
 
-@keyframes cp-draw {
-  to { stroke-dashoffset: 0; }
+.action-tile:hover .action-ico {
+  border-color: var(--teal-bright);
 }
 
-.empty-mark {
-  animation: cp-breathe 2.8s ease-in-out infinite;
+.data-table tbody tr {
+  transition: background-color 160ms ease;
 }
 
-@keyframes cp-breathe {
-  0%,
-  100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
+.data-table tbody tr:hover td {
+  background: rgba(15, 118, 110, 0.06);
 }
 
-.empty-actions {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.nav-link.is-active {
-  animation: cp-nav 220ms ease;
-}
-
-@keyframes cp-nav {
-  from { background-color: rgba(20, 184, 166, 0); }
-  to { background-color: rgba(20, 184, 166, 0.16); }
+.data-table tbody tr:hover .empty-cell {
+  background: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sidebar::before,
-  .sidebar::after,
-  .auth-shell::before,
-  .auth-shell::after,
-  .balance-hero::after,
   .auth-card,
   .balance-hero,
+  .wallet-sheet,
+  .content > .page-kicker,
+  .content > .page-title,
+  .content > .lede,
+  .content > .panel,
+  .content > .split-2,
+  .content > .remain,
+  .content > .panel-inline,
+  .stat-card,
+  .action-tile,
+  .split-2 > .panel,
+  .tabbar,
+  .data-cards tbody tr {
+    animation: none;
+  }
+
+  .btn,
+  .btn-ghost,
+  .btn-social,
+  .btn-text,
+  .lang-btn,
   .stat-card,
   .panel,
-  .actions .btn,
-  .live-dot,
-  .empty-mark,
-  .spark path,
-  .nav-link.is-active {
-    animation: none;
+  .nav-link,
+  .tab-link,
+  .tab-switch a,
+  .field-input,
+  .action-tile,
+  .action-ico,
+  .data-table tbody tr {
+    transition: none;
   }
 
   .stat-card:hover,
   .panel:hover,
-  .btn:hover:not(:disabled),
-  .btn-ghost:hover:not(:disabled) {
+  .action-tile:hover {
+    transform: none;
+  }
+
+  html.auth-motion .auth-orb,
+  html.auth-motion .auth-hero-kicker,
+  html.auth-motion .auth-hero-title,
+  html.auth-motion .auth-hero-lede,
+  html.auth-motion .auth-card,
+  html.auth-motion .auth-footer {
+    opacity: 1;
     transform: none;
   }
 }

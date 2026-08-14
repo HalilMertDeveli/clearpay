@@ -39,11 +39,11 @@ Bugün (TASK-04): Identity SQLite (`App_Data/identity.db`). Ledger SQL Server `C
 | 1 | Giriş | `/Account/Login` | TASK-03 |
 | 2 | Kayıt | `/Account/Register` | TASK-03 |
 | 3 | Cüzdan özeti | `/` (`Index`) | Boş özet TASK-03; canlı TASK-05 |
-| 4 | Havale | `/Havale` | Placeholder; API TASK-06 |
-| 5 | Yükle / Çek | `/YukleCek` | Placeholder; gateway TASK-07/08 |
-| 6 | Hareketler | `/Hareketler` | Placeholder; filtre TASK-09 |
-| 7 | Dekont | yok | TASK-09 (`correlation id`) |
-| 8 | Admin | yok (menü role gizli) | TASK-10 |
+| 4 | Havale | `/havale` | TASK-06: form POST → `ITransferExecutor`; `POST /api/transfers` JWT + `Idempotency-Key` (201/409) |
+| 5 | Yükle / Çek | `/yukle-cek` | TASK-07 REST; TASK-08 SOAP (`BankGateway:Strategy`). Timeout → ledger yok |
+| 6 | Hareketler | `/hareketler` | TASK-09 filtre + sayfa |
+| 7 | Dekont | `/dekont/{correlationId}` | TASK-09 correlation id |
+| 8 | Admin | `/admin` | TASK-10 rol `Admin`; freeze / kuyruk / audit |
 
 Sol menü SPEC ile aynı: Özet, Havale, Yükle/Çek, Hareketler; Admin yalnızca rol. Logout yardımcı sayfadır, yeni ürün ekranı değil. Satıcı paneli / POS yok (Q2, kapsam dışı).
 
@@ -54,7 +54,7 @@ Razor ve JSON API aynı ASP.NET Core 8 uygulamasında. Mülakat omurgası “mik
 ## Neden Identity cookie, sonra JWT
 
 - **Site (tarayıcı):** ASP.NET Identity + HttpOnly cookie (`ClearPay.Auth`). Form POST, anti-forgery, sliding expiration. TASK-03.
-- **JSON API:** JWT + OpenAPI. `POST /api/transfers` + `Idempotency-Key` (201 / 409). TASK-06. Swagger ve harici client cookie’ye bağlanmaz.
+- **JSON API:** JWT + OpenAPI. `POST /api/transfers` + `Idempotency-Key` (201 / 409). TASK-06 landed. Swagger UI `/swagger` (T-050). Harici client cookie’ye bağlanmaz.
 - Aynı kullanıcı deposu; iki protokol. Razor JWT taşımaz; para API’si tarayıcı cookie’sini birincil kimlik saymaz.
 
 ## Neden ledger Web’de değil
@@ -83,8 +83,8 @@ Coder: `Program.cs` içinde `builder.Services.AddClearPay(builder.Configuration)
 | | Q1 | Q2 |
 |--|----|-----|
 | Gerçeklik kaynağı | SQL + outbox satırı | Aynı; broker kopya değil |
-| Kuyruk | Hangfire, outbox tablosu (TASK-11) | Rabbit publisher (TASK-12 Compose; canlı CloudAMQP) |
-| Cache | Yok / sonra | Redis özet bakiyesi; havale sonrası invalidate |
+| Kuyruk | Hangfire, outbox tablosu (TASK-11) | Rabbit `clearpay.outbox` (T-048; yoksa log). Canlı CloudAMQP Q2 |
+| Cache | Redis özet DTO (`localhost:6379`; yoksa SQL) | Aynı; havale sonrası invalidate (TASK-06) |
 | Canlı | App Service + Azure SQL | + Azure Cache for Redis |
 
-Compose: SQL gün 1; Redis/Rabbit TASK-12 lokal. Canlı broker Q1 şart değil — ledger commit olduysa mesaj kaybolmaz (önce DB, sonra yayın). Redis bakiyeyi hızlandırır, ledger’ın yerini tutmaz.
+Compose: SQL gün 1. Redis özet cache T-041 (kasa SQL). Rabbit publisher T-048 (`ConnectionStrings:RabbitMq`; düşerse log). Canlı broker Q1 şart değil — ledger commit olduysa mesaj kaybolmaz (önce DB, sonra yayın). Redis bakiyeyi hızlandırır, ledger’ın yerini tutmaz. Health: `redis` + `rabbit` = `up` / `down` / `off`.
