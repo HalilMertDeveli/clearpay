@@ -142,6 +142,7 @@ La CI restore et teste `tests/ClearPay.Tests` sur `main`.
 
 ## Docs
 
+- [`docs/YOL.md`](docs/YOL.md) — à quoi ça sert, où ça va (carrière d’abord ; URL live = TASK-16)
 - [`docs/SPEC.md`](docs/SPEC.md) — écrans et règles d’argent (409, une transaction, outbox)
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — couches onion, cookie puis JWT
 - [`docs/FARK.md`](docs/FARK.md) — rapprochement d’abord ; pas un rival Papara
