@@ -1,5 +1,6 @@
 using ClearPay.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -14,7 +15,10 @@ public static class IdentitySeeder
         using var scope = services.CreateScope();
         var provider = scope.ServiceProvider;
         var db = provider.GetRequiredService<AppIdentityDbContext>();
-        await db.Database.EnsureCreatedAsync();
+        if (db.Database.IsSqlite())
+            await db.Database.EnsureCreatedAsync();
+        else
+            await db.Database.MigrateAsync();
 
         var roles = provider.GetRequiredService<RoleManager<IdentityRole>>();
         if (!await roles.RoleExistsAsync(AppRoles.Musteri))
