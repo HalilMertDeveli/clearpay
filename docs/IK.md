@@ -4,7 +4,7 @@ ClearPay **işveren değil**. Bu dosya **aday** (Halil) içindir: CV, 15/30 daki
 
 Kaynak CV: [`README.md`](../README.md) *CV bullets (intended)* — kelime kelime. Pitch: [`SATIS.md`](SATIS.md). Fark: [`FARK.md`](FARK.md). Motor: [`SPEC.md`](SPEC.md). Neden: [`OGRENME.md`](OGRENME.md).
 
-**Kilit:** Demo — sahte banka gateway. Lisanslı cüzdan değil. TASK-06 (409 HTTP) ve TASK-11 (outbox worker) bitmeden “kanıtladım” deme.
+**Kilit:** Demo — sahte banka gateway. Lisanslı cüzdan değil. TASK-06 (409 HTTP) ve TASK-11 (outbox worker) **Done** — mülakatta gösterebilirsin. Canlı URL = TASK-16 (sen `az login`).
 
 ---
 
@@ -16,7 +16,7 @@ LinkedIn / CV / e-posta. Üç satır, README ile aynı:
 - Integrated a mock bank gateway over REST and SOAP; used an outbox + queue so payment completion is not lost on timeout.
 - Shipped Docker Compose, xUnit tests, Serilog correlation, and CI/CD to Azure App Service.
 
-**Şimdi (dürüst):** iskelet + Identity WIP; ledger Domain’de var; HTTP 409 = TASK-06; outbox worker = TASK-11; Azure URL = TASK-16. Mülakatta “kural kilitli, kod TASK-06/11’de kanıt” de. Bitince README cümlesi durur; abartı ekleme.
+**Şimdi (dürüst):** Q1 kod TASK-01…15 Done (409 HTTP, outbox worker, CI). Azure URL = TASK-16 — sen `az login` + `.\infra\deploy.ps1` ([`YOL.md`](YOL.md)). Bitince README cümlesi durur; abartı ekleme.
 
 Kullanma: Papara clone, FAST integration, licensed e-money, production wallet, BDDK.
 
@@ -118,7 +118,7 @@ Aynı kapı: banka yazılım evleri, holding BT, .NET ilanı açık diğer kurum
 
 - İşe alıyoruz / ClearPay’de açık pozisyon
 - Papara alternatifi, BDDK, gerçek FAST/POS/IBAN
-- “409’u production’da kanıtladım” (TASK-06/11 öncesi)
+- “409’u production Azure’da kanıtladım” (TASK-16 URL yokken)
 - Maaş bandı, başlık uydurma, rakip firma iç bilgi
 
 Sales 15s pitch ve site copy: `SATIS.md`. İK script’i ezberletir; Sales pazar cümlesini yazar — çelişirse **demo + üçlü** kazanır.

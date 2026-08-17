@@ -16,10 +16,10 @@ Bütün hesaplar **`halilmertdeveliii@gmail.com`** (Gmail). Yeni Microsoft / Goo
 |--------|-------------|----------------|
 | **GitHub** | `HalilMertDeveli` — primary e-posta doğrulanmış; repo `HalilMertDeveli/clearpay` public `main` | Yeni hesap / force push / secret |
 | **Gmail MCP** | Aynı kutu; etiket `ClearPay` | Papara maili, Ads harcaması |
-| **Azure** | Portal hesabı bu Gmail iddiası; bu makinede `az` yok → abonelik görünmedi | Abonelik uydurma, Portal açma, TASK-16 şimdi |
+| **Azure** | Portal hesabı bu Gmail iddiası; bu makinede `az` yok → abonelik görünmedi | Abonelik uydurma, Portal açma, URL uydurma |
 | **Search Console / Ads** | Canlı URL sonrası sen; harcama yok | Hesap açma, kampanya, “ucuz havale” |
 
-TASK-16: [`CANLI.md`](CANLI.md) — **şimdi değil**. `az login` sen; ajan hesabı açmaz.
+TASK-16: [`CANLI.md`](CANLI.md) + [`YOL.md`](YOL.md) — **sıradaki tık senin.** `az login` sen; ajan hesabı açmaz, URL uydurmaz.
 
 ## Her gün
 
@@ -64,7 +64,7 @@ Gerçek banka / Papara / iyzico / FAST başvurusu. POS, 3D Secure, lisans. Gerç
 5. Canlıda: Azure’u sen açarsın (`CANLI.md`). App Settings’e SQL + JWT. **Ödeme KEY yok.**
 6. Mülakat: 15/30 dk script + 409/tx/outbox + hangi firma (`IK.md`). Kısa üçlü: `OGRENME.md` / `FARK.md` / `KRONIK.md` §13.
 7. Google Ads’te “ucuz havale / Papara alternatif” **yazma**.
-8. **Banka / iş yeri sunumu** — pitch, rota, gelir mertebesi: [`GELIR.md`](GELIR.md) (T-013). Lisans başvurusu yok. Kapıya soğuk girme.
+8. **Banka / iş yeri sunumu** — pitch, rota: [`GELIR.md`](GELIR.md). Nereye gider: [`YOL.md`](YOL.md). Lisans başvurusu yok.
 
 ---
 

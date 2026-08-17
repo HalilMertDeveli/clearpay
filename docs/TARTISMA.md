@@ -876,6 +876,19 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-059 — 2026-08-17 — Yol haritası belgesi (Q1 kariyer, Q2 park)
+
+- **Kim:** Orchestrator, Satış, İK, Deploy
+- **Konu:** “Ne işe yarar, nereye götüreceğim” planı nereye yazılır; TASK-16 / Q2 ne zaman?
+- **Seçenekler:**
+  1. SPEC’i Papara/lisans ürününe çevir; TASK listesini Q2 satıcı paneliyle şişir.
+  2. **Kalıcı `docs/YOL.md`:** Q1 = mülakat demosu (409/tx/outbox + TASK-16 URL). Kariyer kapısı ilk nakit. Kendi e-para lisansı kapalı. Q2 kapalı devre/white-label **park** (avukat + 9. ekran onayı yokken `src/` yok). TASK-16 URL ajan uydurmaz (`az login` Halil).
+- **Karar:** **2.** Plan Cursor onayı; OWN `docs/YOL.md`. `src/` yok. TASKS Todo şişmez (TASK-16 durur).
+- **Neden:** T-004/T-013 durur. Kod Q1 (TASK-01…15) bitti; eksik kanıt HTTPS. Ticari satış avukatsız yalan.
+- **Sonra hangi dosya:** `docs/YOL.md`; `docs/GELIR.md` işaret; `docs/IK.md` (409/outbox kanıt TASK-06/11 Done); `docs/SENIN-ISLERIN.md` / `docs/CANLI.md` TASK-16 tık; `docs/HANDOFF.md` append. README Docs satırı.
+
+---
+
 ## T-058 — 2026-08-17 — Lokal Identity SQL Server (numara: T-057 kamu cüzdana ait)
 
 - **Kim:** Orchestrator (düzeltme). Önceki Identity bloğu T-057 başlığıyla yazıldı; aynı gün kamu cüzdan maddesi de T-057 aldı.
@@ -888,4 +901,19 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Sonra hangi dosya:** HANDOFF append T-058. `AddClearPayIdentity` mesajı T-058. DEPLOY/ARCHITECTURE T-058.
 
 ---
+
+## T-060 — 2026-08-17 — Gelecek senaryoları (dört masa; YOL’a katalog)
+
+- **Kim:** Orchestrator + Product + Architect + Payments + Sales/İK (kullanıcı: ajanlar tartışsın, proje geleceğini hesaplasın, olası senaryo listesi)
+- **Konu:** TASK-01…15 bitti; TASK-16 URL Halil’de. T-059 `docs/YOL.md` Q1 kariyer / Q2 park kilitli. Ayrı `GELECEK.md` mi, yoksa YOL’a senaryo kataloğu mu? Hangi gelecek **izlenir**, hangisi **park**, hangisi **kapalı**?
+- **Seçenekler:**
+  1. Papara / kendi e-para lisansı (Yol A) / 9. ekran / Kafka / gerçek Visa-FAST — hayır (T-004, T-013, SPEC).
+  2. URL’den önce satıcı paneli + özellik fabrikası — hayır; Sales/İK vetosu, Architect SPEC kilit.
+  3. **YOL kataloğu.** T-059 durur. Dört masa senaryoları `docs/YOL.md` içine yazılır (ikinci OWN yok). Kazanan 12 ay: tek host + TASK-16 HTTPS + Yol B (mülakat maaşı). 8 ekran cilâsı (T-056/057) içeride. Q2 C/D + satıcı = park (avukat + kullanıcı onayı). Ledger invarianti Payments; mikroservis/Kafka dual-write reddi.
+- **Karar:** **3.** `src/` yok. SPEC 8 değişmez. TASK-16 Todo. `GELECEK.md` açılmaz (T-059 ile çatışır).
+- **Neden:** Product/Sales/Architect/Payments aynı kapıya çıktı: nakit = kariyer; kanıt = tarayıcıda 409; kasa = SQL çift kayıt. 1 yasa/iddiayı bozar. 2 wedge’i sulandırır. 3 T-059’u ezer değil, hesaplanmış liste ekler.
+- **Sonra hangi dosya:** Orchestrator `docs/YOL.md` senaryo bölümü; `docs/HANDOFF.md` append. SPEC/PLAN/TASKS ekran eklenmez.
+
+---
+
 

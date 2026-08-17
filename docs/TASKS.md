@@ -31,7 +31,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»
-- **Ürün sırası TASK-16.** Infra/docs hazır; açık URL **Halil tıklar**. Ads harcaması yok.
+- **Ürün sırası TASK-16.** Yol: [`YOL.md`](YOL.md) (T-059). Infra hazır; açık URL **Halil tıklar**. Ads harcaması yok.
 - TASK-12: `ConnectionStrings:RabbitMq` yok/düşer → log publisher; Hangfire yedek. Health `rabbit` up/down/off. CloudAMQP hesabı açılmaz.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz

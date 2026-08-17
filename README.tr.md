@@ -142,6 +142,7 @@ CI `main` üzerinde `tests/ClearPay.Tests` restore + test eder.
 
 ## Belgeler
 
+- [`docs/YOL.md`](docs/YOL.md) — ne işe yarar, nereye gider (önce kariyer; canlı URL TASK-16)
 - [`docs/SPEC.md`](docs/SPEC.md) — ekranlar ve para kuralları (409, tek transaction, outbox)
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — soğan katmanları, önce cookie sonra JWT
 - [`docs/FARK.md`](docs/FARK.md) — mutabakat; Papara rakibi değil
