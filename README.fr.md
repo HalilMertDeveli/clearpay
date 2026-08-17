@@ -10,6 +10,8 @@
 <p align="center">
   <a href="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml"><img src="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet" alt=".NET 8">
+  <img src="https://img.shields.io/badge/Flutter-app_mobile-02569B?logo=flutter" alt="Application Flutter">
+  <img src="https://img.shields.io/badge/Android%20%7C%20Windows%20%7C%20iOS-livr%C3%A9-0F766E" alt="Android Windows iOS">
   <img src="https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver" alt="SQL Server">
   <img src="https://img.shields.io/badge/UI-TR%20%7C%20EN%20%7C%20DE%20%7C%20FR-1B2A4A" alt="Langues UI">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
@@ -17,7 +19,11 @@
 
 <p align="center"><b>Démo — passerelle fictive pour les recharges.</b> Pas un établissement e-money licencié. Pas Papara / FAST / une fausse banque de détail.</p>
 
-Portefeuille web ASP.NET Core 8 **type WePay**. On paie et on envoie de l’argent **sur ce site**. Un seul hôte : Razor Pages pour l’UI, JSON pour l’API. La partie double est dans le Domain — `Wallet` n’a **pas** de colonne `Balance`.
+## Web + mobile (livré)
+
+Ce dépôt **n’est pas que le site**. L’**application Flutter** est dans [`mobile/clearpay`](mobile/clearpay) et parle au même hôte ASP.NET Core 8. Huit opérations, un grand livre SQL, **pas** de second solde sur le téléphone. Détail : [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+
+**Un portefeuille, deux clients.** La même personne se connecte, vire, recharge et ouvre le reçu **sur le site** et **dans l’app Flutter**. Razor Pages (cookie) ; JSON (JWT). La partie double est dans le Domain — `Wallet` n’a **pas** de colonne `Balance`.
 
 Je suis Halil Mert Develi. J’ai écrit ça pour un entretien .NET (Intertech, Softtech), pas pour cloner Papara. Licence MIT.
 
@@ -33,9 +39,13 @@ Le Web ne calcule pas le grand livre. La synthèse demande `IWalletReader`. Aujo
 
 ```mermaid
 flowchart TB
+  subgraph clients [Same person]
+    razor[Website Razor cookie]
+    flutter[Flutter app JWT]
+  end
   subgraph web [ClearPay.Web]
-    razor[Razor Pages TR/EN/DE/FR]
-    api[JSON host]
+    pages[Razor Pages TR/EN/DE/FR]
+    api[JSON API]
   end
   subgraph app [ClearPay.Application]
     reader[IWalletReader]
@@ -43,46 +53,179 @@ flowchart TB
   end
   subgraph infra [ClearPay.Infrastructure]
     sql[SqlWalletReader + EF]
-    id[Identity SQLite]
+    id[Identity]
   end
   subgraph domain [ClearPay.Domain]
     pair[LedgerPair / LedgerEntry]
   end
-  razor --> reader
+  razor --> pages
+  flutter --> api
+  pages --> reader
+  pages --> exec
+  api --> reader
+  api --> exec
   reader --> sql
-  sql --> pair
   exec --> pair
+  sql --> pair
 ```
 
 | Couche | Projet | Contient | Ne contient pas |
 |--------|--------|----------|-----------------|
 | UI + hôte | `ClearPay.Web` | Razor, cookie, culture, `:5153` | Net du ledger, `UPDATE Balance` |
 | Cas d’usage | `ClearPay.Application` | Ports, DTO, FluentValidation | Chaînes de connexion |
-| Adaptateurs | `ClearPay.Infrastructure` | EF SQL Server, Identity SQLite, stubs gateway | Razor / CSS |
+| Adaptateurs | `ClearPay.Infrastructure` | EF SQL Server (Identity + ledger, même LocalDB), stubs gateway | Razor / CSS |
 | Règles | `ClearPay.Domain` | `LedgerPair`, `Wallet` (pas de champ solde) | EF, HTTP, ASP.NET |
 
 Les dépendances pointent **vers l’intérieur**. Le Domain ne référence ni EF ni ASP.NET.
 
 ---
 
+## Schéma relationnel (SQL Server)
+
+**Demo — sahte banka gateway. Lisanslı e-para değil.** Pas Papara / FAST / une fausse banque de détail. Huit écrans, pas un neuvième.
+
+Développement local : `(localdb)\MSSQLLocalDB` / base `ClearPay`. Identity et le grand livre partagent cette base (deux contextes EF, deux tables d’historique). **Deux clients, un seul grand livre SQL :** Razor (cookie) et Flutter (JWT). Flutter `firebase_core` projet `clearpay-c0485` — pas un portefeuille Firestore. MySQL (`ConnectionStrings:MySql`) est un sidecar ; l’argent n’y vit pas.
+
+Il n’y a **pas** de colonne `Wallet.Balance`. Le solde = `LedgerPair.NetOf` (C#, pas une table). `UPDATE Balance` est interdit. `Wallet.UserId` est unique et correspond à `AspNetUsers.Id` dans la même base ; **pas de FK** (deux DbContexts). FK réels : Identity plus `LedgerEntry` → `Wallet` / `Transfer` et `Transfer` → `Wallet`.
+
+Le même mermaid est dans le README GitHub par défaut (`README.md`, section **Relational schema (SQL Server)**).
+
+```mermaid
+erDiagram
+    AspNetUsers {
+        string Id PK
+        string FullName
+        string Email
+        string AccountKind
+        string UserName
+    }
+    AspNetRoles {
+        string Id PK
+        string Name
+    }
+    AspNetUserRoles {
+        string UserId PK
+        string RoleId PK
+    }
+    AspNetUserClaims {
+        int Id PK
+        string UserId FK
+        string ClaimType
+        string ClaimValue
+    }
+    AspNetRoleClaims {
+        int Id PK
+        string RoleId FK
+        string ClaimType
+        string ClaimValue
+    }
+    AspNetUserLogins {
+        string LoginProvider PK
+        string ProviderKey PK
+        string UserId FK
+    }
+    AspNetUserTokens {
+        string UserId PK
+        string LoginProvider PK
+        string Name PK
+    }
+    Wallet {
+        uniqueidentifier Id PK
+        string UserId UK
+        bit IsFrozen
+        datetimeoffset CreatedAt
+    }
+    LedgerEntry {
+        uniqueidentifier Id PK
+        uniqueidentifier WalletId FK
+        decimal Amount
+        uniqueidentifier PairId
+        uniqueidentifier CorrelationId
+        uniqueidentifier TransferId FK
+        int Kind
+        nvarchar Description
+        datetimeoffset CreatedAt
+    }
+    Transfer {
+        uniqueidentifier Id PK
+        uniqueidentifier FromWalletId FK
+        uniqueidentifier ToWalletId FK
+        decimal Amount
+        int Status
+        uniqueidentifier CorrelationId
+        datetimeoffset CreatedAt
+    }
+    IdempotencyRecord {
+        nvarchar Key PK
+        nvarchar Scope
+        nvarchar RequestHash
+        uniqueidentifier ResourceId
+        datetimeoffset CreatedAt
+    }
+    AuditLog {
+        uniqueidentifier Id PK
+        string ActorUserId
+        nvarchar Action
+        uniqueidentifier CorrelationId
+        nvarchar Details
+        datetimeoffset CreatedAt
+    }
+    OutboxMessage {
+        uniqueidentifier Id PK
+        nvarchar Type
+        nvarchar Payload
+        uniqueidentifier CorrelationId
+        int Status
+        datetimeoffset OccurredAt
+        datetimeoffset ProcessedAt
+    }
+    LinkedInstrument {
+        uniqueidentifier Id PK
+        string UserId
+        nvarchar Last4
+        nvarchar Label
+        datetimeoffset CreatedAt
+    }
+    EFMigrationsHistory {
+        nvarchar MigrationId PK
+        nvarchar ProductVersion
+    }
+    EFMigrationsHistoryIdentity {
+        nvarchar MigrationId PK
+        nvarchar ProductVersion
+    }
+    AspNetUsers ||--o{ AspNetUserRoles : UserId
+    AspNetRoles ||--o{ AspNetUserRoles : RoleId
+    AspNetUsers ||--o{ AspNetUserClaims : UserId
+    AspNetUsers ||--o{ AspNetUserLogins : UserId
+    AspNetUsers ||--o{ AspNetUserTokens : UserId
+    AspNetRoles ||--o{ AspNetRoleClaims : RoleId
+    Wallet ||--o{ LedgerEntry : WalletId
+    Wallet ||--o{ Transfer : FromWalletId
+    Wallet ||--o{ Transfer : ToWalletId
+    Transfer |o--o{ LedgerEntry : TransferId
+```
+
+Historique EF : `__EFMigrationsHistory` (ledger) et `__EFMigrationsHistoryIdentity` (Identity). `IdempotencyRecord.Key` unique (rejeu → **409**). `LinkedInstrument` : quatre derniers chiffres seulement — pas de PAN.
+
+---
+
 ## Ce qui s’ouvre aujourd’hui
 
-Identity cookie, SQLite : `App_Data/identity.db`. Langues : **Türkçe (défaut), English, Deutsch, Français** — sélecteur dans le layout, pas un 9ᵉ écran.
+Les huit mêmes opérations sur le site et dans l’app. Langues : **Türkçe (défaut), English, Deutsch, Français**. UI Flutter par défaut : Türkçe. Pas un 9ᵉ écran.
 
-| Écran | Route | État honnête |
-|-------|--------|----------------|
-| Connexion | `/giris` | OK |
-| Inscription | `/kayit` | OK |
-| Synthèse | `/` | **Live** depuis le net du ledger (zéros sans SQL / sans lignes) |
-| Virement | `/havale` | Formulaire cookie → `ITransferExecutor`. Mêmes règles que l’API |
-| Recharger / retirer | `/yukle-cek` | Fausse passerelle REST/SOAP (`TIMEOUT` file, pas de ledger) |
-| Mouvements | `/hareketler` | Filtre + page ; lien reçu |
-| Reçu | `/dekont/{correlationId}` | Uniquement son portefeuille |
-| Admin | `/admin` | Rôle Admin. Gel, outbox en échec, audit. Dev `admin@clearpay.test` / `Deneme123` |
+| Opération | Site | App Flutter |
+|-----------|------|-------------|
+| Connexion | [`/giris`](http://localhost:5153/giris) | Giriş — `POST /api/token` |
+| Inscription | [`/kayit`](http://localhost:5153/kayit) | Hesap oluştur — `POST /api/register` |
+| Synthèse | [`/`](http://localhost:5153/) | Özet, pull-to-refresh — `GET /api/wallet` |
+| Virement | [`/havale`](http://localhost:5153/havale) | Havale + confirmation — `POST /api/transfers` + `Idempotency-Key` |
+| Recharger / retirer | [`/yukle-cek`](http://localhost:5153/yukle-cek) | Yükle / Çek — `POST /api/topup` / `withdraw` |
+| Mouvements | [`/hareketler`](http://localhost:5153/hareketler) | Hareketler + filtre — `GET /api/movements` |
+| Reçu | [`/dekont/{id}`](http://localhost:5153/hareketler) | Dekont — `GET /api/receipts/{id}` |
+| Admin | [`/admin`](http://localhost:5153/admin) | Onglet Admin (rôle Admin) — `/api/admin/*` |
 
-`GET /api/health` → `{ "status": "ok", "product": "ClearPay", "redis": "up|down|off", "rabbit": "up|down|off" }`.
-
-JSON : `POST /api/token` puis `POST /api/transfers` + `Idempotency-Key` → **201** / **409**. OpenAPI : [http://localhost:5153/swagger](http://localhost:5153/swagger).
+Dev : `admin@clearpay.test` / `Deneme123`. Virement **201** / rejeu **409**. OpenAPI : [http://localhost:5153/swagger](http://localhost:5153/swagger). README mobile : [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
 
 Redis cache uniquement le DTO résumé (~60 s). La caisse reste SQL Server. Rabbit `clearpay.outbox` si `ConnectionStrings:RabbitMq`. **Pas d’URL Azure publique** — tu cliques `az login` (`docs/CANLI.md`).
 
@@ -96,23 +239,30 @@ Redis cache uniquement le DTO résumé (~60 s). La caisse reste SQL Server. Rabb
 
 ## Lancer
 
-SDK .NET 8. Docker Desktop pour la synthèse live depuis SQL.
+SDK .NET 8. **Web Development** utilise SQL Server LocalDB — `(localdb)\MSSQLLocalDB` / `ClearPay` — pour Identity et le grand livre. Docker Desktop est optionnel (SQL Server 2022 + Redis/Rabbit).
 
 ```bash
-docker compose up -d
 dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
-[http://localhost:5153](http://localhost:5153). Identity n’a pas besoin de Docker. Sans SQL, la synthèse reste `0,00 ₺`.
+[http://localhost:5153](http://localhost:5153). Le même argent dans Flutter (**cmd**) :
+
+```bat
+cd /d mobile\clearpay
+flutter doctor
+flutter run -d windows
+```
+
+Émulateur Android : `http://10.0.2.2:5153`. Flutter parle JWT au même hôte ; `firebase_core` (`clearpay-c0485`) ne stocke pas le solde. Sans LocalDB/SQL, la synthèse reste `0,00 ₺`.
 
 ```bash
 dotnet test
 dotnet build ClearPay.slnx
 ```
 
-Mot de passe SA local : `.env.example`. Docker uniquement. Ne pas committer `.env`. Ne pas le réutiliser sur Azure.
+Bind Docker SQL optionnel : `D:\ClearPay\data\mssql`. Mot de passe SA local : `.env.example` (Compose uniquement). Ne pas committer `.env`. Ne pas le réutiliser sur Azure.
 
-Bind des données SQL : `D:\ClearPay\data\mssql` (cette machine). Le grand livre de l’app est **SQL Server seulement**. MySQL/Oracle compose sont des sidecars, pas la base du portefeuille.
+Le grand livre de l’app est **SQL Server seulement**. MySQL (`ConnectionStrings:MySql`) est un sidecar, pas la base du portefeuille. Mobile **JWT → C# → SQL Server** — pas de driver MySQL ni de portefeuille Firestore dans Flutter.
 
 ---
 
@@ -121,8 +271,9 @@ Bind des données SQL : `D:\ClearPay\data\mssql` (cette machine). Le grand livre
 ```
 src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (pas de Balance)
 src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
-src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity SQLite
+src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity (même LocalDB)
 src/ClearPay.Web              Razor + localisation + MapControllers
+mobile/clearpay               client Flutter JWT (pas dans le .slnx)
 tests/ClearPay.Tests          LedgerPair, architecture, SqlWalletReader, culture
 docker-compose.yml            SQL Server 2022 — pas l’app web
 ClearPay.slnx
@@ -142,11 +293,13 @@ La CI restore et teste `tests/ClearPay.Tests` sur `main`.
 
 ## Docs
 
+- [`docs/YOL.md`](docs/YOL.md) — à quoi ça sert, où ça va (carrière d’abord ; URL live = TASK-16)
 - [`docs/SPEC.md`](docs/SPEC.md) — écrans et règles d’argent (409, une transaction, outbox)
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — couches onion, cookie puis JWT
 - [`docs/FARK.md`](docs/FARK.md) — rapprochement d’abord ; pas un rival Papara
 - [`docs/SATIS.md`](docs/SATIS.md) — pitch 15 secondes
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
+- [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — client Flutter (les huit mêmes opérations)
 - Pas à pas : [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (public dans ce dépôt). Même liste sur [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — Share → Publish to web pour les lecteurs sans compte Notion.
 
 Cible live : Azure App Service + Azure SQL (West Europe). Pas d’`azurewebsites.net` à cliquer aujourd’hui.
