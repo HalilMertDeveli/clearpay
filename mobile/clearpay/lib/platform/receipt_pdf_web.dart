@@ -1,10 +1,15 @@
-import 'dart:html' as html;
+import 'dart:typed_data';
+
+import 'package:share_plus/share_plus.dart';
 
 Future<void> openReceiptPdf(String correlationId, List<int> bytes) async {
-  final blob = html.Blob([bytes], 'application/pdf');
-  final url = html.Url.createObjectUrlFromBlob(blob);
-  html.AnchorElement(href: url)
-    ..setAttribute('download', 'clearpay-dekont-$correlationId.pdf')
-    ..click();
-  html.Url.revokeObjectUrl(url);
+  final file = XFile.fromData(
+    Uint8List.fromList(bytes),
+    mimeType: 'application/pdf',
+    name: 'clearpay-dekont-$correlationId.pdf',
+  );
+  await Share.shareXFiles(
+    [file],
+    text: 'ClearPay dekont (demo)',
+  );
 }

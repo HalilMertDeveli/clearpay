@@ -57,10 +57,10 @@ Site must be up: [http://localhost:5153](http://localhost:5153). Same eight oper
 | Transfer | Havale + onay; **QR yapıştır** | `POST /api/transfers` + `Idempotency-Key` → 201 / **409** |
 | Top-up / withdraw | Yükle / Çek + demo kart | `POST /api/topup` / `withdraw` |
 | Movements | Hareketler + filtre | `GET /api/movements` |
-| Receipt | Dekont | `GET /api/receipts/{id}` |
+| Receipt | Dekont (kopyala + **PDF indir**) | `GET /api/receipts/{id}` + `GET /api/receipts/{id}/pdf` |
 | Admin | Admin sekmesi (rol) | `/api/admin/*` |
 
-Dev: `admin@clearpay.test` / `Deneme123`. Demo TC (Mernis değil): `10000000146` → aynı admin e-posta, hâlâ `POST /api/token`. Android emulator base: `http://10.0.2.2:5153`. Windows / iOS: `http://localhost:5153`. Optional `--dart-define=CLEARPAY_API=...` only — **no MySQL dart-define**. Host MySQL (`MySQL84`, `ConnectionStrings:MySql`) is tools/sidecar; this app does not add a `mysql` package or store balances (T-061 / T-077). Same path as the website: JWT → C# → SQL Server.
+Dev: `admin@clearpay.test` / `Deneme123`. Demo TC (Mernis değil): `10000000146` → aynı admin e-posta, hâlâ `POST /api/token`. **Örnek dekont** (Development seed, çift kayıt TopUp 25 ₺): `aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001`. Site: [http://localhost:5153/dekont/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001](http://localhost:5153/dekont/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001) → **PDF indir**. Flutter: giriş → Hareketler → Dekont (aynı satır) → **PDF indir** (`GET /api/receipts/{id}/pdf`, uygulama içi sahte PDF yok). Android emulator base: `http://10.0.2.2:5153`. Windows / iOS: `http://localhost:5153`. Optional `--dart-define=CLEARPAY_API=...` only — **no MySQL dart-define**. Host MySQL (`MySQL84`, `ConnectionStrings:MySql`) is tools/sidecar; this app does not add a `mysql` package or store balances (T-061 / T-077). Same path as the website: JWT → C# → SQL Server.
 
 QR: **QR al** Özet’te `clearpay://pay?to={email}` üretir (`qr_flutter`). **QR öde** yük yapıştırır / e-posta yazar, Havale formunu doldurur, mevcut onay + `POST /api/transfers`. Kamera eklentisi yok (Windows symlink). FAST kiremiti Havale’dir — TCMB FAST değil. Piyasalar / Fatura / Kredi **Park — demo değil**.
 

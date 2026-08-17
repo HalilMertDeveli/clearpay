@@ -32,6 +32,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [x] UI: splash + Bireysel/Kurumsal Identity AccountKind (T-068; Firebase kasa yok; 8 ekran aynı)
 - [x] UI: web internet-şube kromu — masthead + hızlı işlemler (T-072; TASK numarası değil, 8 ekran aynı; YK kopyası değil)
 - [x] UI: web dekont PDF — mevcut ledger correlation (T-079; 9. ekran yok)
+- [x] UI: Flutter dekont borusu + PDF aynı fiş (T-069; T-079 web PDF durur; 9. ekran yok)
 
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
@@ -47,6 +48,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - T-071: SignalR `/hubs/wallet` — mobil yazınca web yenilenir; bakiye hub’da yok. Halil tıkları: [`API-ESZAMAN.md`](API-ESZAMAN.md). TASK-16 Todo.
 - T-072: girişli Razor internet-şube kromu (YK *düzeni*, marka yok). 560px kolon 1120px. Tabbar ≤800px durur. TASK-16 Todo.
 - T-079: dekont PDF (aynı SQL fiş). Razor `handler=Pdf` + `GET /api/receipts/{id}/pdf`. TASK-16 Todo.
+- T-069: Flutter başarı → Dekont; PDF byte API’den. Örnek `aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001`. TASK-16 Todo.
 - TASK-12: `ConnectionStrings:RabbitMq` yok/düşer → log publisher; Hangfire yedek. Health `rabbit` up/down/off. CloudAMQP hesabı açılmaz.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz

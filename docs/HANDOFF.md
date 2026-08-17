@@ -873,4 +873,19 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** http://localhost:5153/giris (Razor). IIS Express için `localhost` kullan; `127.0.0.1` 400 verebilir. Flutter Chrome açıksa Bireysel → aynı hesap. Demo `admin@clearpay.test` / `Deneme123`. VS F5 ile ikinci `dotnet run` aynı anda DLL kilitlemesin.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — Dekont borusu + PDF (T-069; Coder + Payments)
+
+- **OWN:** TARTISMA **T-069**. Web PDF T-079 durur (`IReceiptPdf`, Razor `?handler=Pdf`, `GET /api/receipts/{id}/pdf`). Flutter: başarılı havale/yükle/QR öde → Dekont; PDF byte API’den (sahte asset yok). TIMEOUT 202 fiş açmaz. Örnek seed `aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001`. TASK-16 Todo. 9. ekran yok. `UPDATE Balance` yok.
+- **Landed:** Flutter `PostedMoney` + `receiptPdf` + Dekont kopyala/PDF. Hareket satırı aynı correlation. Development TopUp örneği (25 ₺, `****4242`).
+- **Sen tıklarsın:** siteyi yeniden başlat. Giriş `admin@clearpay.test` / `Deneme123`. Site: http://localhost:5153/dekont/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001 → **PDF indir**. Flutter: Hareketler → Dekont → **PDF indir**. Yeni havale sonrası otomatik Dekont.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Web dekont PDF (T-079 + T-081; Coder)
+
+- **OWN:** TARTISMA **T-079** (PDF = mevcut ledger) + **T-081** (QuestPDF native iptal; yönetilen PDF 1.4). TASK-16 Todo. 9. ekran yok. `UPDATE Balance` yok.
+- **Landed:** `/dekont/{id}` **PDF indir** (`?handler=Pdf`). JWT `GET /api/receipts/{id}/pdf`. Development örnek (LocalDB, sqlite test değil): admin `aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001` (25 TRY TopUp, LedgerPair). Yazdır/kopyala durur.
+- **Kanıt:** `dotnet test ClearPay.slnx -c Release` **127 geçti**, 0 skip. AuthOrUi PDF `%PDF`; WalletApi transfer→JSON+PDF.
+- **Sen tıklarsın:** siteyi **yeniden başlat** (IIS Express eski DLL kilitler). http://localhost:5153/giris → `admin@clearpay.test` / `Deneme123` → http://localhost:5153/dekont/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001 → **PDF indir**. Veya Havale/Yükle sonrası fişte aynı düğme.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 

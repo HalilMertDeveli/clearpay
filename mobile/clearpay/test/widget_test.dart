@@ -166,4 +166,42 @@ void main() {
     await expectLater(api.wallet(), throwsA(isA<ApiException>()));
     expect(called, isTrue);
   });
+
+  test('receipt JSON keeps last4 hint', () {
+    final receipt = ReceiptSnapshot.fromJson({
+      'correlationId': 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001',
+      'at': '2026-08-17',
+      'kind': 'TopUp',
+      'amount': 25,
+      'debitParty': 'treasury',
+      'creditParty': 'admin@clearpay.test',
+      'description': '****4242',
+      'instrumentHint': '****4242',
+    });
+    expect(receipt.correlationId, 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001');
+    expect(receipt.instrumentHint, '****4242');
+  });
+
+  test('gateway timeout does not look like a posted receipt', () async {
+    final store = MemoryTokenStore(_jwt(email: 'a@clearpay.test'));
+    final api = ClearPayClient(
+      store: store,
+      baseUrl: 'http://localhost:5153',
+      httpClient: MockClient(
+        (_) async => http.Response(
+          jsonEncode({
+            'correlationId': 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001',
+            'detail': 'Gateway timed out',
+          }),
+          202,
+        ),
+      ),
+    );
+    await expectLater(
+      api.topUp(amount: 10, account: 'TIMEOUT'),
+      throwsA(
+        isA<ApiException>().having((e) => e.status, 'status', 202),
+      ),
+    );
+  });
 }
