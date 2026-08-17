@@ -2,6 +2,8 @@
 
 Tarih: **2026-08-17**. Dal: `cursor/yol-haritasi-career-first`. Kaynak: `TASKS.md`, `TARTISMA.md` T-016/T-017, `ORGANIZASYON.md`, `OTURUM-PLAN.md`. Uydurma canlı URL yok.
 
+Mobil yazınca web bakiyesinin güncellenmesi bu dosya değil: [`API-ESZAMAN.md`](API-ESZAMAN.md) (T-071 SignalR). Burada git / masalar / makine.
+
 «Eşzamanlı» burada üç ayrı şey. Karışınca MSB3027, port 5153, HANDOFF silinmesi, ledger çift kesimi çıkar. Ayrı tutunca masalar aynı anda yazabilir; ürün kuyruğu yine **tek TASK**.
 
 Paylaşım: bu dosya GitHub’da public (push sonrası blob). Notion kopyası varsayılan **private** — herkese açık yapmak senin **Share → Publish**.

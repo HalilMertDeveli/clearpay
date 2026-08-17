@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
+import '../auth/account_kind_store.dart';
 import '../auth/token_store.dart';
 import '../theme.dart';
 import 'shell_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key, required this.store, required this.api});
+  const RegisterScreen({
+    super.key,
+    required this.store,
+    required this.api,
+    required this.kindStore,
+  });
 
   final TokenStore store;
   final ClearPayClient api;
+  final AccountKindStore kindStore;
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -43,13 +50,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
         email: _email.text,
         password: _password.text,
         confirmPassword: _confirm.text,
+        accountKind: widget.kindStore.kind,
       );
+      if (!mounted) {
+        return;
+      }
+      final jwtKind = widget.api.accountKind;
+      if (jwtKind != null) {
+        await widget.kindStore.save(jwtKind);
+      }
       if (!mounted) {
         return;
       }
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(
-          builder: (_) => ShellScreen(store: widget.store, api: widget.api),
+          builder: (_) => ShellScreen(
+            store: widget.store,
+            api: widget.api,
+            kindStore: widget.kindStore,
+          ),
         ),
         (_) => false,
       );
@@ -69,6 +88,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
+          Text(
+            '${widget.kindStore.kind} kayıt — aynı 8 ekran',
+            style: const TextStyle(color: navy, fontWeight: FontWeight.w600),
+          ),
           TextField(controller: _name, decoration: const InputDecoration(labelText: 'Ad')),
           TextField(
             controller: _email,

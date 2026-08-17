@@ -54,6 +54,10 @@ public class LoginModel : PageModel
             isPersistent: Input.RememberMe,
             lockoutOnFailure: false);
 
+        // #region agent log
+        AgentDebugLog.Write("K", "Login.cshtml.cs:OnPostAsync", "cookie login", new { ok = result.Succeeded, locked = result.IsLockedOut });
+        // #endregion
+
         if (result.Succeeded)
         {
             return LocalRedirect(SafeReturnUrl());

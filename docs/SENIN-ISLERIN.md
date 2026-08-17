@@ -107,3 +107,13 @@ tool\configure-firebase.cmd
 ```
 
 3. Yeni Google hesabı yok. Secret’ı sohbete yapıştırma. `flutterfire` yazdığı `firebase_options.dart` / `google-services.json` istemci anahtarıdır (JWT signing key değil).
+
+## Mobil ↔ web canlı bakiye (T-071) — senin işin
+
+Kod ajanın. Sen API’yi ayağa kaldırır, JWT ve 409’u Swagger’da kanıtlarsın. Adım adım: [`API-ESZAMAN.md`](API-ESZAMAN.md).
+
+1. Site http://localhost:5153 ayakta (`dotnet run` veya VS F5).
+2. http://localhost:5153/swagger → `POST /api/token` → Authorize Bearer.
+3. Para POST’larında her seferinde yeni `Idempotency-Key` (ikinci aynı key → **409**).
+4. İki istemci: tarayıcı özet açık + Flutter aynı hesap havale. Web kendiliğinden yenilenmeli.
+5. İkinci veritabanı / Firestore bakiye yok. Azure SignalR Service şimdi yok. TASK-16 URL sende.

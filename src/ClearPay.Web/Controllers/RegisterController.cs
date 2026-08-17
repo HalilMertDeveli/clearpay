@@ -52,7 +52,8 @@ public sealed class RegisterController : ControllerBase
         {
             UserName = email,
             Email = email,
-            FullName = request.FullName.Trim()
+            FullName = request.FullName.Trim(),
+            AccountKind = AccountKinds.Normalize(request.AccountKind)
         };
         var created = await _users.CreateAsync(user, request.Password).ConfigureAwait(false);
         if (!created.Succeeded)
@@ -68,7 +69,7 @@ public sealed class RegisterController : ControllerBase
 
         await _users.AddToRoleAsync(user, AppRoles.Musteri).ConfigureAwait(false);
         var roles = await _users.GetRolesAsync(user).ConfigureAwait(false);
-        var token = _tokens.Issue(user.Id, email, roles.ToList());
+        var token = _tokens.Issue(user.Id, email, roles.ToList(), user.AccountKind);
         return Created("/api/wallet", new
         {
             access_token = token,

@@ -1,5 +1,5 @@
-/* ClearPay brand layer — T-040 + T-053 (mobil bankacılık) + T-055 (demo kart yüzü) + T-057 (onay / iskelet).
-   Load after site.css. Yumuşak gölge serbest; gradient bakiye + .demo-card. */
+/* ClearPay brand layer — T-040 + T-053 (mobil) + T-055 (demo kart) + T-057 (onay) + T-072 (internet-şube kromu).
+   Load after site.css. Yumuşak gölge serbest; gradient bakiye + .demo-card. YK/Worldcard asset yok. */
 
 :root {
   --brand-navy: #1b2a4a;
@@ -27,7 +27,8 @@
 /* Kart yükseltmesi — 1px çizgi durur, gölge onu yumuşatır */
 .stat-card,
 .panel,
-.panel-inline {
+.panel-inline,
+.ops-rail {
   box-shadow: var(--elev-1);
 }
 
@@ -73,6 +74,11 @@ form[aria-busy="true"] .field-input {
   letter-spacing: 0;
   font-weight: 700;
   font-size: 0.85rem;
+}
+
+.pill-admin {
+  border-color: var(--brand-warm);
+  color: #fff;
 }
 
 .page-kicker {
@@ -415,6 +421,32 @@ button[name="provider"][value="Apple"]:hover {
 }
 
 .tabbar .nav-ico--activity::before {
+  background: currentColor;
+  box-shadow: 0 3px 0 currentColor, 0 6px 0 currentColor;
+}
+
+/* T-072: sol menü kâğıt zeminde; glifler navy */
+.sidebar .nav-ico {
+  background: rgba(27, 42, 74, 0.08);
+  color: var(--navy, #1b2a4a);
+}
+
+.sidebar .nav-ico--overview::before,
+.sidebar .nav-ico--admin::before {
+  border-color: currentColor;
+}
+
+.sidebar .nav-ico--send::before {
+  border-top-color: currentColor;
+  border-right-color: currentColor;
+}
+
+.sidebar .nav-ico--topup::before,
+.sidebar .nav-ico--topup::after {
+  background: currentColor;
+}
+
+.sidebar .nav-ico--activity::before {
   background: currentColor;
   box-shadow: 0 3px 0 currentColor, 0 6px 0 currentColor;
 }

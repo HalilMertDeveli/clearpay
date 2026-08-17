@@ -27,7 +27,11 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [x] UI: mobil bankacılık düzeni — alt sekme çubuğu, ortalanmış kolon, ölçülü derinlik (T-053; TASK numarası değil, 8 ekran aynı)
 - [x] UI: demo kayıtlı kart — Yükle/Çek paneli, PAN yok (T-055; 9. ekran yok)
 - [x] UI: kamu cüzdan örnekleri — havale onay, unfreeze, tarih-bitiş, fiş corr/son4 (T-057; TASK numarası değil, 8 ekran aynı)
-- [x] UI: Flutter sol çekmece + perakende banka ana kromu (T-066; TASK numarası değil, 8 ekran aynı; YK kopyası değil)
+- [x] UI: web+mobil+JWT parite — GET transfer, 401 ProblemDetails, Yükle İptal, Admin rol hapı, Flutter tarih/sayfa/secure JWT/freeze (T-073; TASK numarası değil, 8 ekran aynı)
+- [x] UI: Flutter TC demo giriş + FAST/QR kısayol + QR kanal (T-067; TASK numarası değil, 8 ekran aynı)
+- [x] UI: splash + Bireysel/Kurumsal Identity AccountKind (T-068; Firebase kasa yok; 8 ekran aynı)
+- [x] UI: web internet-şube kromu — masthead + hızlı işlemler (T-072; TASK numarası değil, 8 ekran aynı; YK kopyası değil)
+- [x] UI: web dekont PDF — mevcut ledger correlation (T-079; 9. ekran yok)
 
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
@@ -38,6 +42,11 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - T-063: Flutter aynı git repo (`mobile/clearpay` + `ClearPay.code-workspace`). İç içe git yok. TASK-16 Todo.
 - T-065: Flutter `firebase_core` (istemci). Firestore/Auth ikinci kasa yok. Firebase projesi Halil. TASK-16 Todo.
 - T-066: Flutter sol `NavigationDrawer` + özet bakiye kartı / kısayol (8 işlem). YK/Papara marka yok. TASK-16 Todo.
+- T-067: Flutter TC demo giriş + ana ızgara (FAST→Havale, QR al/öde kanal, Daha fazla, Piyasalar park). YK/World/Jet QR yok. TASK-16 Todo.
+- T-068: Splash + Bireysel/Kurumsal. SQL Identity `AccountKind` + JWT `account_kind`. Firebase’e mod yazılmaz. TASK-16 Todo.
+- T-071: SignalR `/hubs/wallet` — mobil yazınca web yenilenir; bakiye hub’da yok. Halil tıkları: [`API-ESZAMAN.md`](API-ESZAMAN.md). TASK-16 Todo.
+- T-072: girişli Razor internet-şube kromu (YK *düzeni*, marka yok). 560px kolon 1120px. Tabbar ≤800px durur. TASK-16 Todo.
+- T-079: dekont PDF (aynı SQL fiş). Razor `handler=Pdf` + `GET /api/receipts/{id}/pdf`. TASK-16 Todo.
 - TASK-12: `ConnectionStrings:RabbitMq` yok/düşer → log publisher; Hangfire yedek. Health `rabbit` up/down/off. CloudAMQP hesabı açılmaz.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz

@@ -55,7 +55,8 @@ public class RegisterModel : PageModel
         {
             UserName = email,
             Email = email,
-            FullName = Input.FullName.Trim()
+            FullName = Input.FullName.Trim(),
+            AccountKind = AccountKinds.Normalize(Input.AccountKind)
         };
 
         var created = await _userManager.CreateAsync(user, Input.Password);

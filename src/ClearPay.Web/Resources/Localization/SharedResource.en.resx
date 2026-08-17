@@ -21,6 +21,9 @@
   <data name="AvailableBalance" xml:space="preserve"><value>Available balance</value></data>
   <data name="BackToWallet" xml:space="preserve"><value>Back to wallet</value></data>
   <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="WebChannel" xml:space="preserve"><value>Internet</value></data>
+  <data name="Welcome" xml:space="preserve"><value>Welcome</value></data>
+  <data name="QuickOps" xml:space="preserve"><value>Quick actions</value></data>
   <data name="AddCard" xml:space="preserve"><value>Add card</value></data>
   <data name="CardAddFail" xml:space="preserve"><value>Could not add the card. Enter 4 digits only — no full card number. Max 5 cards.</value></data>
   <data name="CardAddOk" xml:space="preserve"><value>Demo card saved. Top-up and withdraw use this card as the hint.</value></data>
@@ -103,6 +106,7 @@
   <data name="RemainingBalance" xml:space="preserve"><value>Remaining balance</value></data>
   <data name="RequestId" xml:space="preserve"><value>Request id</value></data>
   <data name="RoleCustomer" xml:space="preserve"><value>Customer</value></data>
+  <data name="RoleAdmin" xml:space="preserve"><value>Admin</value></data>
   <data name="Send" xml:space="preserve"><value>Send</value></data>
   <data name="SendTransfer" xml:space="preserve"><value>Send transfer</value></data>
   <data name="SignIn" xml:space="preserve"><value>Sign in</value></data>
@@ -115,6 +119,7 @@
   <data name="CopyRef" xml:space="preserve"><value>Copy</value></data>
   <data name="Copied" xml:space="preserve"><value>Copied</value></data>
   <data name="PrintReceipt" xml:space="preserve"><value>Print</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>Download PDF</value></data>
   <data name="AccessDeniedTitle" xml:space="preserve"><value>Access denied</value></data>
   <data name="AccessDeniedHint" xml:space="preserve"><value>You do not have permission for this page. Return to the wallet overview.</value></data>
   <data name="SocialEmailRequired" xml:space="preserve"><value>The provider did not send an email. Register with email and password.</value></data>

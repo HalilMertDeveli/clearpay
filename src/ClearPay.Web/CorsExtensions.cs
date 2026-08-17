@@ -20,7 +20,7 @@ public static class CorsExtensions
         {
             options.AddPolicy(PolicyName, policy =>
             {
-                policy.AllowAnyHeader().AllowAnyMethod();
+                policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 if (environment.IsDevelopment())
                 {
                     policy.SetIsOriginAllowed(static origin =>

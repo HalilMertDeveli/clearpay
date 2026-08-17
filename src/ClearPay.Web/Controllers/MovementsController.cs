@@ -16,12 +16,16 @@ public sealed class MovementsController : ControllerBase
         _activity = activity;
     }
 
+    /// <summary>Ledger activity for the JWT subject. Default pageSize 20, max 50.</summary>
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Get(
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to,
         [FromQuery] string? kind,
         [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -35,7 +39,8 @@ public sealed class MovementsController : ControllerBase
             ? new DateTimeOffset(DateTime.SpecifyKind(end.Date.AddDays(1), DateTimeKind.Utc))
             : null;
 
-        var result = await _activity.ListAsync(userId, fromUtc, toUtc, kind, page, cancellationToken)
+        var result = await _activity
+            .ListAsync(userId, fromUtc, toUtc, kind, page, pageSize, cancellationToken)
             .ConfigureAwait(false);
         return Ok(new
         {

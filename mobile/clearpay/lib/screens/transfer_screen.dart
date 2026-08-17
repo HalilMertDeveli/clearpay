@@ -1,29 +1,57 @@
 import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
+import '../qr/pay_uri.dart';
 import '../theme.dart';
 
+class TransferPrefill {
+  const TransferPrefill({this.recipient, this.amount, this.description});
+
+  final String? recipient;
+  final String? amount;
+  final String? description;
+}
+
 class TransferScreen extends StatefulWidget {
-  const TransferScreen({super.key, required this.api});
+  const TransferScreen({super.key, required this.api, this.prefill});
 
   final ClearPayClient api;
+  final TransferPrefill? prefill;
 
   @override
   State<TransferScreen> createState() => _TransferScreenState();
 }
 
 class _TransferScreenState extends State<TransferScreen> {
-  final _recipient = TextEditingController();
-  final _amount = TextEditingController();
-  final _description = TextEditingController(text: 'demo');
+  late final TextEditingController _recipient;
+  late final TextEditingController _amount;
+  late final TextEditingController _description;
   double? _balance;
+  bool _frozen = false;
   String? _message;
   bool _busy = false;
 
   @override
   void initState() {
     super.initState();
+    _recipient = TextEditingController(text: widget.prefill?.recipient ?? '');
+    _amount = TextEditingController(text: widget.prefill?.amount ?? '');
+    _description = TextEditingController(text: widget.prefill?.description ?? 'demo');
     _loadBalance();
+  }
+
+  @override
+  void didUpdateWidget(covariant TransferScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final next = widget.prefill;
+    if (next != null && !identical(next, oldWidget.prefill)) {
+      if (next.recipient != null) {
+        _recipient.text = next.recipient!;
+      }
+      if (next.amount != null) {
+        _amount.text = next.amount!;
+      }
+    }
   }
 
   @override
@@ -40,13 +68,52 @@ class _TransferScreenState extends State<TransferScreen> {
       if (!mounted) {
         return;
       }
-      setState(() => _balance = wallet.balance);
+      setState(() {
+        _balance = wallet.balance;
+        _frozen = wallet.isFrozen;
+        if (wallet.isFrozen) {
+          _message = 'Cüzdan dondurulmuş; gönderim kapalı.';
+        }
+      });
     } on ApiException catch (e) {
       if (!mounted) {
         return;
       }
       setState(() => _message = e.message);
     }
+  }
+
+  Future<void> _pasteQr() async {
+    final field = TextEditingController();
+    final raw = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('QR yapıştır'),
+        content: TextField(
+          controller: field,
+          decoration: const InputDecoration(labelText: 'clearpay://pay?to=… veya e-posta'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, field.text), child: const Text('Doldur')),
+        ],
+      ),
+    );
+    if (raw == null) {
+      return;
+    }
+    final parsed = PayUri.tryParse(raw);
+    if (parsed == null) {
+      setState(() => _message = 'Geçerli ClearPay QR veya e-posta girin.');
+      return;
+    }
+    setState(() {
+      _recipient.text = parsed.to;
+      if (parsed.amount != null) {
+        _amount.text = parsed.amount!;
+      }
+      _message = 'QR alıcı forma yazıldı. Onay + POST /api/transfers.';
+    });
   }
 
   Future<void> _send() async {
@@ -96,6 +163,10 @@ class _TransferScreenState extends State<TransferScreen> {
       padding: const EdgeInsets.all(20),
       children: [
         if (_balance != null) Text('Kalan bakiye: ${formatTry(_balance!)}', style: const TextStyle(color: navy)),
+        const Text(
+          'QR ile öde bu formdur. Jet QR değil.',
+          style: TextStyle(color: muted, fontSize: 12),
+        ),
         TextField(
           controller: _recipient,
           keyboardType: TextInputType.emailAddress,
@@ -110,10 +181,12 @@ class _TransferScreenState extends State<TransferScreen> {
           controller: _description,
           decoration: const InputDecoration(labelText: 'Açıklama'),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
+        OutlinedButton(onPressed: _pasteQr, child: const Text('QR yapıştır')),
+        const SizedBox(height: 8),
         FilledButton(
-          onPressed: _busy ? null : _send,
-          child: Text(_busy ? '…' : 'Gönder'),
+          onPressed: (_busy || _frozen) ? null : _send,
+          child: Text(_frozen ? 'Dondurulmuş' : (_busy ? '…' : 'Gönder')),
         ),
         if (_message != null) ...[
           const SizedBox(height: 12),

@@ -170,6 +170,47 @@ public sealed class TransferApiTests : IClassFixture<ClearPayWebFactory>
         poor.StatusCode.Should().Be((HttpStatusCode)422);
     }
 
+    [Fact]
+    public async Task Get_transfer_by_id_returns_201_location_and_hides_strangers()
+    {
+        var client = _factory.CreateClient();
+        var senderEmail = $"get.{Guid.NewGuid():N}@clearpay.test";
+        var recipientEmail = $"hedef.{Guid.NewGuid():N}@clearpay.test";
+        var strangerEmail = $"yabanci.{Guid.NewGuid():N}@clearpay.test";
+        await RegisterAsync(client, senderEmail, "Gönderen");
+        await RegisterAsync(client, recipientEmail, "Alıcı");
+        await RegisterAsync(client, strangerEmail, "Yabancı");
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var sender = await users.FindByEmailAsync(senderEmail);
+            await FundAsync(scope.ServiceProvider.GetRequiredService<ClearPayDbContext>(), sender!.Id, 80m);
+        }
+
+        var token = await GetTokenAsync(client, senderEmail);
+        var created = await PostTransferAsync(client, token, "get-" + Guid.NewGuid().ToString("N"), recipientEmail, 12m);
+        created.StatusCode.Should().Be(HttpStatusCode.Created);
+        using var body = JsonDocument.Parse(await created.Content.ReadAsStringAsync());
+        var transferId = body.RootElement.GetProperty("transferId").GetGuid();
+        created.Headers.Location.Should().NotBeNull();
+        created.Headers.Location!.ToString().Should().Contain(transferId.ToString());
+
+        using var got = await GetJsonAsync(client, token, $"/api/transfers/{transferId}");
+        got.RootElement.GetProperty("transferId").GetGuid().Should().Be(transferId);
+        got.RootElement.GetProperty("amount").GetDecimal().Should().Be(12m);
+
+        var strangerToken = await GetTokenAsync(client, strangerEmail);
+        (await GetRawAsync(client, strangerToken, $"/api/transfers/{transferId}"))
+            .StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var anon = await client.GetAsync($"/api/transfers/{transferId}");
+        anon.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        anon.Content.Headers.ContentType!.MediaType.Should().Be("application/problem+json");
+        var problem = await anon.Content.ReadAsStringAsync();
+        problem.Should().Contain("Unauthorized");
+    }
+
     private static async Task RegisterAsync(HttpClient client, string email, string name)
     {
         var page = await client.GetStringAsync("/Account/Register");
@@ -210,6 +251,20 @@ public sealed class TransferApiTests : IClassFixture<ClearPayWebFactory>
         request.Headers.TryAddWithoutValidation("Idempotency-Key", key);
         if (!string.IsNullOrEmpty(token))
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return await client.SendAsync(request);
+    }
+
+    private static async Task<JsonDocument> GetJsonAsync(HttpClient client, string token, string url)
+    {
+        using var response = await GetRawAsync(client, token, url);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        return JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+    }
+
+    private static async Task<HttpResponseMessage> GetRawAsync(HttpClient client, string token, string url)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return await client.SendAsync(request);
     }
 

@@ -38,7 +38,8 @@ public static class IdentitySeeder
             {
                 UserName = DevelopmentAdminEmail,
                 Email = DevelopmentAdminEmail,
-                FullName = "ClearPay Admin"
+                FullName = "ClearPay Admin",
+                AccountKind = AccountKinds.Bireysel
             };
             var created = await users.CreateAsync(admin, "Deneme123");
             if (!created.Succeeded)

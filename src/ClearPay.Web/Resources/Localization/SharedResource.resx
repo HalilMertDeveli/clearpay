@@ -21,6 +21,9 @@
   <data name="AvailableBalance" xml:space="preserve"><value>Kullanılabilir bakiye</value></data>
   <data name="BackToWallet" xml:space="preserve"><value>Cüzdana dön</value></data>
   <data name="Cancel" xml:space="preserve"><value>İptal</value></data>
+  <data name="WebChannel" xml:space="preserve"><value>İnternet</value></data>
+  <data name="Welcome" xml:space="preserve"><value>Hoş geldiniz</value></data>
+  <data name="QuickOps" xml:space="preserve"><value>Hızlı işlemler</value></data>
   <data name="AddCard" xml:space="preserve"><value>Kart ekle</value></data>
   <data name="CardAddFail" xml:space="preserve"><value>Kart eklenemedi. Yalnızca 4 hane yazın; tam kart numarası yok. En fazla 5 kart.</value></data>
   <data name="CardAddOk" xml:space="preserve"><value>Demo kart kaydedildi. Yükle/çek bu karta bağlanır.</value></data>
@@ -103,6 +106,7 @@
   <data name="RemainingBalance" xml:space="preserve"><value>Kalan bakiye</value></data>
   <data name="RequestId" xml:space="preserve"><value>İstek no</value></data>
   <data name="RoleCustomer" xml:space="preserve"><value>Musteri</value></data>
+  <data name="RoleAdmin" xml:space="preserve"><value>Admin</value></data>
   <data name="Send" xml:space="preserve"><value>Gönder</value></data>
   <data name="SendTransfer" xml:space="preserve"><value>Havale gönder</value></data>
   <data name="SignIn" xml:space="preserve"><value>Giriş</value></data>
@@ -115,6 +119,7 @@
   <data name="CopyRef" xml:space="preserve"><value>Kopyala</value></data>
   <data name="Copied" xml:space="preserve"><value>Kopyalandı</value></data>
   <data name="PrintReceipt" xml:space="preserve"><value>Yazdır</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>PDF indir</value></data>
   <data name="AccessDeniedTitle" xml:space="preserve"><value>Erişim yok</value></data>
   <data name="AccessDeniedHint" xml:space="preserve"><value>Bu sayfa için yetkiniz yok. Cüzdan özetine dönebilirsiniz.</value></data>
   <data name="SocialEmailRequired" xml:space="preserve"><value>Sağlayıcı e-posta göndermedi. E-posta ve şifre ile kaydolun.</value></data>

@@ -25,6 +25,7 @@ public sealed class SwaggerTests : IClassFixture<ClearPayWebFactory>
         json.Should().Contain("/api/wallet");
         json.Should().Contain("/api/movements");
         json.Should().Contain("/api/receipts");
+        json.Should().Contain("/pdf");
         json.Should().Contain("/api/topup");
         json.Should().Contain("/api/withdraw");
         json.Should().Contain("wallet was not charged");

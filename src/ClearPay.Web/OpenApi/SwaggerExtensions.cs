@@ -13,7 +13,7 @@ public static class SwaggerExtensions
             {
                 Title = "ClearPay API",
                 Version = "v1",
-                Description = "Demo wallet JSON API. Not a licensed e-money institution. Same Idempotency-Key → HTTP 409, no second debit."
+                Description = "Demo wallet JSON API. Not a licensed e-money institution. Same Idempotency-Key → HTTP 409, no second debit. Live refresh: SignalR /hubs/wallet (JWT query access_token). Hub payload is a hint — GET /api/wallet remains the balance."
             });
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {

@@ -70,10 +70,140 @@ flowchart TB
 |--------|-------|----------|-----------|
 | UI + host | `ClearPay.Web` | Razor, cookie, dil çerezi, `:5153` | Ledger net, `UPDATE Balance` |
 | Use case | `ClearPay.Application` | Portlar, DTO, FluentValidation | Connection string |
-| Adapter | `ClearPay.Infrastructure` | EF SQL Server, Identity SQLite, gateway stub | Razor / CSS |
+| Adapter | `ClearPay.Infrastructure` | EF SQL Server (Identity + ledger, aynı LocalDB), gateway stub | Razor / CSS |
 | Kural | `ClearPay.Domain` | `LedgerPair`, `Wallet` (bakiye alanı yok) | EF, HTTP, ASP.NET |
 
 Bağımlılık **içe** bakar. Domain EF veya ASP.NET görmez.
+
+---
+
+## İlişkisel şema (SQL Server)
+
+**Demo — sahte banka gateway. Lisanslı e-para değil.** Papara / FAST / sahte perakende banka değil. Sekiz ekran; 9. ekran yok.
+
+Lokal Development: `(localdb)\MSSQLLocalDB` / veritabanı `ClearPay`. Identity ve defter **aynı** veritabanında (iki EF context, iki history tablosu). **İki istemci, tek SQL defter:** Razor (cookie) ve Flutter (JWT). Flutter `firebase_core` proje `clearpay-c0485` — Firestore kasa değil. MySQL (`ConnectionStrings:MySql`) yan motor; para orada durmaz.
+
+`Wallet.Balance` kolonu **yok**. Bakiye = `LedgerPair.NetOf` (C#; SQL tablosu değil). `UPDATE Balance` yok. `Wallet.UserId` unique; `AspNetUsers.Id` ile aynı DB’de eşleşir, **FK yok** (iki DbContext). Gerçek FK’ler Identity üyelik + `LedgerEntry` → `Wallet` / `Transfer` + `Transfer` → `Wallet`.
+
+Diyagram GitHub varsayılan README’de (`README.md`, bölüm **Relational schema (SQL Server)**) aynı mermaid’dir.
+
+```mermaid
+erDiagram
+    AspNetUsers {
+        string Id PK
+        string FullName
+        string Email
+        string AccountKind
+        string UserName
+    }
+    AspNetRoles {
+        string Id PK
+        string Name
+    }
+    AspNetUserRoles {
+        string UserId PK
+        string RoleId PK
+    }
+    AspNetUserClaims {
+        int Id PK
+        string UserId FK
+        string ClaimType
+        string ClaimValue
+    }
+    AspNetRoleClaims {
+        int Id PK
+        string RoleId FK
+        string ClaimType
+        string ClaimValue
+    }
+    AspNetUserLogins {
+        string LoginProvider PK
+        string ProviderKey PK
+        string UserId FK
+    }
+    AspNetUserTokens {
+        string UserId PK
+        string LoginProvider PK
+        string Name PK
+    }
+    Wallet {
+        uniqueidentifier Id PK
+        string UserId UK
+        bit IsFrozen
+        datetimeoffset CreatedAt
+    }
+    LedgerEntry {
+        uniqueidentifier Id PK
+        uniqueidentifier WalletId FK
+        decimal Amount
+        uniqueidentifier PairId
+        uniqueidentifier CorrelationId
+        uniqueidentifier TransferId FK
+        int Kind
+        nvarchar Description
+        datetimeoffset CreatedAt
+    }
+    Transfer {
+        uniqueidentifier Id PK
+        uniqueidentifier FromWalletId FK
+        uniqueidentifier ToWalletId FK
+        decimal Amount
+        int Status
+        uniqueidentifier CorrelationId
+        datetimeoffset CreatedAt
+    }
+    IdempotencyRecord {
+        nvarchar Key PK
+        nvarchar Scope
+        nvarchar RequestHash
+        uniqueidentifier ResourceId
+        datetimeoffset CreatedAt
+    }
+    AuditLog {
+        uniqueidentifier Id PK
+        string ActorUserId
+        nvarchar Action
+        uniqueidentifier CorrelationId
+        nvarchar Details
+        datetimeoffset CreatedAt
+    }
+    OutboxMessage {
+        uniqueidentifier Id PK
+        nvarchar Type
+        nvarchar Payload
+        uniqueidentifier CorrelationId
+        int Status
+        datetimeoffset OccurredAt
+        datetimeoffset ProcessedAt
+    }
+    LinkedInstrument {
+        uniqueidentifier Id PK
+        string UserId
+        nvarchar Last4
+        nvarchar Label
+        datetimeoffset CreatedAt
+    }
+    EFMigrationsHistory {
+        nvarchar MigrationId PK
+        nvarchar ProductVersion
+    }
+    EFMigrationsHistoryIdentity {
+        nvarchar MigrationId PK
+        nvarchar ProductVersion
+    }
+    AspNetUsers ||--o{ AspNetUserRoles : UserId
+    AspNetRoles ||--o{ AspNetUserRoles : RoleId
+    AspNetUsers ||--o{ AspNetUserClaims : UserId
+    AspNetUsers ||--o{ AspNetUserLogins : UserId
+    AspNetUsers ||--o{ AspNetUserTokens : UserId
+    AspNetRoles ||--o{ AspNetRoleClaims : RoleId
+    Wallet ||--o{ LedgerEntry : WalletId
+    Wallet ||--o{ Transfer : FromWalletId
+    Wallet ||--o{ Transfer : ToWalletId
+    Transfer |o--o{ LedgerEntry : TransferId
+```
+
+EF history adları: `__EFMigrationsHistory` (ledger) ve `__EFMigrationsHistoryIdentity` (Identity). `IdempotencyRecord.Key` unique (tekrar → **409**). `LinkedInstrument` yalnız son dört hane.
 
 ---
 
@@ -106,10 +236,9 @@ Redis yalnızca özet DTO (~60s; para hareketinde invalidate). Kasa SQL Server. 
 
 ## Çalıştırma
 
-.NET 8 SDK. Canlı özet için Docker Desktop.
+.NET 8 SDK. **Web Development** SQL Server LocalDB — `(localdb)\MSSQLLocalDB` / `ClearPay` — Identity + ledger. Docker Desktop isteğe bağlı (SQL Server 2022 + Redis/Rabbit).
 
 ```bash
-docker compose up -d
 dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
@@ -121,16 +250,16 @@ flutter doctor
 flutter run -d windows
 ```
 
-Android emülatör: `http://10.0.2.2:5153`. Identity için Docker gerekmez. SQL yoksa özet `0,00 ₺` kalır.
+Android emülatör: `http://10.0.2.2:5153`. Flutter JWT ile aynı host’a gider; `firebase_core` (`clearpay-c0485`) bakiye tutmaz. LocalDB/SQL yoksa özet `0,00 ₺` kalır.
 
 ```bash
 dotnet test
 dotnet build ClearPay.slnx
 ```
 
-Lokal SA şifresi `.env.example` içinde. Yalnız Docker. `.env` commit edilmez. Azure’da bu şifre yok.
+İsteğe bağlı Docker SQL bind: `D:\ClearPay\data\mssql`. Lokal SA şifresi `.env.example` (yalnız Compose). `.env` commit edilmez. Azure’da bu şifre yok.
 
-SQL veri bind: `D:\ClearPay\data\mssql` (bu makine). Uygulama defteri **yalnızca SQL Server**. MySQL/Oracle compose yan servis; cüzdan veritabanı değil.
+Uygulama defteri **yalnızca SQL Server**. MySQL (`ConnectionStrings:MySql`) yan motor; cüzdan veritabanı değil. Mobil **JWT → C# → SQL Server** — Flutter’da MySQL sürücüsü ve Firestore kasa yok.
 
 ---
 
@@ -139,7 +268,7 @@ SQL veri bind: `D:\ClearPay\data\mssql` (bu makine). Uygulama defteri **yalnızc
 ```
 src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (Balance yok)
 src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
-src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity SQLite
+src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity (aynı LocalDB)
 src/ClearPay.Web              Razor + localization + MapControllers
 mobile/clearpay               Flutter JWT istemci (.slnx’de yok)
 tests/ClearPay.Tests          LedgerPair, mimari, SqlWalletReader, dil
@@ -170,6 +299,7 @@ CI `main` üzerinde `tests/ClearPay.Tests` restore + test eder.
 - [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter istemci (aynı sekiz işlem)
 - Adım adım: [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (bu repo, public). Aynı liste [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — sayfada Share → Publish to web (Notion hesabı olmayan da okusun).
 - [`docs/ESZAMANLI.md`](docs/ESZAMANLI.md) — eşzamanlı çalışma (git / masalar / makine)
+- [`docs/API-ESZAMAN.md`](docs/API-ESZAMAN.md) — canlı bakiye hub (API tıkları; SignalR ≠ kasa)
 
 Canlı hedef: Azure App Service + Azure SQL (West Europe). Tıklanacak `azurewebsites.net` yok.
 

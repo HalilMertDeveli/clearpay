@@ -1,6 +1,12 @@
 using System.Net;
+using ClearPay.Domain.Ledger;
+using ClearPay.Infrastructure.Identity;
+using ClearPay.Infrastructure.Persistence;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ClearPay.Tests;
 
@@ -126,6 +132,10 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         wallet.Should().Contain("Bu ay giden");
         wallet.Should().Contain("Bu ay gelen");
         wallet.Should().Contain("Yükle / Çek");
+        wallet.Should().Contain("masthead");
+        wallet.Should().Contain("Hızlı işlemler");
+        wallet.Should().Contain("İnternet");
+        wallet.Should().NotContain("Worldcard");
         wallet.Should().NotContain(">Admin<");
     }
 
@@ -221,6 +231,56 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         html.Should().Contain("Havale gönder");
         html.Should().Contain("skip-link");
         html.Should().NotContain(">Kartlar<");
+    }
+
+    [Fact]
+    public async Task Dekont_page_offers_pdf_of_existing_ledger_row()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = true,
+            HandleCookies = true
+        });
+        if (!await LoginPageExistsAsync(client))
+            return;
+
+        var email = $"pdf.{Guid.NewGuid():N}@clearpay.test";
+        var registerGet = await client.GetAsync("/Account/Register");
+        var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Input.FullName"] = "Pdf Deneme",
+            ["Input.Email"] = email,
+            ["Input.Password"] = "Deneme123",
+            ["Input.ConfirmPassword"] = "Deneme123",
+            ["__RequestVerificationToken"] = token
+        }));
+
+        Guid correlation;
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var userId = (await users.FindByEmailAsync(email))!.Id;
+            var db = scope.ServiceProvider.GetRequiredService<ClearPayDbContext>();
+            var wallet = new Wallet { Id = Guid.NewGuid(), UserId = userId, CreatedAt = DateTimeOffset.UtcNow };
+            var treasury = new Wallet { Id = Guid.NewGuid(), UserId = "fund-pdf", CreatedAt = DateTimeOffset.UtcNow };
+            db.Wallets.AddRange(treasury, wallet);
+            correlation = Guid.NewGuid();
+            var (debit, credit) = LedgerPair.Create(treasury.Id, wallet.Id, 25m, correlation, LedgerEntryKind.TopUp);
+            db.LedgerEntries.AddRange(debit, credit);
+            await db.SaveChangesAsync();
+        }
+
+        var html = await client.GetStringAsync($"/dekont/{correlation}");
+        html.Should().Contain("PDF indir");
+        html.Should().Contain("handler=Pdf");
+        html.Should().NotContain("Worldcard");
+
+        var pdf = await client.GetAsync($"/dekont/{correlation}?handler=Pdf");
+        pdf.StatusCode.Should().Be(HttpStatusCode.OK);
+        pdf.Content.Headers.ContentType!.MediaType.Should().Be("application/pdf");
+        var bytes = await pdf.Content.ReadAsByteArrayAsync();
+        System.Text.Encoding.ASCII.GetString(bytes, 0, 4).Should().Be("%PDF");
     }
 
     [Fact]

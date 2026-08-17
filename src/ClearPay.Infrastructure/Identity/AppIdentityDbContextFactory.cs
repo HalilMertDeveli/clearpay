@@ -10,7 +10,7 @@ public sealed class AppIdentityDbContextFactory : IDesignTimeDbContextFactory<Ap
     {
         var options = new DbContextOptionsBuilder<AppIdentityDbContext>()
             .UseSqlServer(
-                "Server=lpc:localhost;Database=ClearPay;Integrated Security=True;TrustServerCertificate=True;Encrypt=True",
+                "Server=(localdb)\\MSSQLLocalDB;Database=ClearPay;Integrated Security=True;TrustServerCertificate=True;Encrypt=True",
                 sql => sql.MigrationsHistoryTable(AppIdentityDbContext.SqlMigrationsHistoryTable))
             .Options;
         return new AppIdentityDbContext(options);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
+import '../api/wallet_live_hub.dart';
+import '../auth/account_kind_store.dart';
 import '../auth/token_store.dart';
 import '../theme.dart';
 import 'admin_screen.dart';
@@ -11,10 +13,16 @@ import 'overview_screen.dart';
 import 'transfer_screen.dart';
 
 class ShellScreen extends StatefulWidget {
-  const ShellScreen({super.key, required this.store, required this.api});
+  const ShellScreen({
+    super.key,
+    required this.store,
+    required this.api,
+    required this.kindStore,
+  });
 
   final TokenStore store;
   final ClearPayClient api;
+  final AccountKindStore kindStore;
 
   @override
   State<ShellScreen> createState() => _ShellScreenState();
@@ -22,17 +30,56 @@ class ShellScreen extends StatefulWidget {
 
 class _ShellScreenState extends State<ShellScreen> {
   int _index = 0;
+  int _liveTick = 0;
+  final WalletLiveHub _live = WalletLiveHub();
+  TransferPrefill? _prefill;
+  int _prefillNonce = 0;
+  var _leaving = false;
 
   static const _movementsIndex = 3;
 
+  String get _kind =>
+      normalizeAccountKind(widget.api.accountKind ?? widget.kindStore.kind);
+
+  @override
+  void initState() {
+    super.initState();
+    _live.connect(
+      baseUrl: widget.api.baseUrl,
+      token: () => widget.store.token,
+      onChanged: () {
+        if (mounted) {
+          setState(() => _liveTick++);
+        }
+      },
+    );
+    widget.api.onUnauthorized = _logout;
+  }
+
+  @override
+  void dispose() {
+    _live.dispose();
+    super.dispose();
+  }
+
   Future<void> _logout() async {
+    if (_leaving) {
+      return;
+    }
+    _leaving = true;
+    widget.api.onUnauthorized = null;
+    await _live.dispose();
     await widget.store.clear();
     if (!mounted) {
       return;
     }
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(
-        builder: (_) => LoginScreen(store: widget.store, api: widget.api),
+        builder: (_) => LoginScreen(
+          store: widget.store,
+          api: widget.api,
+          kindStore: widget.kindStore,
+        ),
       ),
       (_) => false,
     );
@@ -40,6 +87,14 @@ class _ShellScreenState extends State<ShellScreen> {
 
   void _openTab(int index) {
     setState(() => _index = index);
+  }
+
+  void _openPay(TransferPrefill prefill) {
+    setState(() {
+      _prefill = prefill;
+      _prefillNonce++;
+      _index = 1;
+    });
   }
 
   void _selectDrawerDestination(int i) {
@@ -51,11 +106,21 @@ class _ShellScreenState extends State<ShellScreen> {
   Widget build(BuildContext context) {
     final admin = widget.api.isAdmin;
     final pages = [
-      OverviewScreen(api: widget.api, onOpenTab: _openTab),
-      TransferScreen(api: widget.api),
-      FundingScreen(api: widget.api),
-      MovementsScreen(api: widget.api),
-      if (admin) AdminScreen(api: widget.api),
+      OverviewScreen(
+        api: widget.api,
+        kind: _kind,
+        onOpenTab: _openTab,
+        onPayQr: _openPay,
+        liveTick: _liveTick,
+      ),
+      TransferScreen(
+        key: ValueKey('transfer-$_prefillNonce'),
+        api: widget.api,
+        prefill: _prefill,
+      ),
+      FundingScreen(api: widget.api, liveTick: _liveTick),
+      MovementsScreen(api: widget.api, liveTick: _liveTick),
+      if (admin) AdminScreen(api: widget.api, liveTick: _liveTick),
     ];
     final titles = [
       'Özet',
@@ -65,12 +130,25 @@ class _ShellScreenState extends State<ShellScreen> {
       if (admin) 'Admin',
     ];
     return Scaffold(
-      appBar: AppBar(title: Text(titles[_index])),
+      appBar: AppBar(
+        title: Text(titles[_index]),
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Text(
+                _kind,
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+        ],
+      ),
       drawer: NavigationDrawer(
         selectedIndex: _index,
         onDestinationSelected: _selectDrawerDestination,
         children: [
-          _DrawerBrand(email: widget.api.email),
+          _DrawerBrand(email: widget.api.email, kind: _kind),
           const NavigationDrawerDestination(
             icon: Icon(Icons.account_balance_wallet_outlined),
             selectedIcon: Icon(Icons.account_balance_wallet),
@@ -146,9 +224,10 @@ class _ShellScreenState extends State<ShellScreen> {
 }
 
 class _DrawerBrand extends StatelessWidget {
-  const _DrawerBrand({this.email});
+  const _DrawerBrand({this.email, required this.kind});
 
   final String? email;
+  final String kind;
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +253,11 @@ class _DrawerBrand extends StatelessWidget {
               Text(
                 email ?? '',
                 style: const TextStyle(color: Colors.white70, fontSize: 13),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '$kind · üye iş yeri değil',
+                style: const TextStyle(color: Colors.white70, fontSize: 12),
               ),
             ],
           ),

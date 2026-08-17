@@ -70,10 +70,138 @@ flowchart TB
 |-------|---------|-------|----------------|
 | UI + host | `ClearPay.Web` | Razor, cookie, culture cookie, `:5153` | Ledger net, `UPDATE Balance` |
 | Use cases | `ClearPay.Application` | Ports, DTOs, FluentValidation | Connection strings |
-| Adapters | `ClearPay.Infrastructure` | EF SQL Server, Identity SQLite, gateway stubs | Razor / CSS |
+| Adapters | `ClearPay.Infrastructure` | EF SQL Server (Identity + ledger, same LocalDB), gateway stubs | Razor / CSS |
 | Rules | `ClearPay.Domain` | `LedgerPair`, `Wallet` (no balance field) | EF, HTTP, ASP.NET |
 
 Dependencies point **inward**. Domain does not reference EF or ASP.NET.
+
+---
+
+## Relational schema (SQL Server)
+
+**Demo — sahte banka gateway. Lisanslı e-para değil.** Not Papara / FAST / a fake retail bank. Eight screens, not a ninth.
+
+Local Development: `(localdb)\MSSQLLocalDB` / database `ClearPay`. Identity and the ledger share that one database (two EF contexts, two history tables). **Two clients, one SQL ledger:** Razor Pages (cookie) and Flutter (JWT). Flutter `firebase_core` is client bootstrap for project `clearpay-c0485` — not a Firestore wallet. MySQL (`ConnectionStrings:MySql`) is a sidecar / Workbench tool; money does not live there.
+
+There is **no** `Wallet.Balance` column. Balance = `LedgerPair.NetOf` over signed `LedgerEntry` rows (`LedgerPair` is C#, not a table). `UPDATE Balance` is forbidden. `Wallet.UserId` is unique and matches `AspNetUsers.Id` in the same database; there is **no FK** (two DbContexts). Real FKs are Identity membership plus `LedgerEntry` → `Wallet` / `Transfer`, and `Transfer` → `Wallet` (from/to).
+
+```mermaid
+erDiagram
+    AspNetUsers {
+        string Id PK
+        string FullName
+        string Email
+        string AccountKind
+        string UserName
+    }
+    AspNetRoles {
+        string Id PK
+        string Name
+    }
+    AspNetUserRoles {
+        string UserId PK
+        string RoleId PK
+    }
+    AspNetUserClaims {
+        int Id PK
+        string UserId FK
+        string ClaimType
+        string ClaimValue
+    }
+    AspNetRoleClaims {
+        int Id PK
+        string RoleId FK
+        string ClaimType
+        string ClaimValue
+    }
+    AspNetUserLogins {
+        string LoginProvider PK
+        string ProviderKey PK
+        string UserId FK
+    }
+    AspNetUserTokens {
+        string UserId PK
+        string LoginProvider PK
+        string Name PK
+    }
+    Wallet {
+        uniqueidentifier Id PK
+        string UserId UK
+        bit IsFrozen
+        datetimeoffset CreatedAt
+    }
+    LedgerEntry {
+        uniqueidentifier Id PK
+        uniqueidentifier WalletId FK
+        decimal Amount
+        uniqueidentifier PairId
+        uniqueidentifier CorrelationId
+        uniqueidentifier TransferId FK
+        int Kind
+        nvarchar Description
+        datetimeoffset CreatedAt
+    }
+    Transfer {
+        uniqueidentifier Id PK
+        uniqueidentifier FromWalletId FK
+        uniqueidentifier ToWalletId FK
+        decimal Amount
+        int Status
+        uniqueidentifier CorrelationId
+        datetimeoffset CreatedAt
+    }
+    IdempotencyRecord {
+        nvarchar Key PK
+        nvarchar Scope
+        nvarchar RequestHash
+        uniqueidentifier ResourceId
+        datetimeoffset CreatedAt
+    }
+    AuditLog {
+        uniqueidentifier Id PK
+        string ActorUserId
+        nvarchar Action
+        uniqueidentifier CorrelationId
+        nvarchar Details
+        datetimeoffset CreatedAt
+    }
+    OutboxMessage {
+        uniqueidentifier Id PK
+        nvarchar Type
+        nvarchar Payload
+        uniqueidentifier CorrelationId
+        int Status
+        datetimeoffset OccurredAt
+        datetimeoffset ProcessedAt
+    }
+    LinkedInstrument {
+        uniqueidentifier Id PK
+        string UserId
+        nvarchar Last4
+        nvarchar Label
+        datetimeoffset CreatedAt
+    }
+    EFMigrationsHistory {
+        nvarchar MigrationId PK
+        nvarchar ProductVersion
+    }
+    EFMigrationsHistoryIdentity {
+        nvarchar MigrationId PK
+        nvarchar ProductVersion
+    }
+    AspNetUsers ||--o{ AspNetUserRoles : UserId
+    AspNetRoles ||--o{ AspNetUserRoles : RoleId
+    AspNetUsers ||--o{ AspNetUserClaims : UserId
+    AspNetUsers ||--o{ AspNetUserLogins : UserId
+    AspNetUsers ||--o{ AspNetUserTokens : UserId
+    AspNetRoles ||--o{ AspNetRoleClaims : RoleId
+    Wallet ||--o{ LedgerEntry : WalletId
+    Wallet ||--o{ Transfer : FromWalletId
+    Wallet ||--o{ Transfer : ToWalletId
+    Transfer |o--o{ LedgerEntry : TransferId
+```
+
+EF history table names: `__EFMigrationsHistory` (ledger) and `__EFMigrationsHistoryIdentity` (Identity). `IdempotencyRecord.Key` is unique (replay → **409**). `LinkedInstrument` stores last-four only — no PAN.
 
 ---
 
@@ -106,10 +234,9 @@ Redis caches the wallet summary DTO only (~60s; bust on money movement). Ledger 
 
 ## Run
 
-.NET 8 SDK. Docker Desktop if you want live summary from SQL.
+.NET 8 SDK. **Web Development** uses SQL Server LocalDB — `(localdb)\MSSQLLocalDB` / `ClearPay` — for both Identity and the ledger. Docker Desktop is optional (SQL Server 2022 + Redis/Rabbit).
 
 ```bash
-docker compose up -d
 dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
@@ -121,16 +248,16 @@ flutter doctor
 flutter run -d windows
 ```
 
-Android emulator uses `http://10.0.2.2:5153`. Identity works without Docker. Without SQL the summary stays `0,00 ₺`.
+Android emulator uses `http://10.0.2.2:5153`. Flutter talks JWT to the same host; `firebase_core` (`clearpay-c0485`) does not store balance. Without LocalDB/SQL the summary stays `0,00 ₺`.
 
 ```bash
 dotnet test
 dotnet build ClearPay.slnx
 ```
 
-Local SA password is in `.env.example`. Docker only. Do not commit `.env`. Do not put that password on Azure.
+Optional Docker SQL bind is `D:\ClearPay\data\mssql` (this machine). Local SA password is in `.env.example` (Compose only). Do not commit `.env`. Do not put that password on Azure.
 
-SQL data bind is `D:\ClearPay\data\mssql` (this machine). App ledger is **SQL Server only**. MySQL/Oracle compose files are sidecars, not the wallet database.
+App ledger is **SQL Server only**. MySQL (`ConnectionStrings:MySql`, Windows `MySQL84` or Compose) is a sidecar — not the wallet database. Mobile is **JWT → C# → SQL Server** — no MySQL driver and no Firestore wallet in Flutter.
 
 ---
 
@@ -139,7 +266,7 @@ SQL data bind is `D:\ClearPay\data\mssql` (this machine). App ledger is **SQL Se
 ```
 src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (no Balance)
 src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
-src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity SQLite
+src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity (same LocalDB)
 src/ClearPay.Web              Razor + localization + MapControllers
 mobile/clearpay               Flutter JWT client (not in the .slnx)
 tests/ClearPay.Tests          LedgerPair, architecture, SqlWalletReader, culture
@@ -170,6 +297,7 @@ CI restores and tests `tests/ClearPay.Tests` on `main`.
 - [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter client (same eight operations)
 - Step-by-step: [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (public in this repo). Same list in [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — on that page, Share → Publish to web so people without a Notion login can open it.
 - [`docs/ESZAMANLI.md`](docs/ESZAMANLI.md) — concurrent work (git / desks / this machine)
+- [`docs/API-ESZAMAN.md`](docs/API-ESZAMAN.md) — live wallet hub (Halil API steps; SignalR ≠ ledger)
 
 Live target: Azure App Service + Azure SQL (West Europe). There is no `azurewebsites.net` to click today.
 

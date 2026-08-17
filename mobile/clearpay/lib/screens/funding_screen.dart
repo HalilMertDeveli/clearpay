@@ -4,9 +4,10 @@ import '../api/clearpay_client.dart';
 import '../theme.dart';
 
 class FundingScreen extends StatefulWidget {
-  const FundingScreen({super.key, required this.api});
+  const FundingScreen({super.key, required this.api, this.liveTick = 0});
 
   final ClearPayClient api;
+  final int liveTick;
 
   @override
   State<FundingScreen> createState() => _FundingScreenState();
@@ -20,11 +21,20 @@ class _FundingScreenState extends State<FundingScreen> {
   List<CardSnapshot> _cards = [];
   String? _message;
   bool _busy = false;
+  bool _frozen = false;
 
   @override
   void initState() {
     super.initState();
     _loadCards();
+  }
+
+  @override
+  void didUpdateWidget(FundingScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.liveTick != widget.liveTick) {
+      _loadCards();
+    }
   }
 
   @override
@@ -39,10 +49,17 @@ class _FundingScreenState extends State<FundingScreen> {
   Future<void> _loadCards() async {
     try {
       final cards = await widget.api.cards();
+      final wallet = await widget.api.wallet();
       if (!mounted) {
         return;
       }
-      setState(() => _cards = cards);
+      setState(() {
+        _cards = cards;
+        _frozen = wallet.isFrozen;
+        if (wallet.isFrozen) {
+          _message = 'Cüzdan dondurulmuş; yükle/çek kapalı.';
+        }
+      });
     } on ApiException catch (e) {
       if (!mounted) {
         return;
@@ -111,12 +128,12 @@ class _FundingScreenState extends State<FundingScreen> {
         ),
         const SizedBox(height: 16),
         FilledButton(
-          onPressed: _busy ? null : () => _run(widget.api.topUp),
-          child: const Text('Yükle'),
+          onPressed: (_busy || _frozen) ? null : () => _run(widget.api.topUp),
+          child: Text(_frozen ? 'Dondurulmuş' : 'Yükle'),
         ),
         const SizedBox(height: 8),
         OutlinedButton(
-          onPressed: _busy ? null : () => _run(widget.api.withdraw),
+          onPressed: (_busy || _frozen) ? null : () => _run(widget.api.withdraw),
           child: const Text('Çek'),
         ),
         if (_message != null) ...[

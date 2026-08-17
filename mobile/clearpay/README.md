@@ -36,11 +36,11 @@ flowchart LR
   ports --> sql
 ```
 
-Navy `#1B2A4A`. Footer her ekranda: **Demo — sahte banka gateway.**
+Navy `#1B2A4A`. Footer her ekranda: **Demo — sahte banka gateway.** Relational schema (no `Wallet.Balance`): root [`README.md`](../../README.md) section **Relational schema (SQL Server)**.
 
 | Must hold | Must not hold |
 |-----------|----------------|
-| JWT, pull-to-refresh, Guid `Idempotency-Key` | `UPDATE Balance`, Hive/SQLite cüzdan, WebView cookie |
+| JWT, pull-to-refresh, Guid `Idempotency-Key` | `UPDATE Balance`, Hive/SQLite/MySQL cüzdan, WebView cookie |
 
 ---
 
@@ -50,16 +50,21 @@ Site must be up: [http://localhost:5153](http://localhost:5153). Same eight oper
 
 | Operation | In the app | API |
 |-----------|------------|-----|
-| Sign in | Giriş | `POST /api/token` |
-| Register | Hesap oluştur | `POST /api/register` |
-| Summary | Özet (hamburger + sol çekmece, bakiye kartı, kısayol; pull-to-refresh) | `GET /api/wallet` |
-| Transfer | Havale + onay | `POST /api/transfers` + `Idempotency-Key` → 201 / **409** |
+| Sign in | Giriş — **E-posta** / **TC (demo)** | `POST /api/token` |
+| Mode | Splash → **Bireysel** / **Kurumsal** (üye iş yeri değil) | JWT `account_kind`; SQL `AccountKind` |
+| Register | Hesap oluştur | `POST /api/register` (+ `accountKind`) |
+| Summary | Özet (hamburger + sol çekmece, bakiye kartı, kısayol ızgarası; live hub + pull-to-refresh) | `GET /api/wallet` + `/hubs/wallet` |
+| Transfer | Havale + onay; **QR yapıştır** | `POST /api/transfers` + `Idempotency-Key` → 201 / **409** |
 | Top-up / withdraw | Yükle / Çek + demo kart | `POST /api/topup` / `withdraw` |
 | Movements | Hareketler + filtre | `GET /api/movements` |
 | Receipt | Dekont | `GET /api/receipts/{id}` |
 | Admin | Admin sekmesi (rol) | `/api/admin/*` |
 
-Dev: `admin@clearpay.test` / `Deneme123`. Android emulator base: `http://10.0.2.2:5153`. Windows / iOS: `http://localhost:5153`.
+Dev: `admin@clearpay.test` / `Deneme123`. Demo TC (Mernis değil): `10000000146` → aynı admin e-posta, hâlâ `POST /api/token`. Android emulator base: `http://10.0.2.2:5153`. Windows / iOS: `http://localhost:5153`. Optional `--dart-define=CLEARPAY_API=...` only — **no MySQL dart-define**. Host MySQL (`MySQL84`, `ConnectionStrings:MySql`) is tools/sidecar; this app does not add a `mysql` package or store balances (T-061 / T-077). Same path as the website: JWT → C# → SQL Server.
+
+QR: **QR al** Özet’te `clearpay://pay?to={email}` üretir (`qr_flutter`). **QR öde** yük yapıştırır / e-posta yazar, Havale formunu doldurur, mevcut onay + `POST /api/transfers`. Kamera eklentisi yok (Windows symlink). FAST kiremiti Havale’dir — TCMB FAST değil. Piyasalar / Fatura / Kredi **Park — demo değil**.
+
+Bireysel/Kurumsal **Firebase’e yazılmaz** (T-068). SQL Identity `AccountKind` + yerel `%LOCALAPPDATA%\ClearPay\account_kind.txt`. Firestore/Auth ikinci kasa yok. `firebase_core` yalnız T-065 bootstrap.
 
 ## Interview (three sentences)
 

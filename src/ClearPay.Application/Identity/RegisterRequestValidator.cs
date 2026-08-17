@@ -1,3 +1,4 @@
+using ClearPay.Domain.Identity;
 using FluentValidation;
 
 namespace ClearPay.Application.Identity;
@@ -22,5 +23,9 @@ public sealed class RegisterRequestValidator : AbstractValidator<RegisterRequest
 
         RuleFor(x => x.ConfirmPassword)
             .Equal(x => x.Password).WithMessage("Şifreler eşleşmiyor.");
+
+        RuleFor(x => x.AccountKind)
+            .Must(kind => string.IsNullOrWhiteSpace(kind) || AccountKinds.IsKnown(kind))
+            .WithMessage("Hesap türü Bireysel veya Kurumsal olmalı.");
     }
 }

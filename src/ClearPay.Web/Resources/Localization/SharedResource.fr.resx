@@ -21,6 +21,9 @@
   <data name="AvailableBalance" xml:space="preserve"><value>Solde disponible</value></data>
   <data name="BackToWallet" xml:space="preserve"><value>Retour au portefeuille</value></data>
   <data name="Cancel" xml:space="preserve"><value>Annuler</value></data>
+  <data name="WebChannel" xml:space="preserve"><value>Internet</value></data>
+  <data name="Welcome" xml:space="preserve"><value>Bienvenue</value></data>
+  <data name="QuickOps" xml:space="preserve"><value>Accès rapide</value></data>
   <data name="AddCard" xml:space="preserve"><value>Ajouter une carte</value></data>
   <data name="CardAddFail" xml:space="preserve"><value>Carte non ajoutée. Saisissez 4 chiffres seulement — pas de numéro complet. 5 cartes max.</value></data>
   <data name="CardAddOk" xml:space="preserve"><value>Carte démo enregistrée. Dépôt/retrait utilisent cet indice.</value></data>
@@ -103,6 +106,7 @@
   <data name="RemainingBalance" xml:space="preserve"><value>Solde restant</value></data>
   <data name="RequestId" xml:space="preserve"><value>N° de requête</value></data>
   <data name="RoleCustomer" xml:space="preserve"><value>Client</value></data>
+  <data name="RoleAdmin" xml:space="preserve"><value>Admin</value></data>
   <data name="Send" xml:space="preserve"><value>Envoyer</value></data>
   <data name="SendTransfer" xml:space="preserve"><value>Envoyer un virement</value></data>
   <data name="SignIn" xml:space="preserve"><value>Connexion</value></data>
@@ -115,6 +119,7 @@
   <data name="CopyRef" xml:space="preserve"><value>Copier</value></data>
   <data name="Copied" xml:space="preserve"><value>Copié</value></data>
   <data name="PrintReceipt" xml:space="preserve"><value>Imprimer</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>Télécharger le PDF</value></data>
   <data name="AccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
   <data name="AccessDeniedHint" xml:space="preserve"><value>Vous n&apos;avez pas l&apos;autorisation pour cette page. Retournez au résumé du portefeuille.</value></data>
   <data name="SocialEmailRequired" xml:space="preserve"><value>Le fournisseur n’a pas envoyé d’e-mail. Inscrivez-vous avec e-mail et mot de passe.</value></data>

@@ -25,20 +25,22 @@ public sealed class SqlActivityReader : IActivityReader
         DateTimeOffset? to,
         string? kind,
         int page,
+        int pageSize = PageSize,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        pageSize = Math.Clamp(pageSize, 1, 50);
         if (string.IsNullOrWhiteSpace(userId))
-            return new ActivityPage([], 1, PageSize, 0);
+            return new ActivityPage([], 1, pageSize, 0);
 
         if (!await TryConnectAsync(cancellationToken).ConfigureAwait(false))
-            return new ActivityPage([], 1, PageSize, 0);
+            return new ActivityPage([], 1, pageSize, 0);
 
         var wallet = await _db.Wallets.AsNoTracking()
             .FirstOrDefaultAsync(w => w.UserId == userId, cancellationToken)
             .ConfigureAwait(false);
         if (wallet is null)
-            return new ActivityPage([], 1, PageSize, 0);
+            return new ActivityPage([], 1, pageSize, 0);
 
         page = Math.Max(page, 1);
         var query = _db.LedgerEntries.AsNoTracking().Where(e => e.WalletId == wallet.Id);
@@ -53,8 +55,8 @@ public sealed class SqlActivityReader : IActivityReader
         var total = rows.Count;
         rows = rows
             .OrderByDescending(e => e.CreatedAt)
-            .Skip((page - 1) * PageSize)
-            .Take(PageSize)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToList();
 
         var pairIds = rows.Select(r => r.PairId).Distinct().ToList();
@@ -83,7 +85,7 @@ public sealed class SqlActivityReader : IActivityReader
                 "Completed"));
         }
 
-        return new ActivityPage(items, page, PageSize, total);
+        return new ActivityPage(items, page, pageSize, total);
     }
 
     public async Task<ReceiptDto?> GetReceiptAsync(

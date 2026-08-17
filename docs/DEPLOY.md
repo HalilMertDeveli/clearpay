@@ -13,7 +13,7 @@ dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
 Site: http://localhost:5153  
-SQL: Windows instance `lpc:localhost` / `ClearPay` (Identity + ledger, T-058). Docker SQL `localhost,1433` (SA) Compose yedek; Development profili Windows SQL kullanır.  
+SQL: Development LocalDB `(localdb)\MSSQLLocalDB` / `ClearPay` (Identity + ledger, T-058 / T-076). Docker SQL `localhost,1433` (SA) Compose yedek; Production Azure SQL.  
 Redis: `localhost:6379`. Rabbit yönetim: http://localhost:15672 (`guest` / `guest`).  
 Lokal SA şifresi varsayılanı `ClearPay_Dev1!` (yalnızca Docker; Azure’da kullanma). `.env.example` kopyalanabilir; `.env` commit edilmez.
 
@@ -29,7 +29,7 @@ Veri bind mount (T-021), C: named volume silinmez:
 | MySQL 8.4 | `docker compose -f docker-compose.databases.yml up -d` | 3306 | `D:\ClearPay\data\mysql` |
 | Oracle XE 21 | ayni databases compose (`gvenzl/oracle-xe:21-slim`) | 1521 | `D:\ClearPay\data\oracle` |
 
-Sifreler `.env` (gitignore). `.env.example` placeholder. App connection string **MSSQL only**. Development: Windows SQL `ClearPay` (Identity + ledger). Testler SQLite (`ClearPay:UseSqliteLedger`).
+Sifreler `.env` (gitignore). `.env.example` placeholder. App connection string **MSSQL only**. Development: LocalDB `ClearPay` (Identity + ledger). Testler SQLite (`ClearPay:UseSqliteLedger`).
 
 ```bash
 docker compose up -d
@@ -39,7 +39,7 @@ docker compose -f docker-compose.databases.yml ps
 powershell -File scripts/db-smoke.ps1
 ```
 
-Windows native MySQL84 zaten `:3306` dinliyorsa Compose MySQL icin o servisi durdur (veriyi silme). Native MSSQLSERVER data C: Program Files'da kalir; Compose SQL D: bind kullanir.
+Windows native MySQL84 zaten `:3306` dinliyorsa Compose MySQL icin o servisi durdur (veriyi silme). Native: `Get-Service MySQL84` / `net start MySQL84`. Development `ConnectionStrings:MySql` yan motor (T-077); `AddClearPay` / Identity LocalDB veya SQL Server kalir. Flutter mysql paketi yok. Native MSSQLSERVER data C: Program Files'da kalir; Compose SQL D: bind kullanir.
 
 Docker Desktop Linux motoru Virtual Machine Platform ister. Ozellikler acildi (`scripts/docker-vmp-fix.ps1`); **CBS reboot pending** — ajan reboot etmez. Reboot sonrasi:
 

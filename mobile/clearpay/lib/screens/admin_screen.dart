@@ -4,9 +4,10 @@ import '../api/clearpay_client.dart';
 import '../theme.dart';
 
 class AdminScreen extends StatefulWidget {
-  const AdminScreen({super.key, required this.api});
+  const AdminScreen({super.key, required this.api, this.liveTick = 0});
 
   final ClearPayClient api;
+  final int liveTick;
 
   @override
   State<AdminScreen> createState() => _AdminScreenState();
@@ -15,6 +16,7 @@ class AdminScreen extends StatefulWidget {
 class _AdminScreenState extends State<AdminScreen> {
   final _email = TextEditingController();
   final _actor = TextEditingController();
+  final _correlation = TextEditingController();
   List<OutboxRow> _outbox = [];
   List<AuditRow> _audits = [];
   String? _message;
@@ -26,16 +28,25 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   @override
+  void didUpdateWidget(AdminScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.liveTick != widget.liveTick) {
+      _reload();
+    }
+  }
+
+  @override
   void dispose() {
     _email.dispose();
     _actor.dispose();
+    _correlation.dispose();
     super.dispose();
   }
 
   Future<void> _reload() async {
     try {
       final outbox = await widget.api.failedOutbox();
-      final audits = await widget.api.audit(actor: _actor.text);
+      final audits = await widget.api.audit(actor: _actor.text, correlationId: _correlation.text);
       if (!mounted) {
         return;
       }
@@ -97,6 +108,10 @@ class _AdminScreenState extends State<AdminScreen> {
         const SizedBox(height: 16),
         const Text('Audit', style: TextStyle(fontWeight: FontWeight.w600)),
         TextField(controller: _actor, decoration: const InputDecoration(labelText: 'Aktör ara')),
+        TextField(
+          controller: _correlation,
+          decoration: const InputDecoration(labelText: 'Correlation id'),
+        ),
         TextButton(onPressed: _reload, child: const Text('Ara')),
         for (final row in _audits)
           ListTile(

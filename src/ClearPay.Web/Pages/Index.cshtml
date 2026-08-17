@@ -10,38 +10,43 @@
     {
         <p class="flash-ok" role="status" aria-live="polite">@Model.Flash</p>
     }
-    <article class="balance-hero wallet-band">
-        <p class="page-kicker kicker-on-dark">@L["WalletKicker"]</p>
-        <h1 class="page-title title-on-dark">@L["Overview"]</h1>
-        @if (!string.IsNullOrWhiteSpace(Model.GreetingName))
-        {
-            <p class="lede lede-on-dark">@Model.GreetingName</p>
-        }
-        <p class="live-pill"><span class="live-dot" aria-hidden="true"></span>@L["LiveBadge"]</p>
-        <div class="hero-balance">
-            <p class="stat-label">@L["AvailableBalance"]</p>
-            <p class="stat-value stat-value-xl" data-count="@Model.BalanceAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.BalanceText)</p>
-            <p class="status-line">@L["AccountStatus"]: <span class="@(Model.IsFrozen ? "badge-frozen" : "badge-active")">@(Model.IsFrozen ? L["StatusFrozen"] : L["StatusActive"])</span></p>
-        </div>
-        <nav class="action-grid" aria-label="@L["WalletActions"]">
-            <a class="action-tile" asp-page="/Havale">
-                <span class="action-ico action-ico--send" aria-hidden="true"></span>
-                <span class="action-label">@L["Send"]</span>
-            </a>
-            <a class="action-tile" asp-page="/YukleCek" asp-fragment="yukle">
-                <span class="action-ico action-ico--topup" aria-hidden="true"></span>
-                <span class="action-label">@L["TopUp"]</span>
-            </a>
-            <a class="action-tile" asp-page="/YukleCek" asp-fragment="cek">
-                <span class="action-ico action-ico--withdraw" aria-hidden="true"></span>
-                <span class="action-label">@L["Withdraw"]</span>
-            </a>
-            <a class="action-tile" asp-page="/Hareketler">
-                <span class="action-ico action-ico--activity" aria-hidden="true"></span>
-                <span class="action-label">@L["NavActivity"]</span>
-            </a>
-        </nav>
-    </article>
+    <div class="dash-grid">
+        <article class="balance-hero wallet-band">
+            <p class="page-kicker kicker-on-dark">@L["WalletKicker"]</p>
+            <h1 class="page-title title-on-dark">@L["Overview"]</h1>
+            @if (!string.IsNullOrWhiteSpace(Model.GreetingName))
+            {
+                <p class="lede lede-on-dark">@Model.GreetingName</p>
+            }
+            <p class="live-pill"><span class="live-dot" aria-hidden="true"></span>@L["LiveBadge"]</p>
+            <div class="hero-balance">
+                <p class="stat-label">@L["AvailableBalance"]</p>
+                <p class="stat-value stat-value-xl" data-count="@Model.BalanceAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Html.Raw(Model.BalanceText)</p>
+                <p class="status-line">@L["AccountStatus"]: <span class="@(Model.IsFrozen ? "badge-frozen" : "badge-active")">@(Model.IsFrozen ? L["StatusFrozen"] : L["StatusActive"])</span></p>
+            </div>
+        </article>
+        <section class="ops-rail" aria-label="@L["QuickOps"]">
+            <h2 class="ops-title">@L["QuickOps"]</h2>
+            <nav class="action-grid" aria-label="@L["WalletActions"]">
+                <a class="action-tile" asp-page="/Havale">
+                    <span class="action-ico action-ico--send" aria-hidden="true"></span>
+                    <span class="action-label">@L["Send"]</span>
+                </a>
+                <a class="action-tile" asp-page="/YukleCek" asp-fragment="yukle">
+                    <span class="action-ico action-ico--topup" aria-hidden="true"></span>
+                    <span class="action-label">@L["TopUp"]</span>
+                </a>
+                <a class="action-tile" asp-page="/YukleCek" asp-fragment="cek">
+                    <span class="action-ico action-ico--withdraw" aria-hidden="true"></span>
+                    <span class="action-label">@L["Withdraw"]</span>
+                </a>
+                <a class="action-tile" asp-page="/Hareketler">
+                    <span class="action-ico action-ico--activity" aria-hidden="true"></span>
+                    <span class="action-label">@L["NavActivity"]</span>
+                </a>
+            </nav>
+        </section>
+    </div>
 
     <div class="wallet-sheet">
         <div class="stat-row stat-row-in-sheet">

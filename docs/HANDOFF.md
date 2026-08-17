@@ -787,11 +787,90 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** site `:5153` + cmd `cd /d C:\Users\clt\Projects\clearpay\mobile\clearpay` → `flutter run -d emulator-5554` (veya Windows). Giriş sonrası sol menü.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — Web + mobil + JWT parite (T-073; Orchestrator)
+
+- **OWN:** TARTISMA **T-073**. 8 ekran. TASK-16 Todo durur.
+- **Landed:** `GET /api/transfers/{id}` (sahip/alıcı; yabancı 404); JWT 401 `ProblemDetails`; movements `page`/`pageSize` (max 50). Razor: Yükle İptal; Admin topbar `RoleAdmin`. Flutter: hareket tarih+sayfa; `flutter_secure_storage` + dosya yedek; 401 → çıkış; dondurulmuşta Havale/Yükle/Çek kapalı. Designer `.pill-admin`.
+- **Sen tıklarsın:** site `:5153/yukle-cek` İptal; Admin girişte rol hapı; Flutter `flutter run`. Azure hâlâ `az login` + `.\infra\deploy.ps1`.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 ## 2026-08-17 — Eşzamanlı çalışma belgesi (T-070; Orchestrator)
 
 - **OWN:** TARTISMA **T-070**. `docs/ESZAMANLI.md` (üç katman: git / masalar / makine). README + README.tr Docs satırı. `src/` yok. TASK-16 Todo.
 - **Landed:** Öğretici + dürüst snapshot (TASK-01…15 Done, 409 TASK-06 Done, Azure URL yok). Paralel = ayrı OWN, tek ürün TASK. Notion kopya varsa Publish Halil.
 - **Sen tıklarsın:** blob `cursor/yol-haritasi-career-first` / `docs/ESZAMANLI.md`. Notion’da Share → Publish. Docker VMP reboot hâlâ senin.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Mobil↔web canlı bakiye (T-071; Coder + Payments)
+
+- **OWN:** TARTISMA **T-071**. SignalR `/hubs/wallet` chrome (9. ekran değil). Ledger commit sonra `IWalletLiveNotifier`. Payload `{ reason, correlationId }` — tutar yok. Cookie Razor + JWT query Flutter. Pull-to-refresh yedek. Firestore/Hive/`UPDATE Balance` yok. TASK-16 Todo durur.
+- **Landed:** Hub + executor/admin notify. `site.js` reload. Flutter `signalr_netcore`. `docs/API-ESZAMAN.md` Halil API tıkları.
+- **Sen tıklarsın:** site `:5153` girişte özet açık; Flutter aynı hesap havale. Web bakiyesi yenilenmeli. Adımlar: [`docs/API-ESZAMAN.md`](API-ESZAMAN.md).
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Flutter TC/QR ana ızgara (T-067; Coder)
+
+- **OWN:** TARTISMA **T-067**. Coder `mobile/**/*.dart`. TASK-16 Todo durur. 9. ekran yok.
+- **Landed:** Giriş sekmeleri E-posta / TC (demo). Seed `10000000146` → `admin@clearpay.test` yalnız Flutter; arkada `POST /api/token`. Özet ızgara: Havale, Yükle, Çek, QR al, QR öde, FAST→Havale («Demo P2P — TCMB FAST değil»), Piyasalar park, Daha fazla. QR al: `qr_flutter` + `clearpay://pay?to=`. QR öde: yapıştır/yaz → Havale + `POST /api/transfers` + Guid Idempotency-Key. YK/World/Jet QR wordmark yok. SignalR liveTick korundu.
+- **Sen tıklarsın:** site `:5153` + cmd `cd /d C:\Users\clt\Projects\clearpay\mobile\clearpay` → `flutter run -d emulator-5554`. Demo e-posta veya TC `10000000146` / `Deneme123`.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Splash + Bireysel/Kurumsal SQL (T-068; Coder)
+
+- **OWN:** TARTISMA **T-068**. Identity `ApplicationUser.AccountKind` + JWT `account_kind`. Flutter splash → iki kart → giriş. **Firebase’e Bireysel/Kurumsal yazılmadı** (T-061 ikinci kasa yok; Firestore/Auth yok). Yerel `%LOCALAPPDATA%\ClearPay\account_kind.txt`. Kurumsal POS/9. ekran değil. Seed admin = Bireysel. `UPDATE Balance` yok.
+- **Landed:** EF Identity migration `AddAccountKind`. Register/token round-trip. Rozet çekmece/app bar. WalletApiTests `account_kind` claim.
+- **Sen tıklarsın:** soğuk açılış animasyonu → Bireysel veya Kurumsal → giriş. SQL Server Identity migrate (lokal).
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Web internet-şube kromu (T-072; Coder + Designer)
+
+- **OWN:** TARTISMA **T-072**. Coder `_Layout` / `Index` / `site.css` / `brand.css` / resx. Designer `TASARIM.md` + `MARKA.md`. TASK-16 Todo durur. 9. ekran yok. YK/Worldcard asset yok.
+- **Landed:** Tam genişlik navy masthead (ClearPay + İnternet + kullanıcı/çıkış). Sol menü kâğıt zeminde, 8 işlem. Özet `dash-grid`: hesap kartı + Hızlı işlemler karoları. Masaüstü içerik 1120px. ≤800px tabbar durur. Auth T-054 aynı.
+- **Kanıt:** `dotnet test ClearPay.slnx -c Release` **124 geçti**, 0 skip. AuthOrUi: masthead, Hızlı işlemler, İnternet; Worldcard yok.
+- **Sen tıklarsın:** http://localhost:5153/giris → özet: üst navy şerit + sol menü + hesap kartı + hızlı karolar. Dar pencerede alt sekme durur.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — İki platform debug (T-074; Coder)
+
+- **OWN:** TARTISMA **T-074**. Coder Flutter + Web debug ingest. TASK-16 Todo durur. Landed yok — hipotez log’u.
+- **Hipotez:** (A) API taban URL, (C) token saklama, (D) SignalR hub, (E) Windows symlink/Developer Mode, (F) `/api/token`.
+- **Sen tıklarsın:** site’yi yeniden başlat (`dotnet run --project src/ClearPay.Web --launch-profile http`). Tarayıcı `:5153/giris` + Flutter `flutter run -d emulator-5554`. Windows için Geliştirici Modu (`start ms-settings:developers`) sonra `flutter run -d windows`. Demo `admin@clearpay.test` / `Deneme123`.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Windows firebase_core skip + iki istemci (T-075; Coder)
+
+- **OWN:** TARTISMA **T-075**. `windows/clearpay_plugins.cmake` + `clearpay_plugin_registrant.cc`. TASK-16 Todo durur. Debug ingest durur.
+- **Landed:** Developer Mode (HKLM AppModelUnlock=1). Windows `clearpay.exe` 36.9s yeşil — firebase C++ zip yok. Android `emulator-5554` APK yüklendi. Site `:5153` token 200 + hub cookie.
+- **Kanıt:** `flutter run -d windows` Built clearpay.exe; `flutter run -d emulator-5554` assembleDebug; debug-021de0 `apiBase=http://localhost:5153` (windows).
+- **Sen tıklarsın:** tarayıcı `:5153/giris` + açık Flutter Windows + emülatör. Demo `admin@clearpay.test` / `Deneme123`.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Development LocalDB (T-076; Coder)
+
+- **OWN:** TARTISMA **T-076**. Development SQL = `(localdb)\MSSQLLocalDB` / `ClearPay` (Identity + ledger, T-058 durur). Testler SQLite. Production Azure boş. Docker/`D:\` ezilmedi. TASK-16 Todo.
+- **Landed:** `appsettings.Development.json` + Identity/ledger factories LocalDB. `identity.db` Development’ta yok. Migrate: AspNet* + Wallet/LedgerEntry. Seed `admin@clearpay.test` Admin+Musteri. MDF `C:\Users\clt\ClearPay.mdf`.
+- **Sen tıklarsın:** VS’de siteyi durdur/yeniden başlat (eski `lpc:localhost` kilitli). Sonra http://localhost:5153/giris → `admin@clearpay.test` / `Deneme123`.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — PC MySQL yan motor (T-077; Deploy)
+
+- **OWN:** TARTISMA **T-077**. Windows **MySQL84** (8.4.9) Running — yeni installer yok. `ConnectionStrings:MySql` Development yan motor; `AddClearPay` / Identity **LocalDB** (T-076) durur. Flutter mysql paketi yok. `docker-compose.databases.yml` birleşmedi (T-020). TASK-16 Todo. Firebase yok.
+- **Landed:** Boş şema `ClearPay` native MySQL’de. `.env.example` MYSQL_* Compose placeholder. Mobil README: JWT → C# → SQL. Pomelo/`UseMySql` yok.
+- **Sen tıklarsın:** `Get-Service MySQL84` (Automatic). Durmuşsa `net start MySQL84`. Workbench: `localhost:3306` / `root` / şifre `.env.example` MYSQL_ROOT_PASSWORD (Compose varsayılanı). Compose mysql **aynı anda açma** (:3306 native). Site hâlâ LocalDB; Flutter hâlâ JWT.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — README mermaid ERD (T-078; Orchestrator)
+
+- **OWN:** TARTISMA **T-078**. Kök README mermaid `erDiagram` (EN varsayılan). TR/DE/FR aynı şema. 8 ekran. Papara / 9. ekran / `Wallet.Balance` yok. TASK-16 Todo.
+- **Landed:** Bölüm **Relational schema (SQL Server)**. Caption: Demo — sahte banka gateway. Lisanslı e-para değil. LocalDB `(localdb)\MSSQLLocalDB` / `ClearPay`. Flutter JWT + `firebase_core` `clearpay-c0485` (Firestore kasa yok). MySQL yan motor.
+- **Sen tıklarsın:** GitHub repo ana sayfa → README → **Relational schema (SQL Server)** (mermaid render). SSMS’de `Wallet` kolonlarında Balance arama — yok.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Flutter Chrome web JWT (T-080; Coder)
+
+- **OWN:** TARTISMA **T-080**. `mobile/clearpay/web/**` + `lib/platform/**` (`dart:io` web’de yok). TASK-16 Todo. Debug ingest durur.
+- **Landed:** `flutter build web` yeşil. `flutter run -d chrome` açıldı. Razor `:5153` `--no-build` (VS IIS Express MSB3027 kilit). `auth-hero.js` giriş kartı opacity yedek.
+- **Sen tıklarsın:** http://localhost:5153/giris (Razor). IIS Express için `localhost` kullan; `127.0.0.1` 400 verebilir. Flutter Chrome açıksa Bireysel → aynı hesap. Demo `admin@clearpay.test` / `Deneme123`. VS F5 ile ikinci `dotnet run` aynı anda DLL kilitlemesin.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
 

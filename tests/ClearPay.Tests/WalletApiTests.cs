@@ -24,10 +24,31 @@ public sealed class WalletApiTests : IClassFixture<ClearPayWebFactory>
     }
 
     [Fact]
+    public async Task Wallet_hub_negotiate_requires_jwt_then_accepts_it()
+    {
+        var client = _factory.CreateClient();
+        (await client.PostAsync("/hubs/wallet/negotiate?negotiateVersion=1", null))
+            .StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var email = $"hub.{Guid.NewGuid():N}@clearpay.test";
+        await RegisterAsync(client, email, "Hub");
+        var token = await GetTokenAsync(client, email);
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/hubs/wallet/negotiate?negotiateVersion=1");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var negotiate = await client.SendAsync(request);
+        negotiate.StatusCode.Should().Be(HttpStatusCode.OK);
+        var body = await negotiate.Content.ReadAsStringAsync();
+        body.Should().Contain("connectionToken");
+    }
+
+    [Fact]
     public async Task Wallet_without_jwt_is_401_with_jwt_matches_ledger_net()
     {
         var client = _factory.CreateClient();
-        (await client.GetAsync("/api/wallet")).StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        var unauth = await client.GetAsync("/api/wallet");
+        unauth.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        unauth.Content.Headers.ContentType!.MediaType.Should().Be("application/problem+json");
+        (await unauth.Content.ReadAsStringAsync()).Should().Contain("Unauthorized");
 
         var email = $"ozet.{Guid.NewGuid():N}@clearpay.test";
         await RegisterAsync(client, email, "Özet");
@@ -80,6 +101,16 @@ public sealed class WalletApiTests : IClassFixture<ClearPayWebFactory>
         using var receipt = await GetJsonAsync(client, token, $"/api/receipts/{corr}");
         receipt.RootElement.GetProperty("correlationId").GetGuid().Should().Be(corr);
         receipt.RootElement.GetProperty("amount").GetDecimal().Should().BeGreaterThan(0);
+
+        var pdf = await SendAsync(client, token, HttpMethod.Get, $"/api/receipts/{corr}/pdf");
+        pdf.StatusCode.Should().Be(HttpStatusCode.OK);
+        pdf.Content.Headers.ContentType!.MediaType.Should().Be("application/pdf");
+        var bytes = await pdf.Content.ReadAsByteArrayAsync();
+        bytes.Length.Should().BeGreaterThan(200);
+        bytes[0].Should().Be((byte)'%');
+        bytes[1].Should().Be((byte)'P');
+        bytes[2].Should().Be((byte)'D');
+        bytes[3].Should().Be((byte)'F');
     }
 
     [Fact]
@@ -121,6 +152,36 @@ public sealed class WalletApiTests : IClassFixture<ClearPayWebFactory>
         var response = await client.SendAsync(request);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Headers.GetValues("Access-Control-Allow-Origin").Should().Contain("http://localhost:8080");
+    }
+
+    [Fact]
+    public async Task Register_api_jwt_includes_account_kind_claim()
+    {
+        var client = _factory.CreateClient();
+        var email = $"kind.{Guid.NewGuid():N}@clearpay.test";
+        var created = await client.PostAsJsonAsync("/api/register", new
+        {
+            fullName = "Kurumsal Demo",
+            email,
+            password = "Deneme123",
+            confirmPassword = "Deneme123",
+            accountKind = "Kurumsal"
+        });
+        created.StatusCode.Should().Be(HttpStatusCode.Created);
+        using var doc = JsonDocument.Parse(await created.Content.ReadAsStringAsync());
+        var token = doc.RootElement.GetProperty("access_token").GetString()!;
+        DecodeJwtPayload(token).GetProperty("account_kind").GetString().Should().Be("Kurumsal");
+
+        var login = await client.PostAsJsonAsync("/api/token", new
+        {
+            email,
+            password = "Deneme123",
+            accountKind = "Bireysel"
+        });
+        login.StatusCode.Should().Be(HttpStatusCode.OK);
+        using var loginDoc = JsonDocument.Parse(await login.Content.ReadAsStringAsync());
+        var again = loginDoc.RootElement.GetProperty("access_token").GetString()!;
+        DecodeJwtPayload(again).GetProperty("account_kind").GetString().Should().Be("Bireysel");
     }
 
     [Fact]
@@ -200,6 +261,23 @@ public sealed class WalletApiTests : IClassFixture<ClearPayWebFactory>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         return doc.RootElement.GetProperty("access_token").GetString()!;
+    }
+
+    private static JsonElement DecodeJwtPayload(string token)
+    {
+        var payload = token.Split('.')[1].Replace('-', '+').Replace('_', '/');
+        switch (payload.Length % 4)
+        {
+            case 2:
+                payload += "==";
+                break;
+            case 3:
+                payload += "=";
+                break;
+        }
+
+        using var doc = JsonDocument.Parse(Convert.FromBase64String(payload));
+        return doc.RootElement.Clone();
     }
 
     private static async Task<JsonDocument> GetJsonAsync(HttpClient client, string token, string url)

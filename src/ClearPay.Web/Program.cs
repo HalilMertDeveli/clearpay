@@ -5,8 +5,10 @@ using ClearPay.Infrastructure.Messaging;
 using ClearPay.Infrastructure.Identity;
 using ClearPay.Infrastructure.Persistence;
 using ClearPay.Web;
+using ClearPay.Application.Ports;
 using ClearPay.Web.Localization;
 using ClearPay.Web.OpenApi;
+using ClearPay.Web.Realtime;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +33,8 @@ builder.Services.AddRazorPages(options =>
 builder.Services.AddControllers();
 builder.Services.AddClearPayCors(builder.Configuration, builder.Environment);
 builder.Services.AddClearPaySwagger();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IWalletLiveNotifier, SignalRWalletLiveNotifier>();
 
 var app = builder.Build();
 
@@ -38,6 +42,7 @@ await IdentitySeeder.EnsureCreatedAndRolesAsync(app.Services);
 if (app.Configuration.GetValue("ClearPay:ApplyLedgerMigrations", true))
 {
     await LedgerDatabase.EnsureMigratedAsync(app.Services, app.Logger);
+    await DemoReceiptSeeder.EnsureExampleAsync(app.Services, app.Logger);
 }
 
 if (!app.Environment.IsDevelopment())
@@ -57,6 +62,7 @@ app.UseAuthorization();
 app.MapClearPaySwagger();
 app.MapRazorPages();
 app.MapControllers();
+app.MapHub<WalletHub>(WalletHub.Path);
 app.Services.MapClearPayHangfire(app.Configuration);
 app.MapGet("/api/health", (RedisRuntimeStatus redis, RabbitRuntimeStatus rabbit) =>
     Results.Ok(new { status = "ok", product = "ClearPay", redis = redis.Value, rabbit = rabbit.Value }));

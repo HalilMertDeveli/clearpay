@@ -1,7 +1,6 @@
+import 'package:clearpay/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-
-import 'firebase_options.dart';
 
 /// Initializes Firebase when FlutterFire options exist. Missing config must not
 /// block JWT login — the ledger is still SQL Server.

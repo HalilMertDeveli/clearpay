@@ -9,11 +9,37 @@ public sealed class TransferIdempotencyOperationFilter : IOperationFilter
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         var path = context.ApiDescription.RelativePath ?? string.Empty;
+        var method = context.ApiDescription.HttpMethod ?? string.Empty;
         var isMoneyPost = path.Equals("api/transfers", StringComparison.OrdinalIgnoreCase)
             || path.Equals("api/topup", StringComparison.OrdinalIgnoreCase)
             || path.Equals("api/withdraw", StringComparison.OrdinalIgnoreCase);
+        if (path.Equals("api/transfers/{id}", StringComparison.OrdinalIgnoreCase)
+            && method.Equals("GET", StringComparison.OrdinalIgnoreCase))
+        {
+            operation.Summary = "Get a transfer the caller sent or received (T-073). 404 if missing or not a party.";
+            operation.Responses["200"] = new OpenApiResponse
+            {
+                Description = "transferId, correlationId, amount, status, createdAt."
+            };
+            operation.Responses["401"] = new OpenApiResponse
+            {
+                Description = "ProblemDetails — JWT missing or invalid."
+            };
+            return;
+        }
+
+        if (path.Equals("api/movements", StringComparison.OrdinalIgnoreCase)
+            && method.Equals("GET", StringComparison.OrdinalIgnoreCase))
+        {
+            operation.Summary = "Wallet ledger lines. Query: from, to, kind, page (1+), pageSize (default 20, max 50).";
+            operation.Responses["401"] = new OpenApiResponse
+            {
+                Description = "ProblemDetails — JWT missing or invalid."
+            };
+            return;
+        }
+
         if (!isMoneyPost
-            || context.ApiDescription.HttpMethod is not { } method
             || !method.Equals("POST", StringComparison.OrdinalIgnoreCase))
         {
             return;

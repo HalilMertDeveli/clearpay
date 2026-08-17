@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ClearPay.Application.Ports;
+using ClearPay.Domain.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
@@ -63,7 +64,7 @@ public sealed class JwtTokenIssuer : IJwtTokenIssuer
         };
     }
 
-    public string Issue(string userId, string email, IReadOnlyList<string> roles)
+    public string Issue(string userId, string email, IReadOnlyList<string> roles, string? accountKind = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(userId);
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
@@ -75,7 +76,8 @@ public sealed class JwtTokenIssuer : IJwtTokenIssuer
             new(ClaimTypes.NameIdentifier, userId),
             new(ClaimTypes.Email, email),
             new(JwtRegisteredClaimNames.Email, email),
-            new(ClaimTypes.Name, email)
+            new(ClaimTypes.Name, email),
+            new(AccountKinds.JwtClaim, AccountKinds.Normalize(accountKind))
         };
         foreach (var role in roles)
         {

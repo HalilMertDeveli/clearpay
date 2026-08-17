@@ -10,10 +10,12 @@ namespace ClearPay.Web.Controllers;
 public sealed class ReceiptsController : ControllerBase
 {
     private readonly IActivityReader _activity;
+    private readonly IReceiptPdf _pdf;
 
-    public ReceiptsController(IActivityReader activity)
+    public ReceiptsController(IActivityReader activity, IReceiptPdf pdf)
     {
         _activity = activity;
+        _pdf = pdf;
     }
 
     [HttpGet("{correlationId:guid}")]
@@ -39,5 +41,21 @@ public sealed class ReceiptsController : ControllerBase
             description = receipt.Description,
             instrumentHint = receipt.InstrumentHint
         });
+    }
+
+    [HttpGet("{correlationId:guid}/pdf")]
+    public async Task<IActionResult> Pdf(Guid correlationId, CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var receipt = await _activity.GetReceiptAsync(userId, correlationId, cancellationToken)
+            .ConfigureAwait(false);
+        if (receipt is null)
+            return NotFound();
+
+        var bytes = _pdf.Render(receipt);
+        return File(bytes, "application/pdf", $"clearpay-dekont-{correlationId:N}.pdf");
     }
 }

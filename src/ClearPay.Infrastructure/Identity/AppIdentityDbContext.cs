@@ -1,3 +1,4 @@
+using ClearPay.Domain.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,9 @@ public sealed class AppIdentityDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<ApplicationUser>(entity =>
         {
             entity.Property(user => user.FullName).HasMaxLength(200);
+            entity.Property(user => user.AccountKind)
+                .HasMaxLength(32)
+                .HasDefaultValue(AccountKinds.Bireysel);
         });
     }
 }

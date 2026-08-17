@@ -8,9 +8,12 @@ environment:
 
 dependencies:
   firebase_core: ^4.13.0
+  signalr_netcore: ^1.4.4
   flutter:
     sdk: flutter
   http: ^1.2.2
+  qr_flutter: ^4.1.0
+  flutter_secure_storage: ^9.2.4
 
 dev_dependencies:
   flutter_test:

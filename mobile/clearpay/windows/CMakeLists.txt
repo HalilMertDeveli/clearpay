@@ -55,7 +55,8 @@ add_subdirectory("runner")
 
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
-include(flutter/generated_plugins.cmake)
+# T-075: skip firebase_core Windows C++ SDK zip (see clearpay_plugins.cmake).
+include(clearpay_plugins.cmake)
 
 
 # === Installation ===

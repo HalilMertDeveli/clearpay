@@ -1,17 +1,19 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:http/http.dart' as http;
 
 import '../auth/token_store.dart';
+import '../debug_agent_log.dart';
+import '../platform/host.dart';
 
 String defaultApiBase() {
+  // CLEARPAY_API only. No MySQL dart-define: ledger is C# SQL Server (T-077 / T-061).
   const fromEnv = String.fromEnvironment('CLEARPAY_API');
   if (fromEnv.isNotEmpty) {
     return fromEnv;
   }
-  if (Platform.isAndroid) {
+  if (isAndroidHost) {
     return 'http://10.0.2.2:5153';
   }
   return 'http://localhost:5153';
@@ -85,6 +87,29 @@ class WalletRow {
         kind: '${json['kind'] ?? ''}',
         amount: _num(json['amount']),
         correlationId: '${json['correlationId'] ?? ''}',
+      );
+}
+
+class MovementPage {
+  MovementPage({
+    required this.items,
+    required this.page,
+    required this.pageSize,
+    required this.totalCount,
+  });
+
+  final List<MovementRow> items;
+  final int page;
+  final int pageSize;
+  final int totalCount;
+
+  int get totalPages => pageSize <= 0 ? 1 : ((totalCount + pageSize - 1) / pageSize).ceil().clamp(1, 9999);
+
+  factory MovementPage.fromJson(Map<String, dynamic> json) => MovementPage(
+        items: _items(json, MovementRow.fromJson),
+        page: json['page'] is num ? (json['page'] as num).toInt() : 1,
+        pageSize: json['pageSize'] is num ? (json['pageSize'] as num).toInt() : 20,
+        totalCount: json['totalCount'] is num ? (json['totalCount'] as num).toInt() : 0,
       );
 }
 
@@ -253,29 +278,61 @@ String? jwtEmail(String? token) {
   return null;
 }
 
+String? jwtAccountKind(String? token) {
+  final json = jwtPayload(token);
+  if (json == null) {
+    return null;
+  }
+  final kind = json['account_kind'];
+  if (kind is String && kind.isNotEmpty) {
+    return kind;
+  }
+  return null;
+}
+
 /// JWT client only. Does not store a second balance (no Hive).
 class ClearPayClient {
   ClearPayClient({
     required this.store,
     http.Client? httpClient,
     String? baseUrl,
+    this.onUnauthorized,
   })  : _http = httpClient ?? http.Client(),
         baseUrl = baseUrl ?? defaultApiBase();
 
   final TokenStore store;
   final http.Client _http;
   final String baseUrl;
+  Future<void> Function()? onUnauthorized;
 
   bool get isAdmin => jwtIsAdmin(store.token);
 
   String? get email => jwtEmail(store.token);
 
-  Future<void> login(String email, String password) async {
+  String? get accountKind => jwtAccountKind(store.token);
+
+  Future<void> login(String email, String password, {String? accountKind}) async {
     final response = await _http.post(
       _uri('/api/token'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email.trim(), 'password': password}),
+      body: jsonEncode({
+        'email': email.trim(),
+        'password': password,
+        if (accountKind != null && accountKind.isNotEmpty) 'accountKind': accountKind,
+      }),
     );
+    // #region agent log
+    agentDebugLog(
+      hypothesisId: 'F',
+      location: 'clearpay_client.dart:login',
+      message: 'token response',
+      data: {
+        'status': response.statusCode,
+        'host': _uri('/api/token').host,
+        'kindSent': accountKind != null && accountKind.isNotEmpty,
+      },
+    );
+    // #endregion
     if (response.statusCode != 200) {
       throw ApiException(response.statusCode, 'E-posta veya şifre hatalı.');
     }
@@ -287,6 +344,7 @@ class ClearPayClient {
     required String email,
     required String password,
     required String confirmPassword,
+    String? accountKind,
   }) async {
     final response = await _http.post(
       _uri('/api/register'),
@@ -296,6 +354,7 @@ class ClearPayClient {
         'email': email.trim(),
         'password': password,
         'confirmPassword': confirmPassword,
+        if (accountKind != null && accountKind.isNotEmpty) 'accountKind': accountKind,
       }),
     );
     if (response.statusCode != 201) {
@@ -318,14 +377,22 @@ class ClearPayClient {
     return WalletSnapshot.fromJson(json);
   }
 
-  Future<List<MovementRow>> movements({String? kind, String? from, String? to}) async {
+  Future<MovementPage> movements({
+    String? kind,
+    String? from,
+    String? to,
+    int page = 1,
+    int pageSize = 20,
+  }) async {
     final query = <String, String>{
       if (kind != null && kind.isNotEmpty && kind != 'all') 'kind': kind,
       if (from != null && from.isNotEmpty) 'from': from,
       if (to != null && to.isNotEmpty) 'to': to,
+      'page': '$page',
+      'pageSize': '$pageSize',
     };
     final json = await _get('/api/movements', query);
-    return _items(json, MovementRow.fromJson);
+    return MovementPage.fromJson(json);
   }
 
   Future<ReceiptSnapshot> receipt(String correlationId) async {
@@ -410,7 +477,7 @@ class ClearPayClient {
       uri = uri.replace(queryParameters: query);
     }
     final response = await _http.get(uri, headers: _headers(money: false));
-    return _decode(response);
+    return await _decode(response);
   }
 
   Future<Map<String, dynamic>> _postMoney(String path, Map<String, dynamic> body) =>
@@ -426,11 +493,15 @@ class ClearPayClient {
       headers: _headers(money: money),
       body: jsonEncode(body),
     );
-    return _decode(response);
+    return await _decode(response);
   }
 
-  Map<String, dynamic> _decode(http.Response response) {
+  Future<Map<String, dynamic>> _decode(http.Response response) async {
     if (response.statusCode == 401) {
+      final handler = onUnauthorized;
+      if (handler != null) {
+        await handler();
+      }
       throw ApiException(401, 'Oturum süresi doldu.');
     }
     if (response.statusCode == 409) {

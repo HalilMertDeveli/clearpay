@@ -47,6 +47,7 @@ Asıl iddia ürün değil motor. “Onlardan ucuzuz / onları geçeriz” yok.
 - Papara / Tosla / ininal rakibi, “daha ucuz havale”
 - **Alipay / 支付宝 değiliz.** Ev düzeni (büyük bakiye + 4 işlem ızgarası) esinlenme; logo, QR markası, “Alipay” ürün adı yok
 - **Papara görünümü kopyalanmaz (T-053).** Mobil bankacılık *düzeni* (alt sekme çubuğu, kart yığını, işlem listesi) serbest; mor kimlik, logo, “Papara gibi” metni yok. Renk MARKA navy/teal kalır
+- **Yapı Kredi / Worldcard görünümü kopyalanmaz (T-072).** Internet-şube *düzeni* (üst şerit, sol menü, hesap kartı, hızlı işlem karoları) serbest; YK logo, altın kimlik, kredi/kampanya, “Yapı Kredi gibi” metni yok
 - Üretim SLA, “paranız güvende”, yatırım tavsiyesi
 - Google Ads’te Demo cümlesi olmadan kampanya (SEO/Ads ajanı; harcama yok)
 

@@ -11,17 +11,20 @@ public sealed class SqlAdminPanel : IAdminPanel
     private readonly IUserDirectory _users;
     private readonly IWalletSummaryCache _cache;
     private readonly IClock _clock;
+    private readonly IWalletLiveNotifier _live;
 
     public SqlAdminPanel(
         ClearPayDbContext db,
         IUserDirectory users,
         IWalletSummaryCache cache,
-        IClock clock)
+        IClock clock,
+        IWalletLiveNotifier live)
     {
         _db = db;
         _users = users;
         _cache = cache;
         _clock = clock;
+        _live = live;
     }
 
     public async Task<bool> FreezeByEmailAsync(
@@ -63,6 +66,9 @@ public sealed class SqlAdminPanel : IAdminPanel
         });
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         await _cache.InvalidateAsync(userId, cancellationToken).ConfigureAwait(false);
+        await _live.NotifyAsync(
+            new WalletLiveNotice("freeze", null, new[] { userId }),
+            cancellationToken).ConfigureAwait(false);
         return true;
     }
 
@@ -93,6 +99,9 @@ public sealed class SqlAdminPanel : IAdminPanel
         });
         await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         await _cache.InvalidateAsync(userId, cancellationToken).ConfigureAwait(false);
+        await _live.NotifyAsync(
+            new WalletLiveNotice("unfreeze", null, new[] { userId }),
+            cancellationToken).ConfigureAwait(false);
         return true;
     }
 
