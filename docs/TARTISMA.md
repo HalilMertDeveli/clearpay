@@ -876,6 +876,19 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-059 — 2026-08-17 — Yol haritası belgesi (Q1 kariyer, Q2 park)
+
+- **Kim:** Orchestrator, Satış, İK, Deploy
+- **Konu:** “Ne işe yarar, nereye götüreceğim” planı nereye yazılır; TASK-16 / Q2 ne zaman?
+- **Seçenekler:**
+  1. SPEC’i Papara/lisans ürününe çevir; TASK listesini Q2 satıcı paneliyle şişir.
+  2. **Kalıcı `docs/YOL.md`:** Q1 = mülakat demosu (409/tx/outbox + TASK-16 URL). Kariyer kapısı ilk nakit. Kendi e-para lisansı kapalı. Q2 kapalı devre/white-label **park** (avukat + 9. ekran onayı yokken `src/` yok). TASK-16 URL ajan uydurmaz (`az login` Halil).
+- **Karar:** **2.** Plan Cursor onayı; OWN `docs/YOL.md`. `src/` yok. TASKS Todo şişmez (TASK-16 durur).
+- **Neden:** T-004/T-013 durur. Kod Q1 (TASK-01…15) bitti; eksik kanıt HTTPS. Ticari satış avukatsız yalan.
+- **Sonra hangi dosya:** `docs/YOL.md`; `docs/GELIR.md` işaret; `docs/IK.md` (409/outbox kanıt TASK-06/11 Done); `docs/SENIN-ISLERIN.md` / `docs/CANLI.md` TASK-16 tık; `docs/HANDOFF.md` append. README Docs satırı.
+
+---
+
 ## T-058 — 2026-08-17 — Lokal Identity SQL Server (numara: T-057 kamu cüzdana ait)
 
 - **Kim:** Orchestrator (düzeltme). Önceki Identity bloğu T-057 başlığıyla yazıldı; aynı gün kamu cüzdan maddesi de T-057 aldı.
@@ -888,4 +901,718 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Sonra hangi dosya:** HANDOFF append T-058. `AddClearPayIdentity` mesajı T-058. DEPLOY/ARCHITECTURE T-058.
 
 ---
+
+## T-060 — 2026-08-17 — Gelecek senaryoları (dört masa; YOL’a katalog)
+
+- **Kim:** Orchestrator + Product + Architect + Payments + Sales/İK (kullanıcı: ajanlar tartışsın, proje geleceğini hesaplasın, olası senaryo listesi)
+- **Konu:** TASK-01…15 bitti; TASK-16 URL Halil’de. T-059 `docs/YOL.md` Q1 kariyer / Q2 park kilitli. Ayrı `GELECEK.md` mi, yoksa YOL’a senaryo kataloğu mu? Hangi gelecek **izlenir**, hangisi **park**, hangisi **kapalı**?
+- **Seçenekler:**
+  1. Papara / kendi e-para lisansı (Yol A) / 9. ekran / Kafka / gerçek Visa-FAST — hayır (T-004, T-013, SPEC).
+  2. URL’den önce satıcı paneli + özellik fabrikası — hayır; Sales/İK vetosu, Architect SPEC kilit.
+  3. **YOL kataloğu.** T-059 durur. Dört masa senaryoları `docs/YOL.md` içine yazılır (ikinci OWN yok). Kazanan 12 ay: tek host + TASK-16 HTTPS + Yol B (mülakat maaşı). 8 ekran cilâsı (T-056/057) içeride. Q2 C/D + satıcı = park (avukat + kullanıcı onayı). Ledger invarianti Payments; mikroservis/Kafka dual-write reddi.
+- **Karar:** **3.** `src/` yok. SPEC 8 değişmez. TASK-16 Todo. `GELECEK.md` açılmaz (T-059 ile çatışır).
+- **Neden:** Product/Sales/Architect/Payments aynı kapıya çıktı: nakit = kariyer; kanıt = tarayıcıda 409; kasa = SQL çift kayıt. 1 yasa/iddiayı bozar. 2 wedge’i sulandırır. 3 T-059’u ezer değil, hesaplanmış liste ekler.
+- **Sonra hangi dosya:** Orchestrator `docs/YOL.md` senaryo bölümü; `docs/HANDOFF.md` append. SPEC/PLAN/TASKS ekran eklenmez.
+
+---
+
+## T-061 — 2026-08-17 — Flutter JWT istemci (Q2; 8 ekran durur)
+
+- **Kim:** Orchestrator, Architect, Coder (kullanıcı onaylı plan: ASP.NET site + Flutter mobil, aynı ledger)
+- **Konu:** Site C#, mobil Flutter olabilir mi? Eşzaman ikinci defter mi? SPEC “site” + eski Flutter reddi (Firebase/pasta) bu istemciyi yasaklar mı?
+- **Seçenekler:**
+  1. Flutter yok — yalnız Razor (kullanıcı Q2 istedi).
+  2. **JWT istemci:** `GET /api/wallet|movements|receipts` + mevcut `POST /api/transfers` + `POST /api/topup|withdraw`; CORS debug+canlı kök. `mobile/clearpay` Dart. Domain’e Dart yok. 8 ekran. Pull-to-refresh = Q2.1 eşzaman. SignalR yok. Hive/`UPDATE Balance` yok.
+  3. Flutter’da offline bakiye / ikinci SQL / 9. ekran / PWA — hayır.
+- **Karar:** **2.** Q1 TASK-16 Todo durur. `ClearPay.slnx` Flutter içermez. LED yok.
+- **Neden:** İki istemci, tek kasa (T-019 portlar). Eski Flutter reddi Firebase ikiziydi. Cookie≠JWT (ARCHITECTURE).
+- **Sonra hangi dosya:** Coder `src/ClearPay.Web/Controllers/**`, `OpenApi`, `Program.cs` CORS. Tester JWT GET/POST. `mobile/clearpay/**`. SPEC/ARCHITECTURE/YOL/README birer cümle. `docs/HANDOFF.md` append. Domain/Persistence rewrite yok.
+
+---
+
+## T-062 — 2026-08-17 — Flutter’da site işlemleri + ajanlar mobil OWN
+
+- **Kim:** Orchestrator, Coder (kullanıcı: uygulama kurulsun; işlemler Flutter içinde; ajanlar mobil içinde çalışsın)
+- **Konu:** T-061 JWT istemci var ama kayıt sitede; Windows’ta `flutter run` yok; Coder kuralı yalnız Razor. Ajan kökü yalnız `mobile/` olursa TARTISMA kaybolur.
+- **Seçenekler:**
+  1. WebView ile site — hayır (T-061 cookie≠para API).
+  2. **JWT tam müşteri akışı:** `POST /api/register` (aynı `RegisterRequest`, cookie SignIn yok, JWT döner). `GET/POST /api/cards`. Admin JWT `IAdminPanel` (rol Admin; 9. ekran değil). Flutter: kayıt, özet kısayol, havale kalan bakiye + onay, kartlı yükle/çek, hareket filtre, dekont, admin sekmesi. Windows masaüstü (`flutter create --platforms=windows`) bu PC’de kurulum. Coder OWN += `mobile/**/*.dart`. Workspace: repo + `mobile/clearpay` (ajanlar Dart’ta; TARTISMA kökte). Hive yok.
+  3. Ajan kökünü yalnız `mobile/clearpay` yapmak — hayır (`docs/` ve `src/` TARTISMA/ledger).
+- **Karar:** **2.** TASK-16 Todo durur. Domain’e Dart yok.
+- **Neden:** Kullanıcı işlemleri telefonda/Windows Flutter’da; para hâlâ C# port. Çok köklü workspace TARTISMA’yı korur.
+- **Sonra hangi dosya:** `RegisterController`, `CardsController`, `AdminApiController`. `mobile/clearpay/lib/**`, Windows platform. `.cursor/rules/coder.mdc` + `flutter.mdc`. `docs/AGENTS.md`, HANDOFF append. Tester register+cards.
+
+---
+
+## T-063 — 2026-08-17 — Flutter aynı git repo + çok köklü workspace
+
+- **Kim:** Orchestrator (kullanıcı: Flutter uygulaması ek olarak şuanki repo olarak eklensin)
+- **Konu:** `mobile/clearpay` Cursor’da ayrı “current repo” mı, iç içe `git init` mı, yoksa aynı GitHub repo + workspace klasörü mü?
+- **Seçenekler:**
+  1. `mobile/clearpay` içinde ikinci `git init` / ayrı remote — hayır (TARTISMA iki yer, submodule karmaşası).
+  2. **Aynı repo:** `HalilMertDeveli/clearpay` içinde `mobile/clearpay`. `ClearPay.code-workspace` iki klasör (site + Flutter). `ClearPay.slnx` Flutter içermez (T-061).
+  3. Yalnızca ajan kökünü `mobile/` yapmak — hayır (T-062).
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** Tek kasa, tek git; Flutter ikinci istemci klasörü. Ajanlar Dart’ta, TARTISMA kökte.
+- **Sonra hangi dosya:** `ClearPay.code-workspace`, `.gitignore` (ephemeral/local.properties), `mobile/clearpay` kaynak git’te. HANDOFF append. `git init` yok.
+
+---
+
+## T-064 — 2026-08-17 — README: web+mobil aynı işlemler; mobil README kök stili
+
+- **Kim:** Orchestrator / Sales copy (kullanıcı: repoya giren hem mobil hem web işlemlerini görsün; kök README güzel, mobil için benzeri)
+- **Konu:** GitHub’da yalnız site mi görünür? `mobile/clearpay/README.md` kısa kaldı.
+- **Seçenekler:**
+  1. İki ayrı ürün README — hayır (iki kasa izlenimi).
+  2. **Kök README:** 8 işlem tablosu Web rotası + Flutter ekran. Flutter rozeti. Mermaid’e JWT istemci. Mobil README kök ile aynı düzen (rozet, mermaid, ekran tablosu, demo, cmd). 9. ekran yok.
+  3. Papara/mağaza vaadi — hayır.
+- **Karar:** **2.** TASK-16 Todo. `src/` yok.
+- **Neden:** Ziyaretçi “aynı kişi, iki istemci, tek defter” görsün.
+- **Sonra hangi dosya:** `README.md` + TR/DE/FR; `mobile/clearpay/README.md`; HANDOFF append.
+
+---
+
+## T-065 — 2026-08-17 — Flutter Firebase yapılandırması (istemci; kasa değil)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: Flutter için Firebase yapılandırması)
+- **Konu:** `mobile/clearpay` JWT istemci. T-061 eski reddi **Firebase ikizi / Firestore bakiye** içindi. Şimdi Google projesi + `firebase_core` mi, yoksa Auth/Firestore ikinci defter mi?
+- **Seçenekler:**
+  1. Firebase Auth + Firestore/Hive bakiye — hayır (T-061; `UPDATE Balance` ikizi; SQL ledger kırılır).
+  2. **`firebase_core` istemci init.** JWT + C# port + SQL kasa durur. 8 ekran. 9. ekran / FCM inbox yok. `google-services.json` / `firebase_options.dart` FlutterFire üretir. Ajan Firebase/Google Cloud projesi **açmaz** (GIRIS-SOSYAL / CANLI ile aynı). CLI yoksa iskelet + Halil `firebase login` + `configure-firebase.cmd`. Crashlytics/Analytics sonra; şimdi yalnız core.
+  3. Firebase’siz — kullanıcı yapılandırma istedi.
+- **Karar:** **2.** TASK-16 Todo durur. Domain’e Dart yok. `ClearPay.slnx` Flutter içermez.
+- **Neden:** 1 ikinci kasa. 3 isteği karşılamaz. 2 mülakat omurgası SQL/409; Firebase yalnızca mobil Google bağları.
+- **Sonra hangi dosya:** Coder `mobile/clearpay` (`pubspec`, `lib/firebase/**`, `main.dart`, Android Gradle koşullu plugin, `tool/configure-firebase.cmd`, README). `docs/SENIN-ISLERIN.md` tık. HANDOFF append. `src/` yok.
+
+---
+
+## T-066 — 2026-08-17 — Flutter sol çekmece + perakende banka kromu (YK kopyası değil)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: solda pencere/panel; Yapı Kredi mobil gibi UI, iç özellikler sonra)
+- **Konu:** Flutter’da sol panel + TR banka uygulaması ana ekran dili. Pixel-clone / YK ürün ızgarası mı, yoksa mevcut 8 işleme map’li ClearPay kromu mu?
+- **Seçenekler:**
+  1. Yapı Kredi piksel kopyası (logo, YK altın/mavi kimlik, kredi/döviz/fatura/QR ızgarası) — **red** (marka; SPEC 9. ekran; lisans iddiası).
+  2. **Kazanan:** Sol `NavigationDrawer` + perakende-banka mobil kromu (app bar hamburger, hesap/bakiye kartı, kısayol karoları, işlem listesi). ClearPay navy `#1B2A4A`. Footer **Demo — sahte banka gateway.** Çekmece + ana kısayollar yalnız mevcut 8 işlem: Giriş (zaten), Kayıt (auth), Özet, Havale, Yükle/Çek, Hareketler, Dekont (hareketten), Admin (JWT Admin). Kartlar bugünkü gibi Yükle/Çek altında.
+  3. Kredi / fatura / QR için yeni ekranlar — **park** (kullanıcı sonra dedi; yeni TARTISMA + SPEC şart).
+- **Karar:** **2.** TASK-16 Todo durur. 9. ekran yok. Papara/YK wordmark yok.
+- **Neden:** Aynı kişi, iki istemci, tek defter. TR banka uygulamasının UI dili (hamburger, hesap kartı, kısayol ızgarası) YK olmayı gerektirmez. 1 marka+SPEC kırar. 3 şimdi kapsam dışı.
+- **Sonra hangi dosya:** Coder `mobile/clearpay/lib/screens/shell_screen.dart`, `overview_screen.dart`, `theme.dart`, `api/clearpay_client.dart` (JWT e-posta), `test/widget_test.dart`. HANDOFF append. `src/` yok. SPEC ekran listesi durur.
+
+---
+
+## T-067 — 2026-08-17 — Flutter ana ızgara + TC demo giriş + QR kanal (YK/FAST kopyası değil)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: Yapı Kredi benzeri ana alanlar; TC giriş; FAST/Piyasalar/QR; Daha fazla; uygulamadan QR ile öde/al)
+- **Konu:** Ana ekranı TR banka hissi ile genişletmek. Pixel-clone (World/Jet QR/FAST gerçek ray) mı, yoksa aynı 8 işlem + kanal mı?
+- **Seçenekler:**
+  1. YK piksel kopyası; World / Jet QR / FAST gerçek ray — **red** (marka + lisans iddiası + 9. ekran).
+  2. **Kazanan:** Aynı 8 işlem. Özet **kısayol ızgarası** + **Daha fazla**. **TC ile giriş:** mevcut girişte sekme (9. ekran değil). TCKN Mernis değil. Identity e-posta-only → Flutter demo map `10000000146` → `admin@clearpay.test`, arkada `POST /api/token`. **FAST** → Havale («Demo P2P — TCMB FAST değil»). **Piyasalar** park («Yatırım/döviz yok; SPEC 8»). **QR ile öde / QR ile al** (Jet QR / World Pay değil) → Özet+Havale kanalı; `qr_flutter`; `POST /api/transfers` + Guid `Idempotency-Key`. **Daha fazla:** 8 işlem + park (Piyasalar, Fatura, Kredi) «Park — demo değil».
+  3. Gerçek Worldcard / TCMB FAST / Mernis — **red**.
+- **Karar:** **2.** TASK-16 Todo. 9. ekran yok. Firebase/Hive kasa yok. `UPDATE Balance` yok.
+- **Neden:** Banka evi dili YK olmayı gerektirmez. QR ürün değil kanal. TC KYC değil.
+- **Sonra hangi dosya:** Coder `mobile/clearpay` login/overview/transfer/shell, `lib/demo/`, `lib/qr/`, `qr_flutter`, test, README. HANDOFF append.
+
+---
+
+## T-068 — 2026-08-17 — Splash + Bireysel/Kurumsal (SQL Identity; Firebase kasa yok)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: açılış animasyonu; Kurumsal/Bireysel; bunları Firebase’de ayrı tut)
+- **Konu:** İki mod ve splash. Firestore/Firebase Auth mı, aynı SQL Identity mi?
+- **Seçenekler:**
+  1. İki Firebase / Firestore / Firebase Auth — **red** (T-061 ikinci kasa yok; T-065 `firebase_core` yalnız istemci bootstrap; Auth/Firestore cüzdan değil; yeni Firestore eklenmez).
+  2. **Kazanan:** Splash (ClearPay tween; YK asset yok) → **Bireysel | Kurumsal** iki kart → giriş (T-067 e-posta + TC). Son mod `%LOCALAPPDATA%/ClearPay/account_kind.txt` (plugin yok). Sunucu: `ApplicationUser.AccountKind` aynı Identity SQL; JWT `account_kind`. Kayıt/giriş round-trip. Seed `admin@clearpay.test` = Bireysel. **Kurumsal POS / 9. ekran / üye iş yeri değil** — aynı 8 işlem; rozet/kopya.
+  3. Yalnız Flutter local — **red** (kullanıcı sunucu ayrımı istedi).
+- **Karar:** **2.** TASK-16 Todo. Bireysel/Kurumsal Firebase’e **yazılmaz**. `UPDATE Balance` yok.
+- **Neden:** İkinci kullanıcı deposu T-061 kırar. SQL Identity dürüst ayrım.
+- **Sonra hangi dosya:** Coder `ApplicationUser` + Identity migration; JWT/token/register; Flutter splash/mode/login/main; tests. HANDOFF append.
+
+---
+
+## T-070 — 2026-08-17 — Eşzamanlı çalışma belgesi (git / masalar / makine)
+
+- **Kim:** Orchestrator (kullanıcı: eşzamanlı çalışma için gereken yapı; öğretici + bu projenin hali; paylaş)
+- **Konu:** Chat cevabı mı, yoksa kalıcı OWN doküman + GitHub blob + isteğe Notion mu?
+- **Seçenekler:**
+  1. Yalnız sohbet özeti — kapanınca kaybolur; paylaşılmaz.
+  2. **`docs/ESZAMANLI.md`:** üç katman (Git, masalar/ajanlar, makine); TASKS dürüst snapshot; yaşanan çatışmalar (MSB3027, VMP, Notion Publish, ERR_CONNECTION_REFUSED). README/README.tr bir satır. Notion kopya isteğe. `src/` yok.
+  3. HANDOFF’a uzun tartışma / ikinci `OTURUM-PLAN` — hayır (append defteri; tıklama sırası zaten var).
+- **Karar:** **2.** TASK-16 Todo durur. 409 TASK-06 Done (uydurma skip yok). Azure URL uydurulmaz.
+- **Neden:** 1 paylaşılmaz. 3 HANDOFF/OWN karışır. 2 öğretir ve bu repo’nun gerçek paralelini (Architect T-016, docs masaları; iki Payments yok) yazar.
+- **Sonra hangi dosya:** Orchestrator `docs/ESZAMANLI.md`; `README.md` + `README.tr.md` Docs satırı; HANDOFF append. Notion yeni sayfa (Publish Halil).
+
+---
+
+## T-073 — 2026-08-17 — Web + mobil + JWT parite dalgası (8 ekran)
+
+- **Kim:** Orchestrator (onaylı plan: Web Mobil Backend Wave)
+- **Konu:** Aynı 8 cüzdan işlemini Razor, Flutter ve JWT API’de hizalamak. 9. ekran / ikinci kasa mı?
+- **Seçenekler:**
+  1. Flutter Google/Apple (cookie OAuth) + PWA + Firestore/Hive bakiye + satıcı/POS/Kafka — **red**.
+  2. **Kazanan:** 8 ekran parite. Backend: `GET /api/transfers/{id}` (201 Location), JWT 401 `ProblemDetails`, `GET /api/movements` `page`/`pageSize`. Web: Yükle **İptal**, Admin topbar rolü. Flutter: T-066 çekmece durur; hareket tarih+sayfa; güvenli JWT; 401 → giriş; dondurulmuşta Havale/Yükle/Çek kapalı. Designer token `brand.css`. `UPDATE Balance` yok.
+  3. Yalnız kozmetik — **red** (Location boş, 401 gövdesi, freeze UX ledger kadar mülakat).
+- **Karar:** **2.** TASK-16 Todo durur. Azure URL uydurulmaz.
+- **Neden:** İki istemci, tek C# kasa (T-061). Cookie ≠ JWT. Ledger kuralları bozulmaz.
+- **Sonra hangi dosya:** Payments `Controllers/TransfersController`, `ITransferLookup`, JWT events, `MovementsController`. Coder Razor `YukleCek.cshtml`, `_Layout.cshtml`. Coder Flutter `mobile/clearpay/lib/**`. Designer `TASARIM.md` + `brand.css`. Tester `TransferApiTests` + `flutter analyze`. HANDOFF append.
+
+---
+
+## T-071 — 2026-08-17 — Mobil↔web canlı bakiye (SignalR chrome)
+
+- **Kim:** Orchestrator + Architect + Coder + Payments (kullanıcı: mobilde değişiklik web’de otomatik yansısin; eşzamanlı yapı; API’de Halil adımları)
+- **Konu:** T-061 “SignalR yok / pull-to-refresh = Q2.1”. İki istemci aynı SQL kasayı yazıyor; web özeti Razor HTML — mobil POST sonrası tarayıcı eski bakiyeyi gösterir. T-070 `ESZAMANLI.md` git/masa öğreticisidir, para push’u değil. İkinci defter veya 9. ekran mı?
+- **Seçenekler:**
+  1. Yalnız pull-to-refresh (T-061) — kullanıcı otomatik istedi.
+  2. **SignalR hub chrome:** `/hubs/wallet` (9. ekran değil). Ledger commit **sonra** `IWalletLiveNotifier` → grup `user:{id}`. Payload yalnız `{ reason, correlationId }` — bakiye yok; istemci `GET /api/wallet` veya Razor reload. Cookie (Razor) + JWT `access_token` query (Flutter). Firestore/FCM/Hive/`UPDATE Balance` yok. Kafka yok. T-057 “KYC+QR+SignalR+CSV yeni ekran” reddi durur.
+  3. Firebase FCM / Firestore dinleyici — hayır.
+- **Karar:** **2.** TASK-16 Todo durur. T-061 pull-to-refresh yedek (hub kopunca). Domain’e Dart yok. T-066 çekmece kararı durur.
+- **Neden:** 1 isteği karşılamaz. 3 ikinci kaynak. 2 tek kasa + push “yenile”; mülakat: SignalR ≠ ledger.
+- **Sonra hangi dosya:** Application `IWalletLiveNotifier`. Infrastructure NoOp + executor/admin notify. Web `WalletHub` + `site.js`. Flutter `signalr_netcore`. `docs/API-ESZAMAN.md`. HANDOFF append. SPEC 8 ekran aynı.
+
+---
+
+## T-072 — 2026-08-17 — Web internet-şube kromu (YK düzeni; marka kopyası değil)
+
+- **Kim:** Orchestrator + Designer + Coder (kullanıcı: web uygulaması için güzel arayüz; Yapı Kredi *web* örnek)
+- **Konu:** T-054 auth hero + T-053 mobil tabbar durur. Giriş sonrası Razor hâlâ dar 560px kolon + navy sidebar. YK internet şube *düzeni* (üst şerit + sol menü + hesap kartı + hızlı işlem karoları) mı, yoksa YK/Worldcard piksel kopyası mı?
+- **Seçenekler:**
+  1. Yapı Kredi / Worldcard piksel kopyası (logo, altın kimlik, kredi, kampanya) — **red** (marka; lisans iddiası; 9. ekran).
+  2. **Kazanan:** Girişli Razor = internet-bankacılığı *web kromu*. Tam genişlik navy **masthead** (ClearPay + «İnternet» kicker + kullanıcı/çıkış). Sol menü 8 işlem (wordmark tekrar yok). Masaüstü içerik **~1120px** (T-053 560px kolon gevşer; ≤800px **tabbar durur**). Özet: hesap kartı + **Hızlı işlemler** beyaz karolar (Gönder/Yükle/Çek/Hareketler). Renk MARKA navy `#1B2A4A`. Auth T-054 değişmez. Ledger / `UPDATE Balance` yok.
+  3. Kredi / fatura / 9. ekran — **park**.
+- **Karar:** **2.** TASK-16 Todo durur. YK/Papara wordmark yok. T-071 hub kromu durur (ekran değil).
+- **Neden:** Kullanıcı web yüzeyini YK *şube sitesi* gibi istedi; 1 marka+SPEC kırar. 3 kapsam dışı. T-015 «şube kromu yok» girişli kabuk için T-072 ile güncellenir; ürün hâlâ demo cüzdan.
+- **Sonra hangi dosya:** Coder `_Layout.cshtml`, `Index.cshtml`, `site.css` / `brand.css`, resx 4 dil. Designer `TASARIM.md` + `MARKA.md`. Tester AuthOrUi. HANDOFF append.
+
+---
+
+## T-074 — 2026-08-17 — Web + Flutter iki platformda çalışma (hata kanıtı)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: 2 platform içinde çalışma sağla, hataları çöz)
+- **Konu:** Site (Razor `:5153`) ve Flutter (Android emülatör + Windows masaüstü) birlikte. Tahminle yama yok; önce runtime log.
+- **Seçenekler:**
+  1. Kör yama (NDK pin, CORS gevşet, plugin sil) — **red** (kanıtsız; ledger/`UPDATE Balance` riski).
+  2. **Kazanan:** Hipotez log’u (API taban URL, token yükleme, `/api/token`, SignalR hub, Windows symlink). Kanıt sonrası tek yama. 9. ekran yok. Firebase kasa yok.
+  3. Flutter web/PWA (`dart:io` kırılır) — **red** (T-073).
+- **Karar:** **2.** TASK-16 Todo durur. Windows Developer Mode kullanıcı tıklar (`ms-settings:developers`); ajan hesap açmaz.
+- **Neden:** Terminalde Windows symlink ve Android NDK/cache zaten göründü; giriş/hub/URL henüz log’suz.
+- **Sonra hangi dosya:** Coder Flutter `mobile/clearpay/lib/**` (debug ingest). Coder Web `TokenController`, `WalletHub`, `site.js`. HANDOFF append (landed değil; debug).
+
+---
+
+## T-075 — 2026-08-17 — Windows masaüstü: firebase_core C++ SDK zip yok (JWT durur)
+
+- **Kim:** Coder (T-074 log + `flutter build windows`)
+- **Konu:** Developer Mode açılınca symlink geçti. CMake `firebase_cpp_sdk_windows_13.9.0.zip` (~959MB) `ARCHIVE_EXTRACT` “File size could not be restored”. Firebase options Windows’ta zaten stub throw (T-065).
+- **Seçenekler:**
+  1. Zip’i elle aç / `FIREBASE_CPP_SDK_DIR` — 1GB SDK, JWT için gerekmez, extract yine kırılabilir.
+  2. **Kazanan:** Windows native plugin listesinden `firebase_core` çıkar. Android `firebase_core` durur. Dart `initClearPayFirebase` catch aynı. `flutter_secure_storage_windows` durur. `UPDATE Balance` yok.
+  3. pubspec’ten `firebase_core` sil — **red** (T-065 Android bootstrap).
+- **Karar:** **2.** TASK-16 Todo durur. 9. ekran yok.
+- **Neden:** Log: token 200 + web hub cookie bağlandı. Windows bloğu Firebase C++ extract; runtime zaten skip.
+- **Sonra hangi dosya:** Coder `windows/CMakeLists.txt`, `windows/clearpay_plugins.cmake`, `windows/runner/clearpay_plugin_registrant.cc`, `runner/CMakeLists.txt`. HANDOFF append.
+
+---
+
+## T-076 — 2026-08-17 — Flutter web (Chrome) JWT istemci; Razor site durur
+
+- **Kim:** Coder (kullanıcı: web tarafı çalışmıyor)
+- **Konu:** `flutter build web` → «This project is not configured for the web.» Razor `:5153` cookie giriş 200 (curl). Chrome/Edge cihazı Flutter’da kırık. 9. ekran / PWA mağaza mı?
+- **Seçenekler:**
+  1. Yalnız Razor’u web say — kullanıcı Chrome cihazını seçince yine kırılır.
+  2. **Kazanan:** `flutter create --platforms web`. `dart:io` koşullu import. API `http://localhost:5153` (CORS T-061 localhost). Aynı 8 ekran, aynı SQL JWT. Hive/Firestore kasa yok. Razor internet-şube durur.
+  3. Azure canlı URL / PWA mağaza — **red** (TASK-16 blok Halil).
+- **Karar:** **2.** TASK-16 Todo durur. T-073 PWA red durur; bu yalnızca `flutter run -d chrome` JWT.
+- **Neden:** Yeni olgu: web klasörü yok. `dart:io` web’de derlenmez. CORS zaten localhost.
+- **Sonra hangi dosya:** Coder `mobile/clearpay/web/**`, `lib/platform/**`, `dart:io` ayrımı, `auth-hero.js` opacity yedek. HANDOFF append.
+
+---
+
+## T-076 — 2026-08-17 — Development SQL: LocalDB (MSSQLLocalDB)
+
+- **Kim:** Orchestrator + Coder + Deploy (kullanıcı: tam MSSQLSERVER değil; SQL Server LocalDB)
+- **Konu:** T-058 Identity+ledger aynı Windows SQL `ClearPay` durur. Development şu an `lpc:localhost` (varsayılan `MSSQLSERVER`). Kullanıcı `(localdb)\MSSQLLocalDB` istiyor. Docker SA / Azure / TASK-16 değişmez.
+- **Seçenekler:**
+  1. `lpc:localhost` MSSQLSERVER durur — kullanıcı reddi (LocalDB istedi).
+  2. **Kazanan:** Development `ConnectionStrings:ClearPay` + design-time factory = `Server=(localdb)\MSSQLLocalDB;Database=ClearPay;Integrated Security=True`. Identity T-058 aynı DB (SQLite `identity.db` yok). Testler `UseSqliteLedger`. Production Azure boş string. Docker Compose / `D:\ClearPay\data` dokunulmaz.
+  3. Docker `sa` @ `:1433` Development — hayır (engine sık kapalı; kullanıcı Windows LocalDB).
+- **Karar:** **2.** T-058 ilişkisel SQL durur (LocalDB hâlâ SQL Server). TASK-16 Todo. 8 ekran. `UPDATE Balance` yok.
+- **Neden:** 1 kullanıcı isteği değil. 3 Docker şartı. 2 VS/dotnet LocalDB; tam instance şart değil.
+- **Sonra hangi dosya:** Coder `appsettings.Development.json`, `AppIdentityDbContextFactory`, `ClearPayDbContextFactory`. Deploy `docs/DEPLOY.md` lokal satır. Migrate + `IdentitySeeder`. HANDOFF append. Production json yok.
+
+---
+
+## T-077 — 2026-08-17 — PC MySQL yan motor (web+mobil config; ledger MSSQL)
+
+- **Kim:** Deploy + Coder (kullanıcı: PC’ye MySQL kur + web ve mobil için bağlantı config)
+- **Konu:** SPEC kilit DB **SQL Server**. T-029/T-021: uygulama ledger MSSQL. MySQL Compose yan motor (`docker-compose.databases.yml`, `D:\ClearPay\data\mysql`). Flutter ikinci defter yasak (T-061 Hive/SQLite/Firestore — Dart MySQL aynı yasak). Kullanıcı PC kurulumu istedi (yalnız Docker yetmez). T-076 LocalDB Identity+ledger dokunulmaz.
+- **Seçenekler:**
+  1. Identity+ledger’ı web **ve** Flutter için MySQL’e taşı — **red** (SPEC, dual-write, 409/outbox SQL Server).
+  2. **Kazanan (robust):** Kurulu Windows **MySQL84** varsa onu kullan (yeni installer yok). Yan motor connection config: `ConnectionStrings:MySql` Development’ta; `AddClearPay` / Identity LocalDB/SQL Server kalır. Flutter mysql paketi / bakiye yok. Compose `docker-compose.yml` ile birleşmez (T-020).
+  3. Kurulumu atla, yalnız Docker MySQL — kullanıcı PC kurulumu istedi.
+- **Karar:** **2.** TASK-16 Todo durur. 8 ekran. `UPDATE Balance` yok. Firebase yok.
+- **Neden:** 1 SPEC ve 409/outbox’ı kırar. 3 kullanıcı isteği değil. 2 yan motor + araç (Workbench); kasa hâlâ SQL Server. Mobil JWT → C# → SQL.
+- **Sonra hangi dosya:** Deploy `.env.example`, `docs/DEPLOY.md` (bir satır), `docker-compose.databases.yml` yorum (birleşmez). Coder `appsettings.Development.json` (`MySql` anahtarı; ClearPay/Identity LocalDB kalır), `mobile/clearpay/README.md`, kök README notu. HANDOFF **append**. Production json / `AddClearPay` / Pomelo yok.
+
+---
+
+## T-078 — 2026-08-17 — README mermaid ERD (LocalDB gerçek şema)
+
+- **Kim:** Orchestrator / Sales copy (kullanıcı: ilişkisel DB diyagramı README; push)
+- **Konu:** GitHub kök README’de şema. Ekran görüntüsü `Wallet.Balance` gösterebilir — yasak. 9. ekran / Papara / lisanslı e-para iddiası?
+- **Seçenekler:**
+  1. SSMS screenshot kopyala — **red** (`Balance` kolonu yalanı; T-003).
+  2. **Kazanan:** Kök `README.md` (GitHub varsayılan EN) mermaid `erDiagram`; gerçek tablolar ve EF FK’ler. `Wallet`’ta **Balance yok**; bakiye = `LedgerPair.NetOf` (C# yardımcı; SQL tablosu değil). Identity + ledger aynı LocalDB `ClearPay`; iki history: `__EFMigrationsHistory` + `__EFMigrationsHistoryIdentity`. `Wallet.UserId` unique, AspNetUsers’a **FK yok** (iki DbContext). Flutter JWT + `firebase_core` proje `clearpay-c0485` (Firestore kasa yok). MySQL `ConnectionStrings:MySql` yan motor. 8 ekran. TR/DE/FR aynı yapı (T-064). Caption: Demo — sahte banka gateway. Lisanslı e-para değil.
+  3. Papara / 9. ekran / lisanslı e-para — **red** (T-004, SPEC).
+- **Karar:** **2.** TASK-16 Todo durur. `src/` bu maddede yok.
+- **Neden:** 1 şema yalanı. 3 iddia. 2 mülakat + GitHub’da doğru ERD.
+- **Sonra hangi dosya:** `README.md` + `README.tr.md` + `README.de.md` + `README.fr.md`; HANDOFF **append**.
+
+---
+
+## T-079 — 2026-08-17 — Web dekont PDF (mevcut ledger; 9. ekran değil)
+
+- **Kim:** Orchestrator + Coder + Payments (kullanıcı: dekont işini web tarafında da yap)
+- **Konu:** Mobil/API dekontu `GET /api/receipts/{id}` ile ledger’dan okunuyor. Site `/dekont/{id}` HTML + yazdır var (T-056). Kullanıcı **gerçek PDF** ve **bir örnek fiş** istiyor. Uydurma fiş / ikinci kasa mı?
+- **Seçenekler:**
+  1. PDF’siz HTML yazdır kalsın; örnek yok — kullanıcı PDF + örnek istedi.
+  2. **Kazanan:** PDF = **var olan** çift kayıt belgesi (`correlationId`). `IReceiptPdf` ReceiptDto → byte[]. QuestPDF Infrastructure. Razor `OnGetPdf` (cookie) + `GET /api/receipts/{id}/pdf` (JWT). Development örnek: admin cüzdanına **LedgerPair** yükleme (sabit Guid); `UPDATE Balance` yok. UseSqliteLedger (test) seed yok. Yazdır/kopyala durur. 9. ekran / e-posta yok.
+  3. Fişsiz PDF, Hive/Firebase fiş, Worldcard kopyası — **red**.
+- **Karar:** **2.** TASK-16 Todo durur. SPEC ekran 7 aynı path.
+- **Neden:** 1 isteği karşılamaz. 3 ikinci kaynak. 2 mülakat: PDF ≠ kasa; HTML ve PDF aynı SQL satırı.
+- **Sonra hangi dosya:** Application `IReceiptPdf`. Infrastructure QuestPDF + `DemoReceiptSeeder`. Web `Dekont` handler + `ReceiptsController`. resx 4 dil. Tester PDF `%PDF` + 404. TASARIM/SPEC/URUN bir satır. HANDOFF append.
+
+---
+
+## T-080 — 2026-08-17 — Flutter Chrome web JWT (T-076 numara çakışması düzeltmesi)
+
+- **Kim:** Coder (kullanıcı: web tarafı çalışmıyor). TARTISMA’da iki **T-076** vardı; LocalDB T-076 durur.
+- **Konu:** `flutter build web` «not configured for the web.» `dart:io` Chrome’da derlenmez. Razor `:5153` IIS Express kilit / MSB3027 ayrı.
+- **Seçenekler:**
+  1. Yalnız Razor — Chrome cihazı kırık kalır.
+  2. **Kazanan:** `flutter create --platforms web` + `dart:io` koşullu import. API `localhost:5153`. 8 ekran. PWA mağaza yok (T-073).
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** Kullanıcı web istemcisini Chrome’da da istedi; LocalDB kararı T-076’da ayrı.
+- **Sonra hangi dosya:** Coder `mobile/clearpay/web/**`, `lib/platform/**`. HANDOFF append.
+
+---
+
+## T-069 — 2026-08-17 — Dekont gerçekten oluşsun (Flutter boru) + PDF aynı fiş
+
+- **Kim:** Payments + Coder (kullanıcı: dekont oluşturulsun; bir örnek; sonra gerçek PDF)
+- **Konu:** Hareket satırında «Dekont» var ama havale/yükle/QR öde sonrası fiş açılmıyor; PDF yoktu. Fişsiz PDF / 9. ekran / Hive mi?
+- **Seçenekler:**
+  1. Fişsiz PDF veya sahte asset (uygulamada sabit PDF) — **red** (LedgerEntry yok; TIMEOUT’u posted göstermek aynı yalan).
+  2. **Kazanan:** Dekont = **var olan** çift kayıt görünümü (`correlationId`). Başarılı havale / yükle / QR öde → API `correlationId` → Flutter **Dekont ekranına gider** (kopyala + PDF). Hareket satırı «Dekont» = aynı fiş. 409 replay → mevcut fiş. Gateway **202 TIMEOUT** → ledger yok, fiş/PDF yok. PDF T-079 durur: `GET /api/receipts/{id}/pdf` (JWT) + Razor `?handler=Pdf`; QuestPDF `ReceiptDto` → byte[]. Development örnek T-079 `DemoReceiptSeeder` (`aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001`). Footer: Demo — sahte banka gateway; banka resmi dekontu değil. YK markası yok.
+  3. 9. ekran / Papara resmi dekont / `UPDATE Balance` — **red**.
+- **Karar:** **2.** TASK-16 Todo durur. SPEC ekran 7 (`/dekont/{id}` + Flutter Dekont) aynı. T-079 web PDF yeniden açılmaz.
+- **Neden:** 1 kullanıcı isteğini yalanlar. 3 SPEC. 2 mülakat: PDF ≠ kasa; HTML/JSON/PDF aynı SQL çifti.
+- **Sonra hangi dosya:** Coder Flutter `clearpay_client`, `receipt_screen`, havale/yükle başarı, `platform/receipt_pdf*`, mobil README. Payments: PDF footer metni (T-079 renderer; tutar uydurma yok). Tester `WalletApiTests` transfer→JSON+PDF (T-079 landed). HANDOFF **append**.
+
+---
+
+## T-081 — 2026-08-17 — Dekont PDF native yok (QuestPDF disk)
+
+- **Kim:** Coder (T-079 uygulama; MSB3027 «not enough space» QuestPDF Skia runtimes)
+- **Konu:** T-079 QuestPDF seçilmişti. 2026.7.3 osx/linux/win-arm native kopyası C: dolu. Fişsiz PDF’e dönmek mi?
+- **Seçenekler:**
+  1. QuestPDF durur — derleme bu PC’de kırılır.
+  2. **Kazanan:** Yönetilen PDF 1.4 (`SimplePdfReceiptRenderer`). `ReceiptDto` aynı. Native Skia yok. Tutar uydurma yok. T-079 path’ler durur.
+  3. PDF iptal — kullanıcı PDF istedi.
+- **Karar:** **2.** TASK-16 Todo. 9. ekran yok.
+- **Neden:** 1 bu makinede kilit. 3 T-079’u bozar. 2 aynı SQL fiş, derlenir.
+- **Sonra hangi dosya:** Infrastructure `Documents/SimplePdfReceiptRenderer.cs`. QuestPDF paket yok. HANDOFF append.
+
+---
+
+## T-082 — 2026-08-17 — Mobil hata (runtime kanıt; yama yok)
+
+- **Kim:** Coder (kullanıcı: mobil tarafında bir hata var)
+- **Konu:** Flutter Android/Windows JWT istemcisi. Tahminle yama yok. Önceki T-074 log’u web-ağırlıklı; native Firebase JNI, login `rethrow`, özet yükleme, SignalR, disk dolu (errno 112) henüz ayrışmadı.
+- **Seçenekler:**
+  1. Kör yama (Firebase stub, login catch-all, overflow) — **red** (kanıtsız).
+  2. **Kazanan:** Hipotez log’u (`pre-firebase` / `firebase ok|catch`, FlutterError, login ok/fail, wallet load). Kanıt sonrası tek yama. 9. ekran yok. Firestore kasa yok. `UPDATE Balance` yok.
+  3. Mobil iptal — kullanıcı hata istedi.
+- **Karar:** **2.** TASK-16 Todo durur. T-065 stub kararı ancak native crash log’u gelirse yeniden açılır.
+- **Neden:** Dart `catch` JNI crash yakalamaz; login `rethrow` kırmızı ekran üretebilir; `flutter test` errno 112 disk. Hangisi olduğunu log ayırır.
+- **Sonra hangi dosya:** Coder `mobile/clearpay/lib/main.dart`, `firebase/bootstrap.dart`, `login_screen.dart`, `overview_screen.dart`. HANDOFF **append**.
+
+---
+
+## T-083 — 2026-08-17 — Mobil errno 112: C: disk dolu (Temp)
+
+- **Kim:** Coder (kullanıcı: onu çöz — T-082 disk hipotezi)
+- **Konu:** `flutter test` / derleme `FileSystemException writeFrom` errno 112. C: ~0.26 GB boş. Ledger/`UPDATE Balance` ile ilgisi yok. Firebase stub’a kör dönüş yok.
+- **Seçenekler:**
+  1. Kör Firebase/login yaması — **red** (disk kanıtı; uygulama kodu değil).
+  2. **Kazanan:** `%LOCALAPPDATA%\Temp` Flutter/VS artıklarını sil (flutter_tools, dart kernel dirs, vscode installer). Flutter `TEMP`/`TMP` = `D:\ClearPay\tmp` (C: tekrar dolmasın). 8 ekran. Firestore kasa yok.
+  3. Gradle/Android SDK sil — **red** (yeniden indirme C:’yi yine doldurur).
+- **Karar:** **2.** TASK-16 Todo durur. T-082 log’ları durur (başka mobil hata kanıtı için).
+- **Neden:** SO: disk dolu = errno 112 ([stackoverflow.com/questions/77871312](https://stackoverflow.com/questions/77871312/flutter-unhandled-exception), [71716920](https://stackoverflow.com/questions/71716920/flutter-build-failed-in-11s-unhandled-exception-filesystemexception-writefro)). Temp ~5.6 GB; silince C: ~4.3 GB.
+- **Sonra hangi dosya:** Coder ortam (Temp silme; `D:\ClearPay\tmp`). `src/` yok. HANDOFF **append**.
+
+---
+
+## T-085 — 2026-08-17 — ClearPay C: → D: (boş disk)
+
+- **Kim:** Coder / Deploy (kullanıcı: C’deki bu proje boş disklere taşınsın)
+- **Konu:** C: ~4 GB boş, D: ~940 GB, E: ~519 GB. Repo `C:\Users\clt\Projects\clearpay` (~1.9 GB). Ledger LocalDB `C:\Users\clt\ClearPay.mdf` + `_log.ldf`. Android SDK / kullanıcı `.gradle` **bu proje değil** (paylaşılan araç).
+- **Seçenekler:**
+  1. Yalnız kopyala, C: aslı kalsın — C: dolmaz.
+  2. **Kazanan:** Repo `D:\ClearPay\clearpay`. Eski yol **junction** (`C:\Users\clt\Projects\clearpay` → D:). LocalDB dosyaları `D:\ClearPay\data\mssql\` (`MODIFY FILE`; connection string `(localdb)\MSSQLLocalDB;Database=ClearPay` durur). `TEMP` zaten `D:\ClearPay\tmp`. Android SDK / `.gradle` taşınmaz. E: yedek boşluk. `UPDATE Balance` yok. 8 ekran.
+  3. E:’ye taşı / SDK’yı da taşı — D: daha boş; SDK tüm Flutter işleri.
+- **Karar:** **2.** TASK-16 Todo durur. T-076 LocalDB aynı instance; yalnızca physical path.
+- **Neden:** Kullanıcı C: boşalsın istedi. Junction VS/Cursor eski yolu kırmaz. Ledger SQL Server’da kalır (T-021).
+- **Sonra hangi dosya:** Deploy ortam. `appsettings` connection string **değişmez**. HANDOFF **append**.
+
+---
+
+## T-084 — 2026-08-17 — Flutter launcher icon (navy C)
+
+- **Kim:** Coder (Flutter) + Designer (hafif)
+- **Konu:** Emülatör hâlâ varsayılan Flutter robotu. ClearPay uygulama ikonu ne olsun? 9. ekran / `src/` ledger yok. (T-082 = mobil hata log; T-083 = C: disk; bu madde ikon.)
+- **Seçenekler:**
+  1. Flutter varsayılanı durur.
+  2. **Kazanan:** Launcher = navy `#1B2A4A` zemin, beyaz geometrik **C** (ince teal halka). TASARIM wordmark (teal kare + C) splash’te halka+C olarak aynı glif. Android mipmap + adaptive; iOS AppIcon; Windows `app_icon.ico`. Kaynak `mobile/clearpay/assets/brand/`. YK/Papara/World yok.
+  3. Cüzdan fotoğrafı / yazı «ClearPay» ikonda — 48dp’de okunmaz.
+- **Karar:** **2.** TASK-16 Todo durur. 9. ekran yok. `UPDATE Balance` yok.
+- **Neden:** 1 demo markası yok. 3 küçük boyutta bulanık. 2 MARKA navy + mevcut C glifi; adaptive güvenli bölge.
+- **Sonra hangi dosya:** Coder OWN `mobile/clearpay/android/**/mipmap-*`, `mipmap-anydpi-v26`, iOS `AppIcon.appiconset`, `windows/runner/resources/app_icon.ico`, `assets/brand/`, splash `BrandMark`. Designer `docs/TASARIM.md` Wordmark bir satır. HANDOFF append.
+
+---
+
+## T-086 — 2026-08-17 — Flutter şifre kurtarma + telefon + Firebase Auth (web yok)
+
+- **Kim:** Coder (kullanıcı: şifremi unuttum her girişte; telefon alınsın; yalnız mobil; kayıtlar Flutter Firebase)
+- **Konu:** Mobil unutulan şifre / telefon / Firebase Auth. Web Razor giriş-kayıt durur mu? Firestore ikinci kasa mı?
+- **Seçenekler:**
+  1. Web + Flutter Razor `/sifre-sifirla` + 9. ekran — **red** (kullanıcı: mobil uygulama için yap, web için yapma; SPEC 8).
+  2. Firestore / Firebase-only kullanıcı, SQL cüzdan yok — **red** (havale kırılır; T-061/T-065 ikinci kasa).
+  3. **Kazanan:** Flutter kayıt/giriş kimliği = **Firebase Auth** (`createUser` / `signIn` / e-posta `sendPasswordResetEmail`). ID token → `POST /api/token/firebase` → SQL `ApplicationUser` provision/link + aynı ledger JWT. Telefon Identity `PhoneNumber` (yeni kayıtta zorunlu; seed admin `5550000001`). Unutulan şifre **yalnız Flutter** (e-posta + TC sekmeleri). SMS fatura yok; telefon sıfırlama = Identity token **log** (Production UI’da token yok) — Firebase yoksa aynı fallback. Razor `*.cshtml` / `/giris` **değişmez**. `POST /api/register` + `/api/token` test/web durur. Mernis / banka OTP / FAST iddiası yok.
+- **Karar:** **3.** TASK-16 Todo durur. 9. ekran yok. `UPDATE Balance` yok. Web forgot-password **park**.
+- **Neden:** Kullanıcı web UI istemedi. 2 SQL defteri koparır. 3 T-065 `firebase_core` üzerine Auth ekler; kasa SQL kalır. Halil Ads/Azure açmaz; `google-services.json` zaten T-065.
+- **Sonra hangi dosya:** Coder `src/ClearPay.Web/Controllers` (`PasswordController`, `TokenController` firebase), Application port `IFirebaseIdTokenVerifier` + `IAccountMailer`, Identity seeder telefon, Flutter `login`/`register`/`forgot` + `firebase_auth`. Razor Account sayfaları **yok**. HANDOFF **append**.
+
+---
+
+## T-087 — 2026-08-17 — Flutter web yok; yalnız mobil (Razor site durur)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: Flutter web geliştirme durdur; Flutter yalnız mobil)
+- **Konu:** T-076/T-080 `flutter run -d chrome` JWT istemci. Kullanıcı web’i Razor’da istedi; Flutter telefon. PWA/9. ekran mı, yoksa platform silme mi?
+- **Seçenekler:**
+  1. Flutter Chrome + Razor iki web — **red** (kullanıcı; T-073 PWA zaten red; iki istemci aynı tarayıcıda kafa karıştırır).
+  2. **Kazanan:** Flutter **web platformu silinir** (`mobile/clearpay/web/**`). Site = Razor (`:5153`). Flutter = Android/iOS (+ mevcut Windows masaüstü JWT, T-062). `*_web.dart` koşullu import stub kalır (VM/Android `dart:io`). 8 ekran. Hive/Firestore kasa yok.
+  3. Windows’u da sil — **park** (bu madde Chrome; Windows T-062 lokal JWT).
+- **Karar:** **2.** TASK-16 Todo durur. T-080 Chrome kararı **yeni olgu ile** kapanır. `UPDATE Balance` yok.
+- **Neden:** 1 isteği tersine çevirir. 3 bu cümlede yok. 2 tek web yüzeyi Razor; telefon JWT.
+- **Sonra hangi dosya:** Coder `mobile/clearpay/web` sil; `.metadata`; README/README mobil; `.cursor/rules/flutter.mdc`. HANDOFF **append**. `src/` Razor yok.
+
+---
+
+## T-088 — 2026-08-17 — Flutter + web kalan iş; kimlik/dil paritesi dilimi
+
+- **Kim:** Orchestrator (kullanıcı: hem Flutter hem web, tartışma yarat, geliştirmeye devam)
+- **Konu:** TASK-01…15 Done. TASK-16 Azure URL **blok Halil**. 8 ekran kilit. İki yüzeyde ne kaldı? 9. ekran / Flutter Chrome geri / satıcı / gerçek FAST / web şifre unuttum mu?
+
+**Envanter (bu madde kilitler; aynı kararı yeni olgu yokken yeniden açma):**
+
+| Madde | Durum |
+|-------|--------|
+| Azure App Service URL | TASK-16 — Halil `az login` |
+| Flutter `web/` / Chrome JWT | T-087 **red** — site = Razor |
+| Web şifre unuttum | T-086 **park** |
+| Web QR / FAST ızgara | **park** — T-067 telefon; TASARIM özet 2×2 |
+| Pull-to-refresh | T-061 Q2.1 **park** |
+| Satıcı paneli / OAuth Flutter | Q2 / Halil secret **park** |
+| Web kayıt telefon + Bireysel/Kurumsal | **bu dilim** — SQL kolon var, Razor form yok |
+| Web giriş TC (demo seed) | **bu dilim** — T-067 yalnız Flutter’daydı; ekran 1 |
+| Flutter TR/EN/DE/FR | **bu dilim** — T-040 layout chrome; cookie değil, yerel dosya |
+
+- **Seçenekler:**
+  1. Kod yok; yalnız TASK-16 bekle — kullanıcı «devam» dedi.
+  2. **Kazanan:** Envanter + tek dilim: **aynı Identity satırı, iki yüzey.** Razor kayıt: telefon zorunlu + AccountKind. Razor giriş: E-posta \| TC demo (`10000000146` → `admin@clearpay.test`; Mernis yok). Flutter: aynı 4 dil seçici (auth + çekmece). API `/api/register` telefon **isteğe bağlı** kalır (mevcut JWT testleri). 8 ekran. `UPDATE Balance` yok. Hive/Firestore kasa yok.
+  3. 9. ekran / PWA / Flutter web geri / TCMB FAST / web forgot — **red**.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** Web kayıtsız telefon Flutter kurtarmayı boş bırakır. TC yalnız telefonda mülakat tutarsız. Dil web’de var, Flutter’da yok (T-040 chrome, 9. ekran değil). 1 kullanıcı isteği değil. 3 SPEC.
+- **Sonra hangi dosya:** Coder Razor Login/Register + `LoginRequest` + `DemoTc` + resx 4 dil + `site.css` `.auth-tabs` + testler. Coder Flutter `lib/l10n/**` + locale store. Designer TASARIM giriş/kayıt bir satır. SPEC ekran 1–2 alan notu. TASKS Done UI satırı. HANDOFF **append**.
+
+---
+
+## T-089 — 2026-08-17 — C: junction: debug log D: (T-085 kilidi)
+
+- **Kim:** Coder (kullanıcı proceed; T-085 junction bitmedi)
+- **Konu:** `ClearPay.Web` `AgentDebugLog` `C:\Users\clt\Projects\clearpay\debug-021de0.log` yazıyor; klasör silinemez. Ledger D: ONLINE. Kör hub yaması yok.
+- **Seçenekler:**
+  1. C: stub kalsın — kullanıcı D: istedi.
+  2. **Kazanan:** Log yolu workspace `D:\ClearPay\clearpay\debug-021de0.log`. Host durdur → junction `C:\Users\clt\Projects\clearpay` → D:. Instrumentation durur. `UPDATE Balance` yok. 8 ekran.
+  3. Debug log’u sil — **red** (oturum 021de0 kanıtı).
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** Log satırı: host pid 19068 C: dosyasını açık tutuyor. Junction ancak handle kapanınca.
+- **Sonra hangi dosya:** Coder `AgentDebugLog.cs` Path. HANDOFF **append**.
+
+---
+
+## T-090 — 2026-08-17 — TR/EN/DE/FR gerçekten UI değiştirir (web + Flutter)
+
+- **Kim:** Coder (kullanıcı: dil şeridine basınca arayüz değişmiyor; hem mobil hem web)
+- **Konu:** T-088 Flutter LanguageStrip + LocaleStore vardı; `L()` yalnız auth/çekmece kromunda. Özet/havale/yükle/hareket/dekont/admin/splash/QR park Türkçe sabit — English/Deutsch/Français no-op gibi duruyor. Web cookie `c=` + `/culture` (SetCulture) T-040 duruyor mu? 9. ekran / 5. dil / web forgot / Flutter Chrome geri mi?
+- **Seçenekler:**
+  1. Yalnız şerit görünsün, metin TR kalsın — kullanıcı «çalışsın» dedi.
+  2. **Kazanan:** Aynı 4 dil **iki yüzeyde UI’yı sürer** (layout chrome, 9. ekran değil). Web: mevcut picker + cookie `c=` + SharedResource; kırıkysa tamir, yeniden tasarım yok. Flutter: `LocaleStore` + `LocaleScope` snapshot (`code`) + `L()` **8 işlem + splash/mode/auth/shell/QR park**. Dil şeridi auth + çekmece + girişli AppBar (çekmece açmadan). Tap → `save` + `onChanged` → `MaterialApp.locale` ve tüm `L()` yenilenir. 5. dil yok. Web forgot T-086 park. Flutter `web/` T-087 red.
+  3. Kullanıcı hesabı dilini SQL’de tut / sunucu locale Flutter’a dayat — **red** (T-088 yerel dosya; cookie web).
+- **Karar:** **2.** TASK-16 Todo durur. `UPDATE Balance` yok. 8 ekran.
+- **Neden:** 1 şikâyeti bırakır. 3 ikinci kasa/hesap tercihi. 2 SPEC 4 dil + T-040 chrome; T-088 şeridi doldurur.
+- **Sonra hangi dosya:** Coder Flutter `lib/l10n/app_strings.dart` + 8 ekran dart; gerekirse Razor SetCulture/picker (tasarım yok). Tester `widget_test` DE/FR + LocalizationTests kayıt kromu. SPEC bir satır. TASKS Done UI (TASK-16 değil). HANDOFF **append**.
+
+---
+
+## T-091 — 2026-08-17 — Flutter `cloud_firestore` yalnız meta ping (kasa SQL durur)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: Firebase’de veritabanı oluşturdu; Flutter tarafını yap)
+- **Konu:** Console’da Firestore (`clearpay-c0485`) açıldı. Ledger’ı oraya taşımak mı, yoksa JWT/SQL kasayı koruyup Firestore’u para-dışı kullanmak mı?
+- **Seçenekler:**
+  1. Ledger / bakiye / havale Firestore’a — **red** (SPEC + T-061 + T-065 ikinci kasa; `UPDATE Balance` ikizi; Hive/SQLite cüzdan yok).
+  2. **Kazanan:** `cloud_firestore` istemci **yalnız para-dışı** (`app_meta/ping` veya demo bayrak). JWT → ASP.NET → SQL Server/LocalDB değişmez. Firebase Auth ikinci Identity deposu değil (T-086 ID token hâlâ SQL provision). 8 ekran. 9. ekran yok. Init atlanırsa ping de atlanır. Ping hata verirse JWT girişi durmaz (fail-open log). Tutar / ledger / şifre Firestore’a yazılmaz.
+  3. Firestore paketini atla — **red** (kullanıcı DB sonrası Flutter işi istedi; 2 konsolu gerçekten kullanır).
+- **Karar:** **2.** TASK-16 Todo durur. Domain’e Dart yok. `ClearPay.slnx` Flutter içermez. Windows native Firebase C++ skip (T-075) durur.
+- **Neden:** 1 SQL/409 omurgasını kırar. 3 isteği karşılamaz. 2 konsoldaki Firestore’u meta için bağlar; kasa C# defter.
+- **Sonra hangi dosya:** Coder `mobile/clearpay` (`pubspec` `cloud_firestore`, `lib/firebase/bootstrap.dart`, test, README bir cümle). HANDOFF **append**. `src/` yok. Firestore rules Halil console (para yazımını public açma).
+
+---
+
+## T-092 — 2026-08-17 — Özet reload döngüsü + Windows hub HttpError
+
+- **Kim:** Coder (kullanıcı proceed; log 021de0)
+- **Konu:** Giriş sonrası `Index.OnGet` + `WalletHub` saniyeler içinde tekrar. `site.js` `WalletChanged` → `location.reload`. Flutter Windows `hub connect ok:false HttpError host=localhost`; Android `10.0.2.2` ok. `signalr_netcore` `requestTimeout` varsayılan **2000ms**. 9. ekran yok.
+- **Seçenekler:**
+  1. Kör CORS / Firebase stub — **red** (log başka şey diyor).
+  2. **Kazanan:** Web: yüklemeden sonra 4s `WalletChanged` yok say + 4s debounce (döngü kesilir; canlı yenileme durur, F5 durur). Flutter hub: `requestTimeout` 15s; Windows `LongPolling` (WebSocket 2s HttpError). Instrumentation durur. `UPDATE Balance` yok.
+  3. SignalR kaldır — T-071 chrome kaybı.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** Log: cookie `ok:true` sonra overview/hub tekrar (2323075→2326158). Windows HttpError; Android hub ok. Paket timeout 2000ms Windows’u keser.
+- **Sonra hangi dosya:** Coder `wwwroot/js/site.js`, `wallet_live_hub.dart`. HANDOFF **append**.
+
+---
+
+## T-093 — 2026-08-17 — Özet reload: 4s skip yetmedi (location.reload yok)
+
+- **Kim:** Coder (kullanıcı proceed; T-092 doğrulama)
+- **Konu:** T-092 4s skip. Kestrel kanıt: aynı oturumda **üç** `Wallet`/`LedgerEntry` okuma (Index OnGet ×3). Döngü 4s sonra da sürebilir (Hangfire outbox). Kör CORS yok.
+- **Seçenekler:**
+  1. Skip süresini 60s yap — hâlâ reload; gecikmeli döngü.
+  2. **Kazanan:** `WalletChanged` **sayfa yenilemez** (Flutter `liveTick` gibi). Log durur. Kullanıcı F5. T-071 chrome: ipucu yok = F5; döngü yok. `UPDATE Balance` yok. 8 ekran.
+  3. SignalR kaldır — T-071 tamamen gider.
+- **Karar:** **2.** TASK-16 Todo durur. T-092 Flutter timeout/LongPolling durur.
+- **Neden:** 1 Kestrel’de 3× özet. 3 fazla. 2 döngüyü keser; para SQL’de.
+- **Sonra hangi dosya:** Coder `wwwroot/js/site.js` (`location.reload` yok). HANDOFF **append**.
+
+---
+
+## T-096 — 2026-08-17 — ILinkedInstrumentStore.AddAsync Scheme (derleme)
+
+- **Kim:** Coder (site `:5153` düştü; CS0535)
+- **Konu:** Kartlar T-094 `SqlLinkedInstrumentStore.AddAsync(..., scheme, ...)`. Application port Scheme yok. Yükle/Çek 4 arg. Kör ledger yok.
+- **Seçenekler:**
+  1. Store’dan scheme sil — Kartlar BIN kırılır.
+  2. **Kazanan:** Port `string? scheme = null`. Yükle/Çek ve API `null` geçer. 8+Kartlar. `UPDATE Balance` yok.
+- **Karar:** **2.** TASK-16 Todo. Site D: yeniden ayağa.
+- **Neden:** CS0535 host’u kesiyor. T-094 Scheme kararı durur.
+- **Sonra hangi dosya:** Application `ILinkedInstrumentStore`. Coder `YukleCek`, `CardsController`. HANDOFF **append**.
+
+---
+
+## T-097 — 2026-08-17 — Kartlarım (`/kartlar`) + canlı önizleme (kullanıcı istedi; T-094 numara hub’a ait)
+
+- **Kim:** Orchestrator + Architect + Coder + Designer + Tester (kullanıcı: kart bağla, Yapı Kredi örneği, yazarken canlı kart, karttan cüzdana yükle)
+- **Konu:** T-055 kayıtlı kartı **Yükle/Çek paneli** yaptı (9. ekran yok, PAN yok). Kullanıcı şimdi ayrı alan + 16 hane önizleme istiyor. SPEC 8 kilit kullanıcı isteğiyle güncellenebilir. Gerçek POS/3DS/YK API yok.
+- **Seçenekler:**
+  1. Gerçek Visa/iyzico/YK API / 3DS — hayır; lisans, sır, MARKA.
+  2. T-055 durur (yalnız son 4, `/kartlar` yok) — kullanıcı reddi.
+  3. **Kazanan:** Yeni Razor `/kartlar` (ekran 9, kullanıcı istedi). Liste: şema + son 4 + kart adı. Form: numara/ad/SKT/CVV **canlı CSS 3D önizleme** (yazdıkça). Kayıt: `LinkedInstrument` son 4 + Label + Scheme (Visa/Mastercard/Troy BIN; Yapı Kredi = takma ad, şema değil). PAN/CVV SQL/git/log yok; CVV `name` yok (POST edilmez). «Bu karttan cüzdana yükle» → mevcut `/yukle-cek?kart={last4}` + `IFundingExecutor` / sahte `IBankGateway`. PageModel ledger yok. Flutter ekran **park** (JWT `/api/cards` durur; 3D web’e özgü).
+- **Karar:** **3.** T-055 store/port durur; ek ekran SPEC’de 9. TASK-16 Todo. `UPDATE Balance` yok. Papara kopyası yok.
+- **Neden:** 1 kapsam dışı. 2 kullanıcı isteğini karşılamaz. 3 önizlemeye yer; para hâlâ tek kasa + sahte gateway.
+- **Sonra hangi dosya:** Coder `Pages/Kartlar.cshtml(.cs)`, layout nav, `brand.css` + `card-preview.js`, `ILinkedInstrumentStore` Scheme, EF `Scheme` kolonu, resx, Yükle/Çek bağla linki. Designer `docs/TASARIM.md`. SPEC ekran 9. Tester `/kartlar` 200 + anon `/giris` + HTML önizleme. HANDOFF append. Flutter `*.dart` yok.
+
+---
+
+
+## T-094 — 2026-08-17 — localhost hub HttpError (LongPolling yanlış platform)
+
+- **Kim:** Coder (log: `hub connect ok:false HttpError host=localhost windowsLongPoll:false`)
+- **Konu:** T-092 LongPolling yalnız `TargetPlatform.windows`. Kanıt: yeni alan `windowsLongPoll:false` + `host:localhost` hâlâ HttpError. Android `10.0.2.2` WebSocket **ok**. Timeout 15s yetmedi. Debug dosya hâlâ `C:\Users\clt\Projects\clearpay`.
+- **Seçenekler:**
+  1. Yalnız Windows enum — **red** (log false).
+  2. **Kazanan:** Hub LongPolling **Android değilse** (`!isAndroidHost`); Android WebSocket. Debug append `D:\ClearPay\clearpay\debug-021de0.log`. T-093 reload yok durur. `UPDATE Balance` yok.
+  3. Hub iptal — T-071 kaybı.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** Başarılı hub hep `10.0.2.2`; başarısız hep `localhost` + WebSocket.
+- **Sonra hangi dosya:** Coder `wallet_live_hub.dart`, `debug_file_io.dart`. HANDOFF **append**.
+
+---
+
+## T-095 — 2026-08-17 — Azure canlı web ayarları (hesap açılmaz)
+
+- **Kim:** Orchestrator + Deploy + Coder (kullanıcı Azure açıp siteyi canlıya alacak; bilgileri paylaşacak)
+- **Konu:** TASK-16 URL Halil tıklar. Ajan `az login` / abonelik / DNS açmaz. Web tarafında Production’ın App Service arkasında cookie/HTTPS/CORS/JWT/SQL ile ayağa kalkması.
+- **Seçenekler:**
+  1. Yalnız `docs/CANLI.md` tık listesi; kod aynı — **zayıf** (X-Forwarded-Proto yoksa Secure cookie / yönlendirme kırılır; CORS yalnız `clearpay.azurewebsites.net`; F1 restart’ta DataProtection kaybolursa oturum düşer).
+  2. **Kazanan:** Forwarded headers + Production DataProtection (`HOME/data-protection-keys`) + cookie SameSite Lax; Bicep/deploy.ps1 gerçek host’u `Cors__Origins__0` yapar; Identity/ledger hâlâ `ConnectionStrings:ClearPay` (Azure SQL). Yeni tablo yok. 8 ekran. `UPDATE Balance` yok. URL uydurulmaz. Secret git’e yok.
+  3. DataProtection keys’i SQL tabloya — F1 tek instance; şema şimdi şart değil (sonra scale).
+- **Karar:** **2.** TASK-16 Todo durur (açık URL Halil).
+- **Neden:** 1 canlıda sessiz giriş kırığı. 3 şema; Q1 F1’de `/home` kalıcı. 2 SPEC + CANLI isimleri.
+- **Sonra hangi dosya:** Coder `Program.cs` + Azure hosting; Identity cookie; Deploy `infra/main.bicep` + `deploy.ps1` + `docs/CANLI.md`. HANDOFF **append**.
+
+---
+
+## T-096 — 2026-08-17 — Flutter Firestore ping’i ekranda kanıtla (kasa SQL)
+
+- **Kim:** Coder (kullanıcı: Flutter’da Firebase’e veri ekle, çalışıyor mu göster)
+- **Konu:** T-091 `app_meta/ping` sessiz. Windows native Firebase C++ skip (T-075). Kullanıcı görünür yazma istiyor. Ledger Firestore’a taşınmaz.
+- **Seçenekler:**
+  1. Bakiye/havale Firestore’a — **red** (T-091 / SPEC; ikinci kasa).
+  2. **Kazanan:** Mevcut giriş ekranında ping sonucu (yazıldı / atlandı / hata). Payload `ok` + `client` + `message` + `touchedAt` — tutar/şifre yok. Rules yalnız `app_meta/ping` (para koleksiyonu deny). 9. ekran yok. JWT/SQL durur. Init fail → giriş durmaz.
+  3. Yeni Firebase ekranı — SPEC 8/9 şişirme.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** 1 kasa kırar. 3 ekran ekler. 2 konsolda belge + telefonda satır.
+- **Sonra hangi dosya:** Coder `mobile/clearpay` (`bootstrap.dart`, `login_screen.dart`, `firestore.rules`). HANDOFF **append**. `src/` yok.
+
+---
+
+## T-098 — 2026-08-17 — Flutter Windows canlı: SignalR yok, JWT poll
+
+- **Kim:** Coder (kullanıcı: bu kısım çalışmıyor, farklı yol)
+- **Konu:** `signalr_netcore` localhost `HttpError` (T-092/T-094 LongPolling). Android hub `10.0.2.2` ok. Kör CORS yok. Hive bakiye yok.
+- **Seçenekler:**
+  1. SignalR transport daha — **red** (kullanıcı farklı yol).
+  2. **Kazanan:** Android: SignalR durur. Windows/masaüstü: hub **bağlanmaz**; `Timer` 8s → `liveTick` → `GET /api/wallet` (mevcut JWT). Çek-yenile durur. 8 ekran. `UPDATE Balance` yok.
+  3. Canlı yenileme iptal — T-071 tamamen gider; poll T-071’i REST ile tutar.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** 1 aynı HttpError. 3 kullanıcı canlı ister. 2 kanıtlı REST; kasa SQL.
+- **Sonra hangi dosya:** Coder `wallet_live_hub.dart`. HANDOFF **append**.
+
+---
+
+## T-099 — 2026-08-17 — README mülakat yüzeyi + push
+
+- **Kim:** Orchestrator (kullanıcı: bütün değişiklikleri push et, güzel README)
+- **Konu:** GitHub `README.md` hâlâ “sekiz işlem”; SPEC ekran 9 Kartlarım (web). Firestore ping kanıtlandı, kasa SQL. Azure URL yok.
+- **Seçenekler:**
+  1. README’ye dokunmadan push — **zayıf** (yanlış ekran sayısı).
+  2. **Kazanan:** İngilizce + Türkçe README: demo disclaimer, iki istemci bir SQL, 409 / `LedgerPair.NetOf`, Kartlarım web, Flutter JWT, Firestore `app_meta/ping` değil kasa, TASK-16 tık Halil. DE/FR giriş aynı doğruluk. Secret git’e yok.
+  3. Dört dili silip tek README — T-040 chrome kaybı.
+- **Karar:** **2.** TASK-16 Todo durur. `az login` ajan yapmaz. URL uydurulmaz.
+- **Neden:** 1 mülakat yüzeyi yanlış. 3 dil şalterini kırar. 2 SPEC + kanıt.
+- **Sonra hangi dosya:** `README.md`, `README.tr.md` (+ DE/FR giriş). HANDOFF **append**. Push kullanıcı istedi.
+
+---
+
+## T-101 — 2026-08-17 — GitHub README SVG görünmüyor
+
+- **Kim:** Coder (kullanıcı: GitHub README resimleri çıkmamış)
+- **Konu:** `docs/assets/*.svg` XML 1.0 yasak kontrol karakterleri (`U+0012` / `U+0014`) içeriyor; GitHub sanitizer dosyayı boş bırakır. Markdown `![]()` SVG Camo’da da kırılır.
+- **Seçenekler:**
+  1. Yolu `raw.githubusercontent.com` yapmak — **zayıf** (aynı bozuk SVG).
+  2. **Kazanan:** SVG’yi geçerli UTF-8 yap; README `<img>` + PNG yedek (GitHub Camo PNG’yi gösterir). Relative `docs/assets/`. Secret yok. 8/9 ekran metni durur.
+  3. Resimleri sil — mülakat diyagramı kaybı.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** 1 kök nedeni bırakır. 3 kullanıcı isteğine aykırı.
+- **Sonra hangi dosya:** `docs/assets/*`, `README.md` / `README.tr.md` / DE / FR. HANDOFF **append**. Push GitHub yüzeyi için.
+
+---
+
+## T-100 — 2026-08-17 — web + Flutter Android manuel ve otomasyon testi
+
+- **Kim:** Orchestrator + Tester + Coder + Deploy (kullanıcı: her yüzey teste tabi; manuel + otomasyon; web ve Flutter Android)
+- **Konu:** Mevcut xUnit (cookie/JWT/409/ledger) ve `widget_test` dağınık. CI yalnız `dotnet test`. Android emülatör JWT + hub elle doğrulanmıyor. 10. ekran / ikinci kasa yok.
+- **Seçenekler:**
+  1. Yalnız mevcut testlere güven — **zayıf** (Flutter CI yok; manuel checklist yok; Android `10.0.2.2` / hub vs Windows poll yazılı değil).
+  2. Appium / Maestro cihaz farm — kapsam şişer; emülatör hesabı; Q1 değil.
+  3. **Kazanan:** Manuel `docs/SMOKE.md` (Razor 9 ekran + Flutter Android JWT). Otomasyon: Tester `DualSurfaceSmokeTests` (cookie TC + JWT `/api/token`+`/api/wallet` + hub negotiate + `site.js` reload yok + `Wallet.Balance` yok). Coder `flutter test` (Android taban URL, hub skip/poll, TC→JWT, 409). Deploy CI `flutter test` job. SPEC ekran listesi durur. `UPDATE Balance` yok. Hive/Firestore kasa yok. TASK-16 Todo.
+- **Karar:** **3.** TASK-16 durur. `az login` ajan yapmaz. Flutter Chrome yok (T-087).
+- **Neden:** 1 kullanıcı isteğini karşılamaz. 2 cihaz farm / yeni ürün yüzeyi. 3 landed sözleşmeyi kilitler; para hâlâ tek SQL.
+- **Sonra hangi dosya:** Tester `tests/ClearPay.Tests/DualSurfaceSmokeTests.cs`, `docs/SMOKE.md`, `.cursor/rules/tester.mdc`. Coder `mobile/clearpay/lib/api/{clearpay_client,wallet_live_hub}.dart`, `mobile/clearpay/test/android_surface_test.dart`. Deploy `.github/workflows/ci.yml`. Orchestrator TASKS Done UI + HANDOFF **append**. Razor markup yok.
+
+---
+
+## T-101 — 2026-08-17 — Visa / Mastercard yüzü (ISO BIN + görünüm; web + Flutter)
+
+- **Kim:** Orchestrator + Architect + Designer + Coder + Tester (kullanıcı: Mastercard veya Visa ayrımı nasıl yapılıyorsa öğren; kart görünümü ve numaraya göre hem mobil hem web)
+- **Konu:** T-097 şema yazısı var; kart yüzü hep navy. Flutter Kartlarım park. ISO/IEC 7812 IIN (BIN) sektör standardı: Visa = `4…`; Mastercard = `51–55` veya `2221–2720` (2017 2-series). Troy `9792` durur. Resmi Visa/MC SVG yok (MARKA). PAN/CVV SQL yok. Gerçek POS/3DS yok.
+- **Seçenekler:**
+  1. Fotoğraftan OCR/ML şema — hayır; model, sır, 10. ekran.
+  2. Yalnız metin “Visa/Mastercard” — kullanıcı görünüm istedi; zayıf.
+  3. **Kazanan:** Aynı `CardNetwork.Detect` (C#) + Dart kopyası. Yazılan numaraya göre kart yüzü: Visa mavi + VISA yazısı; Mastercard koyu + iki örtüşen daire (geometrik, resmi logo dosyası yok); Troy teal. Web `/kartlar` + Yükle/Çek seçili kart. Flutter yeni Kartlarım sekmesi (SPEC 9; T-097 park kalkar). `POST /api/cards` isteğe `number` → parser last4+scheme, PAN kaydı yok. last4-only = Unknown. `IFundingExecutor` durur. `UPDATE Balance` yok.
+- **Karar:** **3.** TASK-16 Todo durur. Flutter Chrome yok (T-087).
+- **Neden:** 1 kapsam dışı. 2 görünümü karşılamaz. 3 sektör BIN + iki yüzey; kasa SQL.
+- **Sonra hangi dosya:** Coder `CardNetwork` test, `CardsController`/`CardApiRequest`, `Kartlar.cshtml`, `YukleCek.cshtml`, `brand.css`, `card-preview.js`. Flutter `card_network.dart`, `live_payment_card.dart`, `cards_screen.dart`, shell/overview/l10n/client. Designer TASARIM §13. Tester parser + `/kartlar` Mastercard HTML + JWT scheme. HANDOFF **append**.
+
+---
+
+## T-102 — 2026-08-17 — README daha görsel (GitHub yüzeyi)
+
+- **Kim:** Designer + Coder (kullanıcı: daha görsel README)
+- **Konu:** README metin ağır; marka C + diyagram var, ürün yüzü yok. GitHub SVG kırığı T-101 ile PNG. Papara/YK kopya görsel yok. 10. ekran yok.
+- **Seçenekler:**
+  1. Yalnız mevcut iki diyagram — kullanıcı “daha görsel” dedi.
+  2. **Kazanan:** PNG marka + hero + kural şeridi + iki istemci; gerçek `/giris` ekran görüntüsü (localhost). README EN/TR (DE/FR hero). Demo disclaimer durur. `UPDATE Balance` yok. URL uydurulmaz.
+  3. Canva/Figma sahte banka mockup — MARKA red.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** 1 isteği karşılamaz. 3 marka. 2 GitHub’da görünen PNG + gerçek Razor.
+- **Sonra hangi dosya:** `docs/assets/*`, `README.md` / `README.tr.md` (+ DE/FR üst). HANDOFF **append**.
+
+---
+
+## T-103 — 2026-08-17 — Visa / Mastercard yüzü numara düzeltmesi
+
+- **Kim:** Orchestrator (T-101 README SVG’ye ait; Visa/MC karar aynı, numara çakıştı)
+- **Konu:** ISO BIN kart yüzü web+Flutter. Yeni olgu: T-101 = GitHub SVG/PNG. Visa/MC işi **T-103**.
+- **Seçenekler:**
+  1. T-101 Visa bloğunu silmek — yasak (overwrite yok).
+  2. **Kazanan:** Karar T-103; içerik bir üstteki Visa/MC kazanan 3 ile aynı.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** Numara çakışması; karar değişmedi.
+- **Sonra hangi dosya:** Coder aynı OWN (Kartlar + Flutter Kartlarım). HANDOFF **append**.
+
+---
+
+## T-104 — 2026-08-17 — Canlı App Service (Portal ARM; GitHub zip; Bicep unused)
+
+- **Kim:** Orchestrator + Deploy + Coder (Halil Portal ARM JSON verdi; `publishingPassword` null)
+- **Konu:** TASK-16 URL artık uydurma değil. GitHub Actions zip → mevcut Linux App Service. CORS origin gerçek host. Canada Central Halil’in seçimi. `infra/deploy.ps1` bu siteyi ezmez. TASK-16 Done değil: `/api/health` ve `/giris` henüz uygulama yanıtı değil.
+- **Seçenekler:**
+  1. Bicep `.\infra\deploy.ps1` ile `rg-clearpay-weu` / West Europe / `hm-clearpay` — **red** (mevcut `ClearPay_group` / PremiumV2 Linux siteyi ezer).
+  2. **Kazanan:** Portal uygulaması durur. GitHub variable `AZURE_WEBAPP_NAME` = site adı **`ClearPay`**. Canlı kök `https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net`. Production CORS bu origin. `azure-deploy.yml` zip (`main` push veya `workflow_dispatch`). Secret `AZURE_WEBAPP_PUBLISH_PROFILE` uydurulmaz — Halil: Portal **Get publish profile** → GitHub Settings → Secrets → Actions. Bicep unused. Flutter `defaultApiBase` localhost. `UPDATE Balance` yok. 9. ekran yok. README görsel başka ajan.
+  3. CORS’u `https://ClearPay.azurewebsites.net` sanmak — ARM `defaultHostName` unique suffix (`*.canadacentral-01.azurewebsites.net`); tarayıcı Origin eşleşmez.
+- **Karar:** **2.** TASK-16 Todo durur (`/api/health` 404, zip yok).
+- **Neden:** ARM: subscription `c706e53f-1b53-4baa-99fd-e09b63ef8684`, RG **`ClearPay_group`**, name **`ClearPay`**, kind `app,linux`, location Canada Central, `linuxFxVersion` `DOTNETCORE|8.0`, sku PremiumV2, plan `ASP-ClearPaygroup-8f4e`, state Running, host `clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net`, SCM `clearpay-eecuaqc7c5ehbmb5.scm.canadacentral-01.azurewebsites.net`. `httpsOnly` false (Portal’de On önerilir). `appCommandLine` null → Linux zip için startup **`dotnet ClearPay.Web.dll`**. Azure siteConfig `cors` null → uygulama CORS. VNet `ClearPayVnet` / `ClearPayAppSubnet` — SQL firewall Halil Portal (Allow Azure services veya VNet). FTP/publish parolası git’e yok. T-005 West Europe varsayılanı bu siteyi değiştirmez.
+- **Sonra hangi dosya:** Deploy `docs/CANLI.md`, `docs/TASKS.md`, `docs/DEPLOY.md`, `.github/workflows/azure-deploy.yml`. Coder `CorsExtensions.cs`, `appsettings.json`, `appsettings.Production.json`. HANDOFF **append**. `infra/main.bicep` unused (ezilmez). Flutter money yok.
+
+---
+
+## T-105 — 2026-08-17 — GitHub README dil linkleri 404
+
+- **Kim:** Sales + Coder (kullanıcı: English / Türkçe / Deutsch / Français GitHub’da çalışmıyor)
+- **Konu:** Dört dosya `main` ve `cursor/yol-haritasi-career-first` üzerinde duruyor. Dil çubuğu HTML `<a href="README.tr.md">`. Repo kökü `https://github.com/HalilMertDeveli/clearpay` iken bu href `…/clearpay/README.tr.md` olur → **404**. Blob `…/blob/main/README.tr.md` **200**. GitHub native “Translations” dropdown yok (`README.tr.md` adlandırma doğru; GitHub tarayıcı diline göre ana README değiştirmez).
+- **Seçenekler:**
+  1. Mutlak `https://github.com/…/blob/main/README.tr.md` — fork ve yerel klon kırılır; dal sabit `main`.
+  2. **Kazanan:** HTML `<a>` kalkar. Markdown `[Türkçe](./README.tr.md)` (DE/FR/EN aynı). GitHub markdown relative link’i blob’a çevirir. Ortak dizin; `src/` yok. TASK-16 Done değil. URL uydurulmaz.
+  3. GitHub UI dropdown beklemek — ürün yok; `tr` için otomatik şalter yok.
+- **Karar:** **2.**
+- **Neden:** 1 dal/fork kırar. 3 GitHub’da yok. 2 docs’un relative-link kuralı + mevcut dosyalar.
+- **Sonra hangi dosya:** Sales/Coder `README.md`, `README.tr.md`, `README.de.md`, `README.fr.md`, `mobile/clearpay/README.md`. HANDOFF **append**.
+
+---
+
+## T-106 — 2026-08-17 — README Web | Mobil galeri + dört dil
+
+- **Kim:** Designer + Coder (kullanıcı: site + Flutter kareleri README’de; English · Türkçe · Deutsch · Français tıklanır)
+- **Konu:** T-102 hero PNG; T-105 markdown dil linki (HTML `<a href="README.tr.md">` GitHub kökünde 404). Galeri henüz README’de yoktu. Azure host `/api/health` **404**. Papara/YK sahte kare yok. 10. ekran yok. Firestore kasa değil. `azure-deploy.yml` / secret’a dokunulmaz.
+- **Seçenekler:**
+  1. Yalnız diyagram PNG — kullanıcı hem web hem mobil ürün yüzü istedi.
+  2. **Kazanan:** `docs/assets/shot-*.png` (yerel Razor `/giris` `/kayit` `/` `/kartlar`; Flutter `emulator-5554` Özet). Dört README aynı PNG, çeviri altyazı. Dil: markdown tablo + `[Türkçe](./README.tr.md)` (T-105). Azure kare yok; altyazı TASK-16. `main` homepage yalnız README+assets (feature merge değil — Deploy zip çatışması yok).
+  3. 404 Azure’u “canlı ürün” diye göstermek / Papara ekranı uydurmak — red.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** 1 isteği karşılamaz. 3 yalan. 2 gerçek Razor + gerçek Flutter + GitHub-safe PNG.
+- **Sonra hangi dosya:** `README.md` `README.tr.md` `README.de.md` `README.fr.md` `docs/assets/shot-*.png`. HANDOFF **append**. `src/` yok.
+
+---
+
 

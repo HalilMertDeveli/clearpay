@@ -19,3 +19,19 @@ jobs:
         run: dotnet build tests/ClearPay.Tests/ClearPay.Tests.csproj --no-restore --configuration Release
       - name: Test
         run: dotnet test tests/ClearPay.Tests/ClearPay.Tests.csproj --no-build --configuration Release
+
+  flutter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile/clearpay
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Pub get
+        run: flutter pub get
+      - name: Test
+        run: flutter test

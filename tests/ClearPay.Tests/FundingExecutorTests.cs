@@ -5,6 +5,7 @@ using ClearPay.Application.Wallets;
 using ClearPay.Domain.Ledger;
 using ClearPay.Infrastructure.Banking;
 using ClearPay.Infrastructure.Persistence;
+using ClearPay.Infrastructure.Realtime;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,8 @@ public sealed class FundingExecutorTests : IDisposable
             new RestBankGateway(config),
             new SqlIdempotencyStore(_db, _clock),
             _clock,
-            new NoopCache());
+            new NoopCache(),
+            new NoOpWalletLiveNotifier());
     }
 
     [Fact]

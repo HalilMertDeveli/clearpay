@@ -10,7 +10,7 @@ public sealed class ClearPayDbContextFactory : IDesignTimeDbContextFactory<Clear
     {
         var options = new DbContextOptionsBuilder<ClearPayDbContext>()
             .UseSqlServer(
-                "Server=lpc:localhost;Database=ClearPay;Integrated Security=True;TrustServerCertificate=True;Encrypt=True")
+                "Server=(localdb)\\MSSQLLocalDB;Database=ClearPay;Integrated Security=True;TrustServerCertificate=True;Encrypt=True")
             .Options;
         return new ClearPayDbContext(options);
     }

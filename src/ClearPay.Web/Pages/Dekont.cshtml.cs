@@ -11,10 +11,12 @@ namespace ClearPay.Web.Pages;
 public class DekontModel : PageModel
 {
     private readonly IActivityReader _activity;
+    private readonly IReceiptPdf _pdf;
 
-    public DekontModel(IActivityReader activity)
+    public DekontModel(IActivityReader activity, IReceiptPdf pdf)
     {
         _activity = activity;
+        _pdf = pdf;
     }
 
     public ReceiptDto? Receipt { get; private set; }
@@ -26,5 +28,15 @@ public class DekontModel : PageModel
         if (Receipt is null)
             return NotFound();
         return Page();
+    }
+
+    public async Task<IActionResult> OnGetPdfAsync(Guid correlationId, CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+        var receipt = await _activity.GetReceiptAsync(userId, correlationId, cancellationToken).ConfigureAwait(false);
+        if (receipt is null)
+            return NotFound();
+        var bytes = _pdf.Render(receipt);
+        return File(bytes, "application/pdf", $"clearpay-dekont-{correlationId:N}.pdf");
     }
 }

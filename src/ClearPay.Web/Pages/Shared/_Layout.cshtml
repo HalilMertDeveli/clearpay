@@ -7,6 +7,9 @@
     var title = ViewData["Title"] as string ?? L["Overview"].Value;
     var isAdmin = User.IsInRole(ClearPay.Domain.Identity.AppRoles.Admin);
     var contentClass = ViewData["Wide"] as bool? == true ? "content content--wide" : "content";
+    var displayName = User.Identity?.Name;
+    var livePages = new[] { "/Index", "/Hareketler", "/Havale", "/YukleCek", "/Kartlar", "/Admin", "/Dekont" };
+    var liveWallet = livePages.Contains(page);
 }
 <!DOCTYPE html>
 <html lang="@AppCultures.HtmlLang">
@@ -30,17 +33,34 @@
     <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/motion.css" asp-append-version="true" />
 </head>
-<body>
+<body data-wallet-hub="@(User.Identity?.IsAuthenticated == true ? "true" : "false")" data-live-wallet="@(liveWallet ? "true" : "false")">
     <a class="skip-link" href="#main">@L["SkipToContent"]</a>
     <div class="app-shell">
-        <aside class="sidebar" id="sidebar">
-            <a class="brand" asp-page="/Index">
+        <header class="masthead">
+            <a class="brand masthead-brand" asp-page="/Index">
                 <span class="brand-mark" aria-hidden="true">C</span>
                 <span class="brand-name wordmark">ClearPay</span>
             </a>
+            <p class="masthead-kicker">@L["WebChannel"]</p>
+            <div class="masthead-end">
+                <div class="masthead-lang lang-picker-on-navy">
+                    <partial name="_LanguagePicker" />
+                </div>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="pill pill-on-navy @(isAdmin ? "pill-admin" : null)">@(isAdmin ? L["RoleAdmin"] : L["RoleCustomer"])</span>
+                    <span class="topbar-user masthead-user">@displayName</span>
+                    <form asp-page="/Account/Logout" method="post" class="topbar-form">
+                        <button type="submit" class="btn-text btn-text-on-navy">@L["SignOut"]</button>
+                    </form>
+                }
+            </div>
+        </header>
+        <aside class="sidebar" id="sidebar">
             <nav class="side-nav" aria-label="@L["MainMenu"]">
                 <a class="@NavClass("/Index")" asp-page="/Index"><span class="nav-ico nav-ico--overview" aria-hidden="true"></span>@L["NavOverview"]</a>
                 <a class="@NavClass("/Havale")" asp-page="/Havale"><span class="nav-ico nav-ico--send" aria-hidden="true"></span>@L["NavTransfer"]</a>
+                <a class="@NavClass("/Kartlar")" asp-page="/Kartlar"><span class="nav-ico nav-ico--cards" aria-hidden="true"></span>@L["NavCards"]</a>
                 <a class="@NavClass("/YukleCek")" asp-page="/YukleCek"><span class="nav-ico nav-ico--topup" aria-hidden="true"></span>@L["NavTopUpWithdraw"]</a>
                 <a class="@NavClass("/Hareketler")" asp-page="/Hareketler"><span class="nav-ico nav-ico--activity" aria-hidden="true"></span>@L["NavActivity"]</a>
                 @if (isAdmin)
@@ -49,29 +69,19 @@
                 }
             </nav>
             <div class="sidebar-foot">
-                <div class="lang-picker-on-navy">
-                    <partial name="_LanguagePicker" />
-                </div>
                 <p class="sidebar-note">@L["DemoDisclaimer"]</p>
             </div>
         </aside>
         <div class="workspace">
-            <header class="topbar">
-                <p class="topbar-title">@title</p>
-                <span class="live-clock" aria-live="polite"></span>
-                <div class="topbar-end">
-                    <div class="topbar-lang">
-                        <partial name="_LanguagePicker" />
-                    </div>
-                    @if (User.Identity?.IsAuthenticated == true)
+            <header class="workspace-head">
+                <div class="workspace-head-copy">
+                    @if (User.Identity?.IsAuthenticated == true && !string.IsNullOrWhiteSpace(displayName))
                     {
-                        <span class="pill">@L["RoleCustomer"]</span>
-                        <span class="topbar-user">@User.Identity.Name</span>
-                        <form asp-page="/Account/Logout" method="post" class="topbar-form">
-                            <button type="submit" class="btn-text">@L["SignOut"]</button>
-                        </form>
+                        <p class="welcome-line">@L["Welcome"] <strong>@displayName</strong></p>
                     }
+                    <p class="topbar-title">@title</p>
                 </div>
+                <span class="live-clock" aria-live="polite"></span>
             </header>
             <main id="main" class="@contentClass">
                 @RenderBody()
@@ -91,6 +101,10 @@
                     <span class="nav-ico nav-ico--send" aria-hidden="true"></span>
                     <span class="tab-label">@L["NavTransfer"]</span>
                 </a>
+                <a class="@TabClass("/Kartlar")" asp-page="/Kartlar">
+                    <span class="nav-ico nav-ico--cards" aria-hidden="true"></span>
+                    <span class="tab-label">@L["NavCards"]</span>
+                </a>
                 <a class="@TabClass("/YukleCek")" asp-page="/YukleCek">
                     <span class="nav-ico nav-ico--topup" aria-hidden="true"></span>
                     <span class="tab-label">@L["NavTopUpWithdraw"]</span>
@@ -109,6 +123,10 @@
             </nav>
         </div>
     </div>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script src="~/js/vendor/signalr.min.js" asp-append-version="true"></script>
+    }
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -39,6 +39,7 @@ public sealed class SqlLinkedInstrumentStore : ILinkedInstrumentStore
         string userId,
         string last4,
         string label,
+        string? scheme = null,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(userId))
@@ -65,12 +66,19 @@ public sealed class SqlLinkedInstrumentStore : ILinkedInstrumentStore
         if (trimmedLabel.Length > LedgerSchema.LinkedLabelMaxLength)
             trimmedLabel = trimmedLabel[..LedgerSchema.LinkedLabelMaxLength];
 
+        var schemeName = string.IsNullOrWhiteSpace(scheme) ? CardNetwork.Unknown : scheme.Trim();
+        if (schemeName.Length > LedgerSchema.LinkedSchemeMaxLength)
+            schemeName = schemeName[..LedgerSchema.LinkedSchemeMaxLength];
+        if (schemeName is not (CardNetwork.Visa or CardNetwork.Mastercard or CardNetwork.Troy))
+            schemeName = CardNetwork.Unknown;
+
         var row = new LinkedInstrument
         {
             Id = Guid.NewGuid(),
             UserId = userId,
             Last4 = digits,
             Label = trimmedLabel,
+            Scheme = schemeName,
             CreatedAt = _clock.UtcNow
         };
         _db.LinkedInstruments.Add(row);
@@ -111,5 +119,5 @@ public sealed class SqlLinkedInstrumentStore : ILinkedInstrumentStore
     }
 
     private static LinkedInstrumentDto ToDto(LinkedInstrument row) =>
-        new(row.Id, row.Last4, row.Label, row.AccountHint);
+        new(row.Id, row.Last4, row.Label, row.AccountHint, row.Scheme);
 }

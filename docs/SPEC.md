@@ -3,7 +3,7 @@
 ## Ürün
 Dijital cüzdan **sitesi** (WePay benzeri). İnsanlar para gönderir / öder **bu sitede**. Sahte perakende banka uygulaması değil: şube, IBAN çekirdeği, “BankaX” UI yok.
 
-Canvas kilit: Papara / banka mobil **havale hissi** (navy; sol menü **Özet, Havale, Yükle/Çek, Hareketler, Admin**). Kayıt/giriş, cüzdan özeti, havale, yükle/çek, hareketler/dekont, admin.
+Canvas kilit: Papara / banka mobil **havale hissi** (navy; sol menü **Özet, Havale, Kartlarım, Yükle/Çek, Hareketler, Admin**). Kayıt/giriş, cüzdan özeti, havale, kart bağlama (demo), yükle/çek, hareketler/dekont, admin.
 
 **Sahte olan yalnızca BankGateway** (REST+SOAP stub): yükle/çek timeout/retry entegrasyon stand-in’i. Kullanıcının gördüğü uygulama banka değildir. Gerçek POS / FAST / BOA yoktur.
 
@@ -25,18 +25,19 @@ Kurumsal .NET mülakatında anlatılır, internette açılan demo. Kapı: Intert
 ## Ekranlar (sabit liste)
 | # | Ekran | Ne görünür | Butonlar |
 |---|--------|------------|----------|
-| 1 | Giriş | E-posta, şifre. Link: hesap oluştur | Giriş |
-| 2 | Kayıt | Ad, e-posta, şifre, şifre tekrar | Hesap oluştur |
+| 1 | Giriş | E-posta veya demo TC, şifre. Link: hesap oluştur | Giriş |
+| 2 | Kayıt | Ad, e-posta, telefon, Bireysel/Kurumsal, şifre, şifre tekrar | Hesap oluştur |
 | 3 | Cüzdan özeti | Bakiye, bu ay giden/gelen, son 5 hareket | Havale gönder, Yükle, Çek |
 | 4 | Havale | Alıcı, tutar, açıklama, kalan bakiye | Gönder, İptal |
-| 5 | Yükle / Çek | BankGateway stub, tutar, IBAN benzeri. Durum: başarı / timeout | Yükle, Çek, İptal |
+| 5 | Yükle / Çek | BankGateway stub, tutar, bağlı kart ipucu. Durum: başarı / timeout | Yükle, Çek, İptal |
 | 6 | Hareketler | Tarih, işlem no, tür, karşı taraf, tutar, durum. Filtre + sayfa | Filtrele, Dekont |
 | 7 | Dekont | Tek işlem: taraflar, tutar, correlation id, zaman | Geri |
 | 8 | Admin | Kullanıcı dondur. Başarısız kuyruk. Audit arama | Kuyruğa al, Dondur, Ara |
+| 9 | Kartlarım | Bağlı kart listesi (şema + son 4 + ad). Canlı kart önizlemesi: Visa `4…` / Mastercard `51–55`+`2221–2720` / Troy `9792` (ISO BIN; PAN kaydı yok) | Kart ekle, Bu karttan cüzdana yükle |
 
-Sol menü her sitede aynı: **Özet, Havale, Yükle/Çek, Hareketler, Admin** (Admin yalnızca role göre).
+Sol menü her sitede aynı: **Özet, Havale, Kartlarım, Yükle/Çek, Hareketler, Admin** (Admin yalnızca role göre). Ekran 9 kullanıcı isteğiyle eklendi (T-097); gerçek POS / 3DS / banka API yok.
 
-Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Diller: **Türkçe (varsayılan), English, Deutsch, Français** — cookie `c=tr|en|de|fr`. Dil seçici **layout chrome** (sol menü / üst çubuk); 9. ekran değil. Ads/Papara metni çevrilmez. Görsel (T-040): navy `#1B2A4A`, beyaz zemin, **gölge/gradient yok**; kısa CSS motion (150–250ms). 8 ekran durur.
+Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Diller: **Türkçe (varsayılan), English, Deutsch, Français**. Site cookie `c=tr|en|de|fr`; Flutter aynı dört dil (yerel dosya, T-088/T-090; 8 işlem `L()`). Dil seçici **layout chrome** (sol menü / üst çubuk / çekmece); SPEC ekranı değil. Giriş TC = demo seed (Mernis yok). Kayıt telefonu Identity `PhoneNumber` (Razor zorunlu; JWT API isteğe bağlı). Ads/Papara metni çevrilmez. Görsel (T-040): navy `#1B2A4A`, beyaz zemin, **gölge/gradient yok**; kısa CSS motion (150–250ms). Kartlarım ekran 9 (T-097, yüz T-103).
 
 ## Para kuralları (bozulmaz)
 1. **Çift kayıt defteri:** her harekette + ve − satırı (`LedgerEntry`)
@@ -48,16 +49,21 @@ Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Diller: **Tü
 7. **Outbox:** ledger ile **aynı SQL transaction**; timeout’ta kaybolmaz
 
 ## Veri
-`User`, `Wallet`, `LedgerEntry`, `Transfer`, `IdempotencyRecord`, `AuditLog`, `OutboxMessage`
+`User`, `Wallet`, `LedgerEntry`, `Transfer`, `IdempotencyRecord`, `AuditLog`, `OutboxMessage`, `LinkedInstrument` (son 4 + kart adı + şema; PAN/CVV yok)
 
 ## API
 - Site: cookie (Identity)
 - JSON API: JWT + OpenAPI/Swagger
 - Havale: `POST /api/transfers` + `Idempotency-Key` → başarı 201, tekrar 409
+- Havale okuma (T-073): `GET /api/transfers/{id}` (JWT; yalnız gönderen/alıcı; 404)
+- Okuma / yükleme (T-061): `GET /api/wallet`, `GET /api/movements` (`page`, `pageSize` 1–50), `GET /api/receipts/{correlationId}`, `GET /api/receipts/{correlationId}/pdf` (T-079; aynı fiş, bakiye yok), `POST /api/topup` / `withdraw`
+- Kayıt / kart / admin (T-062): `POST /api/register` (JWT, cookie yok), `GET/POST /api/cards`, `/api/admin/*` (rol Admin)
+- Q2 istemci: Flutter **mobil** (`mobile/clearpay`, Android/iOS; T-087 Chrome yok) aynı JWT; web UI = Razor; 9. ekran değil; C# motor durur (T-061, T-062)
+- Eşzaman chrome (T-071): SignalR `/hubs/wallet` — 9. ekran değil; bakiye hub’da yok; `GET /api/wallet` kaynak
 
 ## Kapsam dışı (şimdi değil)
 - Sahte banka uygulaması (şube, IBAN çekirdeği, “BankaX” perakende UI)
-- Gerçek banka / POS / 3D Secure
+- Gerçek banka / POS / 3D Secure / tam PAN saklama
 - Satıcı ödemesi ekranı (Q2 adayı)
 - Kafka, Kubernetes, Java ikizi
 - LED teknik destek sitesine özellik eklemek

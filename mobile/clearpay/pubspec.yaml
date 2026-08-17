@@ -1,0 +1,29 @@
+name: clearpay
+description: ClearPay Q2 JWT client. Same SQL ledger as the ASP.NET site. No local balance.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  firebase_core: ^4.13.0
+  firebase_auth: ^6.1.2
+  signalr_netcore: ^1.4.4
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  http: ^1.2.2
+  qr_flutter: ^4.1.0
+  flutter_secure_storage: ^9.2.4
+  share_plus: ^10.1.4
+  cloud_firestore: ^6.8.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

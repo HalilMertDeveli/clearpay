@@ -11,6 +11,7 @@ Kod değişince:
 3. TASK-03+: giriş/kayıt, menü linkleri kırık olmasın
 4. TASK-06+: çift gönderim **409**; bakiye çift düşmesin; yetersiz bakiyede değişmesin
 5. TASK-07+: gateway timeout’ta ledger kesinleşmesin, kuyruk kaydı kalsın
+6. Web+Flutter: `dotnet test` + `mobile/clearpay` `flutter test`. Elle tık: `docs/SMOKE.md` (Android emülatör JWT; Chrome yok)
 
 Sorun varsa Coder/Payments’a geri ver; TASKS’ta Done’a taşıma.
 

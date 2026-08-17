@@ -1,0 +1,9 @@
+---
+description: Coder — Flutter JWT client
+globs: "**/*.{dart,yaml}"
+alwaysApply: true
+---
+
+# ClearPay mobile
+
+Bu klasör JWT **mobil** istemci (Android/iOS; Windows masaüstü JWT). Ledger C# **Razor sitesinde**. Flutter web/PWA yok (T-087). Hive bakiye yok. TARTISMA repo kökünde: `../../docs/TARTISMA.md`.

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
 namespace ClearPay.Web.Pages.Account;
@@ -35,7 +36,7 @@ public class RegisterModel : PageModel
     [BindProperty]
     public RegisterRequest Input { get; set; } = new();
 
-    public void OnGet() => Input = new RegisterRequest();
+    public void OnGet() => Input = new RegisterRequest { AccountKind = AccountKinds.Bireysel };
 
     public async Task<IActionResult> OnPostAsync()
     {
@@ -50,12 +51,28 @@ public class RegisterModel : PageModel
             return Page();
         }
 
+        var phone = TurkishPhone.Normalize(Input.Phone);
+        if (phone is null)
+        {
+            ModelState.AddModelError("Input.Phone", _localizer["PhoneRequired"]);
+            return Page();
+        }
+
+        var taken = await _userManager.Users.AnyAsync(u => u.PhoneNumber == phone);
+        if (taken)
+        {
+            ModelState.AddModelError("Input.Phone", _localizer["PhoneTaken"]);
+            return Page();
+        }
+
         var email = Input.Email.Trim();
         var user = new ApplicationUser
         {
             UserName = email,
             Email = email,
-            FullName = Input.FullName.Trim()
+            FullName = Input.FullName.Trim(),
+            PhoneNumber = phone,
+            AccountKind = AccountKinds.Normalize(Input.AccountKind)
         };
 
         var created = await _userManager.CreateAsync(user, Input.Password);

@@ -24,11 +24,15 @@
 <section class="panel card-panel" id="kart">
     <h2 class="panel-title">@L["LinkedCard"]</h2>
     <p class="field-hint">@L["CardHint"] @L["DemoDisclaimer"]</p>
-    <article class="demo-card" aria-label="@L["LinkedCard"]">
+    <article class="demo-card" data-scheme="@((Model.SelectedCard?.Scheme ?? "Unknown").ToLowerInvariant())" aria-label="@L["LinkedCard"]">
         <p class="demo-card-brand">ClearPay</p>
+        <p class="demo-card-badge">@(Model.SelectedCard?.Scheme ?? L["DemoWallet"].Value)</p>
+        <div class="scheme-mark" aria-hidden="true">
+            <span class="scheme-orb scheme-orb--a"></span>
+            <span class="scheme-orb scheme-orb--b"></span>
+        </div>
         <p class="demo-card-pan">•••• •••• •••• @(Model.SelectedCard?.Last4 ?? "••••")</p>
         <p class="demo-card-name">@(Model.SelectedCard?.Label ?? "ClearPay Demo")</p>
-        <p class="demo-card-badge">@L["DemoWallet"]</p>
     </article>
     @if (Model.Cards.Count == 0)
     {
@@ -41,26 +45,14 @@
             {
                 <li>
                     <a class="@(card.Last4 == Model.SelectedCard?.Last4 ? "card-chip is-active" : "card-chip")"
-                       asp-page="/YukleCek" asp-route-kart="@card.Last4" asp-fragment="yukle">@card.Label · ****@card.Last4</a>
+                       asp-page="/YukleCek" asp-route-kart="@card.Last4" asp-fragment="yukle">@card.Scheme · @card.Label · ****@card.Last4</a>
                 </li>
             }
         </ul>
     }
-    <form method="post" asp-page-handler="AddCard" class="stack-form" novalidate>
-        <div class="field-row">
-            <div class="field">
-                <label class="field-label" asp-for="NewCard.Last4">@L["CardLast4"]</label>
-                <input class="field-input" asp-for="NewCard.Last4" inputmode="numeric" maxlength="4" autocomplete="off" />
-            </div>
-            <div class="field">
-                <label class="field-label" asp-for="NewCard.Label">@L["CardLabel"]</label>
-                <input class="field-input" asp-for="NewCard.Label" maxlength="40" />
-            </div>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="btn">@L["AddCard"]</button>
-        </div>
-    </form>
+    <p class="form-actions">
+        <a class="btn" asp-page="/Kartlar">@L["AddCard"]</a>
+    </p>
 </section>
 
 <div class="tabset">
@@ -85,6 +77,7 @@
             </div>
             <div class="form-actions form-actions--sticky">
                 <button type="submit" class="btn">@L["TopUp"]</button>
+                <a class="btn btn-ghost" asp-page="/Index">@L["Cancel"]</a>
             </div>
         </form>
     </section>

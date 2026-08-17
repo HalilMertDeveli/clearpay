@@ -2,6 +2,7 @@ using ClearPay.Application.Ports;
 using ClearPay.Application.Wallets;
 using ClearPay.Domain.Ledger;
 using ClearPay.Infrastructure.Persistence;
+using ClearPay.Infrastructure.Realtime;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ public sealed class AdminPanelTests : IDisposable
         _connection.Open();
         _db = new ClearPayDbContext(new DbContextOptionsBuilder<ClearPayDbContext>().UseSqlite(_connection).Options);
         _db.Database.EnsureCreated();
-        _admin = new SqlAdminPanel(_db, new Dir(), new NoopCache(), new Clock());
+        _admin = new SqlAdminPanel(_db, new Dir(), new NoopCache(), new Clock(), new NoOpWalletLiveNotifier());
     }
 
     [Fact]

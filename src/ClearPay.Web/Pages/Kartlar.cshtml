@@ -1,0 +1,112 @@
+@page "/kartlar"
+@model KartlarModel
+@{
+    ViewData["Title"] = L["NavCards"].Value;
+    ViewData["MetaDescription"] = L["MetaCards"].Value;
+    ViewData["Wide"] = true;
+}
+
+<p class="page-kicker">@L["WalletKicker"]</p>
+<h1 class="page-title">@L["NavCards"]</h1>
+<p class="lede">@L["CardsLede"]</p>
+
+@if (TempData["Flash"] is string flash)
+{
+    <p class="flash-ok" role="status" aria-live="polite">@flash</p>
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+<div class="cards-layout">
+    <section class="panel" aria-labelledby="bind-title">
+        <h2 class="panel-title" id="bind-title">@L["AddCard"]</h2>
+        <p class="field-hint">@L["CardBindHint"] @L["DemoDisclaimer"]</p>
+
+        <div class="live-card-stage" id="live-card-stage" data-card-preview>
+            <div class="live-card" id="live-card" data-scheme="unknown">
+                <div class="live-card-face live-card-front">
+                    <p class="live-card-brand">ClearPay</p>
+                    <p class="live-card-scheme" data-card-scheme>@L["CardSchemeUnknown"]</p>
+                    <div class="scheme-mark" aria-hidden="true">
+                        <span class="scheme-orb scheme-orb--a"></span>
+                        <span class="scheme-orb scheme-orb--b"></span>
+                    </div>
+                    <p class="live-card-pan" data-card-pan>•••• •••• •••• ••••</p>
+                    <div class="live-card-meta">
+                        <p class="live-card-name" data-card-name data-placeholder="@L["CardHolder"]">@L["CardHolder"]</p>
+                        <p class="live-card-exp"><span>@L["CardExpiry"]</span> <strong data-card-exp>MM/YY</strong></p>
+                    </div>
+                </div>
+                <div class="live-card-face live-card-back">
+                    <div class="live-card-stripe" aria-hidden="true"></div>
+                    <p class="live-card-cvv-label">CVV</p>
+                    <p class="live-card-cvv" data-card-cvv>•••</p>
+                    <p class="live-card-back-note">@L["CardCvvHint"]</p>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" asp-page-handler="Add" class="stack-form" novalidate data-card-form>
+            <div class="field">
+                <label class="field-label" asp-for="NewCard.Number">@L["CardNumber"]</label>
+                <input class="field-input" asp-for="NewCard.Number" inputmode="numeric" maxlength="19" autocomplete="off" placeholder="4111 1111 1111 1111" data-card-input="number" />
+            </div>
+            <div class="field">
+                <label class="field-label" asp-for="NewCard.Holder">@L["CardHolder"]</label>
+                <input class="field-input" asp-for="NewCard.Holder" maxlength="40" autocomplete="off" data-card-input="name" />
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label class="field-label" for="card-expiry">@L["CardExpiry"]</label>
+                    <input class="field-input" id="card-expiry" maxlength="5" autocomplete="off" placeholder="12/28" data-card-input="expiry" />
+                </div>
+                <div class="field">
+                    <label class="field-label" for="card-cvv">@L["CardCvv"]</label>
+                    <input class="field-input" id="card-cvv" inputmode="numeric" maxlength="4" autocomplete="off" data-card-input="cvv" />
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label" asp-for="NewCard.Label">@L["CardNickname"]</label>
+                <input class="field-input" asp-for="NewCard.Label" maxlength="40" placeholder="Yapı Kredi" autocomplete="off" data-card-input="label" />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn">@L["AddCard"]</button>
+                <a class="btn btn-ghost" asp-page="/YukleCek" asp-fragment="yukle">@L["TopUp"]</a>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel" aria-labelledby="list-title">
+        <h2 class="panel-title" id="list-title">@L["LinkedCard"]</h2>
+        @if (Model.Cards.Count == 0)
+        {
+            <div class="empty-block">
+                <div class="empty-mark" aria-hidden="true"></div>
+                <p class="empty-title">@L["NoLinkedCard"]</p>
+                <p class="empty-hint">@L["CardsEmptyHint"]</p>
+            </div>
+        }
+        else
+        {
+            <ul class="bound-card-list">
+                @foreach (var card in Model.Cards)
+                {
+                    <li class="bound-card" data-scheme="@card.Scheme.ToLowerInvariant()">
+                        <span class="bound-card-scheme">@card.Scheme</span>
+                        <span class="bound-card-mark" aria-hidden="true">
+                            <span class="scheme-orb scheme-orb--a"></span>
+                            <span class="scheme-orb scheme-orb--b"></span>
+                        </span>
+                        <span class="bound-card-pan">****@card.Last4</span>
+                        <span class="bound-card-name">@card.Label</span>
+                        <a class="btn" asp-page="/YukleCek" asp-route-kart="@card.Last4" asp-fragment="yukle">@L["LoadFromCard"]</a>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+</div>
+
+@section Scripts {
+    <script src="~/js/card-preview.js" asp-append-version="true"></script>
+}

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ClearPay.Infrastructure.Persistence;
 
 /// <summary>
-/// SQL Server ledger store. Identity stays on <c>AppIdentityDbContext</c> (SQLite in Development).
+/// SQL Server ledger store. Identity is <c>AppIdentityDbContext</c> on the same SQL Server (SQLite only in tests).
 /// No Balance column. PageModels must not take this type — use Application ports.
 /// </summary>
 public sealed class ClearPayDbContext : DbContext

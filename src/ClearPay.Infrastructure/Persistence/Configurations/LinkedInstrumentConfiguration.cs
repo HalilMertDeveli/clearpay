@@ -19,6 +19,9 @@ internal sealed class LinkedInstrumentConfiguration : IEntityTypeConfiguration<L
         builder.Property(x => x.Label)
             .IsRequired()
             .HasMaxLength(LedgerSchema.LinkedLabelMaxLength);
+        builder.Property(x => x.Scheme)
+            .IsRequired()
+            .HasMaxLength(LedgerSchema.LinkedSchemeMaxLength);
         builder.Property(x => x.CreatedAt).IsRequired();
         builder.Ignore(x => x.AccountHint);
         builder.HasIndex(x => new { x.UserId, x.Last4 })

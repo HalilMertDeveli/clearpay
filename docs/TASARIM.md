@@ -24,7 +24,7 @@ Yaratıcılık: hiyerarşi, boş durum + CTA, wordmark, form ritmi, kısa hareke
 
 **One-liner:** ClearPay — demo dijital cüzdan (WePay benzeri).
 
-**Ürün çerçevesi (T-015):** WePay benzeri **dijital cüzdan / pay**. Kicker **Cüzdan**, tagline **Demo dijital cüzdan**. Şube / internet-bankacılığı kromu yok. `IBankGateway` yalnızca yükle/çek stub.
+**Ürün çerçevesi (T-015 + T-072):** WePay benzeri **dijital cüzdan / pay**. Kicker **Cüzdan**, tagline **Demo dijital cüzdan**. Girişli kabuk internet-şube *düzeni* (masthead + sol menü); YK/Worldcard marka kopyası değil. `IBankGateway` yalnızca yükle/çek stub.
 
 ## Tipografi
 
@@ -37,7 +37,8 @@ Yaratıcılık: hiyerarşi, boş durum + CTA, wordmark, form ritmi, kısa hareke
 ## Wordmark
 
 Kare marka: 2rem, 8px radius, düz teal `#0F766E`, içinde beyaz **C**.  
-İsim: **ClearPay**, tracking `0.04em`, 700. Sidebar’da beyaz; auth’ta navy.  
+Launcher (T-084): navy `#1B2A4A` kare, beyaz geometrik **C**, ince teal halka; YK/Papara/World yok.  
+İsim: **ClearPay**, tracking `0.04em`, 700. Masthead’de beyaz; auth’ta navy.  
 Tagline (yalnız auth): `Demo dijital cüzdan`.
 
 ## Layout
@@ -58,7 +59,7 @@ Footer her yerde: **Demo — yükleme için sahte gateway**
 Sidebar **gizlenir**; hamburger ve backdrop yok (iki gezinme aynı anda olmaz).
 
 ```
-[ topbar: başlık | kullanıcı | çıkış ]
+[ masthead: wordmark | kullanıcı | çıkış ]
 [ içerik, tek kolon kart yığını       ]
 [ footer: demo notu + dil seçici      ]
 [ tabbar sabit: Özet Havale Yükle Hareketler (Admin) ]
@@ -83,10 +84,10 @@ Motion: vendored `anime.min.js` (3.2.2) + `auth-hero.js` yalnız bu layout. Tek 
 
 ### Özet (`/`)
 
-Alipay ev: mavi bant + 4 işlem + örtüşen beyaz tabaka. Sparkline / şube kromu yok.
+Internet-şube ev (T-072): hesap kartı + hızlı işlem karoları + beyaz tabaka. Sparkline / Worldcard yok.
 
-1. `wallet-home` > `balance-hero.wallet-band`: `--hero-grad` navy gradient + `--elev-3` (T-053); kicker **Cüzdan** + `h1` Özet + selamlama; kullanılabilir bakiye **xl / 800**; durum (Aktif teal / Dondurulmuş ılık); altta `.action-grid` 4 daire: **Gönder** `/havale`, **Yükle** `/yukle-cek#yukle`, **Çek** `#cek`, **Hareketler** `/hareketler`. İkonlar CSS geometri (emoji/Alipay QR yok).
-2. `.wallet-sheet` (beyaz, radius `--radius-lg` 20px, banda `-1.25rem` overlap, 1px çizgi + `--elev-3`): iki ay özeti (giden | gelen, iç hücre) + **Son hareketler** + “Tümünü gör”.
+1. `dash-grid`: `balance-hero.wallet-band` (`--hero-grad` + `--elev-3`) kicker **Cüzdan** + `h1` Özet + selamlama; kullanılabilir bakiye **xl / 800**; durum (Aktif teal / Dondurulmuş ılık). Yanında `.ops-rail` **Hızlı işlemler**: `.action-grid` 2×2 beyaz karo — **Gönder** `/havale`, **Yükle** `/yukle-cek#yukle`, **Çek** `#cek`, **Hareketler** `/hareketler`. İkonlar CSS geometri (emoji / YK / Alipay QR yok).
+2. `.wallet-sheet` (beyaz, radius `--radius-lg` 20px, 1px çizgi + `--elev-3`): iki ay özeti (giden | gelen) + **Son hareketler** + “Tümünü gör”.
 
 Boş hareket: `empty-block` — `empty-mark` + başlık + hint + CTA (Havale / Yükle).
 
@@ -183,6 +184,8 @@ auth-mark   2.5rem teal kare, beyaz C; margin 0 0 0.85rem
 tagline     0.85rem muted, margin 0 0 1.25rem; metin: Demo cüzdan
 h1          Giriş — 1.75rem; lede 1rem, margin-bottom 0
 auth-form   margin-top 1.5rem
+.auth-tabs  her zaman görünür (Yükle `.tab-switch` değil — o masaüstünde gizli)
+            2 kolon hap; E-posta | TC (demo)
 .field      margin-bottom 1.1rem
 .btn-block  width 100%; margin-top 0.25rem
 auth-switch margin 1.35rem 0 0; 0.9rem
@@ -190,7 +193,9 @@ auth-footer kart DIŞI, 0.75rem muted, margin-top 1.35rem
             metin: Demo — yükleme için sahte gateway
 ```
 
-Kayıt aynı kart ritmi; dört field, hint şifre altında 0.35rem. Boş durum yok (form). Hata: `.validation-summary` 0.75rem 0.85rem padding, 1px danger.
+Kayıt aynı kart ritmi; ad, e-posta, **telefon**, Bireysel/Kurumsal (`.choice-row` iki radio), şifre + tekrar. Hint şifre altında 0.35rem. Boş durum yok (form). Hata: `.validation-summary` 0.75rem 0.85rem padding, 1px danger.
+
+T-088: TC sekmesi Mernis değil (seed `10000000146`). Flutter dil şeridi auth + çekmece; YK/Papara yok.
 
 ### 2) Özet hero (`/` `.wallet-home`)
 
@@ -285,12 +290,12 @@ receipt-amount  ortalı; stat-label + stat-value-xl 2.3rem + durum rozeti
                 alt 1px --line
 receipt-row     dt sol muted 0.85rem | dd sağ 600; 1px dashed ayraç
                 son satırlar ayraçsız; correlation id .mono + Kopyala; ****son4 varsa Hesap/kart
-form-actions    Yazdır (dolu) + Geri (ghost); yazdırınca chrome gizlenir
+form-actions    PDF indir (dolu) + Yazdır (ghost) + Geri; yazdırınca chrome gizlenir
 ```
 
 Başarılı havale / yükle / çek TempData flash ile **bu fişe** yönlenir (Index değil). `@media print`: sidebar, tabbar, topbar, footer, flash, form-actions yok; yalnız fiş.
 
-T-056: `data-copy` / `data-print` (`site.js`); clipboard + `window.print`. 9. ekran yok.
+T-056: `data-copy` / `data-print` (`site.js`); clipboard + `window.print`. T-079: `handler=Pdf` aynı `correlationId` (yönetilen PDF 1.4); 9. ekran yok.
 
 ### 7) Giriş — Beni hatırla (T-056)
 
@@ -315,3 +320,14 @@ WePayUI / Papara P2P review. `.confirm-sheet` panel içinde: alıcı, tutar, aç
 Papara `listLedgers` start+end. `.filter-row`: Başlangıç | Bitiş | Tür | Filtrele. Boş dönem `empty-actions` Havale + Yükle. İşlem no `.mono` + Kopyala (masaüstü; mobilde col 2 gizli, dekontta durur). Özet son 5: tür dekont linki + 8 hane corr.
 
 Dekont: correlation tam + kopyala; yükle/çek `****son4` satırı (`AccountHintLabel`) Description `****` içerince. Admin: Dondur + **Çöz** (aynı e-posta alanı); boş kuyruk `empty-block`.
+
+### 12) Parite kromu (T-073)
+
+Yükle formunda **İptal** (Çek ile aynı, Özet’e). Topbar rol hapı: Musteri / **Admin** (`.pill-admin` ılık çerçeve). 9. ekran değil.
+
+Flutter: sol çekmece + alt sekme durur; dondurulmuş cüzdanda Havale/Yükle/Çek kapalı. JWT 401 ProblemDetails.
+
+### 13) Kartlarım — canlı önizleme (T-097, ekran 9)
+
+Kullanıcı isteği: kart bağla, yazarken kart yüzü. Rota `/kartlar`. 3D CSS kart (ön: numara gruplu / ad / SKT; CVV odakta arka yüz `rotateY(180deg)`, 220ms). Şema **ISO BIN** (T-103): Visa `4…` mavi yüz + VISA yazısı; Mastercard `51–55` / `2221–2720` koyu yüz + iki örtüşen daire (geometrik; resmi SVG yok); Troy `9792` teal. Yapı Kredi **kart adı**, şema değil. CVV input `name` yok. Kayıt son 4 + ad + şema. «Bu karttan cüzdana yükle» → `/yukle-cek?kart=`. Flutter Kartlarım aynı BIN yüzü (T-097 park kalktı). Footer demo one-liner.
+

@@ -14,10 +14,38 @@ namespace ClearPay.Web.Controllers;
 public sealed class TransfersController : ControllerBase
 {
     private readonly ITransferExecutor _transfers;
+    private readonly ITransferLookup _lookup;
 
-    public TransfersController(ITransferExecutor transfers)
+    public TransfersController(ITransferExecutor transfers, ITransferLookup lookup)
     {
         _transfers = transfers;
+        _lookup = lookup;
+    }
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(actor))
+            return Unauthorized();
+
+        var dto = await _lookup.GetForActorAsync(actor, id, cancellationToken).ConfigureAwait(false);
+        if (dto is null)
+            return NotFound();
+
+        return Ok(new
+        {
+            transferId = dto.TransferId,
+            correlationId = dto.CorrelationId,
+            amount = dto.Amount,
+            description = dto.Description,
+            status = dto.Status,
+            createdAt = dto.CreatedAt
+        });
     }
 
     [HttpPost]

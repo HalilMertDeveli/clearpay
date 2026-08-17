@@ -24,14 +24,8 @@ public sealed class WalletFlowTests : IClassFixture<ClearPayWebFactory>
         var registerHtml = await registerGet.Content.ReadAsStringAsync();
         var token = AntiforgeryTestHelper.GetToken(registerHtml);
 
-        var registerPost = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Ayşe Yılmaz",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        var registerPost = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Ayşe Yılmaz")));
 
         registerPost.StatusCode.Should().Be(HttpStatusCode.OK);
         var wallet = await registerPost.Content.ReadAsStringAsync();
@@ -74,14 +68,8 @@ public sealed class WalletFlowTests : IClassFixture<ClearPayWebFactory>
     {
         var page = await client.GetStringAsync("/Account/Register");
         var token = AntiforgeryTestHelper.GetToken(page);
-        var response = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = name,
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        var response = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, name)));
         response.EnsureSuccessStatusCode();
     }
 

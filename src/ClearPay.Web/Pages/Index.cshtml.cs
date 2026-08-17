@@ -51,5 +51,8 @@ public class IndexModel : PageModel
         MonthInText = MoneyDisplay.FormatTry(MonthInAmount);
         IsFrozen = summary?.IsFrozen ?? false;
         LastMovements = summary?.LastMovements ?? [];
+        // #region agent log
+        AgentDebugLog.Write("H", "Index.cshtml.cs:OnGetAsync", "overview", new { authed = User.Identity?.IsAuthenticated == true, frozen = IsFrozen, hasName = !string.IsNullOrWhiteSpace(GreetingName) });
+        // #endregion
     }
 }

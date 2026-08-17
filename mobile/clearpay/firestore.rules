@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  // ===============================================================
+  // Assumed Data Model
+  // ===============================================================
+  //
+  // Collection: app_meta
+  // Document: ping
+  // {
+  //   ok: bool (must be true),
+  //   client: string (must be "flutter"),
+  //   message: string (<= 80 chars, no money),
+  //   touchedAt: timestamp
+  // }
+  //
+  // Ledger / balance / transfer collections are not used. Default deny.
+  // Unauthenticated write is only for this health ping (T-091 / T-096).
+  // ===============================================================
+
+  match /databases/{database}/documents {
+    function isValidPing() {
+      let data = request.resource.data;
+      return data.keys().hasOnly(['ok', 'client', 'message', 'touchedAt'])
+        && data.ok == true
+        && data.client == 'flutter'
+        && data.message is string
+        && data.message.size() > 0
+        && data.message.size() <= 80
+        && data.touchedAt is timestamp;
+    }
+
+    match /app_meta/ping {
+      allow read: if true;
+      allow create, update: if isValidPing();
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

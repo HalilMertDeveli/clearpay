@@ -2,9 +2,11 @@ using ClearPay.Application.Ports;
 using ClearPay.Infrastructure.Banking;
 using ClearPay.Infrastructure.Caching;
 using ClearPay.Infrastructure.Identity;
+using ClearPay.Infrastructure.Documents;
 using ClearPay.Infrastructure.Jobs;
 using ClearPay.Infrastructure.Messaging;
 using ClearPay.Infrastructure.Persistence;
+using ClearPay.Infrastructure.Realtime;
 using ClearPay.Infrastructure.Time;
 using Hangfire;
 using Hangfire.MemoryStorage;
@@ -47,6 +49,8 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IClock, SystemClock>();
         services.AddSingleton<IJwtTokenIssuer, JwtTokenIssuer>();
+        services.AddSingleton<IReceiptPdf, SimplePdfReceiptRenderer>();
+        services.AddScoped<IWalletLiveNotifier, NoOpWalletLiveNotifier>();
         AddRedisCache(services, configuration);
         AddRabbit(services, configuration);
         services.AddScoped<SqlWalletReader>();
@@ -55,6 +59,7 @@ public static class ServiceCollectionExtensions
             sp.GetRequiredService<IWalletSummaryCache>()));
         services.AddScoped<IIdempotencyStore, SqlIdempotencyStore>();
         services.AddScoped<ITransferExecutor, SqlTransferExecutor>();
+        services.AddScoped<ITransferLookup, SqlTransferLookup>();
         services.AddScoped<IFundingExecutor, SqlFundingExecutor>();
         services.AddScoped<ILinkedInstrumentStore, SqlLinkedInstrumentStore>();
         services.AddScoped<IActivityReader, SqlActivityReader>();
