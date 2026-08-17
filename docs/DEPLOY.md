@@ -13,7 +13,7 @@ dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
 Site: http://localhost:5153  
-SQL: `localhost,1433` (SA). Identity lokal: SQLite `App_Data`. Ledger SQL TASK-04.  
+SQL: Windows instance `lpc:localhost` / `ClearPay` (Identity + ledger, T-058). Docker SQL `localhost,1433` (SA) Compose yedek; Development profili Windows SQL kullanır.  
 Redis: `localhost:6379`. Rabbit yönetim: http://localhost:15672 (`guest` / `guest`).  
 Lokal SA şifresi varsayılanı `ClearPay_Dev1!` (yalnızca Docker; Azure’da kullanma). `.env.example` kopyalanabilir; `.env` commit edilmez.
 
@@ -29,7 +29,7 @@ Veri bind mount (T-021), C: named volume silinmez:
 | MySQL 8.4 | `docker compose -f docker-compose.databases.yml up -d` | 3306 | `D:\ClearPay\data\mysql` |
 | Oracle XE 21 | ayni databases compose (`gvenzl/oracle-xe:21-slim`) | 1521 | `D:\ClearPay\data\oracle` |
 
-Sifreler `.env` (gitignore). `.env.example` placeholder. App connection string **MSSQL only** (`localhost,1433`, SA). Identity lokal: SQLite `App_Data`.
+Sifreler `.env` (gitignore). `.env.example` placeholder. App connection string **MSSQL only**. Development: Windows SQL `ClearPay` (Identity + ledger). Testler SQLite (`ClearPay:UseSqliteLedger`).
 
 ```bash
 docker compose up -d

@@ -22,6 +22,11 @@ public sealed class SwaggerTests : IClassFixture<ClearPayWebFactory>
         json.Should().Contain("Idempotency-Key");
         json.Should().Contain("409");
         json.Should().Contain("/api/transfers");
+        json.Should().Contain("/api/wallet");
+        json.Should().Contain("/api/movements");
+        json.Should().Contain("/api/receipts");
+        json.Should().Contain("/api/topup");
+        json.Should().Contain("/api/withdraw");
         json.Should().Contain("wallet was not charged");
     }
 }

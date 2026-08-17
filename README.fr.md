@@ -10,6 +10,7 @@
 <p align="center">
   <a href="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml"><img src="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet" alt=".NET 8">
+  <img src="https://img.shields.io/badge/Flutter-3.41-02569B?logo=flutter" alt="Flutter">
   <img src="https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver" alt="SQL Server">
   <img src="https://img.shields.io/badge/UI-TR%20%7C%20EN%20%7C%20DE%20%7C%20FR-1B2A4A" alt="Langues UI">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
@@ -17,7 +18,9 @@
 
 <p align="center"><b>Démo — passerelle fictive pour les recharges.</b> Pas un établissement e-money licencié. Pas Papara / FAST / une fausse banque de détail.</p>
 
-Portefeuille web ASP.NET Core 8 **type WePay**. On paie et on envoie de l’argent **sur ce site**. Un seul hôte : Razor Pages pour l’UI, JSON pour l’API. La partie double est dans le Domain — `Wallet` n’a **pas** de colonne `Balance`.
+**Un portefeuille, deux clients.** La même personne se connecte, vire, recharge et ouvre le reçu **sur le site** et **dans l’app Flutter**. Un seul grand livre SQL. Le téléphone ne garde pas un second solde.
+
+Portefeuille web ASP.NET Core 8 **type WePay** plus client **Flutter** JWT ([`mobile/clearpay`](mobile/clearpay)). Razor Pages pour le navigateur (cookie) ; JSON pour l’app (JWT). La partie double est dans le Domain — `Wallet` n’a **pas** de colonne `Balance`.
 
 Je suis Halil Mert Develi. J’ai écrit ça pour un entretien .NET (Intertech, Softtech), pas pour cloner Papara. Licence MIT.
 
@@ -33,9 +36,13 @@ Le Web ne calcule pas le grand livre. La synthèse demande `IWalletReader`. Aujo
 
 ```mermaid
 flowchart TB
+  subgraph clients [Same person]
+    razor[Website Razor cookie]
+    flutter[Flutter app JWT]
+  end
   subgraph web [ClearPay.Web]
-    razor[Razor Pages TR/EN/DE/FR]
-    api[JSON host]
+    pages[Razor Pages TR/EN/DE/FR]
+    api[JSON API]
   end
   subgraph app [ClearPay.Application]
     reader[IWalletReader]
@@ -43,15 +50,20 @@ flowchart TB
   end
   subgraph infra [ClearPay.Infrastructure]
     sql[SqlWalletReader + EF]
-    id[Identity SQLite]
+    id[Identity]
   end
   subgraph domain [ClearPay.Domain]
     pair[LedgerPair / LedgerEntry]
   end
-  razor --> reader
+  razor --> pages
+  flutter --> api
+  pages --> reader
+  pages --> exec
+  api --> reader
+  api --> exec
   reader --> sql
-  sql --> pair
   exec --> pair
+  sql --> pair
 ```
 
 | Couche | Projet | Contient | Ne contient pas |
@@ -67,22 +79,20 @@ Les dépendances pointent **vers l’intérieur**. Le Domain ne référence ni E
 
 ## Ce qui s’ouvre aujourd’hui
 
-Identity cookie, SQLite : `App_Data/identity.db`. Langues : **Türkçe (défaut), English, Deutsch, Français** — sélecteur dans le layout, pas un 9ᵉ écran.
+Les huit mêmes opérations sur le site et dans l’app. Langues : **Türkçe (défaut), English, Deutsch, Français**. UI Flutter par défaut : Türkçe. Pas un 9ᵉ écran.
 
-| Écran | Route | État honnête |
-|-------|--------|----------------|
-| Connexion | `/giris` | OK |
-| Inscription | `/kayit` | OK |
-| Synthèse | `/` | **Live** depuis le net du ledger (zéros sans SQL / sans lignes) |
-| Virement | `/havale` | Formulaire cookie → `ITransferExecutor`. Mêmes règles que l’API |
-| Recharger / retirer | `/yukle-cek` | Fausse passerelle REST/SOAP (`TIMEOUT` file, pas de ledger) |
-| Mouvements | `/hareketler` | Filtre + page ; lien reçu |
-| Reçu | `/dekont/{correlationId}` | Uniquement son portefeuille |
-| Admin | `/admin` | Rôle Admin. Gel, outbox en échec, audit. Dev `admin@clearpay.test` / `Deneme123` |
+| Opération | Site | App Flutter |
+|-----------|------|-------------|
+| Connexion | [`/giris`](http://localhost:5153/giris) | Giriş — `POST /api/token` |
+| Inscription | [`/kayit`](http://localhost:5153/kayit) | Hesap oluştur — `POST /api/register` |
+| Synthèse | [`/`](http://localhost:5153/) | Özet, pull-to-refresh — `GET /api/wallet` |
+| Virement | [`/havale`](http://localhost:5153/havale) | Havale + confirmation — `POST /api/transfers` + `Idempotency-Key` |
+| Recharger / retirer | [`/yukle-cek`](http://localhost:5153/yukle-cek) | Yükle / Çek — `POST /api/topup` / `withdraw` |
+| Mouvements | [`/hareketler`](http://localhost:5153/hareketler) | Hareketler + filtre — `GET /api/movements` |
+| Reçu | [`/dekont/{id}`](http://localhost:5153/hareketler) | Dekont — `GET /api/receipts/{id}` |
+| Admin | [`/admin`](http://localhost:5153/admin) | Onglet Admin (rôle Admin) — `/api/admin/*` |
 
-`GET /api/health` → `{ "status": "ok", "product": "ClearPay", "redis": "up|down|off", "rabbit": "up|down|off" }`.
-
-JSON : `POST /api/token` puis `POST /api/transfers` + `Idempotency-Key` → **201** / **409**. OpenAPI : [http://localhost:5153/swagger](http://localhost:5153/swagger).
+Dev : `admin@clearpay.test` / `Deneme123`. Virement **201** / rejeu **409**. OpenAPI : [http://localhost:5153/swagger](http://localhost:5153/swagger). README mobile : [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
 
 Redis cache uniquement le DTO résumé (~60 s). La caisse reste SQL Server. Rabbit `clearpay.outbox` si `ConnectionStrings:RabbitMq`. **Pas d’URL Azure publique** — tu cliques `az login` (`docs/CANLI.md`).
 
@@ -103,7 +113,15 @@ docker compose up -d
 dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
-[http://localhost:5153](http://localhost:5153). Identity n’a pas besoin de Docker. Sans SQL, la synthèse reste `0,00 ₺`.
+[http://localhost:5153](http://localhost:5153). Le même argent dans Flutter (**cmd**) :
+
+```bat
+cd /d mobile\clearpay
+flutter doctor
+flutter run -d windows
+```
+
+Émulateur Android : `http://10.0.2.2:5153`. Identity n’a pas besoin de Docker. Sans SQL, la synthèse reste `0,00 ₺`.
 
 ```bash
 dotnet test
@@ -123,6 +141,7 @@ src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (pas de Balance)
 src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
 src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity SQLite
 src/ClearPay.Web              Razor + localisation + MapControllers
+mobile/clearpay               client Flutter JWT (pas dans le .slnx)
 tests/ClearPay.Tests          LedgerPair, architecture, SqlWalletReader, culture
 docker-compose.yml            SQL Server 2022 — pas l’app web
 ClearPay.slnx
@@ -148,6 +167,7 @@ La CI restore et teste `tests/ClearPay.Tests` sur `main`.
 - [`docs/FARK.md`](docs/FARK.md) — rapprochement d’abord ; pas un rival Papara
 - [`docs/SATIS.md`](docs/SATIS.md) — pitch 15 secondes
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
+- [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — client Flutter (les huit mêmes opérations)
 - Pas à pas : [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (public dans ce dépôt). Même liste sur [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — Share → Publish to web pour les lecteurs sans compte Notion.
 
 Cible live : Azure App Service + Azure SQL (West Europe). Pas d’`azurewebsites.net` à cliquer aujourd’hui.

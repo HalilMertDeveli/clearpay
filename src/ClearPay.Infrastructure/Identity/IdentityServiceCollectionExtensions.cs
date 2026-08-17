@@ -18,23 +18,29 @@ public static class IdentityServiceCollectionExtensions
         IConfiguration configuration,
         IHostEnvironment environment)
     {
-        if (environment.IsProduction())
-        {
-            var sql = configuration.GetConnectionString("ClearPay");
-            if (string.IsNullOrWhiteSpace(sql))
-            {
-                throw new InvalidOperationException(
-                    "ConnectionStrings:ClearPay is required in Production (Azure SQL). SQLite App_Data is not used live.");
-            }
-
-            services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(sql));
-        }
-        else
+        var useSqliteIdentity = configuration.GetValue("ClearPay:UseSqliteLedger", false);
+        if (useSqliteIdentity)
         {
             var connectionString = ResolveSqliteConnection(
                 configuration.GetConnectionString("Identity"),
                 environment.ContentRootPath);
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlite(connectionString));
+        }
+        else
+        {
+            var sql = configuration.GetConnectionString("ClearPay");
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                throw new InvalidOperationException(
+                    environment.IsProduction()
+                        ? "ConnectionStrings:ClearPay is required in Production (Azure SQL). SQLite App_Data is not used live."
+                        : "ConnectionStrings:ClearPay is required for local SQL Server Identity (T-058).");
+            }
+
+            services.AddDbContext<AppIdentityDbContext>(options =>
+                options.UseSqlServer(
+                    sql,
+                    sqlOptions => sqlOptions.MigrationsHistoryTable(AppIdentityDbContext.SqlMigrationsHistoryTable)));
         }
 
         services.AddIdentity<ApplicationUser, IdentityRole>(options =>

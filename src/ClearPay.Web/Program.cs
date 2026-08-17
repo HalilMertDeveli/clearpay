@@ -4,6 +4,7 @@ using ClearPay.Infrastructure.DependencyInjection;
 using ClearPay.Infrastructure.Messaging;
 using ClearPay.Infrastructure.Identity;
 using ClearPay.Infrastructure.Persistence;
+using ClearPay.Web;
 using ClearPay.Web.Localization;
 using ClearPay.Web.OpenApi;
 using FluentValidation;
@@ -28,6 +29,7 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AddPageRoute("/Account/Register", "/kayit");
 }).AddViewLocalization();
 builder.Services.AddControllers();
+builder.Services.AddClearPayCors(builder.Configuration, builder.Environment);
 builder.Services.AddClearPaySwagger();
 
 var app = builder.Build();
@@ -48,6 +50,7 @@ if (!app.Environment.IsDevelopment())
 app.UseRequestLocalization();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCors(CorsExtensions.PolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 

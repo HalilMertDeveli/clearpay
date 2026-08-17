@@ -956,6 +956,21 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Neden:** Tek kasa, tek git; Flutter ikinci istemci klasörü. Ajanlar Dart’ta, TARTISMA kökte.
 - **Sonra hangi dosya:** `ClearPay.code-workspace`, `.gitignore` (ephemeral/local.properties), `mobile/clearpay` kaynak git’te. HANDOFF append. `git init` yok.
 
+---
+
+## T-064 — 2026-08-17 — README: web+mobil aynı işlemler; mobil README kök stili
+
+- **Kim:** Orchestrator / Sales copy (kullanıcı: repoya giren hem mobil hem web işlemlerini görsün; kök README güzel, mobil için benzeri)
+- **Konu:** GitHub’da yalnız site mi görünür? `mobile/clearpay/README.md` kısa kaldı.
+- **Seçenekler:**
+  1. İki ayrı ürün README — hayır (iki kasa izlenimi).
+  2. **Kök README:** 8 işlem tablosu Web rotası + Flutter ekran. Flutter rozeti. Mermaid’e JWT istemci. Mobil README kök ile aynı düzen (rozet, mermaid, ekran tablosu, demo, cmd). 9. ekran yok.
+  3. Papara/mağaza vaadi — hayır.
+- **Karar:** **2.** TASK-16 Todo. `src/` yok.
+- **Neden:** Ziyaretçi “aynı kişi, iki istemci, tek defter” görsün.
+- **Sonra hangi dosya:** `README.md` + TR/DE/FR; `mobile/clearpay/README.md`; HANDOFF append.
+
+
 
 
 
