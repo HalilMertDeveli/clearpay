@@ -57,6 +57,7 @@ Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Diller: **Tü
 - Okuma / yükleme (T-061): `GET /api/wallet`, `GET /api/movements`, `GET /api/receipts/{correlationId}`, `POST /api/topup` / `withdraw`
 - Kayıt / kart / admin (T-062): `POST /api/register` (JWT, cookie yok), `GET/POST /api/cards`, `/api/admin/*` (rol Admin)
 - Q2 istemci: Flutter (`mobile/clearpay`) aynı JWT yüzeyi; 9. ekran değil; C# motor durur (T-061, T-062)
+- Eşzaman chrome (T-071): SignalR `/hubs/wallet` — 9. ekran değil; bakiye hub’da yok; `GET /api/wallet` kaynak
 
 ## Kapsam dışı (şimdi değil)
 - Sahte banka uygulaması (şube, IBAN çekirdeği, “BankaX” perakende UI)

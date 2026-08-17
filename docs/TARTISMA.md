@@ -1041,3 +1041,17 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Sonra hangi dosya:** Orchestrator `docs/ESZAMANLI.md`; `README.md` + `README.tr.md` Docs satırı; HANDOFF append. Notion yeni sayfa (Publish Halil).
 
 ---
+
+## T-071 — 2026-08-17 — Mobil↔web canlı bakiye (SignalR chrome)
+
+- **Kim:** Orchestrator + Architect + Coder + Payments (kullanıcı: mobilde değişiklik web’de otomatik yansısin; eşzamanlı yapı; API’de Halil adımları)
+- **Konu:** T-061 “SignalR yok / pull-to-refresh = Q2.1”. İki istemci aynı SQL kasayı yazıyor; web özeti Razor HTML — mobil POST sonrası tarayıcı eski bakiyeyi gösterir. T-070 `ESZAMANLI.md` git/masa öğreticisidir, para push’u değil. İkinci defter veya 9. ekran mı?
+- **Seçenekler:**
+  1. Yalnız pull-to-refresh (T-061) — kullanıcı otomatik istedi.
+  2. **SignalR hub chrome:** `/hubs/wallet` (9. ekran değil). Ledger commit **sonra** `IWalletLiveNotifier` → grup `user:{id}`. Payload yalnız `{ reason, correlationId }` — bakiye yok; istemci `GET /api/wallet` veya Razor reload. Cookie (Razor) + JWT `access_token` query (Flutter). Firestore/FCM/Hive/`UPDATE Balance` yok. Kafka yok. T-057 “KYC+QR+SignalR+CSV yeni ekran” reddi durur.
+  3. Firebase FCM / Firestore dinleyici — hayır.
+- **Karar:** **2.** TASK-16 Todo durur. T-061 pull-to-refresh yedek (hub kopunca). Domain’e Dart yok. T-066 çekmece kararı durur.
+- **Neden:** 1 isteği karşılamaz. 3 ikinci kaynak. 2 tek kasa + push “yenile”; mülakat: SignalR ≠ ledger.
+- **Sonra hangi dosya:** Application `IWalletLiveNotifier`. Infrastructure NoOp + executor/admin notify. Web `WalletHub` + `site.js`. Flutter `signalr_netcore`. `docs/API-ESZAMAN.md`. HANDOFF append. SPEC 8 ekran aynı.
+
+---

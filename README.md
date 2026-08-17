@@ -85,7 +85,7 @@ Same eight operations on the site and in the app. Site language: **Türkçe (def
 |-----------|---------|-------------|
 | Sign in | [`/giris`](http://localhost:5153/giris) | Giriş — `POST /api/token` |
 | Register | [`/kayit`](http://localhost:5153/kayit) | Hesap oluştur — `POST /api/register` |
-| Summary | [`/`](http://localhost:5153/) | Özet, pull-to-refresh — `GET /api/wallet` |
+| Summary | [`/`](http://localhost:5153/) | Özet, live hub + pull-to-refresh — `GET /api/wallet` |
 | Transfer | [`/havale`](http://localhost:5153/havale) | Havale + confirm — `POST /api/transfers` + `Idempotency-Key` |
 | Top-up / withdraw | [`/yukle-cek`](http://localhost:5153/yukle-cek) | Yükle / Çek — `POST /api/topup` / `withdraw` |
 | Movements | [`/hareketler`](http://localhost:5153/hareketler) | Hareketler + filter — `GET /api/movements` |
