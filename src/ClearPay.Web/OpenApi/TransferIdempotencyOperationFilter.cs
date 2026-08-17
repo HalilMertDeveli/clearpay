@@ -9,7 +9,10 @@ public sealed class TransferIdempotencyOperationFilter : IOperationFilter
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         var path = context.ApiDescription.RelativePath ?? string.Empty;
-        if (!path.Equals("api/transfers", StringComparison.OrdinalIgnoreCase)
+        var isMoneyPost = path.Equals("api/transfers", StringComparison.OrdinalIgnoreCase)
+            || path.Equals("api/topup", StringComparison.OrdinalIgnoreCase)
+            || path.Equals("api/withdraw", StringComparison.OrdinalIgnoreCase);
+        if (!isMoneyPost
             || context.ApiDescription.HttpMethod is not { } method
             || !method.Equals("POST", StringComparison.OrdinalIgnoreCase))
         {

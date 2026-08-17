@@ -54,7 +54,7 @@ Razor ve JSON API aynı ASP.NET Core 8 uygulamasında. Mülakat omurgası “mik
 ## Neden Identity cookie, sonra JWT
 
 - **Site (tarayıcı):** ASP.NET Identity + HttpOnly cookie (`ClearPay.Auth`). Form POST, anti-forgery, sliding expiration. TASK-03.
-- **JSON API:** JWT + OpenAPI. `POST /api/transfers` + `Idempotency-Key` (201 / 409). TASK-06 landed. Swagger UI `/swagger` (T-050). Harici client cookie’ye bağlanmaz.
+- **JSON API:** JWT + OpenAPI. `POST /api/transfers` + `Idempotency-Key` (201 / 409). TASK-06 landed. Q2 Flutter: `GET /api/wallet`, movements, receipts; `POST /api/topup` / `withdraw` (T-061). Swagger UI `/swagger` (T-050). Harici client cookie’ye bağlanmaz.
 - Aynı kullanıcı deposu; iki protokol. Razor JWT taşımaz; para API’si tarayıcı cookie’sini birincil kimlik saymaz.
 
 ## Neden ledger Web’de değil
