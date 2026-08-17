@@ -45,3 +45,14 @@ infra/*.bicepparam
 ## Azure param files may contain passwords
 infra/*.bicepparam
 !infra/*.bicepparam.example
+
+## Flutter (Q2 JWT client; not in ClearPay.slnx)
+mobile/**/.dart_tool/
+mobile/**/.flutter-plugins
+mobile/**/.flutter-plugins-dependencies
+mobile/**/build/
+mobile/**/.idea/
+mobile/**/android/local.properties
+mobile/**/ios/Flutter/ephemeral/
+mobile/**/windows/flutter/ephemeral/
+*.iml
