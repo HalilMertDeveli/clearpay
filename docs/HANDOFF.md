@@ -745,4 +745,10 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** `ClearPay.code-workspace` aç. Flutter klasörü aynı GitHub repo.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — README web+mobil (T-064)
+
+- **OWN:** TARTISMA **T-064**. Kök README 8 işlem tablosu (site + Flutter). Mobil README kök stili. `src/` yok. TASK-16 Todo.
+- **Sen tıklarsın:** GitHub `README.md` üstü; `mobile/clearpay/README.md`.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 
