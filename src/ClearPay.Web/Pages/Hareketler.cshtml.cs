@@ -21,6 +21,9 @@ public class HareketlerModel : PageModel
     public DateTime? Baslangic { get; set; }
 
     [BindProperty(SupportsGet = true)]
+    public DateTime? Bitis { get; set; }
+
+    [BindProperty(SupportsGet = true)]
     public string? Tur { get; set; }
 
     [BindProperty(SupportsGet = true)]
@@ -32,8 +35,11 @@ public class HareketlerModel : PageModel
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
         DateTimeOffset? from = Baslangic is DateTime d
-            ? new DateTimeOffset(DateTime.SpecifyKind(d, DateTimeKind.Utc))
+            ? new DateTimeOffset(DateTime.SpecifyKind(d.Date, DateTimeKind.Utc))
             : null;
-        Result = await _activity.ListAsync(userId, from, Tur, Sayfa, cancellationToken).ConfigureAwait(false);
+        DateTimeOffset? to = Bitis is DateTime end
+            ? new DateTimeOffset(DateTime.SpecifyKind(end.Date.AddDays(1), DateTimeKind.Utc))
+            : null;
+        Result = await _activity.ListAsync(userId, from, to, Tur, Sayfa, cancellationToken).ConfigureAwait(false);
     }
 }

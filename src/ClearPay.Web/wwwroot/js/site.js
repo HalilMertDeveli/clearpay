@@ -85,4 +85,9 @@
   document.querySelectorAll("[data-print]").forEach((btn) => {
     btn.addEventListener("click", () => window.print());
   });
+
+  const focusEl = document.querySelector("[data-autofocus]");
+  if (focusEl instanceof HTMLElement) {
+    focusEl.focus();
+  }
 })();

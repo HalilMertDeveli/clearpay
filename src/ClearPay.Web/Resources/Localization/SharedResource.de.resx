@@ -63,6 +63,7 @@
   <data name="WithdrawSuccess" xml:space="preserve"><value>Abhebung abgeschlossen. Saldo ist das Ledger-Netto.</value></data>
   <data name="FilterAll" xml:space="preserve"><value>Alle</value></data>
   <data name="FilterFrom" xml:space="preserve"><value>Von</value></data>
+  <data name="FilterTo" xml:space="preserve"><value>Bis</value></data>
   <data name="FilterStatus" xml:space="preserve"><value>Status</value></data>
   <data name="FilterType" xml:space="preserve"><value>Art</value></data>
   <data name="FullName" xml:space="preserve"><value>Name</value></data>
@@ -148,4 +149,15 @@
   <data name="WalletActions" xml:space="preserve"><value>Wallet-Aktionen</value></data>
   <data name="Withdraw" xml:space="preserve"><value>Abheben</value></data>
   <data name="WithdrawHint" xml:space="preserve"><value>Abhebungen sind nur bis zum verfügbaren Guthaben möglich.</value></data>
+  <data name="ConfirmTransfer" xml:space="preserve"><value>Überweisung bestätigen</value></data>
+  <data name="ConfirmAndSend" xml:space="preserve"><value>Bestätigen und senden</value></data>
+  <data name="EditTransfer" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="AfterSendBalance" xml:space="preserve"><value>Saldo nach dem Senden</value></data>
+  <data name="IdempotencyHint" xml:space="preserve"><value>Dieselbe Überweisung wird nicht zweimal belastet (409).</value></data>
+  <data name="Unfreeze" xml:space="preserve"><value>Entsperren</value></data>
+  <data name="AdminUnfreezeOk" xml:space="preserve"><value>Wallet entsperrt. Senden und Abheben sind offen.</value></data>
+  <data name="AdminUnfreezeMiss" xml:space="preserve"><value>Keine Wallet zu dieser E-Mail.</value></data>
+  <data name="AccountHintLabel" xml:space="preserve"><value>Konto / Karte</value></data>
+  <data name="TransferRecipientRequired" xml:space="preserve"><value>Empfänger-E-Mail ist erforderlich.</value></data>
+  <data name="EmptyQueueHint" xml:space="preserve"><value>Timeout-Zeilen bleiben hier; Erneut einreihen wiederholt sie.</value></data>
 </root>

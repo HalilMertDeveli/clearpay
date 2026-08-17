@@ -6,6 +6,8 @@ public interface IAdminPanel
 {
     Task<bool> FreezeByEmailAsync(string email, string actorUserId, CancellationToken cancellationToken = default);
 
+    Task<bool> UnfreezeByEmailAsync(string email, string actorUserId, CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<FailedOutboxItem>> ListFailedAsync(CancellationToken cancellationToken = default);
 
     Task<bool> RequeueAsync(Guid outboxId, CancellationToken cancellationToken = default);

@@ -848,3 +848,44 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-057 — 2026-08-17 — Lokal Identity SQL Server (SQLite Development kalkar)
+
+- **Kim:** Orchestrator + Architect + Coder + Deploy (kullanıcı: “yalnız SQLite var, lokal SQL Server kur, ilişkisel kullan”)
+- **Konu:** T-009 Identity SQLite, ledger ayrı SQL. Olgu: Windows SQL Server (`MSSQLSERVER`) ayakta; `ClearPay` DB’de ledger tabloları var (`Wallet`…`LinkedInstrument`). Identity hâlâ `App_Data/identity.db`. Docker SQL (`D:\ClearPay\data\mssql`) kapalı/boş; uygulama Development’ta zaten `lpc:localhost` Windows SQL. SPEC kilit: SQL Server. Kullanıcı Identity’yi de aynı ilişkisel SQL’e almak istiyor. TASK-16 Azure değil.
+- **Seçenekler:**
+  1. T-009 durur (Identity SQLite) — kullanıcı reddi; SPEC “DB: SQL Server” ile çelişir.
+  2. Identity ayrı `ClearPayIdentity` DB + EnsureCreated — Production tek Azure SQL bağlantısından sapar.
+  3. **Aynı `ClearPay` SQL Server DB.** Development Identity = `UseSqlServer(ConnectionStrings:ClearPay)` (Production ile aynı). EF Identity migration; history `__EFMigrationsHistoryIdentity` (ledger history karışmaz). Test factory `ClearPay:UseSqliteLedger=true` → Identity+ledger SQLite (CI). Docker Compose / MySQL / Oracle / `D:\` bind **dokunulmaz**. Eski SQLite kullanıcıları taşınmaz; `IdentitySeeder` admin tohumu SQL’de. 8 ekran; `UPDATE Balance` yok; PageModel ledger yok.
+- **Karar:** **3.** T-009 Development SQLite maddesi bu blokla kapanır. Canlı hâlâ Azure SQL (T-051). TASK-16 Todo kalır.
+- **Neden:** 1 kullanıcı isteği + SPEC stack. 2 iki DB, canlı tek connection’a ters. 3 ilişkisel tek kasa+kilit; testler Compose/Windows SQL istemez.
+- **Sonra hangi dosya:** Coder `AddClearPayIdentity`, `IdentitySeeder`, `AppIdentityDbContext` + factory + Identity migrations. `appsettings.Development.json` (Identity key dokümantasyon). Tester `dotnet test`. Deploy `docs/DEPLOY.md` / `docs/CANLI.md` / `docs/ARCHITECTURE.md` satır (Compose dosyası ezilmez). HANDOFF append. TASKS.md TASK-16 durur.
+
+---
+
+## T-057 — 2026-08-17 — Kamu cüzdan/ledger örnekleri: 8 ekranda olması gerekenler
+
+- **Kim:** Orchestrator + Architect + Coder + Payments + Designer + Tester (kullanıcı: MY GitHub değil; dijital cüzdan / WePay / Papara-benzeri / Razor para / ledger UX kamu örnekleri; 2–5 ekle, commit/push)
+- **Konu:** TASK-06/09/10 Done; TASK-16 Azure blok Halil. Ciddi demo cüzdanda 8 ekranı kırmadan ne eksik? Ledger mi, yoksa güven UX’i mi?
+- **İncelenen (kamu, kopya değil):** `wepayui/wepayui` (ödeme incele + kayıt); `paparateam/papara-android` + `merchantApiClient-node` (`listLedgers` startDate+endDate, işlem referansı); `Emmanuel-Ejeagha/naira-ledger-engine` (P2P fiş, freeze, reversal, SignalR); `amirhossein-tohidi/fintech-wallet-service` (idempotency, outbox, reserve/confirm, Kafka); `muisoft/fintech-wallet-dotnet` (deposit/withdraw/transfer/history); `NuelUzoma/Digital_Wallet_System` (Redis idempotency); `birukdjn/ArifCore` (atomik P2P + 409-benzeri çift ödeme koruması); `Dedmoo/FintechLedgerApi` (reversal, statement); `ameer017/paylite` (geçmiş filtre, P2P); `Williansouzh/digital-wallets-backend-challenge`; `Tareq-Bilal/E-Wallet-Server-Side` (deposit/withdraw/refund); `Emmanuel-Ejeagha/digital-wallet-api`; `DouglasHutchful1/TranzaPay` (admin); `ak123456789/EIP-Sample` (PayPal-tarzı idempotency+outbox).
+- **Seçenekler:**
+  1. Kafka / reserve-confirm / Paystack-Flutterwave gerçek PSP / KYC+QR+SignalR+CSV yeni ekran / satıcı POS / IBAN çekirdeği / 2FA sayfası / PWA / `UPDATE Balance` — hayır.
+  2. **8 ekran içi (kazanan):** (a) Havale **tutar onay** adımı (WePayUI review; aynı `/havale`). (b) Aynı idempotency key tekrarında **Replay → mevcut dekont** + anahtar kırıntısı (“aynı işlem iki kez kesilmez”; 409 API durur). (c) Hareketler **bitiş tarihi** (Papara listLedgers; tür filtresi durur) + özet/hareketler/dekontta correlation; yükle-çek dekontunda ****son4. (d) Admin **çöz** (SPEC dondur; naira freeze; tek yön dondurma demo’da kör). (e) Boş kuyruk/hareket `empty-block`+CTA; `aria-busy` iskelet **sonsuz shimmer yok** (T-040); skip-link durur; Google/Apple / Beni hatırla / kopyala-yazdır durur.
+- **Karar:** **2.** TASK-16 Todo kalır. 9. ekran yok. `UPDATE Balance` yok. PageModel ledger yok. Outbox/409 SQL aynı.
+- **Neden:** Ledger çekirdeği (çift kayıt, 409, freeze, outbox) zaten var; kamu cüzdanlarda eksik olan güven adımı (onay), tarih aralığı, unfreeze ve fişte referans/son4. 1 SPEC’i kırar veya sahte banka/PSP olur.
+- **Sonra hangi dosya:** Coder `Havale`/`Hareketler`/`Dekont`/`Index`/`Admin` Razor+PageModel, `site.js`, `site.css`. Application `IActivityReader` + `IAdminPanel`. Infrastructure `SqlActivityReader`/`SqlAdminPanel`. Designer `docs/TASARIM.md` + `brand.css`. Tester xUnit. HANDOFF append.
+
+---
+
+## T-058 — 2026-08-17 — Lokal Identity SQL Server (numara: T-057 kamu cüzdana ait)
+
+- **Kim:** Orchestrator (düzeltme). Önceki Identity bloğu T-057 başlığıyla yazıldı; aynı gün kamu cüzdan maddesi de T-057 aldı.
+- **Konu:** Identity SQLite → Windows SQL Server `ClearPay` kararı hangi numarada durur?
+- **Seçenekler:**
+  1. Identity bloğunu silip kamu T-057 tek kalsın — HANDOFF overwrite / silme yasak.
+  2. **Identity kararı T-058.** Kamu cüzdan T-057 durur. Üstteki Identity T-057 başlığı tarihsel; uygulama T-058.
+- **Karar:** **2.** Kod/docs T-058. T-009 Development SQLite kapanır. TASK-16 Todo.
+- **Neden:** Çift T-057 çatışması; düzeltme yeni blok.
+- **Sonra hangi dosya:** HANDOFF append T-058. `AddClearPayIdentity` mesajı T-058. DEPLOY/ARCHITECTURE T-058.
+
+---
+

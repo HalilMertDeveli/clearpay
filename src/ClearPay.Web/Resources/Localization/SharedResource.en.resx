@@ -63,6 +63,7 @@
   <data name="WithdrawSuccess" xml:space="preserve"><value>Withdrawal completed. Balance is the ledger net.</value></data>
   <data name="FilterAll" xml:space="preserve"><value>All</value></data>
   <data name="FilterFrom" xml:space="preserve"><value>From</value></data>
+  <data name="FilterTo" xml:space="preserve"><value>To</value></data>
   <data name="FilterStatus" xml:space="preserve"><value>Status</value></data>
   <data name="FilterType" xml:space="preserve"><value>Type</value></data>
   <data name="FullName" xml:space="preserve"><value>Name</value></data>
@@ -148,4 +149,15 @@
   <data name="WalletActions" xml:space="preserve"><value>Wallet actions</value></data>
   <data name="Withdraw" xml:space="preserve"><value>Withdraw</value></data>
   <data name="WithdrawHint" xml:space="preserve"><value>Withdrawals cannot exceed your available balance.</value></data>
+  <data name="ConfirmTransfer" xml:space="preserve"><value>Confirm transfer</value></data>
+  <data name="ConfirmAndSend" xml:space="preserve"><value>Confirm and send</value></data>
+  <data name="EditTransfer" xml:space="preserve"><value>Edit</value></data>
+  <data name="AfterSendBalance" xml:space="preserve"><value>Balance after send</value></data>
+  <data name="IdempotencyHint" xml:space="preserve"><value>The same transfer is not charged twice (409).</value></data>
+  <data name="Unfreeze" xml:space="preserve"><value>Unfreeze</value></data>
+  <data name="AdminUnfreezeOk" xml:space="preserve"><value>Wallet unfrozen. Send and withdraw are open.</value></data>
+  <data name="AdminUnfreezeMiss" xml:space="preserve"><value>No wallet found for that email.</value></data>
+  <data name="AccountHintLabel" xml:space="preserve"><value>Account / card</value></data>
+  <data name="TransferRecipientRequired" xml:space="preserve"><value>Recipient email is required.</value></data>
+  <data name="EmptyQueueHint" xml:space="preserve"><value>Timeout rows stay here; requeue retries them.</value></data>
 </root>

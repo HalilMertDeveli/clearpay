@@ -16,13 +16,14 @@
 
 <section class="panel">
     <h2 class="panel-title">@L["AdminFreeze"]</h2>
-    <form method="post" asp-page-handler="Freeze" class="stack-form">
+    <form method="post" class="stack-form">
         <div class="field">
             <label class="field-label" asp-for="FreezeEmail">@L["Email"]</label>
             <input class="field-input" asp-for="FreezeEmail" type="email" />
         </div>
         <div class="form-actions">
-            <button type="submit" class="btn">@L["Freeze"]</button>
+            <button type="submit" class="btn" asp-page-handler="Freeze">@L["Freeze"]</button>
+            <button type="submit" class="btn btn-ghost" asp-page-handler="Unfreeze">@L["Unfreeze"]</button>
         </div>
     </form>
 </section>
@@ -42,7 +43,15 @@
         <tbody>
             @if (Model.Failed.Count == 0)
             {
-                <tr><td colspan="4" class="empty-cell">@L["EmptyQueue"]</td></tr>
+                <tr>
+                    <td colspan="4" class="empty-cell">
+                        <div class="empty-block">
+                            <div class="empty-mark" aria-hidden="true"></div>
+                            <p class="empty-title">@L["EmptyQueue"]</p>
+                            <p class="empty-hint">@L["EmptyQueueHint"]</p>
+                        </div>
+                    </td>
+                </tr>
             }
             else
             {

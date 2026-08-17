@@ -7,6 +7,7 @@ public interface IActivityReader
     Task<ActivityPage> ListAsync(
         string userId,
         DateTimeOffset? from,
+        DateTimeOffset? to,
         string? kind,
         int page,
         CancellationToken cancellationToken = default);

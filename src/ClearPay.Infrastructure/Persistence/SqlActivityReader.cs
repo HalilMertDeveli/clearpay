@@ -22,6 +22,7 @@ public sealed class SqlActivityReader : IActivityReader
     public async Task<ActivityPage> ListAsync(
         string userId,
         DateTimeOffset? from,
+        DateTimeOffset? to,
         string? kind,
         int page,
         CancellationToken cancellationToken = default)
@@ -44,6 +45,8 @@ public sealed class SqlActivityReader : IActivityReader
         var rows = await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         if (from is DateTimeOffset start)
             rows = rows.Where(e => e.CreatedAt >= start).ToList();
+        if (to is DateTimeOffset end)
+            rows = rows.Where(e => e.CreatedAt < end).ToList();
         if (TryParseKind(kind, out var parsed))
             rows = rows.Where(e => e.Kind == parsed).ToList();
 

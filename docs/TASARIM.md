@@ -92,11 +92,11 @@ Boş hareket: `empty-block` — `empty-mark` + başlık + hint + CTA (Havale / Y
 
 ### Havale (`/havale`)
 
-Kicker **Havale**. Panel içinde: kalan bakiye üst şerit (label sol, tutar sağ, tabular) → alıcı e-posta → tutar | açıklama → ipucu → **Gönder** + **İptal**. Gönder, bakiye 0 iken disabled (mevcut). Tutar alanı görsel olarak para; süs ikon yok.
+Kicker **Havale**. Panel içinde: kalan bakiye üst şerit (label sol, tutar sağ, tabular) → alıcı e-posta → tutar | açıklama → ipucu (409) → **Gönder** (inceleme) + **İptal**. Gönder, bakiye 0 iken disabled. Onay: `.confirm-sheet` alıcı/tutar/sonraki bakiye + **Onayla ve gönder**. Tutar alanı görsel olarak para; süs ikon yok.
 
 ### Yükle / çek, hareketler, dekont, admin
 
-SPEC sırası. İki kolon Yükle | Çek (`split-2`); hareketler filtre şeridi + tablo; boş tablo aynı `empty-block`. Dekont tek işlem, correlation id monospace + kopyala/yazdır (T-056). Başarılı para hareketi fişe gider. Admin: tablo + dondur / kuyruk; süs dashboard yok.
+SPEC sırası. İki kolon Yükle | Çek (`split-2`); hareketler Başlangıç|Bitiş|Tür + tablo; boş tablo `empty-block` + CTA. Dekont tek işlem, correlation id monospace + kopyala/yazdır (T-056); ****son4 satırı T-057. Başarılı para hareketi fişe gider; havale replay de fişe. Admin: tablo + dondur/**çöz** / kuyruk; süs dashboard yok.
 
 T-055: kayıtlı kart **ekran 5 paneli** (`#kart`), 9. ekran yok. `.demo-card` navy `--hero-grad` + `--elev-3` + `--radius-lg`; son 4 hane tabular (`•••• •••• •••• 1234`); `.card-chip` hap. Tam PAN/CVV yok; Visa/Mastercard logosu yok.
 
@@ -236,7 +236,7 @@ panel            padding 1.25rem 1.35rem
 #tutar           inputmode decimal; tabular-nums (brand.css)
 .field-hint      margin 0.35rem 0 0; 0.875rem
 .form-actions    margin 1.25rem 0 0; gap 0.6rem
-                 Gönder dolu (bakiye 0 → disabled); İptal ghost
+                 Gönder dolu → onay adımı (bakiye 0 → disabled); İptal ghost
 ```
 
 Boş alıcı/tutar: native validation / kırmızı özet; ayrı empty-block yok. Bakiye 0 ipucu hint’te kalır.
@@ -248,7 +248,7 @@ Cüzdan geçmişi. TASK-09 doldurur; iskelet bu ritim.
 ```
 kicker Geçmiş; h1 Hareketler; lede 0 0 1.75rem
 filtre paneli     padding 1.25rem 1.35rem; margin-bottom 1rem
-.filter-row       3 field + Filtrele; gap 1rem; align end
+.filter-row       Başlangıç | Bitiş | Tür + Filtrele; gap 1rem; align end
                   ≤900px tek kolon
 tablo paneli      padding 1.25rem 1.35rem (veya tablo kenarsız, th/td yatay 0.6rem)
 th                padding 0.5rem 0.6rem 0.75rem; border-bottom 1px
@@ -261,6 +261,7 @@ işlem no / corr.  0.85rem; isteğe font-family ui-monospace
 
 - `.empty-title`: Bu dönemde hareket bulunmuyor
 - `.empty-hint`: Tarih veya tür filtresini genişletin; ya da ilk havaleyi Özet’ten gönderin.
+- `.empty-actions`: Havale gönder + Yükle
 
 Dekont satırı (TASK-09): correlation id monospace, 0.8rem muted.
 
@@ -283,7 +284,7 @@ sıra        Özet, Havale, Yükle/Çek, Hareketler (+ Admin role)
 receipt-amount  ortalı; stat-label + stat-value-xl 2.3rem + durum rozeti
                 alt 1px --line
 receipt-row     dt sol muted 0.85rem | dd sağ 600; 1px dashed ayraç
-                son satır ayraçsız; correlation id .mono + Kopyala (btn-text)
+                son satırlar ayraçsız; correlation id .mono + Kopyala; ****son4 varsa Hesap/kart
 form-actions    Yazdır (dolu) + Geri (ghost); yazdırınca chrome gizlenir
 ```
 
@@ -303,4 +304,14 @@ IdentityCourse AccessDenied. `/erisim-yok` — `empty-block` + Özet CTA. Admin�
 
 BankApp çift POST yoktu ve `UPDATE Balance` yaptı; burada tersi: POST form `aria-busy` + `.is-busy` (pointer-events). Submit butonu `disabled` **yapılmaz** (Razor handler adı kaybolmasın). Dil seçici / çıkış hariç. 409 sunucuda durur.
 
-Havale **Gönder** bakiye 0 veya dondurulmuşken `disabled` (TASARIM maddesi; T-056 tamamlar).
+Havale **Gönder** bakiye 0 veya dondurulmuşken `disabled` (TASARIM maddesi; T-056 tamamlar). Gönder = inceleme (`handler=Review`); ikinci adım **Onayla ve gönder** (aynı `/havale`, `.confirm-sheet`). Düzenle yeni idempotency key üretir. Replay (aynı key) mevcut dekonta gider. `aria-busy` iken `.remain strong` / input düz `#E8EEF5` iskelet (sonsuz shimmer yok).
+
+### 10) Havale onay (T-057 — 9. ekran değil)
+
+WePayUI / Papara P2P review. `.confirm-sheet` panel içinde: alıcı, tutar, açıklama, gönderim sonrası bakiye, idempotency kırıntısı. `h2#confirm-title` `data-autofocus` + 2px navy outline. Skip-link durur.
+
+### 11) Hareketler tarih aralığı + fiş referansı (T-057)
+
+Papara `listLedgers` start+end. `.filter-row`: Başlangıç | Bitiş | Tür | Filtrele. Boş dönem `empty-actions` Havale + Yükle. İşlem no `.mono` + Kopyala (masaüstü; mobilde col 2 gizli, dekontta durur). Özet son 5: tür dekont linki + 8 hane corr.
+
+Dekont: correlation tam + kopyala; yükle/çek `****son4` satırı (`AccountHintLabel`) Description `****` içerince. Admin: Dondur + **Çöz** (aynı e-posta alanı); boş kuyruk `empty-block`.

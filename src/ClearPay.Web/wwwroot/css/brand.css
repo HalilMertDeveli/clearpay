@@ -1,4 +1,4 @@
-/* ClearPay brand layer — T-040 + T-053 (mobil bankacılık) + T-055 (demo kart yüzü).
+/* ClearPay brand layer — T-040 + T-053 (mobil bankacılık) + T-055 (demo kart yüzü) + T-057 (onay / iskelet).
    Load after site.css. Yumuşak gölge serbest; gradient bakiye + .demo-card. */
 
 :root {
@@ -43,6 +43,24 @@
 
 .wallet-sheet {
   border-radius: var(--radius-lg);
+}
+
+.confirm-sheet {
+  margin-top: 0.35rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line, #d8dee8);
+}
+
+.confirm-sheet .panel-title:focus {
+  outline: 2px solid var(--brand-navy);
+  outline-offset: 2px;
+}
+
+form[aria-busy="true"] .remain strong,
+form[aria-busy="true"] .field-input {
+  background: #e8eef5;
+  color: transparent;
+  caret-color: transparent;
 }
 
 .brand-name,

@@ -56,6 +56,23 @@ public class AdminModel : PageModel
         return Page();
     }
 
+    public async Task<IActionResult> OnPostUnfreezeAsync(CancellationToken cancellationToken)
+    {
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(FreezeEmail)
+            || !await _admin.UnfreezeByEmailAsync(FreezeEmail, actor, cancellationToken).ConfigureAwait(false))
+        {
+            ModelState.AddModelError(string.Empty, _localizer["AdminUnfreezeMiss"]);
+        }
+        else
+        {
+            TempData["Flash"] = _localizer["AdminUnfreezeOk"].Value;
+        }
+
+        await LoadAsync(cancellationToken).ConfigureAwait(false);
+        return Page();
+    }
+
     public async Task<IActionResult> OnPostRequeueAsync(Guid id, CancellationToken cancellationToken)
     {
         await _admin.RequeueAsync(id, cancellationToken).ConfigureAwait(false);

@@ -33,7 +33,18 @@ public class HavaleModel : PageModel
 
     public string RemainingBalance { get; private set; } = MoneyDisplay.FormatTry(0m);
 
+    public string? AfterSendText { get; private set; }
+
+    public string? ConfirmAmountText { get; private set; }
+
     public bool CanSend { get; private set; }
+
+    public bool Confirming { get; private set; }
+
+    public string IdempotencyShort =>
+        string.IsNullOrEmpty(Input.IdempotencyKey) || Input.IdempotencyKey.Length < 8
+            ? Input.IdempotencyKey
+            : Input.IdempotencyKey[^8..];
 
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
@@ -41,44 +52,99 @@ public class HavaleModel : PageModel
         await LoadBalanceAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
+    public async Task<IActionResult> OnPostReviewAsync(CancellationToken cancellationToken)
     {
         await LoadBalanceAsync(cancellationToken).ConfigureAwait(false);
-        if (string.IsNullOrWhiteSpace(Input.IdempotencyKey))
-            Input.IdempotencyKey = Guid.NewGuid().ToString("N");
-
-        if (!TryParseAmount(Input.Amount, out var amount))
-        {
-            ModelState.AddModelError(nameof(Input.Amount), _localizer["TransferInvalidAmount"]);
+        EnsureKey();
+        if (!ValidateDraft())
             return Page();
-        }
+
+        Confirming = true;
+        ConfirmAmountText = MoneyDisplay.FormatTry(_draftAmount);
+        AfterSendText = MoneyDisplay.FormatTry(_remainingAmount - _draftAmount);
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostEditAsync(CancellationToken cancellationToken)
+    {
+        await LoadBalanceAsync(cancellationToken).ConfigureAwait(false);
+        Input.IdempotencyKey = Guid.NewGuid().ToString("N");
+        Confirming = false;
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostConfirmAsync(CancellationToken cancellationToken)
+    {
+        await LoadBalanceAsync(cancellationToken).ConfigureAwait(false);
+        EnsureKey();
+        if (!ValidateDraft())
+            return Page();
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
         var outcome = await _transfers.ExecuteAsync(
             new TransferCommand(
                 userId,
                 Input.Recipient ?? string.Empty,
-                amount,
+                _draftAmount,
                 Input.Description,
                 Input.IdempotencyKey),
             cancellationToken).ConfigureAwait(false);
 
-        if (outcome.IsSuccess)
+        if (outcome.IsSuccess
+            || (outcome.Kind == TransferResultKind.Replay && outcome.CorrelationId != Guid.Empty))
         {
-            TempData["Flash"] = _localizer["TransferSuccess"].Value;
+            TempData["Flash"] = outcome.IsSuccess
+                ? _localizer["TransferSuccess"].Value
+                : _localizer["TransferReplay"].Value;
             return RedirectToPage("/Dekont", new { correlationId = outcome.CorrelationId });
         }
 
         ModelState.AddModelError(string.Empty, MapError(outcome.Kind));
+        Confirming = true;
+        ConfirmAmountText = MoneyDisplay.FormatTry(_draftAmount);
+        AfterSendText = MoneyDisplay.FormatTry(_remainingAmount - _draftAmount);
         return Page();
     }
+
+    private decimal _remainingAmount;
+    private decimal _draftAmount;
 
     private async Task LoadBalanceAsync(CancellationToken cancellationToken)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
         var summary = await _wallets.GetByUserIdAsync(userId, cancellationToken).ConfigureAwait(false);
-        RemainingBalance = MoneyDisplay.FormatTry(summary?.Balance ?? 0m);
+        _remainingAmount = summary?.Balance ?? 0m;
+        RemainingBalance = MoneyDisplay.FormatTry(_remainingAmount);
         CanSend = summary is { Balance: > 0m, IsFrozen: false };
+    }
+
+    private void EnsureKey()
+    {
+        if (string.IsNullOrWhiteSpace(Input.IdempotencyKey))
+            Input.IdempotencyKey = Guid.NewGuid().ToString("N");
+    }
+
+    private bool ValidateDraft()
+    {
+        if (string.IsNullOrWhiteSpace(Input.Recipient))
+        {
+            ModelState.AddModelError("Input.Recipient", _localizer["TransferRecipientRequired"]);
+            return false;
+        }
+
+        if (!TryParseAmount(Input.Amount, out _draftAmount))
+        {
+            ModelState.AddModelError("Input.Amount", _localizer["TransferInvalidAmount"]);
+            return false;
+        }
+
+        if (_draftAmount > _remainingAmount)
+        {
+            ModelState.AddModelError("Input.Amount", _localizer["TransferInsufficient"]);
+            return false;
+        }
+
+        return ModelState.IsValid;
     }
 
     private string MapError(TransferResultKind kind) => kind switch

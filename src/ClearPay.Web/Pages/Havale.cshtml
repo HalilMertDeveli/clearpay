@@ -17,24 +17,62 @@
             <span class="stat-label">@L["RemainingBalance"]</span>
             <strong>@Html.Raw(Model.RemainingBalance)</strong>
         </div>
-        <div class="field">
-            <label class="field-label" asp-for="Input.Recipient">@L["RecipientEmail"]</label>
-            <input class="field-input" asp-for="Input.Recipient" type="email" autocomplete="off" />
-            <span asp-validation-for="Input.Recipient" class="field-error"></span>
-        </div>
-        <div class="field">
-            <label class="field-label" asp-for="Input.Amount">@L["AmountTry"]</label>
-            <input class="field-input field-input--amount" asp-for="Input.Amount" inputmode="decimal" />
-            <span asp-validation-for="Input.Amount" class="field-error"></span>
-        </div>
-        <div class="field">
-            <label class="field-label" asp-for="Input.Description">@L["Description"]</label>
-            <input class="field-input" asp-for="Input.Description" maxlength="140" />
-        </div>
-        <p class="field-hint">@string.Format(L["TransferHint"].Value, Model.RemainingBalance) @L["DemoDisclaimer"]</p>
-        <div class="form-actions form-actions--sticky">
-            <button type="submit" class="btn" disabled="@(!Model.CanSend)">@L["Send"]</button>
-            <a class="btn btn-ghost" asp-page="/Index">@L["Cancel"]</a>
-        </div>
+        @if (Model.Confirming)
+        {
+            <div class="confirm-sheet" role="region" aria-labelledby="confirm-title">
+                <h2 class="panel-title" id="confirm-title" tabindex="-1" data-autofocus>@L["ConfirmTransfer"]</h2>
+                <dl class="receipt-list">
+                    <div class="receipt-row">
+                        <dt>@L["RecipientEmail"]</dt>
+                        <dd>@Model.Input.Recipient</dd>
+                    </div>
+                    <div class="receipt-row">
+                        <dt>@L["AmountTry"]</dt>
+                        <dd class="num">@Html.Raw(Model.ConfirmAmountText)</dd>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model.Input.Description))
+                    {
+                        <div class="receipt-row">
+                            <dt>@L["Description"]</dt>
+                            <dd>@Model.Input.Description</dd>
+                        </div>
+                    }
+                    <div class="receipt-row">
+                        <dt>@L["AfterSendBalance"]</dt>
+                        <dd class="num">@Html.Raw(Model.AfterSendText)</dd>
+                    </div>
+                </dl>
+                <p class="field-hint">@L["IdempotencyHint"] <code class="mono" title="@Model.Input.IdempotencyKey">@Model.IdempotencyShort</code></p>
+                <input type="hidden" asp-for="Input.Recipient" />
+                <input type="hidden" asp-for="Input.Amount" />
+                <input type="hidden" asp-for="Input.Description" />
+                <div class="form-actions form-actions--sticky">
+                    <button type="submit" class="btn" asp-page-handler="Confirm">@L["ConfirmAndSend"]</button>
+                    <button type="submit" class="btn btn-ghost" asp-page-handler="Edit">@L["EditTransfer"]</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="field">
+                <label class="field-label" asp-for="Input.Recipient">@L["RecipientEmail"]</label>
+                <input class="field-input" asp-for="Input.Recipient" type="email" autocomplete="off" aria-required="true" />
+                <span asp-validation-for="Input.Recipient" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label class="field-label" asp-for="Input.Amount">@L["AmountTry"]</label>
+                <input class="field-input field-input--amount" asp-for="Input.Amount" inputmode="decimal" aria-required="true" />
+                <span asp-validation-for="Input.Amount" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label class="field-label" asp-for="Input.Description">@L["Description"]</label>
+                <input class="field-input" asp-for="Input.Description" maxlength="140" />
+            </div>
+            <p class="field-hint">@string.Format(L["TransferHint"].Value, Model.RemainingBalance) @L["DemoDisclaimer"] @L["IdempotencyHint"]</p>
+            <div class="form-actions form-actions--sticky">
+                <button type="submit" class="btn" asp-page-handler="Review" disabled="@(!Model.CanSend)">@L["Send"]</button>
+                <a class="btn btn-ghost" asp-page="/Index">@L["Cancel"]</a>
+            </div>
+        }
     </form>
 </section>

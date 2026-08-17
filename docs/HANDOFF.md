@@ -706,4 +706,22 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** http://localhost:5153/giris → Beni hatırla. Boş cüzdanda `/havale` Gönder soluk. Para hareketinden sonra fişte **Kopyala** / **Yazdır**.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — Kamu cüzdan örnekleri (T-057; Coder + Payments + Designer + Tester)
+
+- **OWN:** TARTISMA **T-057**. TASK-16 Todo durur. 8 ekran. Google/Apple, Beni hatırla, dekont kopyala/yazdır durur. `UPDATE Balance` yok. PageModel ledger yok. Kafka/PSP/KYC/QR/9. ekran yok.
+- **İlham (kopya değil):** wepayui onay; Papara listLedgers start+end + işlem no; naira-ledger freeze; ArifCore/Digital_Wallet_System idempotency; paylite geçmiş filtre.
+- **Red:** Kafka, Paystack/Flutterwave, KYC+QR+SignalR+CSV ekranı, satıcı POS, IBAN çekirdeği, 2FA sayfası, PWA, sonsuz shimmer.
+- **Landed:** `/havale` incele → onay (aynı sayfa); Replay → mevcut dekont; hareketler Bitiş + corr kopyala; özet corr; dekont ****son4; Admin Çöz; empty-block CTA; `aria-busy` düz iskelet.
+- **Kanıt:** `dotnet test -c Release` **114 geçti**, 0 skip. `Unfreeze_clears_flag_without_updating_balance`, `List_to_date_excludes_later_rows_and_receipt_shows_last4_hint`, `Hareketler_has_to_date_filter_and_empty_cta`. 409 API durur.
+- **Sen tıklarsın:** http://localhost:5153/giris → `/havale` Gönder = onay; `/hareketler` Bitiş; admin e-posta **Çöz**.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Lokal Identity SQL Server (T-058; Coder)
+
+- **OWN:** TARTISMA **T-058** (Identity SQL; kamu cüzdan T-057 ayrı). Development Identity = Windows SQL Server `ClearPay` (AspNet* + ledger aynı DB). Test factory `ClearPay:UseSqliteLedger=true` SQLite kalır. Docker Compose / `D:\ClearPay\data` ezilmedi. TASK-16 Todo.
+- **Landed:** `AddClearPayIdentity` SQL unless test flag; `InitialIdentity` migration; history `__EFMigrationsHistoryIdentity`. `identity.db` artık runtime değil.
+- **Kanıt:** `ClearPay` tabloları AspNetUsers/Roles + Wallet/LedgerEntry. Admin `admin@clearpay.test` rolleri Admin+Musteri.
+- **Sen tıklarsın:** siteyi yeniden başlat → http://localhost:5153/giris (`admin@clearpay.test` / `Deneme123`). Eski SQLite hesapları taşınmadı; yeniden kayıt.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 

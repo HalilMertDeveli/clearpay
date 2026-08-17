@@ -26,6 +26,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [x] TASK-15: GitHub remote + GitHub Actions
 - [x] UI: mobil bankacılık düzeni — alt sekme çubuğu, ortalanmış kolon, ölçülü derinlik (T-053; TASK numarası değil, 8 ekran aynı)
 - [x] UI: demo kayıtlı kart — Yükle/Çek paneli, PAN yok (T-055; 9. ekran yok)
+- [x] UI: kamu cüzdan örnekleri — havale onay, unfreeze, tarih-bitiş, fiş corr/son4 (T-057; TASK numarası değil, 8 ekran aynı)
 
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.

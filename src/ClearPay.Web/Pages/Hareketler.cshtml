@@ -18,6 +18,10 @@
                 <input class="field-input" id="baslangic" name="Baslangic" type="date" value="@(Model.Baslangic?.ToString("yyyy-MM-dd"))" />
             </div>
             <div class="field">
+                <label class="field-label" for="bitis">@L["FilterTo"]</label>
+                <input class="field-input" id="bitis" name="Bitis" type="date" value="@(Model.Bitis?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="field">
                 <label class="field-label" for="tur">@L["FilterType"]</label>
                 <select class="field-input" id="tur" name="Tur">
                     <option value="">@L["FilterAll"]</option>
@@ -52,6 +56,10 @@
                             <div class="empty-mark" aria-hidden="true"></div>
                             <p class="empty-title">@L["EmptyPeriodTitle"]</p>
                             <p class="empty-hint">@L["EmptyPeriodHint"]</p>
+                            <div class="empty-actions">
+                                <a class="btn" asp-page="/Havale">@L["SendTransfer"]</a>
+                                <a class="btn btn-ghost" asp-page="/YukleCek">@L["TopUp"]</a>
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -60,9 +68,19 @@
             {
                 foreach (var row in Model.Result.Items)
                 {
+                    var corr = row.CorrelationId.ToString();
+                    var shortCorr = row.CorrelationId.ToString("N").Substring(0, 8);
                     <tr>
                         <td>@row.At.ToLocalTime().ToString("g")</td>
-                        <td><code>@row.CorrelationId.ToString("N").Substring(0, 8)</code></td>
+                        <td>
+                            <span class="receipt-ref">
+                                <code class="mono" title="@corr">@shortCorr</code>
+                                <button type="button"
+                                        class="btn-text"
+                                        data-copy="@corr"
+                                        data-copied="@L["Copied"]">@L["CopyRef"]</button>
+                            </span>
+                        </td>
                         <td>@row.Kind</td>
                         <td>@row.Counterparty</td>
                         <td class="num @(row.SignedAmount > 0m ? "amount-in" : null)">@ClearPay.Web.Presentation.MoneyDisplay.FormatTry(row.SignedAmount)</td>
@@ -78,12 +96,12 @@
         <p class="field-hint">
             @if (Model.Result.Page > 1)
             {
-                <a class="text-link" asp-page="/Hareketler" asp-route-Baslangic="@Model.Baslangic?.ToString("yyyy-MM-dd")" asp-route-Tur="@Model.Tur" asp-route-Sayfa="@(Model.Result.Page - 1)">←</a>
+                <a class="text-link" asp-page="/Hareketler" asp-route-Baslangic="@Model.Baslangic?.ToString("yyyy-MM-dd")" asp-route-Bitis="@Model.Bitis?.ToString("yyyy-MM-dd")" asp-route-Tur="@Model.Tur" asp-route-Sayfa="@(Model.Result.Page - 1)">←</a>
             }
             @Model.Result.Page
             @if (Model.Result.Page * Model.Result.PageSize < Model.Result.TotalCount)
             {
-                <a class="text-link" asp-page="/Hareketler" asp-route-Baslangic="@Model.Baslangic?.ToString("yyyy-MM-dd")" asp-route-Tur="@Model.Tur" asp-route-Sayfa="@(Model.Result.Page + 1)">→</a>
+                <a class="text-link" asp-page="/Hareketler" asp-route-Baslangic="@Model.Baslangic?.ToString("yyyy-MM-dd")" asp-route-Bitis="@Model.Bitis?.ToString("yyyy-MM-dd")" asp-route-Tur="@Model.Tur" asp-route-Sayfa="@(Model.Result.Page + 1)">→</a>
             }
         </p>
     }

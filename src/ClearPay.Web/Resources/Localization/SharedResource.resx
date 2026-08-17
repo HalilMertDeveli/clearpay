@@ -63,6 +63,7 @@
   <data name="WithdrawSuccess" xml:space="preserve"><value>Çekim tamamlandı. Bakiye defter netinden güncellendi.</value></data>
   <data name="FilterAll" xml:space="preserve"><value>Tümü</value></data>
   <data name="FilterFrom" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="FilterTo" xml:space="preserve"><value>Bitiş</value></data>
   <data name="FilterStatus" xml:space="preserve"><value>Durum</value></data>
   <data name="FilterType" xml:space="preserve"><value>Tür</value></data>
   <data name="FullName" xml:space="preserve"><value>Ad</value></data>
@@ -148,4 +149,15 @@
   <data name="WalletActions" xml:space="preserve"><value>Cüzdan işlemleri</value></data>
   <data name="Withdraw" xml:space="preserve"><value>Çek</value></data>
   <data name="WithdrawHint" xml:space="preserve"><value>Çekim, kullanılabilir bakiyeniz kadar yapılabilir.</value></data>
+  <data name="ConfirmTransfer" xml:space="preserve"><value>Gönderimi onayla</value></data>
+  <data name="ConfirmAndSend" xml:space="preserve"><value>Onayla ve gönder</value></data>
+  <data name="EditTransfer" xml:space="preserve"><value>Düzenle</value></data>
+  <data name="AfterSendBalance" xml:space="preserve"><value>Gönderim sonrası bakiye</value></data>
+  <data name="IdempotencyHint" xml:space="preserve"><value>Aynı işlem iki kez kesilmez (409).</value></data>
+  <data name="Unfreeze" xml:space="preserve"><value>Çöz</value></data>
+  <data name="AdminUnfreezeOk" xml:space="preserve"><value>Cüzdan çözüldü. Gönderim ve çekim açık.</value></data>
+  <data name="AdminUnfreezeMiss" xml:space="preserve"><value>Bu e-posta ile cüzdan bulunamadı.</value></data>
+  <data name="AccountHintLabel" xml:space="preserve"><value>Hesap / kart</value></data>
+  <data name="TransferRecipientRequired" xml:space="preserve"><value>Alıcı e-postası gerekli.</value></data>
+  <data name="EmptyQueueHint" xml:space="preserve"><value>Timeout satırları burada durur; kuyruğa al ile yeniden dener.</value></data>
 </root>

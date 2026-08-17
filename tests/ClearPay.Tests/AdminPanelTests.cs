@@ -35,6 +35,18 @@ public sealed class AdminPanelTests : IDisposable
     }
 
     [Fact]
+    public async Task Unfreeze_clears_flag_without_updating_balance()
+    {
+        (await _admin.FreezeByEmailAsync("a@clearpay.test", "admin-1")).Should().BeTrue();
+        (await _admin.UnfreezeByEmailAsync("a@clearpay.test", "admin-1")).Should().BeTrue();
+        var wallet = await _db.Wallets.SingleAsync(w => w.UserId == "user-a");
+        wallet.IsFrozen.Should().BeFalse();
+        _db.Model.FindEntityType(typeof(Wallet))!.FindProperty("Balance").Should().BeNull();
+        (await _db.AuditLogs.CountAsync(a => a.Action == "wallet.unfreeze")).Should().Be(1);
+        (await _admin.UnfreezeByEmailAsync("missing@clearpay.test", "admin-1")).Should().BeFalse();
+    }
+
+    [Fact]
     public async Task Requeue_moves_failed_to_pending()
     {
         var msg = new OutboxMessage

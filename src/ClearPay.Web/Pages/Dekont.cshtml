@@ -54,6 +54,13 @@
                         data-copied="@L["Copied"]">@L["CopyRef"]</button>
             </dd>
         </div>
+        @if (!string.IsNullOrWhiteSpace(r.InstrumentHint))
+        {
+            <div class="receipt-row">
+                <dt>@L["AccountHintLabel"]</dt>
+                <dd class="mono">@r.InstrumentHint</dd>
+            </div>
+        }
     </dl>
     <div class="form-actions">
         <button type="button" class="btn" data-print>@L["PrintReceipt"]</button>

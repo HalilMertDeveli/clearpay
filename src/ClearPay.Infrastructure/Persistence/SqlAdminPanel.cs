@@ -66,6 +66,36 @@ public sealed class SqlAdminPanel : IAdminPanel
         return true;
     }
 
+    public async Task<bool> UnfreezeByEmailAsync(
+        string email,
+        string actorUserId,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var userId = await _users.FindUserIdByEmailAsync(email.Trim(), cancellationToken).ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(userId))
+            return false;
+
+        var wallet = await _db.Wallets.FirstOrDefaultAsync(w => w.UserId == userId, cancellationToken)
+            .ConfigureAwait(false);
+        if (wallet is null)
+            return false;
+
+        wallet.IsFrozen = false;
+        _db.AuditLogs.Add(new AuditLog
+        {
+            Id = Guid.NewGuid(),
+            ActorUserId = actorUserId,
+            Action = "wallet.unfreeze",
+            CorrelationId = Guid.NewGuid(),
+            Details = email.Trim(),
+            CreatedAt = _clock.UtcNow
+        });
+        await _db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _cache.InvalidateAsync(userId, cancellationToken).ConfigureAwait(false);
+        return true;
+    }
+
     public async Task<IReadOnlyList<FailedOutboxItem>> ListFailedAsync(CancellationToken cancellationToken = default)
     {
         var rows = await _db.OutboxMessages.AsNoTracking()

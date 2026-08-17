@@ -189,6 +189,38 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         html.Should().Contain("Kalan bakiye");
         html.Should().Contain("disabled");
         html.Should().Contain("Gönder");
+        html.Should().Contain("Aynı işlem iki kez kesilmez");
+        html.Should().Contain("handler=Review");
+        html.Should().NotContain("Onayla ve gönder");
+    }
+
+    [Fact]
+    public async Task Hareketler_has_to_date_filter_and_empty_cta()
+    {
+        var client = CreateClient();
+        if (!await LoginPageExistsAsync(client))
+        {
+            return;
+        }
+
+        var email = $"tar.{Guid.NewGuid():N}@clearpay.test";
+        var registerGet = await client.GetAsync("/Account/Register");
+        var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Input.FullName"] = "Tarih Filtre",
+            ["Input.Email"] = email,
+            ["Input.Password"] = "Deneme123",
+            ["Input.ConfirmPassword"] = "Deneme123",
+            ["__RequestVerificationToken"] = token
+        }));
+
+        var html = await client.GetStringAsync("/hareketler");
+        html.Should().Contain("name=\"Bitis\"");
+        html.Should().Contain("Bitiş");
+        html.Should().Contain("Havale gönder");
+        html.Should().Contain("skip-link");
+        html.Should().NotContain(">Kartlar<");
     }
 
     [Fact]

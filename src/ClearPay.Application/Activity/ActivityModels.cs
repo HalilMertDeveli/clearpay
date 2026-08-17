@@ -21,4 +21,17 @@ public sealed record ReceiptDto(
     decimal Amount,
     string DebitParty,
     string CreditParty,
-    string? Description);
+    string? Description)
+{
+    /// <summary>Funding account hint (****1234) when the ledger description is a linked instrument.</summary>
+    public string? InstrumentHint
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(Description))
+                return null;
+            var text = Description.Trim();
+            return text.Contains("****", StringComparison.Ordinal) ? text : null;
+        }
+    }
+}

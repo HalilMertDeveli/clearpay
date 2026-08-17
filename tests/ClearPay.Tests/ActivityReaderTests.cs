@@ -34,7 +34,7 @@ public sealed class ActivityReaderTests : IDisposable
         _db.LedgerEntries.AddRange(debit, credit);
         await _db.SaveChangesAsync();
 
-        var page = await _reader.ListAsync("a", from: null, kind: "Transfer", page: 1);
+        var page = await _reader.ListAsync("a", from: null, to: null, kind: "Transfer", page: 1);
         page.TotalCount.Should().Be(1);
         page.Items[0].CorrelationId.Should().Be(correlation);
         page.Items[0].SignedAmount.Should().Be(-12.5m);
@@ -47,6 +47,34 @@ public sealed class ActivityReaderTests : IDisposable
         receipt.CreditParty.Should().Be("b@clearpay.test");
 
         (await _reader.GetReceiptAsync("stranger", correlation)).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task List_to_date_excludes_later_rows_and_receipt_shows_last4_hint()
+    {
+        var a = new Wallet { Id = Guid.NewGuid(), UserId = "a", CreatedAt = DateTimeOffset.UtcNow };
+        var treasury = new Wallet { Id = Guid.NewGuid(), UserId = Treasury.UserId, CreatedAt = DateTimeOffset.UtcNow };
+        _db.Wallets.AddRange(a, treasury);
+        var oldCorr = Guid.NewGuid();
+        var newCorr = Guid.NewGuid();
+        var day = new DateTimeOffset(2026, 8, 10, 12, 0, 0, TimeSpan.Zero);
+        var later = new DateTimeOffset(2026, 8, 16, 12, 0, 0, TimeSpan.Zero);
+        var (debitOld, creditOld) = LedgerPair.Create(
+            a.Id, treasury.Id, 5m, oldCorr, LedgerEntryKind.Withdraw, description: "****1234", at: day);
+        var (debitNew, creditNew) = LedgerPair.Create(
+            treasury.Id, a.Id, 8m, newCorr, LedgerEntryKind.TopUp, description: "****9999", at: later);
+        _db.LedgerEntries.AddRange(debitOld, creditOld, debitNew, creditNew);
+        await _db.SaveChangesAsync();
+
+        var to = new DateTimeOffset(2026, 8, 11, 0, 0, 0, TimeSpan.Zero);
+        var page = await _reader.ListAsync("a", from: null, to: to, kind: null, page: 1);
+        page.TotalCount.Should().Be(1);
+        page.Items[0].CorrelationId.Should().Be(oldCorr);
+
+        var receipt = await _reader.GetReceiptAsync("a", oldCorr);
+        receipt.Should().NotBeNull();
+        receipt!.InstrumentHint.Should().Be("****1234");
+        receipt.CorrelationId.Should().Be(oldCorr);
     }
 
     public void Dispose()

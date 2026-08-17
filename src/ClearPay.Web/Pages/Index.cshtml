@@ -92,7 +92,10 @@
                         {
                             <tr>
                                 <td>@movement.At.ToLocalTime().ToString("g")</td>
-                                <td>@movement.Kind</td>
+                                <td>
+                                    <a class="text-link" asp-page="/Dekont" asp-route-correlationId="@movement.CorrelationId">@movement.Kind</a>
+                                    <code class="mono" title="@movement.CorrelationId">@movement.CorrelationId.ToString("N").Substring(0, 8)</code>
+                                </td>
                                 <td class="num @(movement.Amount > 0m ? "amount-in" : null)">@ClearPay.Web.Presentation.MoneyDisplay.FormatTry(movement.Amount)</td>
                                 <td>@L["StatusCompleted"]</td>
                             </tr>
