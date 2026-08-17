@@ -36,7 +36,7 @@ public sealed class SimplePdfReceiptRenderer : IReceiptPdf
             lines.Add("Instrument: " + Fold(receipt.InstrumentHint));
         lines.Add("Correlation: " + receipt.CorrelationId.ToString("D"));
         lines.Add("");
-        lines.Add("Demo -- fake gateway for top-ups");
+        lines.Add("Demo -- sahte banka gateway. Not a bank-issued receipt.");
         return SimplePdf.FromLines(lines);
     }
 

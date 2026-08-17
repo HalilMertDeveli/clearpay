@@ -56,7 +56,7 @@ public static class DemoReceiptSeeder
                 ExampleAmount,
                 ExampleCorrelationId,
                 LedgerEntryKind.TopUp,
-                description: "Demo örnek dekont");
+                description: "****4242");
             db.LedgerEntries.AddRange(debit, credit);
             await db.SaveChangesAsync().ConfigureAwait(false);
             logger.LogInformation(
