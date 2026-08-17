@@ -205,13 +205,13 @@ class AuditRow {
       );
 }
 
-bool jwtIsAdmin(String? token) {
+Map<String, dynamic>? jwtPayload(String? token) {
   if (token == null || token.isEmpty) {
-    return false;
+    return null;
   }
   final parts = token.split('.');
   if (parts.length < 2) {
-    return false;
+    return null;
   }
   var payload = parts[1].replaceAll('-', '+').replaceAll('_', '/');
   switch (payload.length % 4) {
@@ -221,16 +221,36 @@ bool jwtIsAdmin(String? token) {
       payload += '=';
   }
   try {
-    final json = jsonDecode(utf8.decode(base64.decode(payload))) as Map<String, dynamic>;
-    const roleKey = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
-    final role = json[roleKey] ?? json['role'];
-    if (role is List) {
-      return role.contains('Admin');
-    }
-    return role == 'Admin';
+    return jsonDecode(utf8.decode(base64.decode(payload))) as Map<String, dynamic>;
   } catch (_) {
+    return null;
+  }
+}
+
+bool jwtIsAdmin(String? token) {
+  final json = jwtPayload(token);
+  if (json == null) {
     return false;
   }
+  const roleKey = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+  final role = json[roleKey] ?? json['role'];
+  if (role is List) {
+    return role.contains('Admin');
+  }
+  return role == 'Admin';
+}
+
+String? jwtEmail(String? token) {
+  final json = jwtPayload(token);
+  if (json == null) {
+    return null;
+  }
+  const emailKey = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress';
+  final email = json['email'] ?? json[emailKey] ?? json['unique_name'];
+  if (email is String && email.isNotEmpty) {
+    return email;
+  }
+  return null;
 }
 
 /// JWT client only. Does not store a second balance (no Hive).
@@ -247,6 +267,8 @@ class ClearPayClient {
   final String baseUrl;
 
   bool get isAdmin => jwtIsAdmin(store.token);
+
+  String? get email => jwtEmail(store.token);
 
   Future<void> login(String email, String password) async {
     final response = await _http.post(

@@ -758,4 +758,11 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** [Firebase console](https://console.firebase.google.com/) (aynı Gmail) → proje → Command Prompt: `npm install -g firebase-tools` → `firebase login` → `mobile\clearpay\tool\configure-firebase.cmd`. Windows plugin için Geliştirici Modu.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — Flutter sol çekmece (T-066; Coder)
+
+- **OWN:** TARTISMA **T-066**. Sol `NavigationDrawer` + özet bakiye kartı / kısayol karoları. YK piksel kopyası değil. 8 işlem. TASK-16 Todo durur.
+- **Landed:** Giriş sonrası hamburger; çekmece ClearPay + e-posta + Özet/Havale/Yükle-Çek/Hareketler/Dekont/Admin/Çıkış. Özet: navy hesap kartı ve kısayollar. Alt sekme durur.
+- **Sen tıklarsın:** site `:5153` + `flutter run` → giriş sonrası sol menü.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 

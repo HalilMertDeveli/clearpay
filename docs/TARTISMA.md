@@ -959,3 +959,32 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-066 — 2026-08-17 — Mobil↔web eşzaman (SignalR chrome)
+
+- **Kim:** Orchestrator + Architect + Coder + Payments (kullanıcı: mobilde değişiklik web’de otomatik yansısin; eşzamanlı yapı; API’de Halil adımları)
+- **Konu:** T-061 “SignalR yok / pull-to-refresh = Q2.1”. İki istemci aynı SQL kasayı yazıyor; web özeti Razor sunucu HTML — mobil POST sonrası tarayıcı eski bakiyeyi gösterir. İkinci defter veya 9. ekran mı?
+- **Seçenekler:**
+  1. Yalnız pull-to-refresh (T-061) — kullanıcı otomatik istedi.
+  2. **SignalR hub chrome:** `/hubs/wallet` (9. ekran değil). Ledger commit **sonra** `IWalletLiveNotifier` → grup `user:{id}`. Payload yalnız `{ reason, correlationId }` — bakiye yok; istemci `GET /api/wallet` veya Razor reload. Cookie (Razor) + JWT `access_token` query (Flutter). Firestore/FCM/Hive/`UPDATE Balance` yok. Kafka yok. T-057 “KYC+QR+SignalR+CSV yeni ekran” reddi durur.
+  3. Firebase FCM / Firestore dinleyici / SSE ikinci kasa — hayır.
+- **Karar:** **2.** TASK-16 Todo durur. T-061 pull-to-refresh yedek kalır (hub kopunca). Domain’e Dart yok.
+- **Neden:** 1 isteği karşılamaz. 3 ikinci kaynak. 2 tek kasa + push “yenile”; mülakat: SignalR ≠ ledger.
+- **Sonra hangi dosya:** Application `IWalletLiveNotifier`. Infrastructure NoOp + executor/admin notify. Web `WalletHub` + SignalR adapter + `site.js`. Flutter `signalr_netcore`. `docs/API-ESZAMAN.md` (Halil API tıkları). HANDOFF append. SPEC 8 ekran aynı.
+
+---
+
+## T-066 — 2026-08-17 — Flutter sol çekmece + perakende banka kromu (YK kopyası değil)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: solda pencere/panel; Yapı Kredi mobil gibi UI, iç özellikler sonra)
+- **Konu:** Flutter’da sol panel + TR banka uygulaması ana ekran dili. Pixel-clone / YK ürün ızgarası mı, yoksa mevcut 8 işleme map’li ClearPay kromu mu?
+- **Seçenekler:**
+  1. Yapı Kredi piksel kopyası (logo, YK altın/mavi kimlik, kredi/döviz/fatura/QR ızgarası) — **red** (marka; SPEC 9. ekran; lisans iddiası).
+  2. **Kazanan:** Sol `NavigationDrawer` + perakende-banka mobil kromu (app bar hamburger, hesap/bakiye kartı, kısayol karoları, işlem listesi). ClearPay navy `#1B2A4A`. Footer **Demo — sahte banka gateway.** Çekmece + ana kısayollar yalnız mevcut 8 işlem: Giriş (zaten), Kayıt (auth), Özet, Havale, Yükle/Çek, Hareketler, Dekont (hareketten), Admin (JWT Admin). Kartlar bugünkü gibi Yükle/Çek altında.
+  3. Kredi / fatura / QR için yeni ekranlar — **park** (kullanıcı sonra dedi; yeni TARTISMA + SPEC şart).
+- **Karar:** **2.** TASK-16 Todo durur. 9. ekran yok. Papara/YK wordmark yok.
+- **Neden:** Aynı kişi, iki istemci, tek defter. TR banka uygulamasının UI dili (hamburger, hesap kartı, kısayol ızgarası) YK olmayı gerektirmez. 1 marka+SPEC kırar. 3 şimdi kapsam dışı.
+- **Sonra hangi dosya:** Coder `mobile/clearpay/lib/screens/shell_screen.dart`, `overview_screen.dart`, `theme.dart`, `api/clearpay_client.dart` (JWT e-posta), `test/widget_test.dart`. HANDOFF append. `src/` yok. SPEC ekran listesi durur.
+
+---
+
+
