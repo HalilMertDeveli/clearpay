@@ -169,6 +169,7 @@ CI `main` üzerinde `tests/ClearPay.Tests` restore + test eder.
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
 - [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter istemci (aynı sekiz işlem)
 - Adım adım: [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (bu repo, public). Aynı liste [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — sayfada Share → Publish to web (Notion hesabı olmayan da okusun).
+- [`docs/ESZAMANLI.md`](docs/ESZAMANLI.md) — eşzamanlı çalışma (git / masalar / makine)
 
 Canlı hedef: Azure App Service + Azure SQL (West Europe). Tıklanacak `azurewebsites.net` yok.
 

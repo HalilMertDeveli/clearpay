@@ -787,4 +787,11 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** site `:5153` + cmd `cd /d C:\Users\clt\Projects\clearpay\mobile\clearpay` → `flutter run -d emulator-5554` (veya Windows). Giriş sonrası sol menü.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — Eşzamanlı çalışma belgesi (T-070; Orchestrator)
+
+- **OWN:** TARTISMA **T-070**. `docs/ESZAMANLI.md` (üç katman: git / masalar / makine). README + README.tr Docs satırı. `src/` yok. TASK-16 Todo.
+- **Landed:** Öğretici + dürüst snapshot (TASK-01…15 Done, 409 TASK-06 Done, Azure URL yok). Paralel = ayrı OWN, tek ürün TASK. Notion kopya varsa Publish Halil.
+- **Sen tıklarsın:** blob `cursor/yol-haritasi-career-first` / `docs/ESZAMANLI.md`. Notion’da Share → Publish. Docker VMP reboot hâlâ senin.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 

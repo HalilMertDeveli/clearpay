@@ -999,3 +999,45 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Sonra hangi dosya:** Coder `mobile/clearpay/lib/screens/shell_screen.dart`, `overview_screen.dart`, `theme.dart`, `api/clearpay_client.dart` (JWT e-posta), `test/widget_test.dart`. HANDOFF append. `src/` yok. SPEC ekran listesi durur.
 
 ---
+
+## T-067 — 2026-08-17 — Flutter ana ızgara + TC demo giriş + QR kanal (YK/FAST kopyası değil)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: Yapı Kredi benzeri ana alanlar; TC giriş; FAST/Piyasalar/QR; Daha fazla; uygulamadan QR ile öde/al)
+- **Konu:** Ana ekranı TR banka hissi ile genişletmek. Pixel-clone (World/Jet QR/FAST gerçek ray) mı, yoksa aynı 8 işlem + kanal mı?
+- **Seçenekler:**
+  1. YK piksel kopyası; World / Jet QR / FAST gerçek ray — **red** (marka + lisans iddiası + 9. ekran).
+  2. **Kazanan:** Aynı 8 işlem. Özet **kısayol ızgarası** + **Daha fazla**. **TC ile giriş:** mevcut girişte sekme (9. ekran değil). TCKN Mernis değil. Identity e-posta-only → Flutter demo map `10000000146` → `admin@clearpay.test`, arkada `POST /api/token`. **FAST** → Havale («Demo P2P — TCMB FAST değil»). **Piyasalar** park («Yatırım/döviz yok; SPEC 8»). **QR ile öde / QR ile al** (Jet QR / World Pay değil) → Özet+Havale kanalı; `qr_flutter`; `POST /api/transfers` + Guid `Idempotency-Key`. **Daha fazla:** 8 işlem + park (Piyasalar, Fatura, Kredi) «Park — demo değil».
+  3. Gerçek Worldcard / TCMB FAST / Mernis — **red**.
+- **Karar:** **2.** TASK-16 Todo. 9. ekran yok. Firebase/Hive kasa yok. `UPDATE Balance` yok.
+- **Neden:** Banka evi dili YK olmayı gerektirmez. QR ürün değil kanal. TC KYC değil.
+- **Sonra hangi dosya:** Coder `mobile/clearpay` login/overview/transfer/shell, `lib/demo/`, `lib/qr/`, `qr_flutter`, test, README. HANDOFF append.
+
+---
+
+## T-068 — 2026-08-17 — Splash + Bireysel/Kurumsal (SQL Identity; Firebase kasa yok)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: açılış animasyonu; Kurumsal/Bireysel; bunları Firebase’de ayrı tut)
+- **Konu:** İki mod ve splash. Firestore/Firebase Auth mı, aynı SQL Identity mi?
+- **Seçenekler:**
+  1. İki Firebase / Firestore / Firebase Auth — **red** (T-061 ikinci kasa yok; T-065 `firebase_core` yalnız istemci bootstrap; Auth/Firestore cüzdan değil; yeni Firestore eklenmez).
+  2. **Kazanan:** Splash (ClearPay tween; YK asset yok) → **Bireysel | Kurumsal** iki kart → giriş (T-067 e-posta + TC). Son mod `%LOCALAPPDATA%/ClearPay/account_kind.txt` (plugin yok). Sunucu: `ApplicationUser.AccountKind` aynı Identity SQL; JWT `account_kind`. Kayıt/giriş round-trip. Seed `admin@clearpay.test` = Bireysel. **Kurumsal POS / 9. ekran / üye iş yeri değil** — aynı 8 işlem; rozet/kopya.
+  3. Yalnız Flutter local — **red** (kullanıcı sunucu ayrımı istedi).
+- **Karar:** **2.** TASK-16 Todo. Bireysel/Kurumsal Firebase’e **yazılmaz**. `UPDATE Balance` yok.
+- **Neden:** İkinci kullanıcı deposu T-061 kırar. SQL Identity dürüst ayrım.
+- **Sonra hangi dosya:** Coder `ApplicationUser` + Identity migration; JWT/token/register; Flutter splash/mode/login/main; tests. HANDOFF append.
+
+---
+
+## T-070 — 2026-08-17 — Eşzamanlı çalışma belgesi (git / masalar / makine)
+
+- **Kim:** Orchestrator (kullanıcı: eşzamanlı çalışma için gereken yapı; öğretici + bu projenin hali; paylaş)
+- **Konu:** Chat cevabı mı, yoksa kalıcı OWN doküman + GitHub blob + isteğe Notion mu?
+- **Seçenekler:**
+  1. Yalnız sohbet özeti — kapanınca kaybolur; paylaşılmaz.
+  2. **`docs/ESZAMANLI.md`:** üç katman (Git, masalar/ajanlar, makine); TASKS dürüst snapshot; yaşanan çatışmalar (MSB3027, VMP, Notion Publish, ERR_CONNECTION_REFUSED). README/README.tr bir satır. Notion kopya isteğe. `src/` yok.
+  3. HANDOFF’a uzun tartışma / ikinci `OTURUM-PLAN` — hayır (append defteri; tıklama sırası zaten var).
+- **Karar:** **2.** TASK-16 Todo durur. 409 TASK-06 Done (uydurma skip yok). Azure URL uydurulmaz.
+- **Neden:** 1 paylaşılmaz. 3 HANDOFF/OWN karışır. 2 öğretir ve bu repo’nun gerçek paralelini (Architect T-016, docs masaları; iki Payments yok) yazar.
+- **Sonra hangi dosya:** Orchestrator `docs/ESZAMANLI.md`; `README.md` + `README.tr.md` Docs satırı; HANDOFF append. Notion yeni sayfa (Publish Halil).
+
+---

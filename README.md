@@ -169,6 +169,7 @@ CI restores and tests `tests/ClearPay.Tests` on `main`.
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
 - [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter client (same eight operations)
 - Step-by-step: [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (public in this repo). Same list in [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — on that page, Share → Publish to web so people without a Notion login can open it.
+- [`docs/ESZAMANLI.md`](docs/ESZAMANLI.md) — concurrent work (git / desks / this machine)
 
 Live target: Azure App Service + Azure SQL (West Europe). There is no `azurewebsites.net` to click today.
 
