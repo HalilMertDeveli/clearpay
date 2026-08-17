@@ -139,6 +139,7 @@ Olasılık: **izle** (şimdi doğru yol) / **park** (onay + avukat sonra) / **ka
 | 8 | **Canlı demo URL** | İzle (Halil tıklar) | Aynı site Azure’da; footer Demo | URL yokken Sales abartır |
 | 9 | **8 ekran içi cilâ** | İzle (T-056/057 landed) | Onay adımı, unfreeze, tarih, last4, Beni hatırla | Yeni menü maddesi yok |
 | 10 | **Satıcı paneli (Q2)** | Park | Tahsilat / üye iş yeri | SPEC 9. ekran; POS hikâyesine kayar |
+| 10b | **Flutter JWT istemci (T-061)** | İzle — Q2.1 | Aynı 8 ekran, aynı SQL, pull-to-refresh | Hive bakiye / SignalR 9. ekran yok |
 | 11 | **Kampanya landing / “eksiksiz cüzdan”** | Kapalı (şimdi) | Ads, QR, KYC sayfası | Wedge sulanır; Ads yasağı |
 
 ### C. Teknik (kasa ve host)
