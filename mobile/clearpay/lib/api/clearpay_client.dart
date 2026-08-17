@@ -31,12 +31,32 @@ String newIdempotencyKey() {
 }
 
 class ApiException implements Exception {
-  ApiException(this.status, this.message);
+  ApiException(this.status, this.message, {this.correlationId});
   final int status;
   final String message;
+  final String? correlationId;
 
   @override
   String toString() => message;
+}
+
+class PostedMoney {
+  PostedMoney({required this.correlationId, this.transferId});
+
+  final String correlationId;
+  final String? transferId;
+
+  factory PostedMoney.fromJson(Map<String, dynamic> json) {
+    final id = '${json['correlationId'] ?? ''}';
+    if (id.isEmpty) {
+      throw ApiException(500, 'correlationId yok.');
+    }
+    final transfer = json['transferId'];
+    return PostedMoney(
+      correlationId: id,
+      transferId: transfer == null ? null : '$transfer',
+    );
+  }
 }
 
 class WalletSnapshot {
@@ -149,6 +169,7 @@ class ReceiptSnapshot {
     required this.debitParty,
     required this.creditParty,
     this.description,
+    this.instrumentHint,
   });
 
   final String correlationId;
@@ -158,16 +179,24 @@ class ReceiptSnapshot {
   final String debitParty;
   final String creditParty;
   final String? description;
+  final String? instrumentHint;
 
-  factory ReceiptSnapshot.fromJson(Map<String, dynamic> json) => ReceiptSnapshot(
-        correlationId: '${json['correlationId'] ?? ''}',
-        at: '${json['at'] ?? ''}',
-        kind: '${json['kind'] ?? ''}',
-        amount: _num(json['amount']),
-        debitParty: '${json['debitParty'] ?? ''}',
-        creditParty: '${json['creditParty'] ?? ''}',
-        description: json['description'] as String?,
-      );
+  factory ReceiptSnapshot.fromJson(Map<String, dynamic> json) {
+    final description = json['description'] as String?;
+    final hint = json['instrumentHint'] as String?;
+    return ReceiptSnapshot(
+      correlationId: '${json['correlationId'] ?? ''}',
+      at: '${json['at'] ?? ''}',
+      kind: '${json['kind'] ?? ''}',
+      amount: _num(json['amount']),
+      debitParty: '${json['debitParty'] ?? ''}',
+      creditParty: '${json['creditParty'] ?? ''}',
+      description: description,
+      instrumentHint: (hint != null && hint.isNotEmpty)
+          ? hint
+          : (description != null && description.contains('****') ? description : null),
+    );
+  }
 }
 
 double _num(dynamic value) {
@@ -400,6 +429,28 @@ class ClearPayClient {
     return ReceiptSnapshot.fromJson(json);
   }
 
+  Future<List<int>> receiptPdf(String correlationId) async {
+    final token = store.token;
+    if (token == null || token.isEmpty) {
+      throw ApiException(401, 'Oturum yok. Yeniden giriş yapın.');
+    }
+    final response = await _http.get(
+      _uri('/api/receipts/$correlationId/pdf'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode == 401) {
+      final handler = onUnauthorized;
+      if (handler != null) {
+        await handler();
+      }
+      throw ApiException(401, 'Oturum süresi doldu.');
+    }
+    if (response.statusCode != 200) {
+      throw ApiException(response.statusCode, 'PDF alınamadı (${response.statusCode}).');
+    }
+    return response.bodyBytes;
+  }
+
   Future<List<CardSnapshot>> cards() async {
     final json = await _get('/api/cards');
     return _items(json, CardSnapshot.fromJson);
@@ -409,12 +460,12 @@ class ClearPayClient {
     await _postJson('/api/cards', {'last4': last4, 'label': label}, money: false);
   }
 
-  Future<void> transfer({
+  Future<PostedMoney> transfer({
     required String recipient,
     required double amount,
     String? description,
   }) async {
-    await _postMoney(
+    final json = await _postMoney(
       '/api/transfers',
       {
         'recipient': recipient.trim(),
@@ -422,14 +473,17 @@ class ClearPayClient {
         'description': description ?? 'demo',
       },
     );
+    return PostedMoney.fromJson(json);
   }
 
-  Future<void> topUp({required double amount, required String account}) async {
-    await _postMoney('/api/topup', {'amount': amount, 'account': account});
+  Future<PostedMoney> topUp({required double amount, required String account}) async {
+    final json = await _postMoney('/api/topup', {'amount': amount, 'account': account});
+    return PostedMoney.fromJson(json);
   }
 
-  Future<void> withdraw({required double amount, required String account}) async {
-    await _postMoney('/api/withdraw', {'amount': amount, 'account': account});
+  Future<PostedMoney> withdraw({required double amount, required String account}) async {
+    final json = await _postMoney('/api/withdraw', {'amount': amount, 'account': account});
+    return PostedMoney.fromJson(json);
   }
 
   Future<void> freeze(String email) async {
@@ -504,15 +558,21 @@ class ClearPayClient {
       }
       throw ApiException(401, 'Oturum süresi doldu.');
     }
+    if (response.statusCode == 202) {
+      throw ApiException(
+        202,
+        'Gateway zaman aşımı. Deftere yazılmadı; dekont yok.',
+        correlationId: _correlationOf(response.body),
+      );
+    }
     if (response.statusCode == 409) {
       throw ApiException(
         409,
         'Bu işlem zaten işlendi. Cüzdan ikinci kez kesilmedi.',
+        correlationId: _correlationOf(response.body),
       );
     }
-    if (response.statusCode == 201 ||
-        response.statusCode == 200 ||
-        response.statusCode == 202) {
+    if (response.statusCode == 201 || response.statusCode == 200) {
       if (response.body.isEmpty) {
         return {};
       }
@@ -520,6 +580,25 @@ class ClearPayClient {
       return decoded is Map<String, dynamic> ? decoded : {};
     }
     throw ApiException(response.statusCode, _problem(response.body, response.statusCode));
+  }
+
+  String? _correlationOf(String body) {
+    try {
+      final json = jsonDecode(body);
+      if (json is! Map<String, dynamic>) {
+        return null;
+      }
+      final direct = json['correlationId'];
+      if (direct != null && '$direct'.isNotEmpty) {
+        return '$direct';
+      }
+      final nested = json['extensions'];
+      if (nested is Map && nested['correlationId'] != null) {
+        final id = '${nested['correlationId']}';
+        return id.isEmpty ? null : id;
+      }
+    } catch (_) {}
+    return null;
   }
 
   String _problem(String body, int status) {
