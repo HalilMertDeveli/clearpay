@@ -32,6 +32,9 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»
 - **Ürün sırası TASK-16.** Infra/docs hazır; açık URL **Halil tıklar**. Ads harcaması yok.
+- Q2 Flutter JWT istemci (T-061) landed: `GET /api/wallet` + `mobile/clearpay`. TASK-16 Todo durur. 9. ekran yok.
+- T-062: kayıt/kart/admin JWT; Flutter’da site işlemleri; Coder OWN `mobile/**/*.dart`. TASK-16 Todo.
+- T-063: Flutter aynı git repo (`mobile/clearpay` + `ClearPay.code-workspace`). İç içe git yok. TASK-16 Todo.
 - TASK-12: `ConnectionStrings:RabbitMq` yok/düşer → log publisher; Hangfire yedek. Health `rabbit` up/down/off. CloudAMQP hesabı açılmaz.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz
