@@ -10,7 +10,8 @@
 <p align="center">
   <a href="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml"><img src="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet" alt=".NET 8">
-  <img src="https://img.shields.io/badge/Flutter-3.41-02569B?logo=flutter" alt="Flutter">
+  <img src="https://img.shields.io/badge/Flutter-mobil_uygulama-02569B?logo=flutter" alt="Flutter mobil uygulama">
+  <img src="https://img.shields.io/badge/Android%20%7C%20Windows%20%7C%20iOS-geldi-0F766E" alt="Android Windows iOS">
   <img src="https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver" alt="SQL Server">
   <img src="https://img.shields.io/badge/UI-TR%20%7C%20EN%20%7C%20DE%20%7C%20FR-1B2A4A" alt="Arayüz dilleri">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
@@ -18,11 +19,44 @@
 
 <p align="center"><b>Demo — yükleme için sahte gateway.</b> Lisanslı e-para kuruluşu değil. Papara / FAST / sahte perakende banka değil.</p>
 
-**Tek cüzdan, iki istemci.** Aynı kişi sitede ve Flutter uygulamasında giriş yapar, havale atar, yükler, dekont açar. Tek SQL defter. Telefonda ikinci bakiye yok.
+## Web + mobil (geldi)
 
-ASP.NET Core 8 **WePay benzeri cüzdan sitesi** ve **Flutter** JWT istemci ([`mobile/clearpay`](mobile/clearpay)). Tarayıcı Razor (cookie); uygulama JSON (JWT). Çift kayıt Domain’de — `Wallet` üzerinde **`Balance` kolonu yok**.
+Bu repo **yalnız site değil**. **Flutter mobil uygulaması** [`mobile/clearpay`](mobile/clearpay) klasöründe; aynı ASP.NET Core 8 host’a bağlanır.
 
-Ben Halil Mert Develi. Bunu Papara klonu diye değil, .NET mülakatında (Intertech / Softtech) savunabileceğim repo diye yazdım. Lisans MIT.
+| İstemci | Yığın | Kimlik | Para |
+|---------|--------|--------|------|
+| **Site** | Razor Pages, `src/ClearPay.Web` | Identity cookie | Application port → SQL defter |
+| **Mobil uygulama** | Flutter 3.41, Android / Windows / iOS ağacı | JWT Bearer | Aynı portlar. Hive / Firestore / MySQL kasa **yok** |
+
+Aynı sekiz işlem (giriş, kayıt, özet, havale, yükle/çek, hareketler, dekont, admin). Aynı `Idempotency-Key` → **409**. Telefonda **ikinci bakiye yok**. Flutter **web ürün yüzeyi değil** — tarayıcı ürünü Razor.
+
+Uygulamayı çalıştırma (önce site `:5153`): aşağıdaki [**Mobil uygulama**](#mobil-uygulama-flutter) ve [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+
+Ben Halil Mert Develi. Mülakat reposu (Intertech, Softtech): ledger + 409 **iki istemcide**. Lisans MIT.
+
+---
+
+## Mobil uygulama (Flutter)
+
+**Bu repoda geldi** — maket değil, ikinci kasa değil.
+
+- Klasör: [`mobile/clearpay`](mobile/clearpay) (aynı git; `ClearPay.slnx` içinde **yok**)
+- Workspace: [`ClearPay.code-workspace`](ClearPay.code-workspace) → **ClearPay** + **ClearPay Flutter**
+- Platform: Android emülatör (`http://10.0.2.2:5153`), Windows masaüstü, iOS proje ağacı. JWT → `:5153`
+- Arayüz: Türkçe varsayılan; çekmece + alt sekme; sitedeki sekiz cüzdan işlemi
+
+```bat
+cd /d D:\ClearPay\clearpay
+dotnet run --project src/ClearPay.Web --launch-profile http
+```
+
+```bat
+cd /d D:\ClearPay\clearpay\mobile\clearpay
+flutter doctor
+flutter run -d emulator-5554
+```
+
+İsteğe bağlı: `flutter run -d windows`. Ayrıntı: [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
 
 ---
 
@@ -283,6 +317,7 @@ ClearPay.slnx
 | Bitti | Sıradaki |
 |-------|----------|
 | TASK-01…15 — ekranlar, ledger, 409, gateway, outbox, Redis/Rabbit, test, Swagger | **TASK-16** — Azure App Service + Azure SQL (`az login` sen tıklarsın; URL uydurulmaz) |
+| **Flutter mobil uygulama** (`mobile/clearpay`) — JWT istemci, aynı sekiz işlem, Android / Windows | Mağaza / açık HTTPS hâlâ TASK-16 |
 
 CI `main` üzerinde `tests/ClearPay.Tests` restore + test eder.
 

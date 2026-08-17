@@ -10,7 +10,8 @@
 <p align="center">
   <a href="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml"><img src="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet" alt=".NET 8">
-  <img src="https://img.shields.io/badge/Flutter-3.41-02569B?logo=flutter" alt="Flutter">
+  <img src="https://img.shields.io/badge/Flutter-app_mobile-02569B?logo=flutter" alt="Application Flutter">
+  <img src="https://img.shields.io/badge/Android%20%7C%20Windows%20%7C%20iOS-livr%C3%A9-0F766E" alt="Android Windows iOS">
   <img src="https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver" alt="SQL Server">
   <img src="https://img.shields.io/badge/UI-TR%20%7C%20EN%20%7C%20DE%20%7C%20FR-1B2A4A" alt="Langues UI">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
@@ -18,9 +19,11 @@
 
 <p align="center"><b>Démo — passerelle fictive pour les recharges.</b> Pas un établissement e-money licencié. Pas Papara / FAST / une fausse banque de détail.</p>
 
-**Un portefeuille, deux clients.** La même personne se connecte, vire, recharge et ouvre le reçu **sur le site** et **dans l’app Flutter**. Un seul grand livre SQL. Le téléphone ne garde pas un second solde.
+## Web + mobile (livré)
 
-Portefeuille web ASP.NET Core 8 **type WePay** plus client **Flutter** JWT ([`mobile/clearpay`](mobile/clearpay)). Razor Pages pour le navigateur (cookie) ; JSON pour l’app (JWT). La partie double est dans le Domain — `Wallet` n’a **pas** de colonne `Balance`.
+Ce dépôt **n’est pas que le site**. L’**application Flutter** est dans [`mobile/clearpay`](mobile/clearpay) et parle au même hôte ASP.NET Core 8. Huit opérations, un grand livre SQL, **pas** de second solde sur le téléphone. Détail : [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+
+**Un portefeuille, deux clients.** La même personne se connecte, vire, recharge et ouvre le reçu **sur le site** et **dans l’app Flutter**. Razor Pages (cookie) ; JSON (JWT). La partie double est dans le Domain — `Wallet` n’a **pas** de colonne `Balance`.
 
 Je suis Halil Mert Develi. J’ai écrit ça pour un entretien .NET (Intertech, Softtech), pas pour cloner Papara. Licence MIT.
 

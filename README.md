@@ -10,7 +10,8 @@
 <p align="center">
   <a href="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml"><img src="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet" alt=".NET 8">
-  <img src="https://img.shields.io/badge/Flutter-3.41-02569B?logo=flutter" alt="Flutter">
+  <img src="https://img.shields.io/badge/Flutter-mobile_app-02569B?logo=flutter" alt="Flutter mobile app">
+  <img src="https://img.shields.io/badge/Android%20%7C%20Windows%20%7C%20iOS-shipped-0F766E" alt="Android Windows iOS">
   <img src="https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver" alt="SQL Server">
   <img src="https://img.shields.io/badge/UI-TR%20%7C%20EN%20%7C%20DE%20%7C%20FR-1B2A4A" alt="UI languages">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
@@ -18,11 +19,44 @@
 
 <p align="center"><b>Demo — fake gateway for top-ups.</b> Not a licensed e-money institution. Not Papara / FAST / a fake retail bank.</p>
 
-**One wallet, two clients.** The same person signs in, sends money, tops up, and opens a receipt on the **website** and in the **Flutter app**. One SQL ledger. The phone does not keep a second balance.
+## Web + mobile (shipped)
 
-ASP.NET Core 8 **WePay-like wallet website** plus a **Flutter** JWT client ([`mobile/clearpay`](mobile/clearpay)). Razor Pages for the browser (cookie); JSON for the app (JWT). Double-entry lives in Domain — `Wallet` has **no** `Balance` column.
+This repo is **not website-only**. A **Flutter mobile app** lives in [`mobile/clearpay`](mobile/clearpay) and talks to the same ASP.NET Core 8 host.
 
-I am Halil Mert Develi. I wrote this as the .NET interview repo I actually want to defend (Intertech, Softtech, that kind of shop). MIT licence.
+| Client | Stack | Auth | Money |
+|--------|--------|------|--------|
+| **Website** | Razor Pages, `src/ClearPay.Web` | Identity cookie | Application ports → SQL ledger |
+| **Mobile app** | Flutter 3.41, Android / Windows / iOS tree | JWT Bearer | Same ports. **No** Hive / Firestore / MySQL wallet |
+
+Same eight operations (sign in, register, summary, transfer, top-up/withdraw, movements, receipt, admin). Same `Idempotency-Key` → **409**. The phone does **not** keep a second balance. Flutter **web is not a product surface** — the browser product is Razor.
+
+How to run the app (site must be on `:5153` first): see [**Mobile app**](#mobile-app-flutter) below and [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+
+I am Halil Mert Develi. Interview repo (Intertech, Softtech): ledger + 409 on **two clients**. MIT licence.
+
+---
+
+## Mobile app (Flutter)
+
+**Shipped in this repository** — not a mock, not a second cash register.
+
+- Path: [`mobile/clearpay`](mobile/clearpay) (same git repo; **not** in `ClearPay.slnx`)
+- Workspace: [`ClearPay.code-workspace`](ClearPay.code-workspace) opens **ClearPay** + **ClearPay Flutter**
+- Platforms: Android emulator (`http://10.0.2.2:5153`), Windows desktop, iOS project tree. JWT to `:5153`.
+- UI: Türkçe default; drawer + bottom tabs; the same eight wallet operations as the site
+
+```bat
+cd /d D:\ClearPay\clearpay
+dotnet run --project src/ClearPay.Web --launch-profile http
+```
+
+```bat
+cd /d D:\ClearPay\clearpay\mobile\clearpay
+flutter doctor
+flutter run -d emulator-5554
+```
+
+Optional: `flutter run -d windows`. Full client notes: [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
 
 ---
 
@@ -281,6 +315,7 @@ ClearPay.slnx
 | Done | Next |
 |------|------|
 | TASK-01…15 — screens, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — Azure App Service + Azure SQL (you click `az login`; no live URL invented here) |
+| **Flutter mobile app** (`mobile/clearpay`) — JWT client, same eight operations, Android / Windows | Store listing / public HTTPS still TASK-16 |
 
 CI restores and tests `tests/ClearPay.Tests` on `main`.
 

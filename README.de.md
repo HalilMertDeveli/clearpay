@@ -10,7 +10,8 @@
 <p align="center">
   <a href="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml"><img src="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet" alt=".NET 8">
-  <img src="https://img.shields.io/badge/Flutter-3.41-02569B?logo=flutter" alt="Flutter">
+  <img src="https://img.shields.io/badge/Flutter-mobile_app-02569B?logo=flutter" alt="Flutter-Mobil-App">
+  <img src="https://img.shields.io/badge/Android%20%7C%20Windows%20%7C%20iOS-geliefert-0F766E" alt="Android Windows iOS">
   <img src="https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver" alt="SQL Server">
   <img src="https://img.shields.io/badge/UI-TR%20%7C%20EN%20%7C%20DE%20%7C%20FR-1B2A4A" alt="UI-Sprachen">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
@@ -18,9 +19,11 @@
 
 <p align="center"><b>Demo — gefälschtes Gateway für Aufladungen.</b> Kein lizenziertes E-Geld-Institut. Nicht Papara / FAST / keine gefälschte Filialbank.</p>
 
-**Ein Wallet, zwei Clients.** Dieselbe Person meldet sich an, überweist, lädt auf und öffnet den Beleg **auf der Website** und **in der Flutter-App**. Ein SQL-Ledger. Das Telefon hält keinen zweiten Saldo.
+## Web + Mobil (geliefert)
 
-ASP.NET Core 8 **WePay-ähnliche Wallet-Website** plus **Flutter**-JWT-Client ([`mobile/clearpay`](mobile/clearpay)). Razor Pages für den Browser (Cookie); JSON für die App (JWT). Doppelte Buchführung liegt im Domain — `Wallet` hat **keine** Spalte `Balance`.
+Dieses Repo ist **keine reine Website**. Die **Flutter-App** liegt in [`mobile/clearpay`](mobile/clearpay) und spricht denselben ASP.NET-Core-8-Host. Acht Operationen, ein SQL-Ledger, **kein** zweiter Saldo auf dem Telefon. Details: [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+
+**Ein Wallet, zwei Clients.** Dieselbe Person meldet sich an, überweist, lädt auf und öffnet den Beleg **auf der Website** und **in der Flutter-App**. Razor Pages (Cookie); JSON (JWT). Doppelte Buchführung im Domain — `Wallet` hat **keine** Spalte `Balance`.
 
 Ich bin Halil Mert Develi. Das ist das .NET-Interview-Repo, das ich verteidigen will (Intertech, Softtech). Lizenz MIT.
 
