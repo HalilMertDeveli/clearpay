@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../api/clearpay_client.dart';
 import '../qr/pay_uri.dart';
 import '../theme.dart';
+import 'receipt_screen.dart';
 
 class TransferPrefill {
   const TransferPrefill({this.recipient, this.amount, this.description});
@@ -141,14 +142,23 @@ class _TransferScreenState extends State<TransferScreen> {
       _message = null;
     });
     try {
-      await widget.api.transfer(
+      final posted = await widget.api.transfer(
         recipient: _recipient.text,
         amount: amount,
         description: _description.text,
       );
-      await _loadBalance();
-      setState(() => _message = 'Havale alındı. Bakiye yenilendi.');
+      if (!mounted) {
+        return;
+      }
+      await openReceipt(context, widget.api, posted.correlationId);
     } on ApiException catch (e) {
+      if (e.status == 409 && e.correlationId != null && e.correlationId!.isNotEmpty) {
+        if (!mounted) {
+          return;
+        }
+        await openReceipt(context, widget.api, e.correlationId!);
+        return;
+      }
       setState(() => _message = e.message);
     } finally {
       if (mounted) {

@@ -262,9 +262,15 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
             var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var userId = (await users.FindByEmailAsync(email))!.Id;
             var db = scope.ServiceProvider.GetRequiredService<ClearPayDbContext>();
-            var wallet = new Wallet { Id = Guid.NewGuid(), UserId = userId, CreatedAt = DateTimeOffset.UtcNow };
-            var treasury = new Wallet { Id = Guid.NewGuid(), UserId = "fund-pdf", CreatedAt = DateTimeOffset.UtcNow };
-            db.Wallets.AddRange(treasury, wallet);
+            var wallet = await db.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+            if (wallet is null)
+            {
+                wallet = new Wallet { Id = Guid.NewGuid(), UserId = userId, CreatedAt = DateTimeOffset.UtcNow };
+                db.Wallets.Add(wallet);
+            }
+
+            var treasury = new Wallet { Id = Guid.NewGuid(), UserId = "fund-pdf-" + Guid.NewGuid().ToString("N"), CreatedAt = DateTimeOffset.UtcNow };
+            db.Wallets.Add(treasury);
             correlation = Guid.NewGuid();
             var (debit, credit) = LedgerPair.Create(treasury.Id, wallet.Id, 25m, correlation, LedgerEntryKind.TopUp);
             db.LedgerEntries.AddRange(debit, credit);
