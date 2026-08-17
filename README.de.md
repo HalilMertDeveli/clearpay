@@ -31,11 +31,15 @@ Ich bin Halil Mert Develi. Das ist das .NET-Interview-Repo, das ich verteidigen 
 
 ## Was gebaut ist
 
-![Clean-Architecture-Schichten](docs/assets/clearpay-layers.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-layers.png" alt="ClearPay Clean-Architecture-Schichten" width="840">
+</p>
 
 Das Web rechnet kein Ledger. Die Übersicht fragt `IWalletReader`. Heute ist der Adapter `SqlWalletReader`: Saldo = `LedgerPair.NetOf`, Monat ein/aus, letzte fünf Zeilen, Freeze-Badge. Ist SQL Server down, läuft die Site trotzdem — Nullen, kein 500.
 
-![Buchungspaar](docs/assets/clearpay-ledger.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-ledger.png" alt="ClearPay Buchungspaar" width="840">
+</p>
 
 ```mermaid
 flowchart TB

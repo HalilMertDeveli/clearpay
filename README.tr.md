@@ -62,11 +62,15 @@ flutter run -d emulator-5554
 
 ## Kurulan yapı
 
-![Clean Architecture katmanları](docs/assets/clearpay-layers.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-layers.png" alt="ClearPay Clean Architecture katmanları" width="840">
+</p>
 
 Web ledger hesabı yapmaz. Özet sayfası `IWalletReader` sorar. Bugün adapter `SqlWalletReader`: bakiye = `LedgerPair.NetOf`, bu ay giden/gelen, son beş hareket, freeze rozeti. SQL Server kapalıysa site yine açılır — sıfırlar, 500 değil.
 
-![Çift kayıt çifti](docs/assets/clearpay-ledger.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-ledger.png" alt="ClearPay çift kayıt çifti" width="840">
+</p>
 
 ```mermaid
 flowchart TB
