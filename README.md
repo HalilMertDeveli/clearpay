@@ -99,11 +99,15 @@ Language pickers are chrome (cookie `c=` on the site; local file on Flutter), no
 
 ## Picture of the build
 
-![Clean Architecture layers](docs/assets/clearpay-layers.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-layers.png" alt="ClearPay Clean Architecture layers" width="840">
+</p>
 
 Web never computes ledger math. The summary page asks `IWalletReader`. Today that adapter is `SqlWalletReader`: balance = `LedgerPair.NetOf`, this month in/out, last five rows, freeze badge. If SQL is down you still get the site — zeros, not a 500.
 
-![Double-entry pair](docs/assets/clearpay-ledger.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-ledger.png" alt="ClearPay double-entry pair" width="840">
+</p>
 
 ```mermaid
 flowchart TB

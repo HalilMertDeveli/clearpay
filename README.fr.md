@@ -31,11 +31,15 @@ Je suis Halil Mert Develi. J’ai écrit ça pour un entretien .NET (Intertech, 
 
 ## Ce qui est construit
 
-![Couches Clean Architecture](docs/assets/clearpay-layers.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-layers.png" alt="Couches Clean Architecture ClearPay" width="840">
+</p>
 
 Le Web ne calcule pas le grand livre. La synthèse demande `IWalletReader`. Aujourd’hui l’adaptateur est `SqlWalletReader` : solde = `LedgerPair.NetOf`, mois entrées/sorties, cinq dernières lignes, badge gel. Si SQL Server est down, le site s’ouvre quand même — des zéros, pas un 500.
 
-![Paire en partie double](docs/assets/clearpay-ledger.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-ledger.png" alt="Paire en partie double ClearPay" width="840">
+</p>
 
 ```mermaid
 flowchart TB

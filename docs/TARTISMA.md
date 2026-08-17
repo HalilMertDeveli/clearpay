@@ -1504,4 +1504,46 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-101 — 2026-08-17 — GitHub README SVG görünmüyor
+
+- **Kim:** Coder (kullanıcı: GitHub README resimleri çıkmamış)
+- **Konu:** `docs/assets/*.svg` XML 1.0 yasak kontrol karakterleri (`U+0012` / `U+0014`) içeriyor; GitHub sanitizer dosyayı boş bırakır. Markdown `![]()` SVG Camo’da da kırılır.
+- **Seçenekler:**
+  1. Yolu `raw.githubusercontent.com` yapmak — **zayıf** (aynı bozuk SVG).
+  2. **Kazanan:** SVG’yi geçerli UTF-8 yap; README `<img>` + PNG yedek (GitHub Camo PNG’yi gösterir). Relative `docs/assets/`. Secret yok. 8/9 ekran metni durur.
+  3. Resimleri sil — mülakat diyagramı kaybı.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** 1 kök nedeni bırakır. 3 kullanıcı isteğine aykırı.
+- **Sonra hangi dosya:** `docs/assets/*`, `README.md` / `README.tr.md` / DE / FR. HANDOFF **append**. Push GitHub yüzeyi için.
+
+---
+
+## T-100 — 2026-08-17 — web + Flutter Android manuel ve otomasyon testi
+
+- **Kim:** Orchestrator + Tester + Coder + Deploy (kullanıcı: her yüzey teste tabi; manuel + otomasyon; web ve Flutter Android)
+- **Konu:** Mevcut xUnit (cookie/JWT/409/ledger) ve `widget_test` dağınık. CI yalnız `dotnet test`. Android emülatör JWT + hub elle doğrulanmıyor. 10. ekran / ikinci kasa yok.
+- **Seçenekler:**
+  1. Yalnız mevcut testlere güven — **zayıf** (Flutter CI yok; manuel checklist yok; Android `10.0.2.2` / hub vs Windows poll yazılı değil).
+  2. Appium / Maestro cihaz farm — kapsam şişer; emülatör hesabı; Q1 değil.
+  3. **Kazanan:** Manuel `docs/SMOKE.md` (Razor 9 ekran + Flutter Android JWT). Otomasyon: Tester `DualSurfaceSmokeTests` (cookie TC + JWT `/api/token`+`/api/wallet` + hub negotiate + `site.js` reload yok + `Wallet.Balance` yok). Coder `flutter test` (Android taban URL, hub skip/poll, TC→JWT, 409). Deploy CI `flutter test` job. SPEC ekran listesi durur. `UPDATE Balance` yok. Hive/Firestore kasa yok. TASK-16 Todo.
+- **Karar:** **3.** TASK-16 durur. `az login` ajan yapmaz. Flutter Chrome yok (T-087).
+- **Neden:** 1 kullanıcı isteğini karşılamaz. 2 cihaz farm / yeni ürün yüzeyi. 3 landed sözleşmeyi kilitler; para hâlâ tek SQL.
+- **Sonra hangi dosya:** Tester `tests/ClearPay.Tests/DualSurfaceSmokeTests.cs`, `docs/SMOKE.md`, `.cursor/rules/tester.mdc`. Coder `mobile/clearpay/lib/api/{clearpay_client,wallet_live_hub}.dart`, `mobile/clearpay/test/android_surface_test.dart`. Deploy `.github/workflows/ci.yml`. Orchestrator TASKS Done UI + HANDOFF **append**. Razor markup yok.
+
+---
+
+## T-101 — 2026-08-17 — Visa / Mastercard yüzü (ISO BIN + görünüm; web + Flutter)
+
+- **Kim:** Orchestrator + Architect + Designer + Coder + Tester (kullanıcı: Mastercard veya Visa ayrımı nasıl yapılıyorsa öğren; kart görünümü ve numaraya göre hem mobil hem web)
+- **Konu:** T-097 şema yazısı var; kart yüzü hep navy. Flutter Kartlarım park. ISO/IEC 7812 IIN (BIN) sektör standardı: Visa = `4…`; Mastercard = `51–55` veya `2221–2720` (2017 2-series). Troy `9792` durur. Resmi Visa/MC SVG yok (MARKA). PAN/CVV SQL yok. Gerçek POS/3DS yok.
+- **Seçenekler:**
+  1. Fotoğraftan OCR/ML şema — hayır; model, sır, 10. ekran.
+  2. Yalnız metin “Visa/Mastercard” — kullanıcı görünüm istedi; zayıf.
+  3. **Kazanan:** Aynı `CardNetwork.Detect` (C#) + Dart kopyası. Yazılan numaraya göre kart yüzü: Visa mavi + VISA yazısı; Mastercard koyu + iki örtüşen daire (geometrik, resmi logo dosyası yok); Troy teal. Web `/kartlar` + Yükle/Çek seçili kart. Flutter yeni Kartlarım sekmesi (SPEC 9; T-097 park kalkar). `POST /api/cards` isteğe `number` → parser last4+scheme, PAN kaydı yok. last4-only = Unknown. `IFundingExecutor` durur. `UPDATE Balance` yok.
+- **Karar:** **3.** TASK-16 Todo durur. Flutter Chrome yok (T-087).
+- **Neden:** 1 kapsam dışı. 2 görünümü karşılamaz. 3 sektör BIN + iki yüzey; kasa SQL.
+- **Sonra hangi dosya:** Coder `CardNetwork` test, `CardsController`/`CardApiRequest`, `Kartlar.cshtml`, `YukleCek.cshtml`, `brand.css`, `card-preview.js`. Flutter `card_network.dart`, `live_payment_card.dart`, `cards_screen.dart`, shell/overview/l10n/client. Designer TASARIM §13. Tester parser + `/kartlar` Mastercard HTML + JWT scheme. HANDOFF **append**.
+
+---
+
 

@@ -1023,10 +1023,24 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** Site `:5153` açık. `cd D:\ClearPay\clearpay\mobile\clearpay` → `$env:TEMP='D:\ClearPay\tmp'; $env:TMP='D:\ClearPay\tmp'; flutter run -d windows`. Giriş `admin@clearpay.test` / `Deneme123`. Özet açılsın; kırmızı hub ekranı olmasın. Çek-yenile veya ~8 sn sonra taze bakiye.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — web + Flutter Android smoke (T-100; Tester+Coder+Deploy)
+
+- **OWN:** TARTISMA **T-100**. TASK-16 Todo durur. 10. ekran yok. `UPDATE Balance` yok. Hive/Firestore kasa yok. Flutter Chrome yok.
+- **Landed:** Manuel [`SMOKE.md`](SMOKE.md). xUnit `DualSurfaceSmokeTests` (JWT+cookie TC+hub+`site.js` reload yok). Flutter `android_surface_test` (10.0.2.2, poll, TC→JWT, 409). CI `flutter test` job.
+- **Sen tıklarsın:** `dotnet test -c Release`. `cd D:\ClearPay\clearpay\mobile\clearpay` → `$env:TEMP='D:\ClearPay\tmp'; $env:TMP='D:\ClearPay\tmp'; flutter test`. Elle: site `:5153` + `flutter run -d emulator-5554` ([SMOKE.md](SMOKE.md) tablo).
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 ## 2026-08-17 — README + push (T-099; Orchestrator)
 
 - **OWN:** TARTISMA **T-099**. README EN/TR (DE/FR giriş). TASK-16 Todo durur. Secret git’e yok. URL uydurulmaz.
 - **Landed:** Mülakat yüzeyi: iki istemci, 409, `LedgerPair.NetOf`, Kartlarım web, Firestore ping meta, Azure tık Halil.
 - **Sen tıklarsın:** GitHub `HalilMertDeveli/clearpay` dal `cursor/yol-haritasi-career-first`. README kök.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — GitHub README PNG (T-101; Coder)
+
+- **OWN:** TARTISMA **T-101**. SVG kontrol karakteri GitHub’da boş kalıyordu. PNG `docs/assets/*.png`. TASK-16 Todo.
+- **Landed:** Geçerli SVG + PNG; README `<img>` PNG.
+- **Sen tıklarsın:** https://github.com/HalilMertDeveli/clearpay/blob/cursor/yol-haritasi-career-first/README.md — katman ve çift kayıt görselleri.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 

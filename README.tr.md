@@ -99,11 +99,15 @@ Dil seçici chrome’dur (sitede cookie `c=`; Flutter’da yerel dosya); onuncu 
 
 ## Kurulan yapı
 
-![Clean Architecture katmanları](docs/assets/clearpay-layers.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-layers.png" alt="ClearPay Clean Architecture katmanları" width="840">
+</p>
 
 Web ledger hesabı yapmaz. Özet `IWalletReader` sorar. Adapter `SqlWalletReader`: bakiye = `LedgerPair.NetOf`. SQL kapalıysa site açılır — sıfırlar, 500 değil.
 
-![Çift kayıt çifti](docs/assets/clearpay-ledger.svg)
+<p align="center">
+  <img src="docs/assets/clearpay-ledger.png" alt="ClearPay çift kayıt çifti" width="840">
+</p>
 
 İngilizce README’deki katman tablosu ve mermaid şema aynı gerçeği anlatır: [`README.md`](README.md#picture-of-the-build).
 
