@@ -42,3 +42,8 @@ android {
 flutter {
     source = "../.."
 }
+
+// T-065: apply only after FlutterFire writes google-services.json (Halil).
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
