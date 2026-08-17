@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 namespace ClearPay.Infrastructure.Persistence;
 
 /// <summary>
-/// Applies ledger migrations when SQL Server is up. Identity SQLite is separate.
-/// Unreachable SQL must not take down the cookie site (TASK-03).
+/// Applies ledger migrations when SQL Server is up.
+/// Unreachable SQL skips ledger migrate (Identity SQL is applied first in <c>IdentitySeeder</c>).
 /// Tests set <c>ClearPay:ApplyLedgerMigrations=false</c> (T-023).
 /// </summary>
 public static class LedgerDatabase
