@@ -739,4 +739,25 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** [`docs/YOL.md`](YOL.md) senaryo tabloları; canlı için [`CANLI.md`](CANLI.md) (`az login` + `.\infra\deploy.ps1`).
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — Flutter JWT istemci (T-061; Orchestrator + Coder)
+
+- **OWN:** TARTISMA **T-061**. `GET /api/wallet|movements|receipts/{id}`, `POST /api/topup|withdraw` + CORS. `mobile/clearpay` Dart. Domain’e Dart yok. `ClearPay.slnx` Flutter içermez. TASK-16 Todo durur.
+- **Landed:** Razor cookie + Flutter JWT → aynı Application portları → tek SQL. Pull-to-refresh = Q2.1. Hive / SignalR 9. ekran yok. Footer: Demo — sahte banka gateway. Navy `#1B2A4A`. TR varsayılan.
+- **Kanıt:** `dotnet test -c Release` WalletApi (401, net 80→55, top-up 409, CORS localhost). Flutter `widget_test` giriş + demo footer.
+- **Sen tıklarsın:** site `:5153` ayaktayken `cd mobile/clearpay` → `flutter run` (Android `10.0.2.2:5153`). Kayıt siteden `/kayit`. Mağaza hesabı / Azure URL yok.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Flutter site işlemleri (T-062; Coder)
+
+- **OWN:** TARTISMA **T-062**. `POST /api/register`, `GET/POST /api/cards`, JWT admin. Flutter kayıt/havale/yükle/hareket/dekont/admin. Windows platform. Coder `mobile/**/*.dart`. TASK-16 Todo.
+- **Landed:** Uygulama içi kayıt (cookie SignIn yok). Ajan kuralı Flutter OWN; workspace repo + `mobile/clearpay`. Hive yok.
+- **Sen tıklarsın:** site `:5153` + `cd mobile/clearpay` → `flutter run -d windows` (veya emülatör). Demo `admin@clearpay.test` / `Deneme123`.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Flutter aynı git repo (T-063)
+
+- **OWN:** TARTISMA **T-063**. `ClearPay.code-workspace` (ClearPay + ClearPay Flutter). İç içe `git init` yok. `ClearPay.slnx` Flutter içermez.
+- **Sen tıklarsın:** `ClearPay.code-workspace` aç. Flutter klasörü aynı GitHub repo.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 

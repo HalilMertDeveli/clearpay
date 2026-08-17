@@ -916,4 +916,49 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-061 — 2026-08-17 — Flutter JWT istemci (Q2; 8 ekran durur)
+
+- **Kim:** Orchestrator, Architect, Coder (kullanıcı onaylı plan: ASP.NET site + Flutter mobil, aynı ledger)
+- **Konu:** Site C#, mobil Flutter olabilir mi? Eşzaman ikinci defter mi? SPEC “site” + eski Flutter reddi (Firebase/pasta) bu istemciyi yasaklar mı?
+- **Seçenekler:**
+  1. Flutter yok — yalnız Razor (kullanıcı Q2 istedi).
+  2. **JWT istemci:** `GET /api/wallet|movements|receipts` + mevcut `POST /api/transfers` + `POST /api/topup|withdraw`; CORS debug+canlı kök. `mobile/clearpay` Dart. Domain’e Dart yok. 8 ekran. Pull-to-refresh = Q2.1 eşzaman. SignalR yok. Hive/`UPDATE Balance` yok.
+  3. Flutter’da offline bakiye / ikinci SQL / 9. ekran / PWA — hayır.
+- **Karar:** **2.** Q1 TASK-16 Todo durur. `ClearPay.slnx` Flutter içermez. LED yok.
+- **Neden:** İki istemci, tek kasa (T-019 portlar). Eski Flutter reddi Firebase ikiziydi. Cookie≠JWT (ARCHITECTURE).
+- **Sonra hangi dosya:** Coder `src/ClearPay.Web/Controllers/**`, `OpenApi`, `Program.cs` CORS. Tester JWT GET/POST. `mobile/clearpay/**`. SPEC/ARCHITECTURE/YOL/README birer cümle. `docs/HANDOFF.md` append. Domain/Persistence rewrite yok.
+
+---
+
+## T-062 — 2026-08-17 — Flutter’da site işlemleri + ajanlar mobil OWN
+
+- **Kim:** Orchestrator, Coder (kullanıcı: uygulama kurulsun; işlemler Flutter içinde; ajanlar mobil içinde çalışsın)
+- **Konu:** T-061 JWT istemci var ama kayıt sitede; Windows’ta `flutter run` yok; Coder kuralı yalnız Razor. Ajan kökü yalnız `mobile/` olursa TARTISMA kaybolur.
+- **Seçenekler:**
+  1. WebView ile site — hayır (T-061 cookie≠para API).
+  2. **JWT tam müşteri akışı:** `POST /api/register` (aynı `RegisterRequest`, cookie SignIn yok, JWT döner). `GET/POST /api/cards`. Admin JWT `IAdminPanel` (rol Admin; 9. ekran değil). Flutter: kayıt, özet kısayol, havale kalan bakiye + onay, kartlı yükle/çek, hareket filtre, dekont, admin sekmesi. Windows masaüstü (`flutter create --platforms=windows`) bu PC’de kurulum. Coder OWN += `mobile/**/*.dart`. Workspace: repo + `mobile/clearpay` (ajanlar Dart’ta; TARTISMA kökte). Hive yok.
+  3. Ajan kökünü yalnız `mobile/clearpay` yapmak — hayır (`docs/` ve `src/` TARTISMA/ledger).
+- **Karar:** **2.** TASK-16 Todo durur. Domain’e Dart yok.
+- **Neden:** Kullanıcı işlemleri telefonda/Windows Flutter’da; para hâlâ C# port. Çok köklü workspace TARTISMA’yı korur.
+- **Sonra hangi dosya:** `RegisterController`, `CardsController`, `AdminApiController`. `mobile/clearpay/lib/**`, Windows platform. `.cursor/rules/coder.mdc` + `flutter.mdc`. `docs/AGENTS.md`, HANDOFF append. Tester register+cards.
+
+---
+
+## T-063 — 2026-08-17 — Flutter aynı git repo + çok köklü workspace
+
+- **Kim:** Orchestrator (kullanıcı: Flutter uygulaması ek olarak şuanki repo olarak eklensin)
+- **Konu:** `mobile/clearpay` Cursor’da ayrı “current repo” mı, iç içe `git init` mı, yoksa aynı GitHub repo + workspace klasörü mü?
+- **Seçenekler:**
+  1. `mobile/clearpay` içinde ikinci `git init` / ayrı remote — hayır (TARTISMA iki yer, submodule karmaşası).
+  2. **Aynı repo:** `HalilMertDeveli/clearpay` içinde `mobile/clearpay`. `ClearPay.code-workspace` iki klasör (site + Flutter). `ClearPay.slnx` Flutter içermez (T-061).
+  3. Yalnızca ajan kökünü `mobile/` yapmak — hayır (T-062).
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** Tek kasa, tek git; Flutter ikinci istemci klasörü. Ajanlar Dart’ta, TARTISMA kökte.
+- **Sonra hangi dosya:** `ClearPay.code-workspace`, `.gitignore` (ephemeral/local.properties), `mobile/clearpay` kaynak git’te. HANDOFF append. `git init` yok.
+
+
+
+
+---
+
 
