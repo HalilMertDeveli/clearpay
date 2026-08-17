@@ -16,10 +16,11 @@ class WalletLiveHub {
     required String baseUrl,
     required String? Function() token,
     required void Function() onChanged,
+    Duration pollEvery = const Duration(seconds: 8),
   }) async {
     await dispose();
     if (!isAndroidHost) {
-      _poll = Timer.periodic(const Duration(seconds: 8), (_) => onChanged());
+      _poll = Timer.periodic(pollEvery, (_) => onChanged());
       // #region agent log
       agentDebugLog(
         hypothesisId: 'D',

@@ -98,7 +98,7 @@ flutter doctor
 flutter run -d emulator-5554
 ```
 
-Windows desktop JWT (optional): `flutter run -d windows`. Store listing / HTTPS live URL: TASK-16 (you click `az login`). CI stays `dotnet test`. Flutter **web platform is not configured** (T-087); the website is Razor. Language chrome TR/EN/DE/FR matches the site (T-088); not a 9th screen.
+Windows desktop JWT (optional): `flutter run -d windows`. Store listing / HTTPS live URL: TASK-16 (you click `az login`). CI runs `dotnet test` and `flutter test`. Flutter **web platform is not configured** (T-087); the website is Razor. Language chrome TR/EN/DE/FR matches the site (T-088); not a 9th screen. Manual click list: [`docs/SMOKE.md`](../../docs/SMOKE.md).
 
 ## Firebase (client only)
 

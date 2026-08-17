@@ -208,6 +208,18 @@ public sealed class WalletApiTests : IClassFixture<ClearPayWebFactory>
         add.StatusCode.Should().Be(HttpStatusCode.Created);
         using var list = await GetJsonAsync(client, token!, "/api/cards");
         list.RootElement.GetProperty("items").GetArrayLength().Should().Be(1);
+
+        var mc = await PostJsonAsync(
+            client,
+            token!,
+            "/api/cards",
+            new { number = "5555555555554444", label = "MC Demo" });
+        mc.StatusCode.Should().Be(HttpStatusCode.Created);
+        var mcBody = await mc.Content.ReadAsStringAsync();
+        using var mcDoc = JsonDocument.Parse(mcBody);
+        mcDoc.RootElement.GetProperty("scheme").GetString().Should().Be("Mastercard");
+        mcDoc.RootElement.GetProperty("last4").GetString().Should().Be("4444");
+        mcBody.Should().NotContain("5555555555554444");
     }
 
     [Fact]

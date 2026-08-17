@@ -7,16 +7,21 @@ import '../auth/token_store.dart';
 import '../debug_agent_log.dart';
 import '../platform/host.dart';
 
-String defaultApiBase() {
-  // CLEARPAY_API only. No MySQL dart-define: ledger is C# SQL Server (T-077 / T-061).
-  const fromEnv = String.fromEnvironment('CLEARPAY_API');
+/// Android emulator reaches the host Razor site via 10.0.2.2 (T-100).
+String apiBaseFor({required bool android, String fromEnv = ''}) {
   if (fromEnv.isNotEmpty) {
     return fromEnv;
   }
-  if (isAndroidHost) {
+  if (android) {
     return 'http://10.0.2.2:5153';
   }
   return 'http://localhost:5153';
+}
+
+String defaultApiBase() {
+  // CLEARPAY_API only. No MySQL dart-define: ledger is C# SQL Server (T-077 / T-061).
+  const fromEnv = String.fromEnvironment('CLEARPAY_API');
+  return apiBaseFor(android: isAndroidHost, fromEnv: fromEnv);
 }
 
 String newIdempotencyKey() {
@@ -214,16 +219,23 @@ List<T> _items<T>(Map<String, dynamic> json, T Function(Map<String, dynamic>) ma
 }
 
 class CardSnapshot {
-  CardSnapshot({required this.last4, required this.label, required this.accountHint});
+  CardSnapshot({
+    required this.last4,
+    required this.label,
+    required this.accountHint,
+    this.scheme = 'Unknown',
+  });
 
   final String last4;
   final String label;
   final String accountHint;
+  final String scheme;
 
   factory CardSnapshot.fromJson(Map<String, dynamic> json) => CardSnapshot(
         last4: '${json['last4'] ?? ''}',
         label: '${json['label'] ?? ''}',
         accountHint: '${json['accountHint'] ?? json['last4'] ?? ''}',
+        scheme: '${json['scheme'] ?? 'Unknown'}',
       );
 }
 
@@ -516,8 +528,15 @@ class ClearPayClient {
     return _items(json, CardSnapshot.fromJson);
   }
 
-  Future<void> addCard({required String last4, required String label}) async {
-    await _postJson('/api/cards', {'last4': last4, 'label': label}, money: false);
+  Future<void> addCard({String? last4, String? number, required String label}) async {
+    final body = <String, dynamic>{'label': label};
+    final pan = (number ?? '').replaceAll(RegExp(r'\D'), '');
+    if (pan.length >= 13) {
+      body['number'] = pan;
+    } else {
+      body['last4'] = last4 ?? pan;
+    }
+    await _postJson('/api/cards', body, money: false);
   }
 
   Future<PostedMoney> transfer({

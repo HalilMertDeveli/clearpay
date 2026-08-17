@@ -27,6 +27,10 @@
                 <div class="live-card-face live-card-front">
                     <p class="live-card-brand">ClearPay</p>
                     <p class="live-card-scheme" data-card-scheme>@L["CardSchemeUnknown"]</p>
+                    <div class="scheme-mark" aria-hidden="true">
+                        <span class="scheme-orb scheme-orb--a"></span>
+                        <span class="scheme-orb scheme-orb--b"></span>
+                    </div>
                     <p class="live-card-pan" data-card-pan>•••• •••• •••• ••••</p>
                     <div class="live-card-meta">
                         <p class="live-card-name" data-card-name data-placeholder="@L["CardHolder"]">@L["CardHolder"]</p>
@@ -87,8 +91,12 @@
             <ul class="bound-card-list">
                 @foreach (var card in Model.Cards)
                 {
-                    <li class="bound-card">
+                    <li class="bound-card" data-scheme="@card.Scheme.ToLowerInvariant()">
                         <span class="bound-card-scheme">@card.Scheme</span>
+                        <span class="bound-card-mark" aria-hidden="true">
+                            <span class="scheme-orb scheme-orb--a"></span>
+                            <span class="scheme-orb scheme-orb--b"></span>
+                        </span>
                         <span class="bound-card-pan">****@card.Last4</span>
                         <span class="bound-card-name">@card.Label</span>
                         <a class="btn" asp-page="/YukleCek" asp-route-kart="@card.Last4" asp-fragment="yukle">@L["LoadFromCard"]</a>

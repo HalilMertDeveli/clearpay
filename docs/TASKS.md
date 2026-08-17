@@ -38,6 +38,8 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [x] UI: web+Flutter kimlik paritesi — kayıt telefon+tür, giriş TC demo, Flutter 4 dil (T-088; TASK numarası değil, 8 ekran aynı)
 - [x] UI: TR/EN/DE/FR gerçekten UI değiştirir — web cookie `c=` + Flutter `L()` 8 işlem (T-090; TASK numarası değil, 8 ekran aynı)
 - [x] UI: Kartlarım `/kartlar` — canlı CSS kart önizleme, son 4 kayıt, yükle mevcut gateway (T-097; ekran 9 kullanıcı isteği)
+- [x] UI: Visa/Mastercard kart yüzü — ISO BIN + görünüm, web + Flutter (T-103; TASK numarası değil, ekran 9 aynı)
+- [x] UI: web+Flutter Android smoke — manuel SMOKE + DualSurface xUnit + `flutter test` CI (T-100; TASK numarası değil, TASK-16 durur)
 
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
@@ -56,9 +58,11 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - T-079: dekont PDF (aynı SQL fiş). Razor `handler=Pdf` + `GET /api/receipts/{id}/pdf`. TASK-16 Todo.
 - T-069: Flutter başarı → Dekont; PDF byte API’den. Örnek `aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001`. TASK-16 Todo.
 - T-087: Flutter `web/` yok. Site Razor. `flutter run -d chrome` yok. TASK-16 Todo.
+- T-100: web+Flutter Android smoke (`docs/SMOKE.md`, DualSurface xUnit, `flutter test` CI). TASK-16 Todo.
 - T-088: Razor kayıt telefon+AccountKind; giriş TC demo; Flutter TR/EN/DE/FR chrome. Web forgot / QR web / Azure durur. TASK-16 Todo.
 - T-090: aynı 4 dil iki yüzeyde UI’yı sürer (Flutter 8 işlem `L()`; web picker/`c=`). 5. dil / 9. ekran / Flutter Chrome yok. TASK-16 Todo.
 - T-084: Flutter launcher navy C + teal halka (mipmap/AppIcon). TASK-16 Todo.
+- T-103: Visa/Mastercard yüzü ISO BIN (web+Flutter). Resmi logo yok. PAN SQL yok. TASK-16 Todo.
 - T-086: Flutter şifre kurtarma + telefon + Firebase Auth (web Razor forgot **park**). TASK-16 Todo.
 - TASK-12: `ConnectionStrings:RabbitMq` yok/düşer → log publisher; Hangfire yedek. Health `rabbit` up/down/off. CloudAMQP hesabı açılmaz.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir

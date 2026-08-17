@@ -77,6 +77,20 @@ class L {
   String get withdraw => _p('Çek', 'Withdraw', 'Abheben', 'Retirer');
   String get movements => _p('Hareketler', 'Activity', 'Umsätze', 'Mouvements');
   String get movementShort => _p('Hareket', 'Activity', 'Umsatz', 'Mouvement');
+  String get cards => _p('Kartlarım', 'Cards', 'Karten', 'Cartes');
+  String get cardsLede => _p(
+        'Numara Visa veya Mastercard yüzünü seçer. Tam numara kaydedilmez.',
+        'The number picks a Visa or Mastercard face. The full number is not stored.',
+        'Die Nummer wählt Visa- oder Mastercard-Gesicht. Die volle Nummer wird nicht gespeichert.',
+        'Le numéro choisit Visa ou Mastercard. Le numéro complet n’est pas enregistré.',
+      );
+  String get cardNumber => _p('Kart numarası', 'Card number', 'Kartennummer', 'Numéro de carte');
+  String get cardHolder => _p('Kart üzerindeki ad', 'Name on card', 'Name auf der Karte', 'Nom sur la carte');
+  String get cardExpiry => _p('SKT', 'Expiry', 'Ablauf', 'Expiration');
+  String get cardCvv => _p('CVV (kaydedilmez)', 'CVV (not stored)', 'CVV (nicht gespeichert)', 'CVV (non enregistré)');
+  String get cardNickname => _p('Kart adı', 'Card nickname', 'Kartenname', 'Nom de la carte');
+  String get noLinkedCard => _p('Kayıtlı kart yok.', 'No linked card.', 'Keine verknüpfte Karte.', 'Aucune carte liée.');
+  String get loadFromCard => _p('Bu karttan cüzdana yükle', 'Load wallet from this card', 'Wallet von dieser Karte laden', 'Recharger depuis cette carte');
   String get receipt => _p('Dekont', 'Receipt', 'Beleg', 'Reçu');
   String get receiptFromList => _p('Hareketler listesinden', 'From the activity list', 'Aus der Umsatzliste', 'Depuis la liste');
   String get admin => _p('Admin', 'Admin', 'Admin', 'Admin');

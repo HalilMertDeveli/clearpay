@@ -1546,4 +1546,31 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-102 — 2026-08-17 — README daha görsel (GitHub yüzeyi)
+
+- **Kim:** Designer + Coder (kullanıcı: daha görsel README)
+- **Konu:** README metin ağır; marka C + diyagram var, ürün yüzü yok. GitHub SVG kırığı T-101 ile PNG. Papara/YK kopya görsel yok. 10. ekran yok.
+- **Seçenekler:**
+  1. Yalnız mevcut iki diyagram — kullanıcı “daha görsel” dedi.
+  2. **Kazanan:** PNG marka + hero + kural şeridi + iki istemci; gerçek `/giris` ekran görüntüsü (localhost). README EN/TR (DE/FR hero). Demo disclaimer durur. `UPDATE Balance` yok. URL uydurulmaz.
+  3. Canva/Figma sahte banka mockup — MARKA red.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** 1 isteği karşılamaz. 3 marka. 2 GitHub’da görünen PNG + gerçek Razor.
+- **Sonra hangi dosya:** `docs/assets/*`, `README.md` / `README.tr.md` (+ DE/FR üst). HANDOFF **append**.
+
+---
+
+## T-103 — 2026-08-17 — Visa / Mastercard yüzü numara düzeltmesi
+
+- **Kim:** Orchestrator (T-101 README SVG’ye ait; Visa/MC karar aynı, numara çakıştı)
+- **Konu:** ISO BIN kart yüzü web+Flutter. Yeni olgu: T-101 = GitHub SVG/PNG. Visa/MC işi **T-103**.
+- **Seçenekler:**
+  1. T-101 Visa bloğunu silmek — yasak (overwrite yok).
+  2. **Kazanan:** Karar T-103; içerik bir üstteki Visa/MC kazanan 3 ile aynı.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** Numara çakışması; karar değişmedi.
+- **Sonra hangi dosya:** Coder aynı OWN (Kartlar + Flutter Kartlarım). HANDOFF **append**.
+
+---
+
 

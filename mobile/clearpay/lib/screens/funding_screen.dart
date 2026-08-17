@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
+import '../cards/card_network.dart';
+import '../cards/live_payment_card.dart';
 import '../l10n/locale_scope.dart';
 import '../theme.dart';
 import 'receipt_screen.dart';
 
 class FundingScreen extends StatefulWidget {
-  const FundingScreen({super.key, required this.api, this.liveTick = 0});
+  const FundingScreen({
+    super.key,
+    required this.api,
+    this.liveTick = 0,
+    this.initialAccount,
+  });
 
   final ClearPayClient api;
   final int liveTick;
+  final String? initialAccount;
 
   @override
   State<FundingScreen> createState() => _FundingScreenState();
@@ -28,6 +36,9 @@ class _FundingScreenState extends State<FundingScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialAccount != null && widget.initialAccount!.isNotEmpty) {
+      _account.text = widget.initialAccount!;
+    }
     _loadCards();
   }
 
@@ -121,12 +132,20 @@ class _FundingScreenState extends State<FundingScreen> {
       children: [
         Text(l.linkedCard, style: const TextStyle(fontWeight: FontWeight.w600)),
         if (_frozen) Text(l.frozenNoFunding, style: const TextStyle(color: navy)),
-        for (final card in _cards)
+        for (final card in _cards) ...[
+          const SizedBox(height: 8),
+          LivePaymentCard(
+            digits: '',
+            last4: card.last4,
+            holder: card.label,
+            scheme: CardNetwork.parseStored(card.scheme),
+          ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text('${card.label} · ${card.accountHint}'),
+            title: Text('${CardNetwork.label(CardNetwork.parseStored(card.scheme))} · ${card.accountHint}'),
             onTap: () => setState(() => _account.text = card.accountHint),
           ),
+        ],
         TextField(controller: _last4, decoration: InputDecoration(labelText: l.last4)),
         TextField(controller: _label, decoration: InputDecoration(labelText: l.cardLabel)),
         TextButton(onPressed: _addCard, child: Text(l.addCard)),

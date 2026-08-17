@@ -329,5 +329,5 @@ Flutter: sol çekmece + alt sekme durur; dondurulmuş cüzdanda Havale/Yükle/Ç
 
 ### 13) Kartlarım — canlı önizleme (T-097, ekran 9)
 
-Kullanıcı isteği: kart bağla, yazarken kart yüzü. Rota `/kartlar`. Navy `#1B2A4A` 3D CSS kart (ön: numara gruplu / ad / SKT; CVV odakta arka yüz `rotateY(180deg)`, 220ms). Şema yazısı Visa / Mastercard / Troy (BIN; resmi logo yok). Yapı Kredi **kart adı**, şema değil. CVV input `name` yok. Kayıt son 4 + ad + şema. «Bu karttan cüzdana yükle» → `/yukle-cek?kart=`. Footer demo one-liner. Sol menü + özet daire. Flutter 3D park.
+Kullanıcı isteği: kart bağla, yazarken kart yüzü. Rota `/kartlar`. 3D CSS kart (ön: numara gruplu / ad / SKT; CVV odakta arka yüz `rotateY(180deg)`, 220ms). Şema **ISO BIN** (T-103): Visa `4…` mavi yüz + VISA yazısı; Mastercard `51–55` / `2221–2720` koyu yüz + iki örtüşen daire (geometrik; resmi SVG yok); Troy `9792` teal. Yapı Kredi **kart adı**, şema değil. CVV input `name` yok. Kayıt son 4 + ad + şema. «Bu karttan cüzdana yükle» → `/yukle-cek?kart=`. Flutter Kartlarım aynı BIN yüzü (T-097 park kalktı). Footer demo one-liner.
 

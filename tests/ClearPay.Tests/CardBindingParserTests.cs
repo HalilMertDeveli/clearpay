@@ -36,6 +36,15 @@ public sealed class CardBindingParserTests
     }
 
     [Fact]
+    public void Mastercard_2_series_bin_is_detected()
+    {
+        CardBindingParser.TryParse("2223003122003222", "MC Demo", out var last4, out var scheme, out _)
+            .Should().BeTrue();
+        last4.Should().Be("3222");
+        scheme.Should().Be(CardNetwork.Mastercard);
+    }
+
+    [Fact]
     public void Last4_only_is_unknown_scheme()
     {
         CardBindingParser.TryParse("4242", "Maas", out var last4, out var scheme, out _)

@@ -33,11 +33,11 @@ Kurumsal .NET mülakatında anlatılır, internette açılan demo. Kapı: Intert
 | 6 | Hareketler | Tarih, işlem no, tür, karşı taraf, tutar, durum. Filtre + sayfa | Filtrele, Dekont |
 | 7 | Dekont | Tek işlem: taraflar, tutar, correlation id, zaman | Geri |
 | 8 | Admin | Kullanıcı dondur. Başarısız kuyruk. Audit arama | Kuyruğa al, Dondur, Ara |
-| 9 | Kartlarım | Bağlı kart listesi (şema + son 4 + ad). Canlı kart önizlemesi. Demo — tam PAN/CVV kaydı yok | Kart ekle, Bu karttan cüzdana yükle |
+| 9 | Kartlarım | Bağlı kart listesi (şema + son 4 + ad). Canlı kart önizlemesi: Visa `4…` / Mastercard `51–55`+`2221–2720` / Troy `9792` (ISO BIN; PAN kaydı yok) | Kart ekle, Bu karttan cüzdana yükle |
 
 Sol menü her sitede aynı: **Özet, Havale, Kartlarım, Yükle/Çek, Hareketler, Admin** (Admin yalnızca role göre). Ekran 9 kullanıcı isteğiyle eklendi (T-097); gerçek POS / 3DS / banka API yok.
 
-Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Diller: **Türkçe (varsayılan), English, Deutsch, Français**. Site cookie `c=tr|en|de|fr`; Flutter aynı dört dil (yerel dosya, T-088/T-090; 8 işlem `L()`). Dil seçici **layout chrome** (sol menü / üst çubuk / çekmece); SPEC ekranı değil. Giriş TC = demo seed (Mernis yok). Kayıt telefonu Identity `PhoneNumber` (Razor zorunlu; JWT API isteğe bağlı). Ads/Papara metni çevrilmez. Görsel (T-040): navy `#1B2A4A`, beyaz zemin, **gölge/gradient yok**; kısa CSS motion (150–250ms). Kartlarım ekran 9 (T-097).
+Arayüz tahmini mockup’lara yakın Razor; kesin Figma değildir. Diller: **Türkçe (varsayılan), English, Deutsch, Français**. Site cookie `c=tr|en|de|fr`; Flutter aynı dört dil (yerel dosya, T-088/T-090; 8 işlem `L()`). Dil seçici **layout chrome** (sol menü / üst çubuk / çekmece); SPEC ekranı değil. Giriş TC = demo seed (Mernis yok). Kayıt telefonu Identity `PhoneNumber` (Razor zorunlu; JWT API isteğe bağlı). Ads/Papara metni çevrilmez. Görsel (T-040): navy `#1B2A4A`, beyaz zemin, **gölge/gradient yok**; kısa CSS motion (150–250ms). Kartlarım ekran 9 (T-097, yüz T-103).
 
 ## Para kuralları (bozulmaz)
 1. **Çift kayıt defteri:** her harekette + ve − satırı (`LedgerEntry`)

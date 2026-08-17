@@ -245,11 +245,19 @@ class _OverviewScreenState extends State<OverviewScreen> {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.credit_card_outlined),
+            title: Text(l.cards),
+            onTap: () {
+              Navigator.pop(ctx);
+              widget.onOpenTab?.call(2);
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.savings_outlined),
             title: Text(l.topUpWithdraw),
             onTap: () {
               Navigator.pop(ctx);
-              widget.onOpenTab?.call(2);
+              widget.onOpenTab?.call(3);
             },
           ),
           ListTile(
@@ -257,7 +265,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
             title: Text(l.movementsReceipt),
             onTap: () {
               Navigator.pop(ctx);
-              widget.onOpenTab?.call(3);
+              widget.onOpenTab?.call(4);
             },
           ),
           if (widget.api.isAdmin)
@@ -266,7 +274,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
               title: Text(l.admin),
               onTap: () {
                 Navigator.pop(ctx);
-                widget.onOpenTab?.call(4);
+                widget.onOpenTab?.call(5);
               },
             ),
           const Divider(),
@@ -351,13 +359,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     icon: Icons.add_card_outlined,
                     label: l.topUp,
                     enabled: !_wallet!.isFrozen,
-                    onTap: () => widget.onOpenTab?.call(2),
+                    onTap: () => widget.onOpenTab?.call(3),
                   ),
                   _QuickTile(
                     icon: Icons.south_west,
                     label: l.withdraw,
                     enabled: !_wallet!.isFrozen,
-                    onTap: () => widget.onOpenTab?.call(2),
+                    onTap: () => widget.onOpenTab?.call(3),
                   ),
                   _QuickTile(icon: Icons.qr_code_2, label: l.qrReceive, onTap: _showReceiveQr),
                   _QuickTile(
@@ -395,7 +403,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () => widget.onOpenTab?.call(3),
+                    onPressed: () => widget.onOpenTab?.call(4),
                     child: Text(l.viewAll),
                   ),
                 ],

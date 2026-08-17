@@ -184,10 +184,11 @@ void main() {
     expect(find.text('Özet'), findsWidgets);
     expect(find.text('Havale'), findsWidgets);
     expect(find.text('Yükle / Çek'), findsOneWidget);
+    expect(find.text('Kartlarım'), findsWidgets);
     expect(find.text('Hareketler'), findsWidgets);
     expect(find.text('Dekont'), findsOneWidget);
     expect(find.text('Admin'), findsWidgets);
-    expect(find.text('Çıkış'), findsOneWidget);
+    expect(find.text('Çıkış', skipOffstage: false), findsOneWidget);
     expect(find.text('Demo — sahte banka gateway.'), findsWidgets);
   });
 

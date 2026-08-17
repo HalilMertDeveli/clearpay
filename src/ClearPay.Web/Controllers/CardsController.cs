@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ClearPay.Application.Funding;
 using ClearPay.Application.Ports;
 using ClearPay.Web.Api;
 using Microsoft.AspNetCore.Mvc;
@@ -45,11 +46,20 @@ public sealed class CardsController : ControllerBase
         if (string.IsNullOrWhiteSpace(userId))
             return Unauthorized();
 
+        var panOrLast4 = string.IsNullOrWhiteSpace(body?.Number) ? body?.Last4 : body.Number;
+        if (!CardBindingParser.TryParse(panOrLast4, body?.Label, out var last4, out var scheme, out var label))
+        {
+            return Problem(
+                title: "Card not added",
+                detail: "Last4 must be 4 digits, or number 13–19 digits. Ledger unchanged.",
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+
         var added = await _cards.AddAsync(
             userId,
-            body?.Last4 ?? string.Empty,
-            body?.Label ?? string.Empty,
-            scheme: null,
+            last4,
+            label,
+            scheme,
             cancellationToken).ConfigureAwait(false);
         if (added is null)
         {

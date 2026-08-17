@@ -173,11 +173,45 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         bind.StatusCode.Should().Be(HttpStatusCode.OK);
         var bound = await bind.Content.ReadAsStringAsync();
         bound.Should().Contain("Visa");
+        bound.Should().Contain("data-scheme=\"visa\"");
+        bound.Should().Contain("scheme-orb");
         bound.Should().Contain("****1111");
         bound.Should().Contain("Yapı Kredi");
         bound.Should().Contain("Bu karttan cüzdana yükle");
         bound.Should().NotContain("4111111111111111");
         bound.Should().Contain("/yukle-cek");
+    }
+
+    [Fact]
+    public async Task Kartlar_mastercard_bin_stores_scheme_not_pan()
+    {
+        var client = CreateClient();
+        if (!await LoginPageExistsAsync(client))
+        {
+            return;
+        }
+
+        var email = $"kartlar.mc.{Guid.NewGuid():N}@clearpay.test";
+        var registerGet = await client.GetAsync("/Account/Register");
+        var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Mastercard Deneme")));
+
+        var html = await client.GetStringAsync("/kartlar");
+        var bindToken = AuthFormToken.Get(html);
+        var bind = await client.PostAsync("/kartlar?handler=Add", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["NewCard.Number"] = "5555555555554444",
+            ["NewCard.Holder"] = "ALI VELI",
+            ["NewCard.Label"] = "MC Demo",
+            ["__RequestVerificationToken"] = bindToken
+        }));
+        bind.StatusCode.Should().Be(HttpStatusCode.OK);
+        var bound = await bind.Content.ReadAsStringAsync();
+        bound.Should().Contain("Mastercard");
+        bound.Should().Contain("data-scheme=\"mastercard\"");
+        bound.Should().Contain("****4444");
+        bound.Should().NotContain("5555555555554444");
     }
 
     [Fact]

@@ -24,11 +24,15 @@
 <section class="panel card-panel" id="kart">
     <h2 class="panel-title">@L["LinkedCard"]</h2>
     <p class="field-hint">@L["CardHint"] @L["DemoDisclaimer"]</p>
-    <article class="demo-card" aria-label="@L["LinkedCard"]">
+    <article class="demo-card" data-scheme="@((Model.SelectedCard?.Scheme ?? "Unknown").ToLowerInvariant())" aria-label="@L["LinkedCard"]">
         <p class="demo-card-brand">ClearPay</p>
+        <p class="demo-card-badge">@(Model.SelectedCard?.Scheme ?? L["DemoWallet"].Value)</p>
+        <div class="scheme-mark" aria-hidden="true">
+            <span class="scheme-orb scheme-orb--a"></span>
+            <span class="scheme-orb scheme-orb--b"></span>
+        </div>
         <p class="demo-card-pan">•••• •••• •••• @(Model.SelectedCard?.Last4 ?? "••••")</p>
         <p class="demo-card-name">@(Model.SelectedCard?.Label ?? "ClearPay Demo")</p>
-        <p class="demo-card-badge">@(Model.SelectedCard?.Scheme ?? L["DemoWallet"].Value)</p>
     </article>
     @if (Model.Cards.Count == 0)
     {

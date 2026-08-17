@@ -9,6 +9,7 @@ import '../l10n/language_strip.dart';
 import '../l10n/locale_scope.dart';
 import '../theme.dart';
 import 'admin_screen.dart';
+import 'cards_screen.dart';
 import 'funding_screen.dart';
 import 'login_screen.dart';
 import 'movements_screen.dart';
@@ -39,9 +40,12 @@ class _ShellScreenState extends State<ShellScreen> {
   final WalletLiveHub _live = WalletLiveHub();
   TransferPrefill? _prefill;
   int _prefillNonce = 0;
+  String? _fundingAccount;
+  int _fundingNonce = 0;
   var _leaving = false;
 
-  static const _movementsIndex = 3;
+  static const _fundingIndex = 3;
+  static const _movementsIndex = 4;
 
   String get _kind =>
       normalizeAccountKind(widget.api.accountKind ?? widget.kindStore.kind);
@@ -103,6 +107,14 @@ class _ShellScreenState extends State<ShellScreen> {
     });
   }
 
+  void _openFundingFromCard(String accountHint) {
+    setState(() {
+      _fundingAccount = accountHint;
+      _fundingNonce++;
+      _index = _fundingIndex;
+    });
+  }
+
   void _selectDrawerDestination(int i) {
     Navigator.of(context).pop();
     _openTab(i);
@@ -125,13 +137,24 @@ class _ShellScreenState extends State<ShellScreen> {
         api: widget.api,
         prefill: _prefill,
       ),
-      FundingScreen(api: widget.api, liveTick: _liveTick),
+      CardsScreen(
+        api: widget.api,
+        liveTick: _liveTick,
+        onLoadFromCard: _openFundingFromCard,
+      ),
+      FundingScreen(
+        key: ValueKey('fund-$_fundingNonce'),
+        api: widget.api,
+        liveTick: _liveTick,
+        initialAccount: _fundingAccount,
+      ),
       MovementsScreen(api: widget.api, liveTick: _liveTick),
       if (admin) AdminScreen(api: widget.api, liveTick: _liveTick),
     ];
     final titles = [
       l.overview,
       l.transfer,
+      l.cards,
       l.topUpWithdraw,
       l.movements,
       if (admin) l.admin,
@@ -169,6 +192,11 @@ class _ShellScreenState extends State<ShellScreen> {
             icon: const Icon(Icons.swap_horiz),
             selectedIcon: const Icon(Icons.swap_horiz),
             label: Text(l.transfer),
+          ),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.credit_card_outlined),
+            selectedIcon: const Icon(Icons.credit_card),
+            label: Text(l.cards),
           ),
           NavigationDrawerDestination(
             icon: const Icon(Icons.savings_outlined),
@@ -224,6 +252,7 @@ class _ShellScreenState extends State<ShellScreen> {
             label: l.overview,
           ),
           NavigationDestination(icon: const Icon(Icons.swap_horiz), label: l.transfer),
+          NavigationDestination(icon: const Icon(Icons.credit_card_outlined), label: l.cards),
           NavigationDestination(icon: const Icon(Icons.savings_outlined), label: l.topUp),
           NavigationDestination(icon: const Icon(Icons.receipt_long_outlined), label: l.movementShort),
           if (admin)

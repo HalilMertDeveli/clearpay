@@ -1026,7 +1026,7 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 ## 2026-08-17 — web + Flutter Android smoke (T-100; Tester+Coder+Deploy)
 
 - **OWN:** TARTISMA **T-100**. TASK-16 Todo durur. 10. ekran yok. `UPDATE Balance` yok. Hive/Firestore kasa yok. Flutter Chrome yok.
-- **Landed:** Manuel [`SMOKE.md`](SMOKE.md). xUnit `DualSurfaceSmokeTests` (JWT+cookie TC+hub+`site.js` reload yok). Flutter `android_surface_test` (10.0.2.2, poll, TC→JWT, 409). CI `flutter test` job.
+- **Landed:** Manuel [`SMOKE.md`](SMOKE.md). xUnit `DualSurfaceSmokeTests` (JWT+cookie TC+hub+`site.js` reload yok). Flutter `android_surface_test` (10.0.2.2, poll, TC→JWT, 409). CI `flutter test` job. `dotnet test -c Release` **168 geçti**; `flutter test` **17 geçti**.
 - **Sen tıklarsın:** `dotnet test -c Release`. `cd D:\ClearPay\clearpay\mobile\clearpay` → `$env:TEMP='D:\ClearPay\tmp'; $env:TMP='D:\ClearPay\tmp'; flutter test`. Elle: site `:5153` + `flutter run -d emulator-5554` ([SMOKE.md](SMOKE.md) tablo).
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
@@ -1042,5 +1042,12 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **OWN:** TARTISMA **T-101**. SVG kontrol karakteri GitHub’da boş kalıyordu. PNG `docs/assets/*.png`. TASK-16 Todo.
 - **Landed:** Geçerli SVG + PNG; README `<img>` PNG.
 - **Sen tıklarsın:** https://github.com/HalilMertDeveli/clearpay/blob/cursor/yol-haritasi-career-first/README.md — katman ve çift kayıt görselleri.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Visa / Mastercard kart yüzü (T-103; Coder)
+
+- **OWN:** TARTISMA **T-103** (ISO BIN; resmi logo yok). T-097 `/kartlar` durur. Flutter Kartlarım park kalktı. `POST /api/cards` `number` → last4+scheme; PAN SQL yok. `IFundingExecutor` durur. TASK-16 Todo. `UPDATE Balance` yok.
+- **Landed:** Visa `4…` mavi + VISA yazısı; Mastercard `51–55` / `2221–2720` koyu + iki daire; Troy `9792` teal. Web canlı önizleme + Yükle/Çek seçili kart. Flutter Kartlarım sekmesi aynı yüz.
+- **Sen tıklarsın:** `cd D:\ClearPay\clearpay` → `dotnet run --project src\ClearPay.Web --launch-profile http`. http://localhost:5153/giris → Kartlarım. `4111 1111 1111 1111` Visa mavi; `5555 5555 5555 4444` Mastercard daire. Mobil: `cd mobile\clearpay` → `flutter run -d emulator-5554` → Kartlarım.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
