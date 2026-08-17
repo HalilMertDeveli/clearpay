@@ -19,15 +19,13 @@ Bütün hesaplar **`halilmertdeveliii@gmail.com`** (Gmail). Yeni Microsoft / Goo
 | **Azure** | Portal hesabı bu Gmail iddiası; bu makinede `az` yok → abonelik görünmedi | Abonelik uydurma, Portal açma, URL uydurma |
 | **Search Console / Ads** | Canlı URL sonrası sen; harcama yok | Hesap açma, kampanya, “ucuz havale” |
 
-TASK-16: [`CANLI.md`](CANLI.md) + [`YOL.md`](YOL.md) — **sıradaki tık senin.** `az login` sen; ajan hesabı açmaz, URL uydurmaz.
+TASK-16: [`CANLI.md`](CANLI.md) (T-104). Canlı kök **https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net**. `az login` / `deploy.ps1` **yapma** (mevcut siteyi ezer). Kalan tık: Get publish profile → GitHub secret.
 
 ## Yol haritası — senin tıkların (plan)
 
 Kalıcı metin: [`YOL.md`](YOL.md) (T-059). `src/` yok. TASK listesi şişmez. Bu makinede **`az` hâlâ yok** (2026-08-17 tekrar bakıldı).
 
-1. **TASK-16 HTTPS** — [Azure CLI](https://aka.ms/installazurecliwindows) kur. PowerShell: `az login` (`halilmertdeveliii@gmail.com`).  
-   `cd D:\ClearPay\clearpay` → `.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`  
-   İsim doluysa `-WebAppName hm-clearpay`. Tarayıcıda script’in yazdığı `/api/health` sonra `/giris`. URL’yi sohbete uydurma. Ayrıntı: [`CANLI.md`](CANLI.md).
+1. **TASK-16 HTTPS** — site duruyor; zip yok (`/api/health` 404). Portal **`ClearPay_group` → `ClearPay` → Get publish profile**. GitHub Settings → Secrets → Actions → **`AZURE_WEBAPP_PUBLISH_PROFILE`** (XML; sohbete yapıştırma). Portal startup **`dotnet ClearPay.Web.dll`**, **HTTPS Only On**. SQL + `Jwt__SigningKey` App Settings. Sonra Actions **Azure deploy** (`main`). Tarayıcı: https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net/api/health sonra `/giris`. Production’da `admin@clearpay.test` yok — `/kayit`. Ayrıntı: [`CANLI.md`](CANLI.md).
 2. **Mülakat kanıtı** — URL tarayıcıda **açık olduktan sonra:** GitHub Website = canlı kök. LinkedIn **taslak B** ([`PAZARLAMA.md`](PAZARLAMA.md); kopya [`IK.md`](IK.md)). 15/30 dk: kayıt → özet → havale iki kez → **409**. Ezber: 409 / transaction / outbox.
 3. **Kapı** — Intertech, Softtech, Bileşim, TAV, İGA, uni BT, sanayi, Turkcell **.NET**. CV üç satır README. Java ilanı yok. Adres: [`GELIR.md`](GELIR.md) §5. Ajan İK paneli açmaz.
 4. **Q2 ticari** — white-label veya kapalı devre **şimdi yok**. Avukat + yeni TARTISMA. 9. ekran / satıcı paneli yok. Kendi e-para lisansı kapalı (40 / 105 milyon TL).
@@ -51,7 +49,7 @@ Kalıcı metin: [`YOL.md`](YOL.md) (T-059). `src/` yok. TASK listesi şişmez. B
 
 Playbook: [`PR.md`](PR.md). **Dürüst:** “havale” / “Papara”da #1 olmayız (ücretli tüketici araması + lisans).
 
-- **Canlı URL** — Azure’u **sen** açarsın ([`CANLI.md`](CANLI.md)). Hedef `https://clearpay.azurewebsites.net`, sonra özel domain, HTTPS. TASK-15 Actions yeşil → TASK-16.
+- **Canlı URL** — https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net ([`CANLI.md`](CANLI.md) T-104). Zip + `/giris` hâlâ Halil secret/deploy. Özel domain sonra.
 - **Google** — Search Console doğrulaması **sen**; sitemap/robots/meta ajan ([`SEO.md`](SEO.md)). Title: `ClearPay — ASP.NET Core cüzdan demo`. `/giris` ince kopya indeks olmasın.
 - **Üst sıra (gerçekçi)** — `ClearPay ASP.NET`, `idempotent wallet .NET`, repo, senin adın + ClearPay. README İngilizce, bir LinkedIn/Medium, GitHub topics.
 - **Launch sırası** — 1 yeşil build 2 Azure URL 3 Search Console 4 LinkedIn 5 isteğe Ads ([`ADS.md`](ADS.md); başlıkta Demo, “ucuz havale” yok).

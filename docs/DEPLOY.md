@@ -56,13 +56,15 @@ Oracle EULA `ORACLE_PASSWORD` ile kabul; pirated imaj yok. Redis/Rabbit `docker-
 
 ## Canlı Q1
 
-Tam tıklama: **`docs/CANLI.md`**. Özet:
+Tam tıklama: **`docs/CANLI.md`** (T-104). Özet:
 
-- West Europe, App Service Linux + Azure SQL. Hangfire in-process (`Hangfire__Enabled=true`, SQL storage).
-- Şablon: `infra/main.bicep`. Kullanıcı: `az login` sonra `.\infra\deploy.ps1`.
-- Publish: GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` + variable `AZURE_WEBAPP_NAME`. Workflow `azure-deploy.yml` değişken boşsa atlar.
-- Path: `/`, `/giris`, `/kayit`, `/havale`, `/yukle-cek`, `/hareketler`, `/admin`, `/api/health`.
-- Production Identity Azure SQL. SQLite prod değil.
+- **Canlı kök:** https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net
+- App Service adı **`ClearPay`** (GitHub `AZURE_WEBAPP_NAME`). RG **`ClearPay_group`**. Canada Central. Linux .NET 8, PremiumV2.
+- Hangfire in-process (`Hangfire__Enabled=true`, SQL storage). Identity + ledger = `ConnectionStrings:ClearPay`.
+- `infra/main.bicep` / `deploy.ps1` **unused** — mevcut siteyi ezme.
+- Publish: secret `AZURE_WEBAPP_PUBLISH_PROFILE` (Halil Portal **Get publish profile**). Workflow `azure-deploy.yml` `main` push veya `workflow_dispatch`.
+- Path: `/`, `/giris`, `/kayit`, `/havale`, `/yukle-cek`, `/hareketler`, `/admin`, `/kartlar`, `/api/health`.
+- Production Identity Azure SQL. SQLite prod değil. Production CORS = canlı https origin.
 
 ## Canlı Q2 (sonra)
 

@@ -25,10 +25,10 @@ Papara / FAST / BDDK iddiası yok. Java ilanına bu repo ile girilmez.
 
 TASK-01…15 **Done** (ledger, havale 409, gateway, hareket/dekont, admin, outbox, Redis/Rabbit lokal, test, README, CI, UI).
 
-**Tek açık ürün TASK:** TASK-16 — Azure App Service + Azure SQL, tarayıcıda HTTPS. Ajan Portal / `az login` / DNS açmaz; URL uydurmaz.
+**Tek açık ürün TASK:** TASK-16 — Azure App Service + Azure SQL, tarayıcıda HTTPS. T-104: host kilit; zip yok. Ajan Portal / `az login` / DNS açmaz.
 
 Lokal: repo **`D:\ClearPay\clearpay`**. Docker Desktop → `docker compose up -d` → `dotnet run --project src/ClearPay.Web --launch-profile http` → http://localhost:5153/giris  
-5153 `ERR_CONNECTION_REFUSED` = Kestrel kapalı, SQL hatası değil. Bu makinede `az` CLI **yok** (2026-08-17); URL uydurulmaz.
+5153 `ERR_CONNECTION_REFUSED` = Kestrel kapalı, SQL hatası değil. Canlı tık: [`CANLI.md`](CANLI.md).
 
 ---
 
@@ -41,16 +41,14 @@ Kendi e-para lisansı: kapalı (40 / 105 milyon TL özkaynak)
 
 ### 1. Kanıt — TASK-16 (bu hafta, sen)
 
-Bu makinede `az` CLI yoktu; abonelik listesi uydurulmaz. Infra hazır: `infra/main.bicep`, `infra/deploy.ps1`.
+Portal site duruyor (T-104). `.\infra\deploy.ps1` **çalıştırma** (RG `ClearPay_group` / `ClearPay` ezilir).
 
-1. [Azure CLI](https://aka.ms/installazurecliwindows) kur.
-2. PowerShell: `az login` — `halilmertdeveliii@gmail.com`.
-3. `cd D:\ClearPay\clearpay` → `.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`  
-   İsim doluysa `-WebAppName hm-clearpay`.
-4. GitHub Secrets: `AZURE_WEBAPP_PUBLISH_PROFILE`; Variables: `AZURE_WEBAPP_NAME`.
-5. Tarayıcıda `https://<app>.azurewebsites.net/api/health` sonra `/giris`. Bu URL’yi ajan yazmaz.
+1. Portal **Get publish profile** → GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` (sohbete yapıştırma). Variable `AZURE_WEBAPP_NAME` = `ClearPay` (ajan koydu).
+2. Portal startup `dotnet ClearPay.Web.dll`; HTTPS Only On; SQL + JWT App Settings.
+3. Actions **Azure deploy** on **`main`** (bu feature dalı zip atmaz).
+4. Tarayıcı: https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net/api/health sonra `/giris`. Production seed yok — `/kayit`.
 
-Hedef ad sırası: `clearpay` → `clearpay-wallet` → `hm-clearpay` ([`CANLI.md`](CANLI.md)). Ads yok. Footer: demo.
+Ayrıntı: [`CANLI.md`](CANLI.md). Ads yok. Footer: demo.
 
 ### 2. Kariyer — ilk nakit (SPEC hedefi)
 
@@ -94,7 +92,7 @@ Kendi lisansı: TCMB 30 Haz 2026 özkaynak fatura ÖK 20 milyon / diğer ÖK 40 
 
 | Dönem | Hedef | Kim |
 |-------|--------|-----|
-| Bu hafta | TASK-16 HTTPS | Sen: `az login` + `deploy.ps1` |
+| Bu hafta | TASK-16 HTTPS | Sen: publish-profile secret + Portal startup ([`CANLI.md`](CANLI.md)) |
 | URL+1 | GitHub Website, LinkedIn B, 15 dk prova | Sen yayın; script `IK.md` |
 | 1–3 ay | 5–10 .NET kapısına CV+repo | Sen başvurur |
 | Q2 | Tek tesis PoC veya white-label konuşma | Avukat + yeni TARTISMA |

@@ -1573,4 +1573,32 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-104 — 2026-08-17 — Canlı App Service (Portal ARM; GitHub zip; Bicep unused)
+
+- **Kim:** Orchestrator + Deploy + Coder (Halil Portal ARM JSON verdi; `publishingPassword` null)
+- **Konu:** TASK-16 URL artık uydurma değil. GitHub Actions zip → mevcut Linux App Service. CORS origin gerçek host. Canada Central Halil’in seçimi. `infra/deploy.ps1` bu siteyi ezmez. TASK-16 Done değil: `/api/health` ve `/giris` henüz uygulama yanıtı değil.
+- **Seçenekler:**
+  1. Bicep `.\infra\deploy.ps1` ile `rg-clearpay-weu` / West Europe / `hm-clearpay` — **red** (mevcut `ClearPay_group` / PremiumV2 Linux siteyi ezer).
+  2. **Kazanan:** Portal uygulaması durur. GitHub variable `AZURE_WEBAPP_NAME` = site adı **`ClearPay`**. Canlı kök `https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net`. Production CORS bu origin. `azure-deploy.yml` zip (`main` push veya `workflow_dispatch`). Secret `AZURE_WEBAPP_PUBLISH_PROFILE` uydurulmaz — Halil: Portal **Get publish profile** → GitHub Settings → Secrets → Actions. Bicep unused. Flutter `defaultApiBase` localhost. `UPDATE Balance` yok. 9. ekran yok. README görsel başka ajan.
+  3. CORS’u `https://ClearPay.azurewebsites.net` sanmak — ARM `defaultHostName` unique suffix (`*.canadacentral-01.azurewebsites.net`); tarayıcı Origin eşleşmez.
+- **Karar:** **2.** TASK-16 Todo durur (`/api/health` 404, zip yok).
+- **Neden:** ARM: subscription `c706e53f-1b53-4baa-99fd-e09b63ef8684`, RG **`ClearPay_group`**, name **`ClearPay`**, kind `app,linux`, location Canada Central, `linuxFxVersion` `DOTNETCORE|8.0`, sku PremiumV2, plan `ASP-ClearPaygroup-8f4e`, state Running, host `clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net`, SCM `clearpay-eecuaqc7c5ehbmb5.scm.canadacentral-01.azurewebsites.net`. `httpsOnly` false (Portal’de On önerilir). `appCommandLine` null → Linux zip için startup **`dotnet ClearPay.Web.dll`**. Azure siteConfig `cors` null → uygulama CORS. VNet `ClearPayVnet` / `ClearPayAppSubnet` — SQL firewall Halil Portal (Allow Azure services veya VNet). FTP/publish parolası git’e yok. T-005 West Europe varsayılanı bu siteyi değiştirmez.
+- **Sonra hangi dosya:** Deploy `docs/CANLI.md`, `docs/TASKS.md`, `docs/DEPLOY.md`, `.github/workflows/azure-deploy.yml`. Coder `CorsExtensions.cs`, `appsettings.json`, `appsettings.Production.json`. HANDOFF **append**. `infra/main.bicep` unused (ezilmez). Flutter money yok.
+
+---
+
+## T-105 — 2026-08-17 — GitHub README dil linkleri 404
+
+- **Kim:** Sales + Coder (kullanıcı: English / Türkçe / Deutsch / Français GitHub’da çalışmıyor)
+- **Konu:** Dört dosya `main` ve `cursor/yol-haritasi-career-first` üzerinde duruyor. Dil çubuğu HTML `<a href="README.tr.md">`. Repo kökü `https://github.com/HalilMertDeveli/clearpay` iken bu href `…/clearpay/README.tr.md` olur → **404**. Blob `…/blob/main/README.tr.md` **200**. GitHub native “Translations” dropdown yok (`README.tr.md` adlandırma doğru; GitHub tarayıcı diline göre ana README değiştirmez).
+- **Seçenekler:**
+  1. Mutlak `https://github.com/…/blob/main/README.tr.md` — fork ve yerel klon kırılır; dal sabit `main`.
+  2. **Kazanan:** HTML `<a>` kalkar. Markdown `[Türkçe](./README.tr.md)` (DE/FR/EN aynı). GitHub markdown relative link’i blob’a çevirir. Ortak dizin; `src/` yok. TASK-16 Done değil. URL uydurulmaz.
+  3. GitHub UI dropdown beklemek — ürün yok; `tr` için otomatik şalter yok.
+- **Karar:** **2.**
+- **Neden:** 1 dal/fork kırar. 3 GitHub’da yok. 2 docs’un relative-link kuralı + mevcut dosyalar.
+- **Sonra hangi dosya:** Sales/Coder `README.md`, `README.tr.md`, `README.de.md`, `README.fr.md`, `mobile/clearpay/README.md`. HANDOFF **append**.
+
+---
+
 

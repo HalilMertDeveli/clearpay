@@ -1051,3 +1051,10 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** `cd D:\ClearPay\clearpay` → `dotnet run --project src\ClearPay.Web --launch-profile http`. http://localhost:5153/giris → Kartlarım. `4111 1111 1111 1111` Visa mavi; `5555 5555 5555 4444` Mastercard daire. Mobil: `cd mobile\clearpay` → `flutter run -d emulator-5554` → Kartlarım.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — GitHub ↔ Azure live bind (T-104; Deploy+Coder)
+
+- **OWN:** TARTISMA **T-104**. TASK-16 Todo durur (`/api/health` **404**). Bicep unused. Flutter money yok. README görsel yok. Secret git’e yok. `az login` yok.
+- **Landed:** Canlı kök `https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net`. App Service **`ClearPay`**, RG **`ClearPay_group`**, Canada Central. GitHub variable `AZURE_WEBAPP_NAME=ClearPay`. CORS + Production origins o https. `azure-deploy.yml` yorum + `main` zip. `AZURE_WEBAPP_PUBLISH_PROFILE` GitHub’da **yok** (dispatch çalıştırılmadı).
+- **Sen tıklarsın:** Portal `ClearPay_group` → `ClearPay` → **Get publish profile** → GitHub Settings → Secrets → Actions → `AZURE_WEBAPP_PUBLISH_PROFILE` (XML; sohbete yapıştırma). Startup Command `dotnet ClearPay.Web.dll`. HTTPS Only On. Connection string `ClearPay` + `Jwt__SigningKey`. SQL firewall (VNet veya Allow Azure services). Sonra merge/push **`main`** veya Actions **Azure deploy**. `/giris` Production seed yok — `/kayit`.
+- **Sıradaki ürün:** TASK-16 Done = health 200 + `/giris` açılır.
+

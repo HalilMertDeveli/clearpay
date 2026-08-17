@@ -2,7 +2,7 @@ namespace ClearPay.Web;
 
 /// <summary>
 /// T-061: browser/Flutter-web only. Native Flutter does not send Origin.
-/// Production: configured https roots. Development: localhost / 127.0.0.1 / 10.0.2.2.
+/// Production: Cors:Origins (T-104 live host). Development: localhost / 127.0.0.1 / 10.0.2.2.
 /// </summary>
 public static class CorsExtensions
 {
@@ -17,7 +17,7 @@ public static class CorsExtensions
             .Where(static origin => !string.IsNullOrWhiteSpace(origin))
             .ToArray();
         if (live.Length == 0)
-            live = ["https://clearpay.azurewebsites.net"];
+            live = ["https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net"];
 
         services.AddCors(options =>
         {

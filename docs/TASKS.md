@@ -3,7 +3,7 @@
 Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a taşır.
 
 ## Todo
-- [ ] TASK-16: Azure App Service + Azure SQL (açık URL) — **Halil:** `az login` + `.\infra\deploy.ps1` (ajan hesap/URL uydurmaz)
+- [ ] TASK-16: Azure App Service + Azure SQL — host kilit (T-104); zip yok (`/api/health` 404). **Halil:** Portal Get publish profile → GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE`; startup `dotnet ClearPay.Web.dll`; HTTPS Only On. Merge/push **main**. Done değil ta ki `/api/health` + `/giris` yanıt versin.
 
 ## Doing
 - (boş)
@@ -44,7 +44,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
 - Kullanıcı kontrol eder; komut: «sıradaki işi yap» / «devam»
-- **Ürün sırası TASK-16.** Yol: [`YOL.md`](YOL.md) (T-059). Infra + T-095 Production web ayarı hazır; açık URL **Halil tıklar**. Ads harcaması yok. Cursor plan = YOL; TASK şişmez.
+- **Ürün sırası TASK-16.** Yol: [`YOL.md`](YOL.md) (T-059). T-104: canlı kök `https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net`; App Service **`ClearPay`**; RG **`ClearPay_group`**; Canada Central. `AZURE_WEBAPP_NAME=ClearPay` GitHub’da. Secret + zip Halil/main. Bicep unused. Ads harcaması yok.
 - Q2 Flutter JWT istemci (T-061) landed: `GET /api/wallet` + `mobile/clearpay`. TASK-16 Todo durur. 9. ekran yok.
 - T-062: kayıt/kart/admin JWT; Flutter’da site işlemleri; Coder OWN `mobile/**/*.dart`. TASK-16 Todo.
 - T-063: Flutter aynı git repo (`mobile/clearpay` + `ClearPay.code-workspace`). İç içe git yok. TASK-16 Todo.
@@ -69,5 +69,5 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz
 - Satıcı ödemesi ve canlı Redis/Rabbit bağlama Q2; uygulama bind TASK-12 Done
 - T-019: kod mimarisi Onion/Clean; n-tier aynı dört projenin adı (ikinci BLL/DAL yok). TASK-04 Done (T-024).
-- **Operasyon (T-025):** `halilmertdeveliii@gmail.com`. GitHub `HalilMertDeveli`. TASK-16 **blok Halil** (`az login` + `.\infra\deploy.ps1`); ajan URL uydurmaz. Ads harcama yok.
+- **Operasyon (T-025):** `halilmertdeveliii@gmail.com`. GitHub `HalilMertDeveli`. TASK-16 **blok Halil** yalnız publish-profile secret + Portal startup/HTTPS/SQL (T-104). `deploy.ps1` bu siteyi ezmez. Ads harcama yok.
 - D: MSSQL/MySQL/Oracle bind (T-021) Deploy OWN; `docker-compose.yml` / `docker-compose.databases.yml` ezilmez.
