@@ -21,6 +21,15 @@
   <data name="AvailableBalance" xml:space="preserve"><value>Kullanılabilir bakiye</value></data>
   <data name="BackToWallet" xml:space="preserve"><value>Cüzdana dön</value></data>
   <data name="Cancel" xml:space="preserve"><value>İptal</value></data>
+  <data name="AddCard" xml:space="preserve"><value>Kart ekle</value></data>
+  <data name="CardAddFail" xml:space="preserve"><value>Kart eklenemedi. Yalnızca 4 hane yazın; tam kart numarası yok. En fazla 5 kart.</value></data>
+  <data name="CardAddOk" xml:space="preserve"><value>Demo kart kaydedildi. Yükle/çek bu karta bağlanır.</value></data>
+  <data name="CardHint" xml:space="preserve"><value>Sahte kayıtlı kart: son 4 hane. Gerçek Visa/Mastercard yok.</value></data>
+  <data name="CardLabel" xml:space="preserve"><value>Kart adı</value></data>
+  <data name="CardLast4" xml:space="preserve"><value>Son 4 hane</value></data>
+  <data name="LinkedCard" xml:space="preserve"><value>Kayıtlı kart</value></data>
+  <data name="NoLinkedCard" xml:space="preserve"><value>Henüz kart yok. Son 4 haneyi yazıp ekleyin.</value></data>
+  <data name="SelectCard" xml:space="preserve"><value>Kart seç</value></data>
   <data name="ColAmount" xml:space="preserve"><value>Tutar</value></data>
   <data name="ColCounterparty" xml:space="preserve"><value>Karşı taraf</value></data>
   <data name="ColDate" xml:space="preserve"><value>Tarih</value></data>
@@ -101,6 +110,12 @@
   <data name="SignInWithGoogle" xml:space="preserve"><value>Google ile giriş</value></data>
   <data name="SignOut" xml:space="preserve"><value>Çıkış</value></data>
   <data name="SkipToContent" xml:space="preserve"><value>İçeriğe geç</value></data>
+  <data name="RememberMe" xml:space="preserve"><value>Beni hatırla</value></data>
+  <data name="CopyRef" xml:space="preserve"><value>Kopyala</value></data>
+  <data name="Copied" xml:space="preserve"><value>Kopyalandı</value></data>
+  <data name="PrintReceipt" xml:space="preserve"><value>Yazdır</value></data>
+  <data name="AccessDeniedTitle" xml:space="preserve"><value>Erişim yok</value></data>
+  <data name="AccessDeniedHint" xml:space="preserve"><value>Bu sayfa için yetkiniz yok. Cüzdan özetine dönebilirsiniz.</value></data>
   <data name="SocialEmailRequired" xml:space="preserve"><value>Sağlayıcı e-posta göndermedi. E-posta ve şifre ile kaydolun.</value></data>
   <data name="SocialLoginFailed" xml:space="preserve"><value>Sosyal giriş tamamlanamadı.</value></data>
   <data name="SocialNotConfigured" xml:space="preserve"><value>{0} girişi yapılandırılmadı. Client ID ve secret user-secrets veya Azure App Settings’te olmalı.</value></data>

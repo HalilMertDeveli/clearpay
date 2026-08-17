@@ -10,7 +10,7 @@
 <h1 class="page-title">@L["Admin"]</h1>
 @if (TempData["Flash"] is string flash)
 {
-    <p class="flash-ok">@flash</p>
+    <p class="flash-ok" role="status" aria-live="polite">@flash</p>
 }
 <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
 

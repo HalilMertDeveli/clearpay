@@ -51,7 +51,7 @@ public class LoginModel : PageModel
         var result = await _signInManager.PasswordSignInAsync(
             Input.Email.Trim(),
             Input.Password,
-            isPersistent: false,
+            isPersistent: Input.RememberMe,
             lockoutOnFailure: false);
 
         if (result.Succeeded)

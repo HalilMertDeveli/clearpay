@@ -33,7 +33,7 @@
         </div>
         <p class="field-hint">@string.Format(L["TransferHint"].Value, Model.RemainingBalance) @L["DemoDisclaimer"]</p>
         <div class="form-actions form-actions--sticky">
-            <button type="submit" class="btn">@L["Send"]</button>
+            <button type="submit" class="btn" disabled="@(!Model.CanSend)">@L["Send"]</button>
             <a class="btn btn-ghost" asp-page="/Index">@L["Cancel"]</a>
         </div>
     </form>

@@ -1,0 +1,15 @@
+@page "/erisim-yok"
+@model ClearPay.Web.Pages.Account.AccessDeniedModel
+@{
+    ViewData["Title"] = L["AccessDeniedTitle"].Value;
+    ViewData["MetaDescription"] = L["AccessDeniedHint"].Value;
+}
+
+<div class="empty-block">
+    <div class="empty-mark" aria-hidden="true"></div>
+    <h1 class="empty-title">@L["AccessDeniedTitle"]</h1>
+    <p class="empty-hint">@L["AccessDeniedHint"]</p>
+    <div class="empty-actions">
+        <a class="btn" asp-page="/Index">@L["BackToWallet"]</a>
+    </div>
+</div>

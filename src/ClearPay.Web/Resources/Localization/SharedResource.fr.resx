@@ -21,6 +21,15 @@
   <data name="AvailableBalance" xml:space="preserve"><value>Solde disponible</value></data>
   <data name="BackToWallet" xml:space="preserve"><value>Retour au portefeuille</value></data>
   <data name="Cancel" xml:space="preserve"><value>Annuler</value></data>
+  <data name="AddCard" xml:space="preserve"><value>Ajouter une carte</value></data>
+  <data name="CardAddFail" xml:space="preserve"><value>Carte non ajoutée. Saisissez 4 chiffres seulement — pas de numéro complet. 5 cartes max.</value></data>
+  <data name="CardAddOk" xml:space="preserve"><value>Carte démo enregistrée. Dépôt/retrait utilisent cet indice.</value></data>
+  <data name="CardHint" xml:space="preserve"><value>Carte démo : 4 derniers chiffres. Pas de Visa/Mastercard réelle.</value></data>
+  <data name="CardLabel" xml:space="preserve"><value>Nom de la carte</value></data>
+  <data name="CardLast4" xml:space="preserve"><value>4 derniers chiffres</value></data>
+  <data name="LinkedCard" xml:space="preserve"><value>Carte liée</value></data>
+  <data name="NoLinkedCard" xml:space="preserve"><value>Pas encore de carte. Saisissez les 4 derniers chiffres.</value></data>
+  <data name="SelectCard" xml:space="preserve"><value>Choisir une carte</value></data>
   <data name="ColAmount" xml:space="preserve"><value>Montant</value></data>
   <data name="ColCounterparty" xml:space="preserve"><value>Contrepartie</value></data>
   <data name="ColDate" xml:space="preserve"><value>Date</value></data>
@@ -101,6 +110,12 @@
   <data name="SignInWithGoogle" xml:space="preserve"><value>Connexion avec Google</value></data>
   <data name="SignOut" xml:space="preserve"><value>Déconnexion</value></data>
   <data name="SkipToContent" xml:space="preserve"><value>Aller au contenu</value></data>
+  <data name="RememberMe" xml:space="preserve"><value>Se souvenir de moi</value></data>
+  <data name="CopyRef" xml:space="preserve"><value>Copier</value></data>
+  <data name="Copied" xml:space="preserve"><value>Copié</value></data>
+  <data name="PrintReceipt" xml:space="preserve"><value>Imprimer</value></data>
+  <data name="AccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="AccessDeniedHint" xml:space="preserve"><value>Vous n&apos;avez pas l&apos;autorisation pour cette page. Retournez au résumé du portefeuille.</value></data>
   <data name="SocialEmailRequired" xml:space="preserve"><value>Le fournisseur n’a pas envoyé d’e-mail. Inscrivez-vous avec e-mail et mot de passe.</value></data>
   <data name="SocialLoginFailed" xml:space="preserve"><value>La connexion sociale n’a pas abouti.</value></data>
   <data name="SocialNotConfigured" xml:space="preserve"><value>La connexion {0} n’est pas configurée. Client ID et secret vont dans user-secrets ou Azure App Settings.</value></data>

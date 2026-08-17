@@ -17,6 +17,7 @@ public sealed class PlaceholderPagesTests : IClassFixture<ClearPayWebFactory>
     [InlineData("/kayit")]
     [InlineData("/Account/Login")]
     [InlineData("/Account/Register")]
+    [InlineData("/erisim-yok")]
     [InlineData("/api/health")]
     public async Task Anonymous_routes_return_200(string path)
     {

@@ -21,6 +21,15 @@
   <data name="AvailableBalance" xml:space="preserve"><value>Available balance</value></data>
   <data name="BackToWallet" xml:space="preserve"><value>Back to wallet</value></data>
   <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="AddCard" xml:space="preserve"><value>Add card</value></data>
+  <data name="CardAddFail" xml:space="preserve"><value>Could not add the card. Enter 4 digits only — no full card number. Max 5 cards.</value></data>
+  <data name="CardAddOk" xml:space="preserve"><value>Demo card saved. Top-up and withdraw use this card as the hint.</value></data>
+  <data name="CardHint" xml:space="preserve"><value>Demo linked card: last 4 digits. No real Visa/Mastercard.</value></data>
+  <data name="CardLabel" xml:space="preserve"><value>Card name</value></data>
+  <data name="CardLast4" xml:space="preserve"><value>Last 4 digits</value></data>
+  <data name="LinkedCard" xml:space="preserve"><value>Linked card</value></data>
+  <data name="NoLinkedCard" xml:space="preserve"><value>No card yet. Enter the last 4 digits to add one.</value></data>
+  <data name="SelectCard" xml:space="preserve"><value>Select card</value></data>
   <data name="ColAmount" xml:space="preserve"><value>Amount</value></data>
   <data name="ColCounterparty" xml:space="preserve"><value>Counterparty</value></data>
   <data name="ColDate" xml:space="preserve"><value>Date</value></data>
@@ -101,6 +110,12 @@
   <data name="SignInWithGoogle" xml:space="preserve"><value>Sign in with Google</value></data>
   <data name="SignOut" xml:space="preserve"><value>Sign out</value></data>
   <data name="SkipToContent" xml:space="preserve"><value>Skip to content</value></data>
+  <data name="RememberMe" xml:space="preserve"><value>Remember me</value></data>
+  <data name="CopyRef" xml:space="preserve"><value>Copy</value></data>
+  <data name="Copied" xml:space="preserve"><value>Copied</value></data>
+  <data name="PrintReceipt" xml:space="preserve"><value>Print</value></data>
+  <data name="AccessDeniedTitle" xml:space="preserve"><value>Access denied</value></data>
+  <data name="AccessDeniedHint" xml:space="preserve"><value>You do not have permission for this page. Return to the wallet overview.</value></data>
   <data name="SocialEmailRequired" xml:space="preserve"><value>The provider did not send an email. Register with email and password.</value></data>
   <data name="SocialLoginFailed" xml:space="preserve"><value>Social sign-in could not be completed.</value></data>
   <data name="SocialNotConfigured" xml:space="preserve"><value>{0} sign-in is not configured. Put Client ID and secret in user-secrets or Azure App Settings.</value></data>

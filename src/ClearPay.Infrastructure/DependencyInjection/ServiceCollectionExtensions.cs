@@ -56,6 +56,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IIdempotencyStore, SqlIdempotencyStore>();
         services.AddScoped<ITransferExecutor, SqlTransferExecutor>();
         services.AddScoped<IFundingExecutor, SqlFundingExecutor>();
+        services.AddScoped<ILinkedInstrumentStore, SqlLinkedInstrumentStore>();
         services.AddScoped<IActivityReader, SqlActivityReader>();
         services.AddScoped<IAdminPanel, SqlAdminPanel>();
         services.AddScoped<IOutboxProcessor, SqlOutboxProcessor>();

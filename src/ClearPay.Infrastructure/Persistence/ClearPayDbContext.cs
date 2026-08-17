@@ -26,6 +26,8 @@ public sealed class ClearPayDbContext : DbContext
 
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
+    public DbSet<LinkedInstrument> LinkedInstruments => Set<LinkedInstrument>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(

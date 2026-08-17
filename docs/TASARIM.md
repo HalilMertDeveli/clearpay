@@ -15,7 +15,7 @@ Kaynak: `docs/SPEC.md` ekran listesi. Piksel Figma yok; Razor mevcut sınıflara
 | Tip | Inter 400/500/600/700/800 |
 | Radius | kart 12px; cüzdan beyaz tabaka `--radius-lg` 20px; sekme hapı `--radius-pill`; buton/input 8px |
 | Elevation | **ölçülü var (T-053):** `--elev-1` kart/panel, `--elev-2` alt sekme çubuğu, `--elev-3` bakiye kartı + beyaz tabaka + auth kart. 1px `--line` durur; parlama/neon yok |
-| Gradient | **yalnız bakiye kartı** `--hero-grad` (`#24365C` → `#1B2A4A`). Buton, sekme, kart, zemin düz |
+| Gradient | **bakiye kartı** + T-055 `.demo-card` (Yükle/Çek sahte kart yüzü) `--hero-grad` (`#24365C` → `#1B2A4A`). Buton, sekme, zemin düz |
 | Cam | yok; auth kart opak `#fff` |
 | Emoji | yok |
 | Bootstrap | yok |
@@ -96,7 +96,9 @@ Kicker **Havale**. Panel içinde: kalan bakiye üst şerit (label sol, tutar sa�
 
 ### Yükle / çek, hareketler, dekont, admin
 
-SPEC sırası. İki kolon Yükle | Çek (`split-2`); hareketler filtre şeridi + tablo; boş tablo aynı `empty-block`. Dekont tek işlem, correlation id monospace. Admin: tablo + dondur / kuyruk; süs dashboard yok.
+SPEC sırası. İki kolon Yükle | Çek (`split-2`); hareketler filtre şeridi + tablo; boş tablo aynı `empty-block`. Dekont tek işlem, correlation id monospace + kopyala/yazdır (T-056). Başarılı para hareketi fişe gider. Admin: tablo + dondur / kuyruk; süs dashboard yok.
+
+T-055: kayıtlı kart **ekran 5 paneli** (`#kart`), 9. ekran yok. `.demo-card` navy `--hero-grad` + `--elev-3` + `--radius-lg`; son 4 hane tabular (`•••• •••• •••• 1234`); `.card-chip` hap. Tam PAN/CVV yok; Visa/Mastercard logosu yok.
 
 ## Boş durum (zorunlu)
 
@@ -281,7 +283,24 @@ sıra        Özet, Havale, Yükle/Çek, Hareketler (+ Admin role)
 receipt-amount  ortalı; stat-label + stat-value-xl 2.3rem + durum rozeti
                 alt 1px --line
 receipt-row     dt sol muted 0.85rem | dd sağ 600; 1px dashed ayraç
-                son satır ayraçsız; correlation id .mono
-form-actions    Geri (ghost)
+                son satır ayraçsız; correlation id .mono + Kopyala (btn-text)
+form-actions    Yazdır (dolu) + Geri (ghost); yazdırınca chrome gizlenir
 ```
 
+Başarılı havale / yükle / çek TempData flash ile **bu fişe** yönlenir (Index değil). `@media print`: sidebar, tabbar, topbar, footer, flash, form-actions yok; yalnız fiş.
+
+T-056: `data-copy` / `data-print` (`site.js`); clipboard + `window.print`. 9. ekran yok.
+
+### 7) Giriş — Beni hatırla (T-056)
+
+IdentityCourse / TaskManagement `RememberMe`. Ekran 1, checkbox `.field-check` şifre altında. `PasswordSignInAsync(isPersistent)`. Google/Apple aynı. Cookie SameSite **Lax** (Strict OAuth’u kırar — reddedildi).
+
+### 8) Erişim yok (hata kromu, SPEC ekran değil)
+
+IdentityCourse AccessDenied. `/erisim-yok` — `empty-block` + Özet CTA. Admin’e yetkisiz Musteri. 9. ekran / satıcı paneli değil.
+
+### 9) Form busy (T-056)
+
+BankApp çift POST yoktu ve `UPDATE Balance` yaptı; burada tersi: POST form `aria-busy` + `.is-busy` (pointer-events). Submit butonu `disabled` **yapılmaz** (Razor handler adı kaybolmasın). Dil seçici / çıkış hariç. 409 sunucuda durur.
+
+Havale **Gönder** bakiye 0 veya dondurulmuşken `disabled` (TASARIM maddesi; T-056 tamamlar).

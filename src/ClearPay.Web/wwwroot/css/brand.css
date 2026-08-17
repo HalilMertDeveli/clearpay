@@ -1,5 +1,5 @@
-/* ClearPay brand layer — T-040 + T-053 (mobil bankacılık düzeni).
-   Load after site.css. Yumuşak gölge serbest; gradient yalnız bakiye kartında. */
+/* ClearPay brand layer — T-040 + T-053 (mobil bankacılık) + T-055 (demo kart yüzü).
+   Load after site.css. Yumuşak gölge serbest; gradient bakiye + .demo-card. */
 
 :root {
   --brand-navy: #1b2a4a;
@@ -403,6 +403,75 @@ button[name="provider"][value="Apple"]:hover {
 
 .amount-in {
   color: var(--teal, #0f766e);
+}
+
+.demo-card {
+  position: relative;
+  margin: 0 0 1rem;
+  padding: 1.15rem 1.2rem 1rem;
+  min-height: 8.5rem;
+  border-radius: var(--radius-lg, 20px);
+  background: var(--hero-grad, linear-gradient(160deg, #24365c 0%, #1b2a4a 62%));
+  color: #fff;
+  box-shadow: var(--elev-3, 0 8px 20px rgba(27, 42, 74, 0.12));
+}
+
+.demo-card-brand {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.demo-card-pan {
+  margin: 1.35rem 0 0.55rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}
+
+.demo-card-name {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.demo-card-badge {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.card-chip {
+  display: inline-block;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--line, #d8dee8);
+  border-radius: var(--radius-pill, 999px);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy, #1b2a4a);
+}
+
+.card-chip.is-active {
+  background: var(--navy, #1b2a4a);
+  border-color: var(--navy, #1b2a4a);
+  color: #fff;
 }
 
 @media (max-width: 800px) {

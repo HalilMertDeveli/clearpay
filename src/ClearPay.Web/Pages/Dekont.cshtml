@@ -9,7 +9,12 @@
 <p class="page-kicker">@L["Receipt"]</p>
 <h1 class="page-title">@L["Receipt"]</h1>
 
-<section class="panel">
+@if (TempData["Flash"] is string flash)
+{
+    <p class="flash-ok" role="status" aria-live="polite">@flash</p>
+}
+
+<section class="panel receipt-sheet">
     <div class="receipt-amount">
         <p class="stat-label">@L["AmountTry"]</p>
         <p class="stat-value stat-value-xl">@ClearPay.Web.Presentation.MoneyDisplay.FormatTry(r.Amount)</p>
@@ -41,10 +46,17 @@
         }
         <div class="receipt-row">
             <dt>@L["ColRef"]</dt>
-            <dd class="mono">@r.CorrelationId</dd>
+            <dd class="receipt-ref">
+                <code class="mono" id="corr">@r.CorrelationId</code>
+                <button type="button"
+                        class="btn-text"
+                        data-copy="@r.CorrelationId"
+                        data-copied="@L["Copied"]">@L["CopyRef"]</button>
+            </dd>
         </div>
     </dl>
     <div class="form-actions">
+        <button type="button" class="btn" data-print>@L["PrintReceipt"]</button>
         <a class="btn btn-ghost" asp-page="/Hareketler">@L["BackToWallet"]</a>
     </div>
 </section>

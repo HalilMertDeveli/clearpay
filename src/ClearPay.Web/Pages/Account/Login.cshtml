@@ -21,6 +21,12 @@
         <input asp-for="Input.Password" class="field-input" type="password" autocomplete="current-password" />
         <span asp-validation-for="Input.Password" class="field-error"></span>
     </div>
+    <div class="field field-check">
+        <label class="check-label" asp-for="Input.RememberMe">
+            <input asp-for="Input.RememberMe" />
+            <span>@L["RememberMe"]</span>
+        </label>
+    </div>
     <button type="submit" class="btn btn-block">@L["SignIn"]</button>
 </form>
 <partial name="_ExternalLoginButtons" model="Model.ReturnUrl" />

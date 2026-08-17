@@ -130,6 +130,68 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
     }
 
     [Fact]
+    public async Task YukleCek_shows_demo_card_panel_without_ninth_screen()
+    {
+        var client = CreateClient();
+        if (!await LoginPageExistsAsync(client))
+        {
+            return;
+        }
+
+        var email = $"kart.{Guid.NewGuid():N}@clearpay.test";
+        var registerGet = await client.GetAsync("/Account/Register");
+        var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Input.FullName"] = "Kart Deneme",
+            ["Input.Email"] = email,
+            ["Input.Password"] = "Deneme123",
+            ["Input.ConfirmPassword"] = "Deneme123",
+            ["__RequestVerificationToken"] = token
+        }));
+
+        var html = await client.GetStringAsync("/yukle-cek");
+        html.Should().Contain("id=\"kart\"");
+        html.Should().Contain("demo-card");
+        html.Should().Contain("Son 4 hane");
+        html.Should().Contain("Kart ekle");
+        html.Should().Contain("Henüz kart yok");
+        html.Should().NotContain("asp-for=\"NewCard.Pan\"");
+        html.Should().NotContain("name=\"NewCard.Cvv\"");
+        html.Should().NotContain(">Kartlar<");
+        html.Should().Contain("Yükle / Çek");
+        html.Should().Contain("Havale");
+        html.Should().Contain("Hareketler");
+    }
+
+    [Fact]
+    public async Task Havale_send_is_disabled_when_wallet_is_empty()
+    {
+        var client = CreateClient();
+        if (!await LoginPageExistsAsync(client))
+        {
+            return;
+        }
+
+        var email = $"bos.{Guid.NewGuid():N}@clearpay.test";
+        var registerGet = await client.GetAsync("/Account/Register");
+        var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Input.FullName"] = "Boş Cüzdan",
+            ["Input.Email"] = email,
+            ["Input.Password"] = "Deneme123",
+            ["Input.ConfirmPassword"] = "Deneme123",
+            ["__RequestVerificationToken"] = token
+        }));
+
+        var html = await client.GetStringAsync("/havale");
+        html.Should().Contain("Kalan bakiye");
+        html.Should().Contain("disabled");
+        html.Should().Contain("Gönder");
+    }
+
+    [Fact]
     public async Task Bad_login_stays_on_form_when_identity_is_in()
     {
         var client = CreateClient();

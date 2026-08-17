@@ -40,4 +40,49 @@
       setInterval(write, 1000);
     }
   }
+
+  document.querySelectorAll('form[method="post"]').forEach((form) => {
+    if (form.closest(".lang-picker") || form.classList.contains("topbar-form")) {
+      return;
+    }
+
+    form.addEventListener("submit", (event) => {
+      if (form.getAttribute("aria-busy") === "true") {
+        event.preventDefault();
+        return;
+      }
+
+      form.setAttribute("aria-busy", "true");
+      form.querySelectorAll('button[type="submit"]').forEach((btn) => {
+        btn.classList.add("is-busy");
+      });
+    });
+  });
+
+  document.querySelectorAll("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const text = btn.getAttribute("data-copy") || "";
+      if (!text || !navigator.clipboard) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        const done = btn.getAttribute("data-copied") || "";
+        const original = btn.textContent;
+        if (done) {
+          btn.textContent = done;
+          window.setTimeout(() => {
+            btn.textContent = original;
+          }, 1600);
+        }
+      } catch {
+        /* clipboard may be blocked */
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-print]").forEach((btn) => {
+    btn.addEventListener("click", () => window.print());
+  });
 })();

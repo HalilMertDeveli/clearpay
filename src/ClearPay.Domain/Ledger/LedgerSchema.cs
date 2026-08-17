@@ -23,4 +23,10 @@ public static class LedgerSchema
     public const int IdempotencyKeyMaxLength = 128;
 
     public const int UserIdMaxLength = 450;
+
+    public const string LinkedInstrumentUserLast4Unique = "UX_LinkedInstrument_UserId_Last4";
+
+    public const int LinkedLast4Length = 4;
+
+    public const int LinkedLabelMaxLength = 40;
 }

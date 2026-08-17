@@ -285,6 +285,43 @@ a {
   opacity: 0.45;
 }
 
+.btn.is-busy {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.field-check {
+  margin-bottom: 1.1rem;
+}
+
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.check-label input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--navy);
+}
+
+.receipt-ref {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.receipt-ref .mono {
+  font-size: 0.85rem;
+}
+
 .empty {
   color: var(--muted);
   margin: 0;
@@ -1231,5 +1268,39 @@ select {
 
   .topbar-user {
     max-width: 7rem;
+  }
+}
+
+@media print {
+  .skip-link,
+  .sidebar,
+  .topbar,
+  .tabbar,
+  .page-footer,
+  .flash-ok,
+  .form-actions {
+    display: none !important;
+  }
+
+  .app-shell {
+    display: block;
+    min-height: 0;
+  }
+
+  .workspace,
+  .content {
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .panel,
+  .receipt-sheet {
+    box-shadow: none;
+    border: 1px solid #d8dee8;
+  }
+
+  body {
+    background: #fff;
   }
 }

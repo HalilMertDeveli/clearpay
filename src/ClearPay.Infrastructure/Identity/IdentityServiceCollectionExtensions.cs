@@ -54,7 +54,7 @@ public static class IdentityServiceCollectionExtensions
         {
             options.LoginPath = "/giris";
             options.LogoutPath = "/Account/Logout";
-            options.AccessDeniedPath = "/giris";
+            options.AccessDeniedPath = "/erisim-yok";
             options.Cookie.Name = "ClearPay.Auth";
             options.Cookie.HttpOnly = true;
             options.Cookie.SecurePolicy = environment.IsDevelopment()

@@ -51,6 +51,15 @@ public sealed class ClearPayDbContextTests
 
         model.FindEntityType(typeof(Transfer))!.GetTableName().Should().Be("Transfer");
         model.FindEntityType(typeof(AuditLog))!.GetTableName().Should().Be("AuditLog");
+
+        var card = model.FindEntityType(typeof(LinkedInstrument));
+        card.Should().NotBeNull();
+        card!.GetTableName().Should().Be("LinkedInstrument");
+        card.FindProperty("Pan").Should().BeNull();
+        card.FindProperty("Cvv").Should().BeNull();
+        card.GetIndexes().Should().Contain(i =>
+            i.IsUnique
+            && i.GetDatabaseName() == LedgerSchema.LinkedInstrumentUserLast4Unique);
     }
 
     [Fact]
@@ -65,7 +74,11 @@ public sealed class ClearPayDbContextTests
         script.Should().Contain("CREATE TABLE [IdempotencyRecord]");
         script.Should().Contain("CREATE TABLE [AuditLog]");
         script.Should().Contain("CREATE TABLE [OutboxMessage]");
+        script.Should().Contain("CREATE TABLE [LinkedInstrument]");
+        script.Should().Contain(LedgerSchema.LinkedInstrumentUserLast4Unique);
         script.Should().NotContain("[Balance]");
+        script.Should().NotContain("Pan");
+        script.Should().NotContain("CVV");
         script.Should().Contain(LedgerSchema.WalletUserIdUnique);
         script.Should().Contain(LedgerSchema.LedgerEntryWalletCreated);
         script.Should().Contain(LedgerSchema.IdempotencyKeyUnique);

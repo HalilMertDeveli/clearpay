@@ -33,6 +33,8 @@ public class HavaleModel : PageModel
 
     public string RemainingBalance { get; private set; } = MoneyDisplay.FormatTry(0m);
 
+    public bool CanSend { get; private set; }
+
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
         Input.IdempotencyKey = Guid.NewGuid().ToString("N");
@@ -64,7 +66,7 @@ public class HavaleModel : PageModel
         if (outcome.IsSuccess)
         {
             TempData["Flash"] = _localizer["TransferSuccess"].Value;
-            return RedirectToPage("/Index");
+            return RedirectToPage("/Dekont", new { correlationId = outcome.CorrelationId });
         }
 
         ModelState.AddModelError(string.Empty, MapError(outcome.Kind));
@@ -76,6 +78,7 @@ public class HavaleModel : PageModel
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
         var summary = await _wallets.GetByUserIdAsync(userId, cancellationToken).ConfigureAwait(false);
         RemainingBalance = MoneyDisplay.FormatTry(summary?.Balance ?? 0m);
+        CanSend = summary is { Balance: > 0m, IsFrozen: false };
     }
 
     private string MapError(TransferResultKind kind) => kind switch

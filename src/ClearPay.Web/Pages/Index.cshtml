@@ -8,7 +8,7 @@
 <div class="wallet-home">
     @if (!string.IsNullOrWhiteSpace(Model.Flash))
     {
-        <p class="flash-ok">@Model.Flash</p>
+        <p class="flash-ok" role="status" aria-live="polite">@Model.Flash</p>
     }
     <article class="balance-hero wallet-band">
         <p class="page-kicker kicker-on-dark">@L["WalletKicker"]</p>

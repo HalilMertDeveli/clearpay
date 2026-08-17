@@ -819,3 +819,32 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Sonra hangi dosya:** Coder `_AuthLayout.cshtml`, `wwwroot/js/vendor/anime.min.js`, `wwwroot/js/auth-hero.js`, `wwwroot/css/site.css` (auth-stage), `wwwroot/css/brand.css` (hero token), `wwwroot/css/motion.css` (auth-motion override). `docs/TASARIM.md` bir paragraf. `docs/HANDOFF.md` append. Domain / ledger / resx yok.
 
 ---
+
+## T-055 — 2026-08-14 — Demo kayıtlı kart (Yükle/Çek paneli; PAN yok)
+
+- **Kim:** Architect + Coder (kullanıcı: hesap bağla, kart ekle, karta para yüklensin)
+- **Konu:** Gerçek Visa/Mastercard / banka OAuth / 3DS bu demo’da yok (SPEC + MARKA). Yükle/Çek zaten `Account` metni + sahte `IBankGateway`. Kart yüzü ve kayıtlı enstrüman listesi yok. 9. ekran mı, yoksa ekran 5 paneli mi?
+- **Seçenekler:**
+  1. Gerçek kart / iyzico / Papara API — hayır; lisans, 3DS, sır; ajan hesap açmaz.
+  2. Yeni `/kartlar` ekranı — hayır; SPEC 8 sabit, 9. ekran yok.
+  3. **Yükle/Çek paneli.** `LinkedInstrument` (UserId, Last4, Label) SQL tablosu. PAN/CVV yok; 16 hane istenmez. Seçim `AccountHint` = `****1234`. `IFundingExecutor` / gateway **değişmez**. Kart bakiyesi ayrı kasa değil; para cüzdan ledger.
+- **Karar:** **3.** PageModel `ClearPayDbContext` yok; port `ILinkedInstrumentStore`. Timeout ipucu `TIMEOUT` durur. Footer **Demo — yükleme için sahte gateway**.
+- **Neden:** 1 yasa dışı / kapsam dışı. 2 ekran listesini şişirir. 3 SPEC ekran 5’e sığar; kasa tek kalır.
+- **Sonra hangi dosya:** Domain `LinkedInstrument`. Application `ILinkedInstrumentStore` + DTO. Infrastructure EF + `SqlLinkedInstrumentStore` + migration. Coder `YukleCek.cshtml(.cs)`, `SharedResource*.resx`, `brand.css` kart yüzü. Tester store test. HANDOFF append.
+
+---
+
+## T-056 — 2026-08-17 — Halil GitHub UI/operasyon taraması (cüzdan içi cilâ)
+
+- **Kim:** Orchestrator + Architect + Coder (kullanıcı: kendi GitHub hesaplarındaki UI/operasyonu araştır, bu projeye yakışanı ekle)
+- **Konu:** `gh api user` = **HalilMertDeveli** (org yok). `clearpay` zaten bu repo. Diğer public repolar tarandı; SPEC 8 ekran + WePay/Papara-tarzı **cüzdan sitesi** durur. Hangisi kopyalanır, hangisi reddedilir?
+- **İncelenen (ilgili):** `BankAppAsp` (havale formu, hesap kartı, boş hesap metni — **UPDATE Balance**), `IdentityCourse` (giriş/kayıt switch, TempData flash, AccessDenied, cookie HttpOnly), `TaskManagementSystem` (Beni hatırla, özet kart, arama, SameSite Strict iddiası, profil/bildirim), `personal-Finance-Tracker` (Flutter giriş + “already have account”, pasta grafik, Firebase pembe tema), `Darky-Landing-Page` (wow.js / animate.css / koyu landing), `StoryGame` / `ASP-NET-E-Trade` / `Udemy.TodoAppNTier` (N-tier ders; Bootstrap). **LED yok:** `led-teknik-destek`, `ASP.NET-APP-FOR-LED` klon/kopya yok.
+- **Seçenekler:**
+  1. BankApp `Balance -= Amount` / `UPDATE` kasa; TaskManagement profil + bildirim 9. ekran; Flutter pasta/Firebase; Darky landing + wow.js karanlık mod; LED ürünü; satıcı/POS/Kafka; Cookie **SameSite=Strict** (Google/Apple OAuth kırılır) — hayır.
+  2. **Cüzdan içi cilâ (8 ekran):** (a) IdentityCourse flash + AccessDenied **hata kromu** (`/erisim-yok`, Error.cshtml gibi; SPEC ekran listesi değil) + TaskManagement **Beni hatırla** (ekran 1). (b) BankApp gönderiminden tersine: çift tıklama **busy** (409 durur; buton `disabled` handler’ı düşürmesin) + bakiye 0/dondurulmuşta Havale Gönder kapalı (TASARIM zaten söyledi). (c) Dekont: correlation id **kopyala** + **yazdır** (`@media print`); başarılı havale/yükle/çek → dekont (fiş), Index flash kaybolmaz TempData dekontta.
+- **Karar:** **2.** Dil seçici zaten TR/EN/DE/FR; yeni dil yok. Google/Apple durur. Ledger / PageModel DbContext / `UPDATE Balance` yok. npm/GSAP/wow.js yok.
+- **Neden:** 1 kapsam dışı veya kasa/OAuth kırar. 2 Halil’in kendi ders/ürün kalıplarını cüzdan ekranlarına taşır; mülakat anlatımı (409 + fiş + Identity) güçlenir.
+- **Sonra hangi dosya:** Coder `Dekont`/`Havale`/`YukleCek`/`Login`/`AccessDenied`, `site.js`, `site.css`/`brand.css`/`motion.css`, `SharedResource*.resx`. Application `LoginRequest.RememberMe`. Infrastructure `AccessDeniedPath`. Designer `docs/TASARIM.md`. Tester UI smoke. HANDOFF append. TASK-16 Todo kalır.
+
+---
+

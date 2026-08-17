@@ -688,4 +688,22 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** http://localhost:5153/giris
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-14 — Demo kayıtlı kart (T-055; Coder + Tester)
+
+- **OWN:** TARTISMA **T-055**. Domain `LinkedInstrument` (Last4 + Label; PAN/CVV yok). Port `ILinkedInstrumentStore` / `SqlLinkedInstrumentStore`. EF tablo `LinkedInstrument` + `UX_LinkedInstrument_UserId_Last4`. Coder `YukleCek.cshtml(.cs)` `#kart` paneli, `SharedResource` TR/EN/DE/FR, `brand.css` `.demo-card`. Funding `IFundingExecutor` + sahte gateway **değişmez**; seçim yalnız `AccountHint` (`****1234`). 9. ekran yok. PageModel ledger yok. `UPDATE Balance` yok.
+- **Landed:** Yükle/Çek’te navy kart yüzü + son 4 hane formu (tam numara istenmez, en fazla 5). Chip seçince Yükle/Çek hesap alanı dolar. Migration `20260814144500_AddLinkedInstrument` SQL’e uygulandı.
+- **Kanıt:** `dotnet test -c Release` **107 geçti**, 0 skip. `Add_stores_last4_without_pan`, `Add_rejects_full_pan_and_non_digits`, `YukleCek_shows_demo_card_panel_without_ninth_screen`. Site `/yukle-cek` 200: `#kart`, `.demo-card`, Kart ekle; 1234 eklenince flash + `****1234`.
+- **Sen tıklarsın:** http://localhost:5153/giris (`admin@clearpay.test` / `Deneme123`) → `/yukle-cek` → son 4 hane yaz → Kart ekle → Yükle. Gerçek Visa yok.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — GitHub taraması cüzdan cilâsı (T-056; Coder + Tester)
+
+- **OWN:** TARTISMA **T-056**. `gh api user` = HalilMertDeveli. LED repo dokunulmadı. 8 ekran. Google/Apple durur. Ledger / `UPDATE Balance` yok.
+- **İlham (kopya değil):** IdentityCourse flash + AccessDenied; TaskManagement Beni hatırla; BankApp gönderim boşluğu → busy + bakiye 0’da Gönder kapalı; dekont kopyala/yazdır (rapor/fiş).
+- **Red:** LED ürünü; BankApp kasa UPDATE; profil/bildirim/9. ekran; Flutter pasta/Firebase; Darky landing + wow.js; SameSite Strict (OAuth).
+- **Landed:** `/erisim-yok` empty-block; giriş `RememberMe`; havale/yükle/çek başarı → `/dekont/{id}`; `site.js` busy + clipboard + print; `@media print` chrome gizler.
+- **Kanıt:** `dotnet test -c Release` **111 geçti**, 0 skip. `Access_denied_is_error_chrome_not_ninth_screen`, `Havale_send_is_disabled_when_wallet_is_empty`, girişte Beni hatırla + Google/Apple.
+- **Sen tıklarsın:** http://localhost:5153/giris → Beni hatırla. Boş cüzdanda `/havale` Gönder soluk. Para hareketinden sonra fişte **Kopyala** / **Yazdır**.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 

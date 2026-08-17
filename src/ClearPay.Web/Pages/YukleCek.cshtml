@@ -9,12 +9,59 @@
 <h1 class="page-title">@L["TopUpWithdraw"]</h1>
 <p class="lede">@L["TopUpWithdrawLede"]</p>
 
+@if (TempData["Flash"] is string flash)
+{
+    <p class="flash-ok" role="status" aria-live="polite">@flash</p>
+}
+
 <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
 
 <div class="remain panel-inline">
     <span class="stat-label">@L["WalletBalance"]</span>
     <strong>@Html.Raw(Model.BalanceText)</strong>
 </div>
+
+<section class="panel card-panel" id="kart">
+    <h2 class="panel-title">@L["LinkedCard"]</h2>
+    <p class="field-hint">@L["CardHint"] @L["DemoDisclaimer"]</p>
+    <article class="demo-card" aria-label="@L["LinkedCard"]">
+        <p class="demo-card-brand">ClearPay</p>
+        <p class="demo-card-pan">•••• •••• •••• @(Model.SelectedCard?.Last4 ?? "••••")</p>
+        <p class="demo-card-name">@(Model.SelectedCard?.Label ?? "ClearPay Demo")</p>
+        <p class="demo-card-badge">@L["DemoWallet"]</p>
+    </article>
+    @if (Model.Cards.Count == 0)
+    {
+        <p class="empty">@L["NoLinkedCard"]</p>
+    }
+    else
+    {
+        <ul class="card-list">
+            @foreach (var card in Model.Cards)
+            {
+                <li>
+                    <a class="@(card.Last4 == Model.SelectedCard?.Last4 ? "card-chip is-active" : "card-chip")"
+                       asp-page="/YukleCek" asp-route-kart="@card.Last4" asp-fragment="yukle">@card.Label · ****@card.Last4</a>
+                </li>
+            }
+        </ul>
+    }
+    <form method="post" asp-page-handler="AddCard" class="stack-form" novalidate>
+        <div class="field-row">
+            <div class="field">
+                <label class="field-label" asp-for="NewCard.Last4">@L["CardLast4"]</label>
+                <input class="field-input" asp-for="NewCard.Last4" inputmode="numeric" maxlength="4" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label class="field-label" asp-for="NewCard.Label">@L["CardLabel"]</label>
+                <input class="field-input" asp-for="NewCard.Label" maxlength="40" />
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn">@L["AddCard"]</button>
+        </div>
+    </form>
+</section>
 
 <div class="tabset">
 <nav class="tab-switch" aria-label="@L["TopUpWithdraw"]">
@@ -26,6 +73,7 @@
         <h2 class="panel-title">@L["TopUp"]</h2>
         <p class="field-hint">@L["DemoDisclaimer"] @L["TopUpHint"]</p>
         <form method="post" asp-page-handler="TopUp" class="stack-form" novalidate>
+            <input type="hidden" asp-for="Kart" />
             <input type="hidden" asp-for="TopUp.IdempotencyKey" />
             <div class="field">
                 <label class="field-label" asp-for="TopUp.Amount">@L["AmountTry"]</label>
@@ -44,6 +92,7 @@
         <h2 class="panel-title">@L["Withdraw"]</h2>
         <p class="field-hint">@L["WithdrawHint"]</p>
         <form method="post" asp-page-handler="Withdraw" class="stack-form" novalidate>
+            <input type="hidden" asp-for="Kart" />
             <input type="hidden" asp-for="Withdraw.IdempotencyKey" />
             <div class="field">
                 <label class="field-label" asp-for="Withdraw.Amount">@L["AmountTry"]</label>

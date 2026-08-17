@@ -17,6 +17,7 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
     [InlineData("/Account/Register")]
     [InlineData("/giris")]
     [InlineData("/kayit")]
+    [InlineData("/erisim-yok")]
     [InlineData("/api/health")]
     public async Task Anonymous_routes_return_200(string path)
     {
@@ -39,6 +40,20 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
         html.Should().Contain("Giriş");
         html.Should().Contain("Google ile giriş");
         html.Should().Contain("Apple ile giriş");
+        html.Should().Contain("Beni hatırla");
+    }
+
+    [Fact]
+    public async Task Access_denied_is_error_chrome_not_ninth_screen()
+    {
+        var client = _factory.CreateClient();
+        var html = await client.GetStringAsync("/erisim-yok");
+
+        html.Should().Contain("Erişim yok");
+        html.Should().Contain("empty-block");
+        html.Should().Contain("Cüzdan özetine");
+        html.Should().NotContain("Satıcı");
+        html.Should().Contain("Demo — yükleme için sahte gateway");
     }
 
     [Fact]

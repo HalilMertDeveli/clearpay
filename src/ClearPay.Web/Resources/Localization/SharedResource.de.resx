@@ -21,6 +21,15 @@
   <data name="AvailableBalance" xml:space="preserve"><value>Verfügbares Guthaben</value></data>
   <data name="BackToWallet" xml:space="preserve"><value>Zurück zur Wallet</value></data>
   <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="AddCard" xml:space="preserve"><value>Karte hinzufügen</value></data>
+  <data name="CardAddFail" xml:space="preserve"><value>Karte nicht gespeichert. Nur 4 Ziffern — keine volle Kartennummer. Höchstens 5 Karten.</value></data>
+  <data name="CardAddOk" xml:space="preserve"><value>Demo-Karte gespeichert. Aufladen/Abheben nutzt diesen Hinweis.</value></data>
+  <data name="CardHint" xml:space="preserve"><value>Demo-Karte: letzte 4 Ziffern. Keine echte Visa/Mastercard.</value></data>
+  <data name="CardLabel" xml:space="preserve"><value>Kartenname</value></data>
+  <data name="CardLast4" xml:space="preserve"><value>Letzte 4 Ziffern</value></data>
+  <data name="LinkedCard" xml:space="preserve"><value>Verknüpfte Karte</value></data>
+  <data name="NoLinkedCard" xml:space="preserve"><value>Noch keine Karte. Letzte 4 Ziffern eingeben.</value></data>
+  <data name="SelectCard" xml:space="preserve"><value>Karte wählen</value></data>
   <data name="ColAmount" xml:space="preserve"><value>Betrag</value></data>
   <data name="ColCounterparty" xml:space="preserve"><value>Gegenpartei</value></data>
   <data name="ColDate" xml:space="preserve"><value>Datum</value></data>
@@ -101,6 +110,12 @@
   <data name="SignInWithGoogle" xml:space="preserve"><value>Mit Google anmelden</value></data>
   <data name="SignOut" xml:space="preserve"><value>Abmelden</value></data>
   <data name="SkipToContent" xml:space="preserve"><value>Zum Inhalt</value></data>
+  <data name="RememberMe" xml:space="preserve"><value>Angemeldet bleiben</value></data>
+  <data name="CopyRef" xml:space="preserve"><value>Kopieren</value></data>
+  <data name="Copied" xml:space="preserve"><value>Kopiert</value></data>
+  <data name="PrintReceipt" xml:space="preserve"><value>Drucken</value></data>
+  <data name="AccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="AccessDeniedHint" xml:space="preserve"><value>Sie haben keine Berechtigung für diese Seite. Zurück zur Wallet-Übersicht.</value></data>
   <data name="SocialEmailRequired" xml:space="preserve"><value>Der Anbieter hat keine E-Mail gesendet. Registrieren Sie sich mit E-Mail und Passwort.</value></data>
   <data name="SocialLoginFailed" xml:space="preserve"><value>Soziale Anmeldung fehlgeschlagen.</value></data>
   <data name="SocialNotConfigured" xml:space="preserve"><value>{0}-Anmeldung ist nicht konfiguriert. Client-ID und Secret gehören in user-secrets oder Azure App Settings.</value></data>
