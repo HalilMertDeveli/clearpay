@@ -2,9 +2,9 @@
 
 Kaynak: `docs/CALISMA-PLANI.md` **Faz 5**. Azure / DNS / ödeme hesabı **kullanıcı** açar; ajan şablon ve pipeline yazar.
 
-**Orchestrator:** TASK-16 Done yalnızca tarayıcıda açık URL. Ajan Portal / `az login` / DNS açmaz. Infra (`infra/main.bicep`, `deploy.ps1`, App Setting adları) T-051 ile hazır. Abonelik yokken URL uydurulmaz. TASK-15 = GitHub Actions `dotnet test`. Secret git’e yok.
+**TASK-16 sıradaki tık (Halil).** Infra (`infra/main.bicep`, `deploy.ps1`) hazır. Ajan Portal / `az login` / DNS açmaz. Abonelik yokken URL uydurulmaz. Bu makinede `az` CLI yok — liste doğrulanmadı. Yol: [`YOL.md`](YOL.md).
 
-**Operasyon kimliği (T-025):** `halilmertdeveliii@gmail.com`. Azure / GitHub / Search Console / Ads bu kutudan. Ajan yeni hesap açmaz. Bu makinede `az` CLI **yok** — abonelik listesi doğrulanmadı, uydurulmadı. Gmail’de 2026-05-11 “Your new Azure account is ready” var; 2025-04 ücretsiz deneme uyarı maili de var (PAYG yükseltme / silinme). **TASK-16 şimdi değil** — deploy TASK-16 ajanına. Secret git’e yok.
+**Operasyon kimliği (T-025):** `halilmertdeveliii@gmail.com`. Azure / GitHub / Search Console / Ads bu kutudan. Ajan yeni hesap açmaz. Bu makinede `az` CLI **yok**. Gmail’de 2026-05-11 “Your new Azure account is ready” var. Secret git’e yok.
 
 SEO/Ads: canlı URL **sonrası**; demo disclaimer (gerçek banka değil).
 
@@ -13,8 +13,8 @@ SEO/Ads: canlı URL **sonrası**; demo disclaimer (gerçek banka değil).
 | Parça | Lokal Compose | Q1 Azure | Q2 (sonra) |
 |--------|----------------|----------|------------|
 | Web | host `dotnet run` :5153 | App Service **Linux**, .NET 8 | aynı |
-| Identity | SQLite `App_Data` | **Azure SQL** (`ConnectionStrings__ClearPay`) | aynı |
-| Ledger | Docker SQL Server | **Azure SQL** (TASK-04+) | aynı |
+| Identity | SQL Server `ClearPay` (AspNet*) | **Azure SQL** (`ConnectionStrings__ClearPay`) | aynı |
+| Ledger | SQL Server `ClearPay` (Windows veya Docker) | **Azure SQL** (TASK-04+) | aynı |
 | CI/CD | — | GitHub Actions: `main` → build/test; publish `AZURE_WEBAPP_NAME` doluysa | aynı |
 | Kuyruk | RabbitMQ container (T-048 bağlı) | Hangfire in-process + outbox (`Hangfire__Enabled=true`) | CloudAMQP (`ConnectionStrings__RabbitMq`) |
 | Cache | Redis container (T-041 bağlı) | yok (SQL özet) | Azure Cache for Redis |
@@ -103,5 +103,5 @@ TASK-16 kabul: tarayıcıda açık URL, giriş, boş/canlı özet. Redis şart d
 
 - Ajan Azure / DNS / domain / CloudAMQP / ödeme hesabı açmaz.
 - Repo’ya connection string, JWT, SQL SA, publish profile.
-- Canlıda lokal `ClearPay_Dev1!` veya SQLite `App_Data`.
+- Canlıda lokal `ClearPay_Dev1!` veya SQLite `App_Data` (prod Identity Azure SQL).
 - AWS, GCP, Kafka, Kubernetes (SPEC dışı).

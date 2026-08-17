@@ -720,8 +720,23 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 
 - **OWN:** TARTISMA **T-058** (Identity SQL; kamu cüzdan T-057 ayrı). Development Identity = Windows SQL Server `ClearPay` (AspNet* + ledger aynı DB). Test factory `ClearPay:UseSqliteLedger=true` SQLite kalır. Docker Compose / `D:\ClearPay\data` ezilmedi. TASK-16 Todo.
 - **Landed:** `AddClearPayIdentity` SQL unless test flag; `InitialIdentity` migration; history `__EFMigrationsHistoryIdentity`. `identity.db` artık runtime değil.
-- **Kanıt:** `ClearPay` tabloları AspNetUsers/Roles + Wallet/LedgerEntry. Admin `admin@clearpay.test` rolleri Admin+Musteri.
+- **Kanıt:** `dotnet test -c Release` **114 geçti**, 0 skip. SQL `ClearPay`: AspNetUsers/Roles + Wallet/LedgerEntry. Admin `admin@clearpay.test` rolleri Admin+Musteri.
 - **Sen tıklarsın:** siteyi yeniden başlat → http://localhost:5153/giris (`admin@clearpay.test` / `Deneme123`). Eski SQLite hesapları taşınmadı; yeniden kayıt.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Yol haritası (T-059)
+
+- **OWN:** `docs/YOL.md`, TARTISMA **T-059**. `src/` yok. TASK-16 Todo durur (URL uydurulmadı; bu makinede `az` yok).
+- Q1 = mülakat demosu (409/tx/outbox kanıt TASK-06/11 Done). İlk nakit = kariyer kapısı. Kendi lisans kapalı. Q2 kapalı devre/white-label **park** (avukat + 9. ekran onayı).
+- İşaret: `GELIR.md`, `IK.md`, `SENIN-ISLERIN.md`, `CANLI.md`, `TASKS.md` not, README Docs.
+- **Sen tıklarsın:** [Azure CLI](https://aka.ms/installazurecliwindows) → `az login` → `.\infra\deploy.ps1`. Sonra LinkedIn taslak B (`PAZARLAMA.md`) + 5–10 .NET kapısı (`IK.md`).
+- **Sıradaki ürün:** TASK-16 (Halil).
+
+## 2026-08-17 — Gelecek senaryoları (T-060; Orchestrator)
+
+- **OWN:** TARTISMA **T-060**. Dört masa (Product, Architect, Payments, Sales/İK) tartıştı. `docs/GELECEK.md` açılmadı; katalog [`docs/YOL.md`](YOL.md) (T-059 durur). `src/` yok. SPEC 8 değişmez. TASK-16 Todo.
+- **Kazanan 12 ay:** tek host + HTTPS URL + Yol **B** (mülakat maaşı). Q2 C/D ve satıcı paneli **park**. Yol A / Papara / Kafka / ikinci kart bakiyesi / 9. ekran **kapalı**.
+- **Sen tıklarsın:** [`docs/YOL.md`](YOL.md) senaryo tabloları; canlı için [`CANLI.md`](CANLI.md) (`az login` + `.\infra\deploy.ps1`).
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
 

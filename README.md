@@ -142,6 +142,7 @@ CI restores and tests `tests/ClearPay.Tests` on `main`.
 
 ## Docs
 
+- [`docs/YOL.md`](docs/YOL.md) — what it is for, where it goes (career first; live URL is TASK-16)
 - [`docs/SPEC.md`](docs/SPEC.md) — screens and money rules (409, one transaction, outbox)
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — onion layers, cookie then JWT
 - [`docs/FARK.md`](docs/FARK.md) — reconciliation-first; not a Papara rival
