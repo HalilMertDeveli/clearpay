@@ -78,6 +78,14 @@ public sealed class ArchitectureTests
         program.Should().NotContain("new RestBankGateway");
     }
 
+    [Fact]
+    public void Domain_contains_no_dart()
+    {
+        var domain = Path.Combine(Root, "src", "ClearPay.Domain");
+        Directory.EnumerateFiles(domain, "*.dart", SearchOption.AllDirectories).Should().BeEmpty();
+        File.ReadAllText(Path.Combine(Root, "ClearPay.slnx")).Should().NotContain("mobile");
+    }
+
     private static IReadOnlyList<string> ProjectRefs(params string[] relativeCsproj)
     {
         var xml = XDocument.Load(Path.Combine(new[] { Root }.Concat(relativeCsproj).ToArray()));
