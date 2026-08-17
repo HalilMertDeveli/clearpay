@@ -1,10 +1,16 @@
 # ClearPay
 
+| [English](./README.md) | [Türkçe](./README.tr.md) | **Deutsch** | [Français](./README.fr.md) |
+|:---------------------:|:-----------------------:|:-----------:|:--------------------------:|
+
 <p align="center">
-  <a href="README.md">English</a>
-  · <a href="README.tr.md">Türkçe</a>
-  · <b>Deutsch</b>
-  · <a href="README.fr.md">Français</a>
+
+[English](./README.md) · [Türkçe](./README.tr.md) · <strong>Deutsch</strong> · [Français](./README.fr.md)
+
+</p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-mark.png" width="96" alt="ClearPay-Marke">
 </p>
 
 <p align="center">
@@ -17,11 +23,53 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
 </p>
 
-<p align="center"><b>Demo — gefälschtes Gateway für Aufladungen.</b> Kein lizenziertes E-Geld-Institut. Nicht Papara / FAST / keine gefälschte Filialbank.</p>
+<p align="center">
+  <img src="docs/assets/clearpay-hero.png" alt="ClearPay — Demo-Wallet, ASP.NET Core 8, Flutter, ein SQL-Ledger. Kein UPDATE Balance." width="920">
+</p>
+
+<p align="center"><b>Demo — gefälschtes Gateway für Aufladungen.</b> Kein lizenziertes E-Geld-Institut. Nicht Papara / FAST / keine gefälschte Filialbank. Kein <code>UPDATE Balance</code>.</p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-rules.png" alt="Saldo abgeleitet; Replay 409; eine SQL-Transaktion" width="920">
+</p>
+
+---
+
+## Website
+
+Razor Pages unter [http://localhost:5153](http://localhost:5153) (Development-Seed `admin@clearpay.test` / `Deneme123`). Es gibt einen Canada-Central-App-Service-Hostnamen, `/api/health` liefert aber noch **404** — öffentliches HTTPS ist **TASK-16**. Die Bilder sind **lokal**. Keine lizenzierte Bank-UI.
+
+| Anmeldung `/giris` | Übersicht nach Login |
+|:------------------:|:--------------------:|
+| <img src="docs/assets/shot-giris.png" alt="ClearPay-Website Anmeldung" width="420"> | <img src="docs/assets/shot-ozet.png" alt="ClearPay-Website Übersicht" width="420"> |
+| Sprachleiste TR · EN · DE · FR. Demo-Wallet. | Dasselbe SQL-Ledger. Saldo = `LedgerPair.NetOf`. |
+
+| Registrierung `/kayit` | Karten `/kartlar` |
+|:----------------------:|:-----------------:|
+| <img src="docs/assets/shot-kayit.png" alt="ClearPay-Website Registrierung" width="420"> | <img src="docs/assets/shot-kartlar.png" alt="ClearPay-Website Karten" width="420"> |
+| Cookie-Identity. Dieselben vier Sprachen. | Nur letzte vier + Schema. Kein PAN in SQL. Fake-Gateway. |
+
+---
+
+## Mobile App
+
+Flutter-JWT-Client auf Android-Emulator `emulator-5554` → `http://10.0.2.2:5153`. Dieselben acht Operationen, dasselbe SQL. **Keine** Hive-/Firestore-Kasse. Firestore schreibt höchstens `app_meta/ping`.
+
+<p align="center">
+  <img src="docs/assets/shot-mobile.png" alt="ClearPay Flutter Übersicht auf dem Android-Emulator" width="280">
+</p>
+
+<p align="center"><i>Özet — Sprachleiste in der Chrome-Leiste, Demo-Fußzeile. Zeilen kommen per JWT → SQL (Spinner, solange die lokale API antwortet).</i></p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-clients.png" alt="Website Razor-Cookie vs. Flutter JWT — ein SQL-Ledger" width="840">
+</p>
+
+---
 
 ## Web + Mobil (geliefert)
 
-Dieses Repo ist **keine reine Website**. Die **Flutter-App** liegt in [`mobile/clearpay`](mobile/clearpay) und spricht denselben ASP.NET-Core-8-Host. Acht Operationen, ein SQL-Ledger, **kein** zweiter Saldo auf dem Telefon. Details: [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+Dieses Repo ist **keine reine Website**. Die **Flutter-App** liegt in [`mobile/clearpay`](mobile/clearpay) und spricht denselben ASP.NET-Core-8-Host. **Ein SQL-Ledger**, **kein** zweiter Saldo auf dem Telefon. Website zusätzlich: [`/kartlar`](http://localhost:5153/kartlar) (Demo-Karte, letzte 4, kein PAN). Firestore schreibt nur `app_meta/ping` — **keine** Kasse. Details: [`README.md`](README.md) und [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
 
 **Ein Wallet, zwei Clients.** Dieselbe Person meldet sich an, überweist, lädt auf und öffnet den Beleg **auf der Website** und **in der Flutter-App**. Razor Pages (Cookie); JSON (JWT). Doppelte Buchführung im Domain — `Wallet` hat **keine** Spalte `Balance`.
 
