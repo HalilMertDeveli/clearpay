@@ -1,10 +1,16 @@
 # ClearPay
 
+| [English](./README.md) | **Türkçe** | [Deutsch](./README.de.md) | [Français](./README.fr.md) |
+|:---------------------:|:----------:|:------------------------:|:--------------------------:|
+
 <p align="center">
-  <a href="README.md">English</a>
-  · <b>Türkçe</b>
-  · <a href="README.de.md">Deutsch</a>
-  · <a href="README.fr.md">Français</a>
+
+[English](./README.md) · <strong>Türkçe</strong> · [Deutsch](./README.de.md) · [Français](./README.fr.md)
+
+</p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-mark.png" width="96" alt="ClearPay markası">
 </p>
 
 <p align="center">
@@ -17,11 +23,51 @@
 </p>
 
 <p align="center">
+  <img src="docs/assets/clearpay-hero.png" alt="ClearPay — demo dijital cüzdan, ASP.NET Core 8, Flutter, tek SQL defteri. UPDATE Balance yok." width="920">
+</p>
+
+<p align="center">
   <b>Demo dijital cüzdan</b> — ASP.NET Core 8 + Flutter, tek SQL Server defteri, <code>UPDATE Balance</code> yok.<br>
   Sahte banka gateway. Lisanslı e-para kuruluşu <b>değil</b>. Papara / FAST / perakende banka kopyası <b>değil</b>.
 </p>
 
 Ben **Halil Mert Develi**. Mülakatta savunduğum repo (Intertech, Softtech): çift kayıt, idempotent HTTP, iki istemci, tek kasa.
+
+<p align="center">
+  <img src="docs/assets/clearpay-rules.png" alt="Bakiye türetilir; tekrar 409; tek SQL işlemi" width="920">
+</p>
+
+---
+
+## Site
+
+Razor Pages: [http://localhost:5153](http://localhost:5153) (Development seed `admin@clearpay.test` / `Deneme123`). Canada Central App Service adı var; `/api/health` hâlâ **404** — canlı HTTPS **TASK-16**. Bu kareler **yerel**. Lisanslı banka arayüzü değil.
+
+| Giriş `/giris` | Giriş sonrası özet |
+|:--------------:|:------------------:|
+| <img src="docs/assets/shot-giris.png" alt="ClearPay site girişi" width="420"> | <img src="docs/assets/shot-ozet.png" alt="ClearPay site özeti" width="420"> |
+| Dil çubuğu TR · EN · DE · FR. Demo cüzdan. | Aynı SQL defteri. Bakiye `LedgerPair.NetOf`. |
+
+| Kayıt `/kayit` | Kartlarım `/kartlar` |
+|:--------------:|:--------------------:|
+| <img src="docs/assets/shot-kayit.png" alt="ClearPay site kayıt" width="420"> | <img src="docs/assets/shot-kartlar.png" alt="ClearPay site kartları" width="420"> |
+| Cookie Identity. Aynı dört dil. | Yalnız son dört + şema. SQL’de PAN yok. Sahte gateway. |
+
+---
+
+## Mobil uygulama
+
+Flutter JWT istemci, Android emülatör `emulator-5554` → `http://10.0.2.2:5153`. Aynı sekiz işlem, aynı SQL. Hive / Firestore **kasa değil**. Firestore yalnız `app_meta/ping` yazabilir.
+
+<p align="center">
+  <img src="docs/assets/shot-mobile.png" alt="ClearPay Flutter özet, Android emülatör" width="280">
+</p>
+
+<p align="center"><i>Özet — chrome’da dil şeridi, demo alt bilgi. Bakiye satırları JWT → SQL (yerel API yavaşsa dönen ikon).</i></p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-clients.png" alt="Site Razor cookie, Flutter JWT — tek SQL defteri" width="840">
+</p>
 
 ---
 
@@ -75,7 +121,7 @@ dotnet build ClearPay.slnx
 
 OpenAPI: [http://localhost:5153/swagger](http://localhost:5153/swagger) · sağlık: [http://localhost:5153/api/health](http://localhost:5153/api/health)
 
-Docker Desktop isteğe bağlı. Para **yalnız SQL Server**. MySQL bu makinede yan araç — cüzdan değil. `.env` commit etme. **Açık Azure URL yok**; canlı TASK-16 (`docs/CANLI.md`), sen `az login` tıklarsın.
+Docker Desktop isteğe bağlı. Para **yalnız SQL Server**. MySQL bu makinede yan araç — cüzdan değil. `.env` commit etme. Canada Central host adı var; `/api/health` hâlâ **404**. Canlı TASK-16 (`docs/CANLI.md`). Bu README o adresi çalışan ürün saymaz.
 
 ---
 

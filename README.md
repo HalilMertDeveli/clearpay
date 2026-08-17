@@ -1,10 +1,16 @@
 # ClearPay
 
+| **English** | [Türkçe](./README.tr.md) | [Deutsch](./README.de.md) | [Français](./README.fr.md) |
+|:-----------:|:-----------------------:|:------------------------:|:--------------------------:|
+
 <p align="center">
-  <b>English</b>
-  · <a href="README.tr.md">Türkçe</a>
-  · <a href="README.de.md">Deutsch</a>
-  · <a href="README.fr.md">Français</a>
+
+<strong>English</strong> · [Türkçe](./README.tr.md) · [Deutsch](./README.de.md) · [Français](./README.fr.md)
+
+</p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-mark.png" width="96" alt="ClearPay mark">
 </p>
 
 <p align="center">
@@ -17,11 +23,51 @@
 </p>
 
 <p align="center">
+  <img src="docs/assets/clearpay-hero.png" alt="ClearPay — demo digital wallet, ASP.NET Core 8, Flutter, one SQL ledger. No UPDATE Balance." width="920">
+</p>
+
+<p align="center">
   <b>Demo digital wallet</b> — ASP.NET Core 8 + Flutter, one SQL Server ledger, no <code>UPDATE Balance</code>.<br>
   Fake bank gateway. <b>Not</b> a licensed e-money institution. <b>Not</b> Papara / FAST / a retail bank clone.
 </p>
 
 I am **Halil Mert Develi**. This is the interview repo I defend (Intertech, Softtech): double-entry, idempotent HTTP, two clients, one cash register.
+
+<p align="center">
+  <img src="docs/assets/clearpay-rules.png" alt="Balance is derived; replay is 409; one SQL transaction" width="920">
+</p>
+
+---
+
+## Website
+
+Razor Pages at [http://localhost:5153](http://localhost:5153) (Development seed `admin@clearpay.test` / `Deneme123`). A Canada Central App Service hostname exists, but `/api/health` still returns **404** — live HTTPS is **TASK-16**, so these shots are **local**. Not a licensed bank UI.
+
+| Sign-in `/giris` | Summary after login |
+|:----------------:|:-------------------:|
+| <img src="docs/assets/shot-giris.png" alt="ClearPay website sign-in" width="420"> | <img src="docs/assets/shot-ozet.png" alt="ClearPay website summary" width="420"> |
+| Language bar TR · EN · DE · FR. Demo wallet. | Same SQL ledger. Balance is `LedgerPair.NetOf`. |
+
+| Register `/kayit` | Cards `/kartlar` |
+|:-----------------:|:----------------:|
+| <img src="docs/assets/shot-kayit.png" alt="ClearPay website register" width="420"> | <img src="docs/assets/shot-kartlar.png" alt="ClearPay website cards" width="420"> |
+| Cookie Identity. Same four languages. | Last four + scheme only. No PAN in SQL. Fake gateway. |
+
+---
+
+## Mobile app
+
+Flutter JWT client on Android emulator `emulator-5554` → `http://10.0.2.2:5153`. Same eight operations, same SQL. **Not** a Hive / Firestore cash register. Firestore may write `app_meta/ping` only.
+
+<p align="center">
+  <img src="docs/assets/shot-mobile.png" alt="ClearPay Flutter overview on Android emulator" width="280">
+</p>
+
+<p align="center"><i>Özet — language strip in chrome, demo footer. Wallet rows come from JWT → SQL (spinner while the local API answers).</i></p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-clients.png" alt="Website Razor cookie vs Flutter JWT — one SQL ledger" width="840">
+</p>
 
 ---
 
@@ -75,7 +121,7 @@ dotnet build ClearPay.slnx
 
 OpenAPI: [http://localhost:5153/swagger](http://localhost:5153/swagger) · health: [http://localhost:5153/api/health](http://localhost:5153/api/health)
 
-Docker Desktop is optional (SQL 2022 + Redis + Rabbit). App money is **SQL Server only**. MySQL on this machine is a sidecar / Workbench tool — not the wallet. Do not commit `.env`. There is **no public Azure URL yet**; live hosting is TASK-16 (`docs/CANLI.md`) after you `az login`.
+Docker Desktop is optional (SQL 2022 + Redis + Rabbit). App money is **SQL Server only**. MySQL on this machine is a sidecar / Workbench tool — not the wallet. Do not commit `.env`. A Canada Central hostname exists; `/api/health` is still **404**. Live hosting is TASK-16 (`docs/CANLI.md`). This README does not treat that URL as a working product.
 
 ---
 

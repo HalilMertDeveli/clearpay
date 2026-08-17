@@ -1058,3 +1058,17 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** Portal `ClearPay_group` → `ClearPay` → **Get publish profile** → GitHub Settings → Secrets → Actions → `AZURE_WEBAPP_PUBLISH_PROFILE` (XML; sohbete yapıştırma). Startup Command `dotnet ClearPay.Web.dll`. HTTPS Only On. Connection string `ClearPay` + `Jwt__SigningKey`. SQL firewall (VNet veya Allow Azure services). Sonra merge/push **`main`** veya Actions **Azure deploy**. `/giris` Production seed yok — `/kayit`.
 - **Sıradaki ürün:** TASK-16 Done = health 200 + `/giris` açılır.
 
+## 2026-08-17 — README Web | Mobil galeri (T-106; Designer+Coder)
+
+- **OWN:** TARTISMA **T-106** (dil linki T-105 durur). TASK-16 Todo (`/api/health` 404). `azure-deploy.yml` yok. Secret yok. `UPDATE Balance` yok. 10. ekran yok. Firestore kasa değil.
+- **Landed:** Dört README: markdown dil tablosu + hero/rules/clients PNG + `shot-giris` `shot-kayit` `shot-ozet` `shot-kartlar` (localhost:5153, admin seed) + `shot-mobile` (emulator-5554 Özet). Aynı PNG, çeviri caption. Azure kare yok.
+- **Sen tıklarsın:** https://github.com/HalilMertDeveli/clearpay (dal `main` homepage) — English · Türkçe · Deutsch · Français. Hard refresh. Site kareleri yerel; canlı URL TASK-16.
+- **Sıradaki ürün:** TASK-16 Azure health 200 + `/giris`.
+
+## 2026-08-17 — GitHub README dil çubuğu (T-105; Sales)
+
+- **OWN:** TARTISMA **T-105**. TASK-16 Todo durur. `src/` yok. Dört `README*.md` zaten GitHub `main` + `cursor/yol-haritasi-career-first` üzerinde.
+- **Landed:** Dil çubuğu HTML `<a href="README.tr.md">` → markdown `[Türkçe](./README.tr.md)` (DE/FR/EN + `mobile/clearpay/README.md`). GitHub native Translations dropdown yok; ana sayfa hep İngilizce `README.md`.
+- **Sen tıklarsın:** Push sonrası https://github.com/HalilMertDeveli/clearpay → Türkçe. Beklenen URL: `https://github.com/HalilMertDeveli/clearpay/blob/main/README.tr.md` (veya dal `…/blob/cursor/yol-haritasi-career-first/README.tr.md`). Kırık olan: `https://github.com/HalilMertDeveli/clearpay/README.tr.md` (404).
+- **Sıradaki ürün:** TASK-16 Azure (Halil publish profile). Bu fix **commit + push** ister; henüz push yok.
+

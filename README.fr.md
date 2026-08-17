@@ -1,10 +1,16 @@
 # ClearPay
 
+| [English](./README.md) | [Türkçe](./README.tr.md) | [Deutsch](./README.de.md) | **Français** |
+|:---------------------:|:-----------------------:|:------------------------:|:------------:|
+
 <p align="center">
-  <a href="README.md">English</a>
-  · <a href="README.tr.md">Türkçe</a>
-  · <a href="README.de.md">Deutsch</a>
-  · <b>Français</b>
+
+[English](./README.md) · [Türkçe](./README.tr.md) · [Deutsch](./README.de.md) · <strong>Français</strong>
+
+</p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-mark.png" width="96" alt="Marque ClearPay">
 </p>
 
 <p align="center">
@@ -17,7 +23,49 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
 </p>
 
-<p align="center"><b>Démo — passerelle fictive pour les recharges.</b> Pas un établissement e-money licencié. Pas Papara / FAST / une fausse banque de détail.</p>
+<p align="center">
+  <img src="docs/assets/clearpay-hero.png" alt="ClearPay — portefeuille démo, ASP.NET Core 8, Flutter, un grand livre SQL. Pas de UPDATE Balance." width="920">
+</p>
+
+<p align="center"><b>Démo — passerelle fictive pour les recharges.</b> Pas un établissement e-money licencié. Pas Papara / FAST / une fausse banque de détail. Pas de <code>UPDATE Balance</code>.</p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-rules.png" alt="Solde dérivé ; rejeu 409 ; une transaction SQL" width="920">
+</p>
+
+---
+
+## Site web
+
+Razor Pages sur [http://localhost:5153](http://localhost:5153) (graine Development `admin@clearpay.test` / `Deneme123`). Un nom d’hôte App Service Canada Central existe, mais `/api/health` renvoie encore **404** — le HTTPS public est **TASK-16**. Ces captures sont **locales**. Pas une UI de banque licenciée.
+
+| Connexion `/giris` | Synthèse après connexion |
+|:------------------:|:------------------------:|
+| <img src="docs/assets/shot-giris.png" alt="Connexion du site ClearPay" width="420"> | <img src="docs/assets/shot-ozet.png" alt="Synthèse du site ClearPay" width="420"> |
+| Barre TR · EN · DE · FR. Portefeuille démo. | Même grand livre SQL. Solde = `LedgerPair.NetOf`. |
+
+| Inscription `/kayit` | Cartes `/kartlar` |
+|:--------------------:|:-----------------:|
+| <img src="docs/assets/shot-kayit.png" alt="Inscription du site ClearPay" width="420"> | <img src="docs/assets/shot-kartlar.png" alt="Cartes du site ClearPay" width="420"> |
+| Identity cookie. Les quatre langues. | Quatre derniers + schéma seulement. Pas de PAN en SQL. Passerelle fictive. |
+
+---
+
+## Application mobile
+
+Client Flutter JWT sur l’émulateur Android `emulator-5554` → `http://10.0.2.2:5153`. Huit opérations, même SQL. **Pas** une caisse Hive / Firestore. Firestore n’écrit que `app_meta/ping`.
+
+<p align="center">
+  <img src="docs/assets/shot-mobile.png" alt="Synthèse Flutter ClearPay sur émulateur Android" width="280">
+</p>
+
+<p align="center"><i>Özet — bandeau de langues, pied démo. Les lignes viennent de JWT → SQL (spinner tant que l’API locale répond).</i></p>
+
+<p align="center">
+  <img src="docs/assets/clearpay-clients.png" alt="Site Razor cookie vs Flutter JWT — un grand livre SQL" width="840">
+</p>
+
+---
 
 ## Web + mobile (livré)
 

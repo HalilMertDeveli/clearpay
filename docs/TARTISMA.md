@@ -1601,4 +1601,18 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-106 — 2026-08-17 — README Web | Mobil galeri + dört dil
+
+- **Kim:** Designer + Coder (kullanıcı: site + Flutter kareleri README’de; English · Türkçe · Deutsch · Français tıklanır)
+- **Konu:** T-102 hero PNG; T-105 markdown dil linki (HTML `<a href="README.tr.md">` GitHub kökünde 404). Galeri henüz README’de yoktu. Azure host `/api/health` **404**. Papara/YK sahte kare yok. 10. ekran yok. Firestore kasa değil. `azure-deploy.yml` / secret’a dokunulmaz.
+- **Seçenekler:**
+  1. Yalnız diyagram PNG — kullanıcı hem web hem mobil ürün yüzü istedi.
+  2. **Kazanan:** `docs/assets/shot-*.png` (yerel Razor `/giris` `/kayit` `/` `/kartlar`; Flutter `emulator-5554` Özet). Dört README aynı PNG, çeviri altyazı. Dil: markdown tablo + `[Türkçe](./README.tr.md)` (T-105). Azure kare yok; altyazı TASK-16. `main` homepage yalnız README+assets (feature merge değil — Deploy zip çatışması yok).
+  3. 404 Azure’u “canlı ürün” diye göstermek / Papara ekranı uydurmak — red.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** 1 isteği karşılamaz. 3 yalan. 2 gerçek Razor + gerçek Flutter + GitHub-safe PNG.
+- **Sonra hangi dosya:** `README.md` `README.tr.md` `README.de.md` `README.fr.md` `docs/assets/shot-*.png`. HANDOFF **append**. `src/` yok.
+
+---
+
 
