@@ -52,7 +52,7 @@ Site must be up: [http://localhost:5153](http://localhost:5153). Same eight oper
 |-----------|------------|-----|
 | Sign in | Giriş | `POST /api/token` |
 | Register | Hesap oluştur | `POST /api/register` |
-| Summary | Özet (pull-to-refresh) | `GET /api/wallet` |
+| Summary | Özet (hamburger + sol çekmece, bakiye kartı, kısayol; pull-to-refresh) | `GET /api/wallet` |
 | Transfer | Havale + onay | `POST /api/transfers` + `Idempotency-Key` → 201 / **409** |
 | Top-up / withdraw | Yükle / Çek + demo kart | `POST /api/topup` / `withdraw` |
 | Movements | Hareketler + filtre | `GET /api/movements` |
@@ -88,6 +88,23 @@ flutter run -d windows
 ```
 
 Store listing / HTTPS live URL: TASK-16 (you click `az login`). CI stays `dotnet test`.
+
+## Firebase (client only)
+
+Ledger stays SQL Server. Firebase is **not** Auth/Firestore wallet.
+
+1. Same Gmail: `halilmertdeveliii@gmail.com` — [Firebase console](https://console.firebase.google.com/) → add project (or reuse ClearPay Google Cloud).
+2. Command Prompt:
+
+```bat
+npm install -g firebase-tools
+firebase login
+cd /d C:\Users\clt\Projects\clearpay\mobile\clearpay
+tool\configure-firebase.cmd
+```
+
+3. Until that runs, the app still logs in with JWT (`firebase_core` skips). Do not put a second balance in Firestore.
+
 
 ## License
 

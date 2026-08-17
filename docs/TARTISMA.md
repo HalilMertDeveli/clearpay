@@ -970,10 +970,32 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Neden:** Ziyaretçi “aynı kişi, iki istemci, tek defter” görsün.
 - **Sonra hangi dosya:** `README.md` + TR/DE/FR; `mobile/clearpay/README.md`; HANDOFF append.
 
+---
 
+## T-065 — 2026-08-17 — Flutter Firebase yapılandırması (istemci; kasa değil)
 
-
+- **Kim:** Orchestrator + Coder (kullanıcı: Flutter için Firebase yapılandırması)
+- **Konu:** `mobile/clearpay` JWT istemci. T-061 eski reddi **Firebase ikizi / Firestore bakiye** içindi. Şimdi Google projesi + `firebase_core` mi, yoksa Auth/Firestore ikinci defter mi?
+- **Seçenekler:**
+  1. Firebase Auth + Firestore/Hive bakiye — hayır (T-061; `UPDATE Balance` ikizi; SQL ledger kırılır).
+  2. **`firebase_core` istemci init.** JWT + C# port + SQL kasa durur. 8 ekran. 9. ekran / FCM inbox yok. `google-services.json` / `firebase_options.dart` FlutterFire üretir. Ajan Firebase/Google Cloud projesi **açmaz** (GIRIS-SOSYAL / CANLI ile aynı). CLI yoksa iskelet + Halil `firebase login` + `configure-firebase.cmd`. Crashlytics/Analytics sonra; şimdi yalnız core.
+  3. Firebase’siz — kullanıcı yapılandırma istedi.
+- **Karar:** **2.** TASK-16 Todo durur. Domain’e Dart yok. `ClearPay.slnx` Flutter içermez.
+- **Neden:** 1 ikinci kasa. 3 isteği karşılamaz. 2 mülakat omurgası SQL/409; Firebase yalnızca mobil Google bağları.
+- **Sonra hangi dosya:** Coder `mobile/clearpay` (`pubspec`, `lib/firebase/**`, `main.dart`, Android Gradle koşullu plugin, `tool/configure-firebase.cmd`, README). `docs/SENIN-ISLERIN.md` tık. HANDOFF append. `src/` yok.
 
 ---
 
+## T-066 — 2026-08-17 — Flutter sol çekmece + perakende banka kromu (YK kopyası değil)
 
+- **Kim:** Orchestrator + Coder (kullanıcı: solda pencere/panel; Yapı Kredi mobil gibi UI, iç özellikler sonra)
+- **Konu:** Flutter’da sol panel + TR banka uygulaması ana ekran dili. Pixel-clone / YK ürün ızgarası mı, yoksa mevcut 8 işleme map’li ClearPay kromu mu?
+- **Seçenekler:**
+  1. Yapı Kredi piksel kopyası (logo, YK altın/mavi kimlik, kredi/döviz/fatura/QR ızgarası) — **red** (marka; SPEC 9. ekran; lisans iddiası).
+  2. **Kazanan:** Sol `NavigationDrawer` + perakende-banka mobil kromu (app bar hamburger, hesap/bakiye kartı, kısayol karoları, işlem listesi). ClearPay navy `#1B2A4A`. Footer **Demo — sahte banka gateway.** Çekmece + ana kısayollar yalnız mevcut 8 işlem: Giriş (zaten), Kayıt (auth), Özet, Havale, Yükle/Çek, Hareketler, Dekont (hareketten), Admin (JWT Admin). Kartlar bugünkü gibi Yükle/Çek altında.
+  3. Kredi / fatura / QR için yeni ekranlar — **park** (kullanıcı sonra dedi; yeni TARTISMA + SPEC şart).
+- **Karar:** **2.** TASK-16 Todo durur. 9. ekran yok. Papara/YK wordmark yok.
+- **Neden:** Aynı kişi, iki istemci, tek defter. TR banka uygulamasının UI dili (hamburger, hesap kartı, kısayol ızgarası) YK olmayı gerektirmez. 1 marka+SPEC kırar. 3 şimdi kapsam dışı.
+- **Sonra hangi dosya:** Coder `mobile/clearpay/lib/screens/shell_screen.dart`, `overview_screen.dart`, `theme.dart`, `api/clearpay_client.dart` (JWT e-posta), `test/widget_test.dart`. HANDOFF append. `src/` yok. SPEC ekran listesi durur.
+
+---

@@ -91,3 +91,19 @@ dotnet user-secrets set "Authentication:Google:ClientSecret" "..."
 3. `git status` bu değerleri **göstermez**. Gösterirse dur; commit etme.
 4. **Apple** isteğe bağlı (ücretli Developer). Yoksa atla. Varsa `GIRIS-SOSYAL.md` §2.
 5. Canlıda aynı anahtarlar Azure App Settings (`Authentication__Google__...`); canlı redirect URI ekle. TASK-16’dan önce şart değil.
+
+## Flutter Firebase (T-065) — senin işin
+
+Ajan Firebase projesi açmaz. Kasa SQL’de kalır; Firestore bakiye yok.
+
+1. [Firebase console](https://console.firebase.google.com/) — bu Gmail. Proje: ClearPay demo (veya mevcut Google Cloud).
+2. Command Prompt:
+
+```bat
+npm install -g firebase-tools
+firebase login
+cd /d C:\Users\clt\Projects\clearpay\mobile\clearpay
+tool\configure-firebase.cmd
+```
+
+3. Yeni Google hesabı yok. Secret’ı sohbete yapıştırma. `flutterfire` yazdığı `firebase_options.dart` / `google-services.json` istemci anahtarıdır (JWT signing key değil).

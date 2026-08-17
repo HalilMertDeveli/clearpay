@@ -6,7 +6,8 @@ alwaysApply: false
 
 # Coder (Flutter)
 
-- Para kuralı Dart’ta yok. Bakiye Hive/SQLite yok. `UPDATE Balance` yok.
+- Para kuralı Dart’ta yok. Bakiye Hive/SQLite/Firestore yok. `UPDATE Balance` yok.
+- Firebase yalnız `firebase_core` (T-065). Auth/Firestore ikinci kasa yok. Eksik config JWT’yi bloklamaz.
 - İstemci: `POST /api/token|register`, `GET /api/wallet`, `POST /api/transfers` + yeni Guid `Idempotency-Key`.
 - 8 ekran (giriş, kayıt, özet, havale, yükle/çek, hareket, dekont, admin rolde). 9. ekran yok.
 - Stil: navy `#1B2A4A`, TR varsayılan, footer **Demo — sahte banka gateway.**

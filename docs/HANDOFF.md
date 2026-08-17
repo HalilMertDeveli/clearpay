@@ -766,4 +766,25 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** GitHub `README.md` üstü; `mobile/clearpay/README.md`.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — Flutter Firebase core (T-065; Coder)
+
+- **OWN:** TARTISMA **T-065**. `firebase_core` + `initClearPayFirebase` (eksik options JWT’yi kesmez). Auth/Firestore kasa yok. Ajan Firebase projesi açmaz. TASK-16 Todo.
+- **Landed:** `lib/firebase/bootstrap.dart` + stub `firebase_options.dart`; Android `google-services` yalnızca json varsa; `tool/configure-firebase.cmd`. `flutter test` giriş+footer geçti.
+- **Sen tıklarsın:** [Firebase console](https://console.firebase.google.com/) (aynı Gmail) → proje → Command Prompt: `npm install -g firebase-tools` → `firebase login` → `mobile\clearpay\tool\configure-firebase.cmd`. Windows plugin için Geliştirici Modu.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Flutter Android emülatör (T-061; Coder)
+
+- **OWN:** TARTISMA **T-061** (10.0.2.2 + debug HTTP). `src/` yok. TASK-16 Todo.
+- **Landed:** Android cleartext: `usesCleartextTraffic` + `network_security_config` (10.0.2.2). `flutter run -d emulator-5554` APK yüklendi, Giriş açıldı. Firebase yok → JWT durur.
+- **Sen tıklarsın:** site `:5153` ayaktayken cmd: `cd /d C:\Users\clt\Projects\clearpay\mobile\clearpay` → `flutter run -d emulator-5554`. Demo `admin@clearpay.test` / `Deneme123`. AVD kapalıysa Android Studio Device Manager → Pixel 10 Pro XL Play.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
+## 2026-08-17 — Flutter sol çekmece (T-066; Coder)
+
+- **OWN:** TARTISMA **T-066**. Sol `NavigationDrawer` + özet bakiye kartı / kısayol karoları. YK piksel kopyası değil (logo, altın kimlik, kredi/döviz/QR yok). 8 işlem. TASK-16 Todo durur.
+- **Landed:** Giriş sonrası hamburger; çekmece ClearPay + e-posta + Özet/Havale/Yükle-Çek/Hareketler/Dekont(hareketten)/Admin(JWT)/Çıkış. Özet: navy hesap kartı, Havale/Yükle/Çek/Hareketler kısayol, son hareket → dekont. Alt sekme durur. Footer demo cümlesi.
+- **Sen tıklarsın:** site `:5153` + cmd `cd /d C:\Users\clt\Projects\clearpay\mobile\clearpay` → `flutter run -d emulator-5554` (veya Windows). Giriş sonrası sol menü.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 

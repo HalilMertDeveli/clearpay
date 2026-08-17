@@ -27,6 +27,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [x] UI: mobil bankacılık düzeni — alt sekme çubuğu, ortalanmış kolon, ölçülü derinlik (T-053; TASK numarası değil, 8 ekran aynı)
 - [x] UI: demo kayıtlı kart — Yükle/Çek paneli, PAN yok (T-055; 9. ekran yok)
 - [x] UI: kamu cüzdan örnekleri — havale onay, unfreeze, tarih-bitiş, fiş corr/son4 (T-057; TASK numarası değil, 8 ekran aynı)
+- [x] UI: Flutter sol çekmece + perakende banka ana kromu (T-066; TASK numarası değil, 8 ekran aynı; YK kopyası değil)
 
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
@@ -35,6 +36,8 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - Q2 Flutter JWT istemci (T-061) landed: `GET /api/wallet` + `mobile/clearpay`. TASK-16 Todo durur. 9. ekran yok.
 - T-062: kayıt/kart/admin JWT; Flutter’da site işlemleri; Coder OWN `mobile/**/*.dart`. TASK-16 Todo.
 - T-063: Flutter aynı git repo (`mobile/clearpay` + `ClearPay.code-workspace`). İç içe git yok. TASK-16 Todo.
+- T-065: Flutter `firebase_core` (istemci). Firestore/Auth ikinci kasa yok. Firebase projesi Halil. TASK-16 Todo.
+- T-066: Flutter sol `NavigationDrawer` + özet bakiye kartı / kısayol (8 işlem). YK/Papara marka yok. TASK-16 Todo.
 - TASK-12: `ConnectionStrings:RabbitMq` yok/düşer → log publisher; Hangfire yedek. Health `rabbit` up/down/off. CloudAMQP hesabı açılmaz.
 - Hosting / DNS / CloudAMQP kullanıcı hesabı gerektirir
 - Para kuralları: `docs/SPEC.md` — 409, transaction, outbox bozulmaz
