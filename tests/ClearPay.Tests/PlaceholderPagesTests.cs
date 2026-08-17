@@ -30,6 +30,7 @@ public sealed class PlaceholderPagesTests : IClassFixture<ClearPayWebFactory>
     [InlineData("/")]
     [InlineData("/havale")]
     [InlineData("/yukle-cek")]
+    [InlineData("/kartlar")]
     [InlineData("/hareketler")]
     [InlineData("/admin")]
     [InlineData("/dekont/00000000-0000-0000-0000-000000000000")]

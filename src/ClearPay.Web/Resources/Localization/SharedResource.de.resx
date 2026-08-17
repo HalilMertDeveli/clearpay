@@ -25,14 +25,27 @@
   <data name="Welcome" xml:space="preserve"><value>Willkommen</value></data>
   <data name="QuickOps" xml:space="preserve"><value>Schnellzugriff</value></data>
   <data name="AddCard" xml:space="preserve"><value>Karte hinzufügen</value></data>
-  <data name="CardAddFail" xml:space="preserve"><value>Karte nicht gespeichert. Nur 4 Ziffern — keine volle Kartennummer. Höchstens 5 Karten.</value></data>
-  <data name="CardAddOk" xml:space="preserve"><value>Demo-Karte gespeichert. Aufladen/Abheben nutzt diesen Hinweis.</value></data>
-  <data name="CardHint" xml:space="preserve"><value>Demo-Karte: letzte 4 Ziffern. Keine echte Visa/Mastercard.</value></data>
+  <data name="CardAddFail" xml:space="preserve"><value>Karte nicht gespeichert. Demo-Nummer (4111…) oder letzte 4 Ziffern. CVV wird nicht gespeichert. Höchstens 5 Karten.</value></data>
+  <data name="CardAddOk" xml:space="preserve"><value>Demo-Karte verknüpft. Aufladen nutzt die letzten 4 Ziffern.</value></data>
+  <data name="CardHint" xml:space="preserve"><value>Vom verknüpften Konto aufladen. Neue Karten unter Meine Karten.</value></data>
   <data name="CardLabel" xml:space="preserve"><value>Kartenname</value></data>
   <data name="CardLast4" xml:space="preserve"><value>Letzte 4 Ziffern</value></data>
   <data name="LinkedCard" xml:space="preserve"><value>Verknüpfte Karte</value></data>
-  <data name="NoLinkedCard" xml:space="preserve"><value>Noch keine Karte. Letzte 4 Ziffern eingeben.</value></data>
+  <data name="NoLinkedCard" xml:space="preserve"><value>Noch keine Karte.</value></data>
   <data name="SelectCard" xml:space="preserve"><value>Karte wählen</value></data>
+  <data name="NavCards" xml:space="preserve"><value>Meine Karten</value></data>
+  <data name="CardsLede" xml:space="preserve"><value>Karte verknüpfen; die Vorschau folgt der Eingabe. Aufladen über das Demo-Gateway.</value></data>
+  <data name="MetaCards" xml:space="preserve"><value>Verknüpfte Karten. Demo — volle Nummer und CVV werden nicht gespeichert.</value></data>
+  <data name="CardNumber" xml:space="preserve"><value>Kartennummer</value></data>
+  <data name="CardHolder" xml:space="preserve"><value>Name auf der Karte</value></data>
+  <data name="CardExpiry" xml:space="preserve"><value>Gültig bis</value></data>
+  <data name="CardCvv" xml:space="preserve"><value>CVV</value></data>
+  <data name="CardCvvHint" xml:space="preserve"><value>CVV wird nicht gespeichert</value></data>
+  <data name="CardNickname" xml:space="preserve"><value>Kartenname (z. B. Yapı Kredi)</value></data>
+  <data name="LoadFromCard" xml:space="preserve"><value>Wallet von dieser Karte aufladen</value></data>
+  <data name="CardSchemeUnknown" xml:space="preserve"><value>Karte</value></data>
+  <data name="CardsEmptyHint" xml:space="preserve"><value>Demo-Nummer: 4111 1111 1111 1111. Troy 9792…. Yapı Kredi ist ein Spitzname, kein Schema.</value></data>
+  <data name="CardBindHint" xml:space="preserve"><value>Live-Vorschau. Gespeichert: letzte 4 + Name + Schema (Visa/Mastercard/Troy). Kein echtes POS.</value></data>
   <data name="ColAmount" xml:space="preserve"><value>Betrag</value></data>
   <data name="ColCounterparty" xml:space="preserve"><value>Gegenpartei</value></data>
   <data name="ColDate" xml:space="preserve"><value>Datum</value></data>
@@ -102,7 +115,7 @@
   <data name="RecentActivity" xml:space="preserve"><value>Letzte Bewegungen</value></data>
   <data name="RecipientEmail" xml:space="preserve"><value>Empfänger (E-Mail)</value></data>
   <data name="Register" xml:space="preserve"><value>Registrierung</value></data>
-  <data name="RegisterLede" xml:space="preserve"><value>Eröffnen Sie ein Kundenkonto mit Name und E-Mail.</value></data>
+  <data name="RegisterLede" xml:space="preserve"><value>Eröffnen Sie ein Kundenkonto mit Name, E-Mail, Mobilnummer und Kontotyp.</value></data>
   <data name="RemainingBalance" xml:space="preserve"><value>Verbleibendes Guthaben</value></data>
   <data name="RequestId" xml:space="preserve"><value>Anfrage-Nr.</value></data>
   <data name="RoleCustomer" xml:space="preserve"><value>Kunde</value></data>
@@ -110,7 +123,7 @@
   <data name="Send" xml:space="preserve"><value>Senden</value></data>
   <data name="SendTransfer" xml:space="preserve"><value>Überweisung senden</value></data>
   <data name="SignIn" xml:space="preserve"><value>Anmelden</value></data>
-  <data name="SignInLede" xml:space="preserve"><value>Melden Sie sich mit E-Mail und Passwort an Ihrer Wallet an.</value></data>
+  <data name="SignInLede" xml:space="preserve"><value>Melden Sie sich mit E-Mail oder Demo-TC und Passwort an.</value></data>
   <data name="SignInWithApple" xml:space="preserve"><value>Mit Apple anmelden</value></data>
   <data name="SignInWithGoogle" xml:space="preserve"><value>Mit Google anmelden</value></data>
   <data name="SignOut" xml:space="preserve"><value>Abmelden</value></data>
@@ -165,4 +178,16 @@
   <data name="AccountHintLabel" xml:space="preserve"><value>Konto / Karte</value></data>
   <data name="TransferRecipientRequired" xml:space="preserve"><value>Empfänger-E-Mail ist erforderlich.</value></data>
   <data name="EmptyQueueHint" xml:space="preserve"><value>Timeout-Zeilen bleiben hier; Erneut einreihen wiederholt sie.</value></data>
+  <data name="Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="PhoneHint" xml:space="preserve"><value>TR-Handy: 5xx. Kein SMS / Mernis.</value></data>
+  <data name="PhoneRequired" xml:space="preserve"><value>Telefon ist erforderlich.</value></data>
+  <data name="PhoneTaken" xml:space="preserve"><value>Diese Nummer ist bereits einem anderen Konto zugeordnet.</value></data>
+  <data name="AccountKind" xml:space="preserve"><value>Kontotyp</value></data>
+  <data name="AccountKindHint" xml:space="preserve"><value>Dieselben 8 Vorgänge. Kein Händler-POS.</value></data>
+  <data name="AccountKindIndividual" xml:space="preserve"><value>Privat</value></data>
+  <data name="AccountKindCorporate" xml:space="preserve"><value>Geschäftlich</value></data>
+  <data name="SignInTabEmail" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="SignInTabTc" xml:space="preserve"><value>TC (Demo)</value></data>
+  <data name="SignInTcHint" xml:space="preserve"><value>Kein Mernis. Demo 10000000146 → admin@clearpay.test</value></data>
+  <data name="SignInTcUnknown" xml:space="preserve"><value>Diese Demo-TC ist nicht hinterlegt.</value></data>
 </root>

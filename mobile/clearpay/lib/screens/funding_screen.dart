@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
+import '../l10n/locale_scope.dart';
 import '../theme.dart';
 import 'receipt_screen.dart';
 
@@ -58,7 +59,7 @@ class _FundingScreenState extends State<FundingScreen> {
         _cards = cards;
         _frozen = wallet.isFrozen;
         if (wallet.isFrozen) {
-          _message = 'Cüzdan dondurulmuş; yükle/çek kapalı.';
+          _message = null;
         }
       });
     } on ApiException catch (e) {
@@ -74,7 +75,7 @@ class _FundingScreenState extends State<FundingScreen> {
       await widget.api.addCard(last4: _last4.text, label: _label.text);
       _last4.clear();
       await _loadCards();
-      setState(() => _message = 'Kart eklendi (PAN yok, yalnız son 4).');
+      setState(() => _message = l10n(context).cardAdded);
     } on ApiException catch (e) {
       setState(() => _message = e.message);
     }
@@ -83,7 +84,7 @@ class _FundingScreenState extends State<FundingScreen> {
   Future<void> _run(Future<PostedMoney> Function({required double amount, required String account}) action) async {
     final amount = double.tryParse(_amount.text.replaceAll(',', '.'));
     if (amount == null || amount <= 0) {
-      setState(() => _message = 'Geçerli tutar girin.');
+      setState(() => _message = l10n(context).validAmount);
       return;
     }
     setState(() {
@@ -114,38 +115,40 @@ class _FundingScreenState extends State<FundingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = l10n(context);
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        const Text('Kayıtlı kart (demo, PAN yok)', style: TextStyle(fontWeight: FontWeight.w600)),
+        Text(l.linkedCard, style: const TextStyle(fontWeight: FontWeight.w600)),
+        if (_frozen) Text(l.frozenNoFunding, style: const TextStyle(color: navy)),
         for (final card in _cards)
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: Text('${card.label} · ${card.accountHint}'),
             onTap: () => setState(() => _account.text = card.accountHint),
           ),
-        TextField(controller: _last4, decoration: const InputDecoration(labelText: 'Son 4 hane')),
-        TextField(controller: _label, decoration: const InputDecoration(labelText: 'Etiket')),
-        TextButton(onPressed: _addCard, child: const Text('Kart ekle')),
+        TextField(controller: _last4, decoration: InputDecoration(labelText: l.last4)),
+        TextField(controller: _label, decoration: InputDecoration(labelText: l.cardLabel)),
+        TextButton(onPressed: _addCard, child: Text(l.addCard)),
         const Divider(),
         TextField(
           controller: _amount,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'Tutar'),
+          decoration: InputDecoration(labelText: l.amount),
         ),
         TextField(
           controller: _account,
-          decoration: const InputDecoration(labelText: 'Hesap ipucu (TIMEOUT = zaman aşımı)'),
+          decoration: InputDecoration(labelText: l.accountHint),
         ),
         const SizedBox(height: 16),
         FilledButton(
           onPressed: (_busy || _frozen) ? null : () => _run(widget.api.topUp),
-          child: Text(_frozen ? 'Dondurulmuş' : 'Yükle'),
+          child: Text(_frozen ? l.frozen : l.topUp),
         ),
         const SizedBox(height: 8),
         OutlinedButton(
           onPressed: (_busy || _frozen) ? null : () => _run(widget.api.withdraw),
-          child: const Text('Çek'),
+          child: Text(l.withdraw),
         ),
         if (_message != null) ...[
           const SizedBox(height: 12),

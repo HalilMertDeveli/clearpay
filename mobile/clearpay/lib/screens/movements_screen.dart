@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
+import '../l10n/locale_scope.dart';
 import '../theme.dart';
 import 'receipt_screen.dart';
 
@@ -96,6 +97,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = l10n(context);
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView(
@@ -111,11 +113,11 @@ class _MovementsScreenState extends State<MovementsScreen> {
                       child: DropdownButton<String>(
                         isExpanded: true,
                         value: _kind,
-                        items: const [
-                          DropdownMenuItem(value: 'all', child: Text('Tümü')),
-                          DropdownMenuItem(value: 'Transfer', child: Text('Havale')),
-                          DropdownMenuItem(value: 'TopUp', child: Text('Yükleme')),
-                          DropdownMenuItem(value: 'Withdraw', child: Text('Çekim')),
+                        items: [
+                          DropdownMenuItem(value: 'all', child: Text(l.filterAll)),
+                          DropdownMenuItem(value: 'Transfer', child: Text(l.transfer)),
+                          DropdownMenuItem(value: 'TopUp', child: Text(l.topUpKind)),
+                          DropdownMenuItem(value: 'Withdraw', child: Text(l.withdrawKind)),
                         ],
                         onChanged: (value) {
                           if (value == null) {
@@ -128,18 +130,18 @@ class _MovementsScreenState extends State<MovementsScreen> {
                         },
                       ),
                     ),
-                    TextButton(onPressed: _load, child: const Text('Filtrele')),
+                    TextButton(onPressed: _load, child: Text(l.filter)),
                   ],
                 ),
                 Row(
                   children: [
                     TextButton(
                       onPressed: _pickFrom,
-                      child: Text(_from == null ? 'Başlangıç' : _iso(_from)!),
+                      child: Text(_from == null ? l.filterFrom : _iso(_from)!),
                     ),
                     TextButton(
                       onPressed: _pickTo,
-                      child: Text(_to == null ? 'Bitiş' : _iso(_to)!),
+                      child: Text(_to == null ? l.filterTo : _iso(_to)!),
                     ),
                     if (_from != null || _to != null)
                       TextButton(
@@ -151,7 +153,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
                           });
                           _load();
                         },
-                        child: const Text('Temizle'),
+                        child: Text(l.clear),
                       ),
                   ],
                 ),
@@ -164,16 +166,16 @@ class _MovementsScreenState extends State<MovementsScreen> {
               child: Text(_error!, style: const TextStyle(color: Colors.red)),
             ),
           if (_page.items.isEmpty && _error == null)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('Bu dönemde hareket yok.', style: TextStyle(color: muted)),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(l.emptyPeriod, style: const TextStyle(color: muted)),
             ),
           for (final row in _page.items)
             ListTile(
-              title: Text('${row.kind} · ${formatTry(row.signedAmount)}'),
+              title: Text('${row.kind} · ${l.money(row.signedAmount)}'),
               subtitle: Text('${row.counterparty}\n${row.at}'),
               isThreeLine: true,
-              trailing: const Text('Dekont'),
+              trailing: Text(l.receipt),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -198,7 +200,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
                             setState(() => _pageIndex--);
                             _load();
                           },
-                    child: const Text('Önceki'),
+                    child: Text(l.previous),
                   ),
                   Text('${_page.page} / ${_page.totalPages}'),
                   TextButton(
@@ -208,7 +210,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
                             setState(() => _pageIndex++);
                             _load();
                           },
-                    child: const Text('Sonraki'),
+                    child: Text(l.next),
                   ),
                 ],
               ),

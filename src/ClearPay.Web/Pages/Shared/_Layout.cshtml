@@ -8,7 +8,7 @@
     var isAdmin = User.IsInRole(ClearPay.Domain.Identity.AppRoles.Admin);
     var contentClass = ViewData["Wide"] as bool? == true ? "content content--wide" : "content";
     var displayName = User.Identity?.Name;
-    var livePages = new[] { "/Index", "/Hareketler", "/Havale", "/YukleCek", "/Admin", "/Dekont" };
+    var livePages = new[] { "/Index", "/Hareketler", "/Havale", "/YukleCek", "/Kartlar", "/Admin", "/Dekont" };
     var liveWallet = livePages.Contains(page);
 }
 <!DOCTYPE html>
@@ -60,6 +60,7 @@
             <nav class="side-nav" aria-label="@L["MainMenu"]">
                 <a class="@NavClass("/Index")" asp-page="/Index"><span class="nav-ico nav-ico--overview" aria-hidden="true"></span>@L["NavOverview"]</a>
                 <a class="@NavClass("/Havale")" asp-page="/Havale"><span class="nav-ico nav-ico--send" aria-hidden="true"></span>@L["NavTransfer"]</a>
+                <a class="@NavClass("/Kartlar")" asp-page="/Kartlar"><span class="nav-ico nav-ico--cards" aria-hidden="true"></span>@L["NavCards"]</a>
                 <a class="@NavClass("/YukleCek")" asp-page="/YukleCek"><span class="nav-ico nav-ico--topup" aria-hidden="true"></span>@L["NavTopUpWithdraw"]</a>
                 <a class="@NavClass("/Hareketler")" asp-page="/Hareketler"><span class="nav-ico nav-ico--activity" aria-hidden="true"></span>@L["NavActivity"]</a>
                 @if (isAdmin)
@@ -99,6 +100,10 @@
                 <a class="@TabClass("/Havale")" asp-page="/Havale">
                     <span class="nav-ico nav-ico--send" aria-hidden="true"></span>
                     <span class="tab-label">@L["NavTransfer"]</span>
+                </a>
+                <a class="@TabClass("/Kartlar")" asp-page="/Kartlar">
+                    <span class="nav-ico nav-ico--cards" aria-hidden="true"></span>
+                    <span class="tab-label">@L["NavCards"]</span>
                 </a>
                 <a class="@TabClass("/YukleCek")" asp-page="/YukleCek">
                     <span class="nav-ico nav-ico--topup" aria-hidden="true"></span>

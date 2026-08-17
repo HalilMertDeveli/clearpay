@@ -42,14 +42,8 @@ public sealed class AuthFlowTests : IClassFixture<ClearPayWebFactory>
 
         var html = await client.GetStringAsync("/kayit");
         var token = GetToken(html);
-        var post = await client.PostAsync("/kayit", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Ayşe Yılmaz",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        var post = await client.PostAsync("/kayit", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Ayşe Yılmaz")));
 
         post.StatusCode.Should().Be(HttpStatusCode.OK);
         var wallet = await post.Content.ReadAsStringAsync();

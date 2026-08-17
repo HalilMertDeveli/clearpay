@@ -29,4 +29,6 @@ public static class LedgerSchema
     public const int LinkedLast4Length = 4;
 
     public const int LinkedLabelMaxLength = 40;
+
+    public const int LinkedSchemeMaxLength = 16;
 }

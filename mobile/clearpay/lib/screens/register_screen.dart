@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
 import '../auth/account_kind_store.dart';
+import '../auth/auth_session.dart';
 import '../auth/token_store.dart';
+import '../l10n/language_strip.dart';
+import '../l10n/locale_scope.dart';
 import '../theme.dart';
+import 'forgot_password_screen.dart';
 import 'shell_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -12,11 +16,13 @@ class RegisterScreen extends StatefulWidget {
     required this.store,
     required this.api,
     required this.kindStore,
+    this.auth = const DisabledAuthSession(),
   });
 
   final TokenStore store;
   final ClearPayClient api;
   final AccountKindStore kindStore;
+  final AuthSession auth;
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -25,6 +31,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _name = TextEditingController();
   final _email = TextEditingController();
+  final _phone = TextEditingController();
   final _password = TextEditingController();
   final _confirm = TextEditingController();
   String? _error;
@@ -34,6 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _name.dispose();
     _email.dispose();
+    _phone.dispose();
     _password.dispose();
     _confirm.dispose();
     super.dispose();
@@ -45,11 +53,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _error = null;
     });
     try {
-      await widget.api.register(
+      if (_password.text != _confirm.text) {
+        setState(() => _error = l10n(context).passwordsMismatch);
+        return;
+      }
+      if (_phone.text.trim().isEmpty) {
+        setState(() => _error = l10n(context).phoneRequired);
+        return;
+      }
+      if (!widget.auth.isConfigured) {
+        setState(() => _error = DisabledAuthSession.notConfigured);
+        return;
+      }
+      String idToken;
+      try {
+        idToken = await widget.auth.register(
+          email: _email.text,
+          password: _password.text,
+          fullName: _name.text,
+        );
+      } on AuthException catch (e) {
+        if (e.code != 'email-already-in-use') {
+          rethrow;
+        }
+        idToken = await widget.auth.signIn(
+          email: _email.text,
+          password: _password.text,
+        );
+      }
+      await widget.api.loginWithFirebase(
+        idToken,
         fullName: _name.text,
-        email: _email.text,
-        password: _password.text,
-        confirmPassword: _confirm.text,
+        phone: _phone.text,
         accountKind: widget.kindStore.kind,
       );
       if (!mounted) {
@@ -68,10 +103,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             store: widget.store,
             api: widget.api,
             kindStore: widget.kindStore,
+            auth: widget.auth,
           ),
         ),
         (_) => false,
       );
+    } on AuthException catch (e) {
+      setState(() => _error = e.message);
     } on ApiException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -83,30 +121,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = l10n(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Hesap oluştur')),
+      appBar: AppBar(
+        title: Text(l.registerTitle),
+        actions: const [Padding(padding: EdgeInsets.only(right: 8), child: LanguageStrip(light: true))],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
           Text(
-            '${widget.kindStore.kind} kayıt — aynı 8 ekran',
+            l.kindRegister(widget.kindStore.kind),
             style: const TextStyle(color: navy, fontWeight: FontWeight.w600),
           ),
-          TextField(controller: _name, decoration: const InputDecoration(labelText: 'Ad')),
+          TextField(controller: _name, decoration: InputDecoration(labelText: l.fullName)),
           TextField(
             controller: _email,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(labelText: 'E-posta'),
+            decoration: InputDecoration(labelText: l.email),
+          ),
+          TextField(
+            controller: _phone,
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+              labelText: l.phone,
+              hintText: '5550000001',
+            ),
           ),
           TextField(
             controller: _password,
             obscureText: true,
-            decoration: const InputDecoration(labelText: 'Şifre'),
+            decoration: InputDecoration(labelText: l.password),
           ),
           TextField(
             controller: _confirm,
             obscureText: true,
-            decoration: const InputDecoration(labelText: 'Şifre tekrar'),
+            decoration: InputDecoration(labelText: l.confirmPassword),
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
@@ -115,7 +165,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const SizedBox(height: 16),
           FilledButton(
             onPressed: _busy ? null : _submit,
-            child: Text(_busy ? '…' : 'Hesap oluştur'),
+            child: Text(_busy ? '…' : l.createAccount),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l.haveAccount),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => ForgotPasswordScreen(
+                    api: widget.api,
+                    auth: widget.auth,
+                    initialEmail: _email.text,
+                  ),
+                ),
+              );
+            },
+            child: Text(l.forgot),
           ),
           const DemoFooter(),
         ],

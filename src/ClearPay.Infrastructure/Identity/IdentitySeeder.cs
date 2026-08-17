@@ -10,6 +10,11 @@ public static class IdentitySeeder
 {
     public const string DevelopmentAdminEmail = "admin@clearpay.test";
 
+    /// <summary>Local 10 digits; stored as 905550000001. Demo recovery, not SMS OTP.</summary>
+    public const string DevelopmentAdminPhoneLocal = "5550000001";
+
+    public const string DevelopmentAdminPhone = "905550000001";
+
     public static async Task EnsureCreatedAndRolesAsync(IServiceProvider services)
     {
         using var scope = services.CreateScope();
@@ -50,5 +55,11 @@ public static class IdentitySeeder
             await users.AddToRoleAsync(admin, AppRoles.Admin);
         if (!await users.IsInRoleAsync(admin, AppRoles.Musteri))
             await users.AddToRoleAsync(admin, AppRoles.Musteri);
+
+        if (string.IsNullOrWhiteSpace(admin.PhoneNumber))
+        {
+            admin.PhoneNumber = DevelopmentAdminPhone;
+            await users.UpdateAsync(admin);
+        }
     }
 }

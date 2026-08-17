@@ -2,7 +2,7 @@ using System.Text.Json;
 
 internal static class AgentDebugLog
 {
-    private const string Path = @"C:\Users\clt\Projects\clearpay\debug-021de0.log";
+    private const string Path = @"D:\ClearPay\clearpay\debug-021de0.log";
 
     public static void Write(string hypothesisId, string location, string message, object data)
     {

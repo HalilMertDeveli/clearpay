@@ -4,6 +4,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../api/clearpay_client.dart';
 import '../auth/account_kind_store.dart';
+import '../debug_agent_log.dart';
+import '../l10n/locale_scope.dart';
 import '../qr/pay_uri.dart';
 import '../theme.dart';
 import 'receipt_screen.dart';
@@ -57,11 +59,40 @@ class _OverviewScreenState extends State<OverviewScreen> {
         _wallet = wallet;
         _error = null;
       });
+      // #region agent log
+      agentDebugLog(
+        hypothesisId: 'C',
+        location: 'overview_screen.dart:_load',
+        message: 'wallet load ok',
+        data: {
+          'frozen': wallet.isFrozen,
+          'movements': wallet.lastMovements.length,
+        },
+      );
+      // #endregion
     } on ApiException catch (e) {
+      // #region agent log
+      agentDebugLog(
+        hypothesisId: 'M',
+        location: 'overview_screen.dart:_load',
+        message: 'wallet load failed',
+        data: {'status': e.status},
+      );
+      // #endregion
       if (!mounted) {
         return;
       }
       setState(() => _error = e.message);
+    } catch (e) {
+      // #region agent log
+      agentDebugLog(
+        hypothesisId: 'C',
+        location: 'overview_screen.dart:_load',
+        message: 'wallet load other',
+        data: {'errorType': e.runtimeType.toString()},
+      );
+      // #endregion
+      rethrow;
     }
   }
 
@@ -77,6 +108,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   }
 
   void _showPark(String title, String body) {
+    final l = l10n(context);
     showModalBottomSheet<void>(
       context: context,
       builder: (ctx) => Padding(
@@ -89,7 +121,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
             const SizedBox(height: 8),
             Text(body, style: const TextStyle(color: muted)),
             const SizedBox(height: 12),
-            const Text('Park — demo değil', style: TextStyle(color: navy, fontWeight: FontWeight.w600)),
+            Text(l.parkNotDemo, style: const TextStyle(color: navy, fontWeight: FontWeight.w600)),
             const DemoFooter(),
           ],
         ),
@@ -98,10 +130,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
   }
 
   void _showReceiveQr() {
+    final l = l10n(context);
     final email = widget.api.email;
     if (email == null || email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('QR için JWT e-posta yok.')),
+        SnackBar(content: Text(l.qrNeedsEmail)),
       );
       return;
     }
@@ -113,12 +146,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('QR ile al', style: TextStyle(color: navy, fontSize: 18, fontWeight: FontWeight.w700)),
+            Text(l.receiveQrTitle, style: const TextStyle(color: navy, fontSize: 18, fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
-            const Text(
-              'ClearPay demo URI. TCMB FAST / Jet QR değil.',
+            Text(
+              l.receiveQrLede,
               textAlign: TextAlign.center,
-              style: TextStyle(color: muted, fontSize: 13),
+              style: const TextStyle(color: muted, fontSize: 13),
             ),
             const SizedBox(height: 16),
             ColoredBox(color: Colors.white, child: QrImageView(data: payload, size: 200)),
@@ -131,7 +164,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   Navigator.pop(ctx);
                 }
               },
-              child: const Text('URI kopyala'),
+              child: Text(l.copyUri),
             ),
           ],
         ),
@@ -140,6 +173,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   }
 
   void _showPayQr() {
+    final l = l10n(context);
     final payload = TextEditingController();
     showModalBottomSheet<void>(
       context: context,
@@ -150,15 +184,15 @@ class _OverviewScreenState extends State<OverviewScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('QR ile öde', style: TextStyle(color: navy, fontSize: 18, fontWeight: FontWeight.w700)),
+            Text(l.payQrTitle, style: const TextStyle(color: navy, fontSize: 18, fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
-            const Text(
-              'Kamera yoksa URI yapıştır veya alıcı e-posta yaz. Havale formuna dolar; POST /api/transfers.',
-              style: TextStyle(color: muted, fontSize: 13),
+            Text(
+              l.payQrLede,
+              style: const TextStyle(color: muted, fontSize: 13),
             ),
             TextField(
               controller: payload,
-              decoration: const InputDecoration(labelText: 'QR yükü veya alıcı e-posta'),
+              decoration: InputDecoration(labelText: l.qrPayload),
             ),
             const SizedBox(height: 12),
             FilledButton(
@@ -166,14 +200,14 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 final parsed = PayUri.tryParse(payload.text);
                 if (parsed == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Geçerli ClearPay QR veya e-posta girin.')),
+                    SnackBar(content: Text(l.invalidQr)),
                   );
                   return;
                 }
                 Navigator.pop(ctx);
                 widget.onPayQr?.call(TransferPrefill(recipient: parsed.to, amount: parsed.amount));
               },
-              child: const Text('Havale formunu doldur'),
+              child: Text(l.fillTransferForm),
             ),
             const DemoFooter(),
           ],
@@ -183,19 +217,20 @@ class _OverviewScreenState extends State<OverviewScreen> {
   }
 
   void _showMore() {
+    final l = l10n(context);
     showModalBottomSheet<void>(
       context: context,
       builder: (ctx) => ListView(
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(8, 16, 8, 24),
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Text('Daha fazla', style: TextStyle(color: navy, fontSize: 18, fontWeight: FontWeight.w700)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(l.more, style: const TextStyle(color: navy, fontSize: 18, fontWeight: FontWeight.w700)),
           ),
           ListTile(
             leading: const Icon(Icons.account_balance_wallet_outlined),
-            title: const Text('Özet'),
+            title: Text(l.overview),
             onTap: () {
               Navigator.pop(ctx);
               widget.onOpenTab?.call(0);
@@ -203,7 +238,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.swap_horiz),
-            title: const Text('Havale'),
+            title: Text(l.transfer),
             onTap: () {
               Navigator.pop(ctx);
               widget.onOpenTab?.call(1);
@@ -211,7 +246,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.savings_outlined),
-            title: const Text('Yükle / Çek'),
+            title: Text(l.topUpWithdraw),
             onTap: () {
               Navigator.pop(ctx);
               widget.onOpenTab?.call(2);
@@ -219,7 +254,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.receipt_long_outlined),
-            title: const Text('Hareketler / Dekont'),
+            title: Text(l.movementsReceipt),
             onTap: () {
               Navigator.pop(ctx);
               widget.onOpenTab?.call(3);
@@ -228,7 +263,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
           if (widget.api.isAdmin)
             ListTile(
               leading: const Icon(Icons.admin_panel_settings_outlined),
-              title: const Text('Admin'),
+              title: Text(l.admin),
               onTap: () {
                 Navigator.pop(ctx);
                 widget.onOpenTab?.call(4);
@@ -237,22 +272,22 @@ class _OverviewScreenState extends State<OverviewScreen> {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.show_chart),
-            title: const Text('Piyasalar'),
-            subtitle: const Text('Park — demo değil'),
+            title: Text(l.markets),
+            subtitle: Text(l.parkNotDemo),
             onTap: () {
               Navigator.pop(ctx);
-              _showPark('Piyasalar', 'Yatırım/döviz yok; SPEC 8.');
+              _showPark(l.markets, l.marketsPark);
             },
           ),
-          const ListTile(
-            leading: Icon(Icons.receipt_outlined),
-            title: Text('Fatura'),
-            subtitle: Text('Park — demo değil'),
+          ListTile(
+            leading: const Icon(Icons.receipt_outlined),
+            title: Text(l.invoice),
+            subtitle: Text(l.parkNotDemo),
           ),
-          const ListTile(
-            leading: Icon(Icons.credit_score_outlined),
-            title: Text('Kredi'),
-            subtitle: Text('Park — demo değil'),
+          ListTile(
+            leading: const Icon(Icons.credit_score_outlined),
+            title: Text(l.credit),
+            subtitle: Text(l.parkNotDemo),
           ),
           const DemoFooter(),
         ],
@@ -261,14 +296,16 @@ class _OverviewScreenState extends State<OverviewScreen> {
   }
 
   void _openFast() {
+    final l = l10n(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Demo P2P — TCMB FAST değil')),
+      SnackBar(content: Text(l.fastSnack)),
     );
     widget.onOpenTab?.call(1);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = l10n(context);
     final kurumsal = widget.kind == kurumsalKind;
     return ColoredBox(
       color: wash,
@@ -292,7 +329,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
               _BalanceCard(wallet: _wallet!, kind: widget.kind),
               const SizedBox(height: 16),
               Text(
-                kurumsal ? 'Kurumsal kısayollar (demo)' : 'Hızlı işlemler',
+                kurumsal ? l.corporateShortcuts : l.quickOps,
                 style: const TextStyle(fontWeight: FontWeight.w600, color: navy),
               ),
               const SizedBox(height: 8),
@@ -306,67 +343,67 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 children: [
                   _QuickTile(
                     icon: Icons.swap_horiz,
-                    label: 'Havale',
+                    label: l.transfer,
                     enabled: !_wallet!.isFrozen,
                     onTap: () => widget.onOpenTab?.call(1),
                   ),
                   _QuickTile(
                     icon: Icons.add_card_outlined,
-                    label: 'Yükle',
+                    label: l.topUp,
                     enabled: !_wallet!.isFrozen,
                     onTap: () => widget.onOpenTab?.call(2),
                   ),
                   _QuickTile(
                     icon: Icons.south_west,
-                    label: 'Çek',
+                    label: l.withdraw,
                     enabled: !_wallet!.isFrozen,
                     onTap: () => widget.onOpenTab?.call(2),
                   ),
-                  _QuickTile(icon: Icons.qr_code_2, label: 'QR al', onTap: _showReceiveQr),
+                  _QuickTile(icon: Icons.qr_code_2, label: l.qrReceive, onTap: _showReceiveQr),
                   _QuickTile(
                     icon: Icons.qr_code_scanner,
-                    label: 'QR öde',
+                    label: l.qrPay,
                     enabled: !_wallet!.isFrozen,
                     onTap: _showPayQr,
                   ),
                   _QuickTile(
                     icon: Icons.bolt_outlined,
-                    label: 'FAST',
+                    label: l.fast,
                     enabled: !_wallet!.isFrozen,
                     onTap: _openFast,
                   ),
                   _QuickTile(
                     icon: Icons.show_chart,
-                    label: 'Piyasalar',
-                    onTap: () => _showPark('Piyasalar', 'Yatırım/döviz yok; SPEC 8.'),
+                    label: l.markets,
+                    onTap: () => _showPark(l.markets, l.marketsPark),
                   ),
-                  _QuickTile(icon: Icons.more_horiz, label: 'Daha fazla', onTap: _showMore),
+                  _QuickTile(icon: Icons.more_horiz, label: l.more, onTap: _showMore),
                 ],
               ),
               const SizedBox(height: 8),
-              const Text(
-                'FAST kiremiti Havale’ye gider. QR kanalı; Jet QR / World Pay değil.',
-                style: TextStyle(color: muted, fontSize: 12),
+              Text(
+                l.fastHint,
+                style: const TextStyle(color: muted, fontSize: 12),
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Son hareketler',
-                      style: TextStyle(fontWeight: FontWeight.w600, color: navy),
+                      l.recentActivity,
+                      style: const TextStyle(fontWeight: FontWeight.w600, color: navy),
                     ),
                   ),
                   TextButton(
                     onPressed: () => widget.onOpenTab?.call(3),
-                    child: const Text('Tümü'),
+                    child: Text(l.viewAll),
                   ),
                 ],
               ),
               if (_wallet!.lastMovements.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: Text('Henüz hareket yok.', style: TextStyle(color: muted)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(l.noMovementsYet, style: const TextStyle(color: muted)),
                 ),
               for (final row in _wallet!.lastMovements)
                 Material(
@@ -375,7 +412,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     title: Text(row.kind),
                     subtitle: Text(row.at, style: const TextStyle(color: muted)),
                     trailing: Text(
-                      formatTry(row.amount),
+                      l.money(row.amount),
                       style: const TextStyle(fontWeight: FontWeight.w600, color: navy),
                     ),
                     onTap: () => _openReceipt(row.correlationId),
@@ -397,6 +434,7 @@ class _BalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = l10n(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
@@ -412,12 +450,12 @@ class _BalanceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            kind == kurumsalKind ? 'Kurumsal cüzdan (demo — üye iş yeri değil)' : 'Cüzdan',
+            kind == kurumsalKind ? l.corporateWallet : l.wallet,
             style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
-            formatTry(wallet.balance),
+            l.money(wallet.balance),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 32,
@@ -426,14 +464,14 @@ class _BalanceCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Bu ay giden ${formatTry(wallet.monthOutgoing)}  ·  gelen ${formatTry(wallet.monthIncoming)}',
+            l.monthFlow(l.money(wallet.monthOutgoing), l.money(wallet.monthIncoming)),
             style: const TextStyle(color: Colors.white70, fontSize: 13),
           ),
           if (wallet.isFrozen) ...[
             const SizedBox(height: 10),
-            const Text(
-              'Cüzdan dondurulmuş',
-              style: TextStyle(color: Color(0xFFFFC9C9), fontWeight: FontWeight.w600),
+            Text(
+              l.walletFrozen,
+              style: const TextStyle(color: Color(0xFFFFC9C9), fontWeight: FontWeight.w600),
             ),
           ],
         ],

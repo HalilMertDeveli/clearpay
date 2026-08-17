@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
+import '../l10n/locale_scope.dart';
 import '../qr/pay_uri.dart';
 import '../theme.dart';
 import 'receipt_screen.dart';
@@ -73,7 +74,7 @@ class _TransferScreenState extends State<TransferScreen> {
         _balance = wallet.balance;
         _frozen = wallet.isFrozen;
         if (wallet.isFrozen) {
-          _message = 'Cüzdan dondurulmuş; gönderim kapalı.';
+          _message = null;
         }
       });
     } on ApiException catch (e) {
@@ -85,18 +86,19 @@ class _TransferScreenState extends State<TransferScreen> {
   }
 
   Future<void> _pasteQr() async {
+    final l = l10n(context);
     final field = TextEditingController();
     final raw = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('QR yapıştır'),
+        title: Text(l.pasteQr),
         content: TextField(
           controller: field,
-          decoration: const InputDecoration(labelText: 'clearpay://pay?to=… veya e-posta'),
+          decoration: InputDecoration(labelText: l.qrOrEmail),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, field.text), child: const Text('Doldur')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, field.text), child: Text(l.fill)),
         ],
       ),
     );
@@ -105,7 +107,7 @@ class _TransferScreenState extends State<TransferScreen> {
     }
     final parsed = PayUri.tryParse(raw);
     if (parsed == null) {
-      setState(() => _message = 'Geçerli ClearPay QR veya e-posta girin.');
+      setState(() => _message = l.invalidQr);
       return;
     }
     setState(() {
@@ -113,24 +115,25 @@ class _TransferScreenState extends State<TransferScreen> {
       if (parsed.amount != null) {
         _amount.text = parsed.amount!;
       }
-      _message = 'QR alıcı forma yazıldı. Onay + POST /api/transfers.';
+      _message = l.qrFilledForm;
     });
   }
 
   Future<void> _send() async {
+    final l = l10n(context);
     final amount = double.tryParse(_amount.text.replaceAll(',', '.'));
     if (amount == null || amount <= 0) {
-      setState(() => _message = 'Geçerli tutar girin.');
+      setState(() => _message = l.validAmount);
       return;
     }
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Havale onayı'),
-        content: Text('${_recipient.text} hesabına ${formatTry(amount)} gönderilsin mi?'),
+        title: Text(l.confirmTransfer),
+        content: Text(l.confirmSend(_recipient.text, l.money(amount))),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('İptal')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Gönder')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l.send)),
         ],
       ),
     );
@@ -169,34 +172,36 @@ class _TransferScreenState extends State<TransferScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = l10n(context);
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        if (_balance != null) Text('Kalan bakiye: ${formatTry(_balance!)}', style: const TextStyle(color: navy)),
-        const Text(
-          'QR ile öde bu formdur. Jet QR değil.',
-          style: TextStyle(color: muted, fontSize: 12),
+        if (_balance != null) Text(l.remainingBalance(l.money(_balance!)), style: const TextStyle(color: navy)),
+        if (_frozen) Text(l.frozenNoSend, style: const TextStyle(color: navy)),
+        Text(
+          l.payQrIsThisForm,
+          style: const TextStyle(color: muted, fontSize: 12),
         ),
         TextField(
           controller: _recipient,
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(labelText: 'Alıcı e-posta'),
+          decoration: InputDecoration(labelText: l.recipientEmail),
         ),
         TextField(
           controller: _amount,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(labelText: 'Tutar'),
+          decoration: InputDecoration(labelText: l.amount),
         ),
         TextField(
           controller: _description,
-          decoration: const InputDecoration(labelText: 'Açıklama'),
+          decoration: InputDecoration(labelText: l.description),
         ),
         const SizedBox(height: 8),
-        OutlinedButton(onPressed: _pasteQr, child: const Text('QR yapıştır')),
+        OutlinedButton(onPressed: _pasteQr, child: Text(l.pasteQr)),
         const SizedBox(height: 8),
         FilledButton(
           onPressed: (_busy || _frozen) ? null : _send,
-          child: Text(_frozen ? 'Dondurulmuş' : (_busy ? '…' : 'Gönder')),
+          child: Text(_frozen ? l.frozen : (_busy ? '…' : l.send)),
         ),
         if (_message != null) ...[
           const SizedBox(height: 12),

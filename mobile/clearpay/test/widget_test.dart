@@ -4,6 +4,7 @@ import 'package:clearpay/api/clearpay_client.dart';
 import 'package:clearpay/auth/account_kind_store.dart';
 import 'package:clearpay/auth/token_store.dart';
 import 'package:clearpay/demo/tc_login.dart';
+import 'package:clearpay/firebase/bootstrap.dart';
 import 'package:clearpay/main.dart';
 import 'package:clearpay/qr/pay_uri.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,16 @@ ClearPayApp _app({
 }
 
 void main() {
+  test('Firestore ping is meta-only and never carries money fields', () {
+    expect(kClearPayFirestorePingPath, 'app_meta/ping');
+    final payload = clearPayFirestorePingPayload();
+    expect(payload['ok'], isTrue);
+    expect(payload['message'], kClearPayFirestorePingMessage);
+    expect(payload.containsKey('amount'), isFalse);
+    expect(payload.containsKey('balance'), isFalse);
+    expect(payload.containsKey('password'), isFalse);
+  });
+
   test('demo TC maps only the documented seed to admin email', () {
     expect(resolveDemoTcEmail('10000000146'), 'admin@clearpay.test');
     expect(resolveDemoTcEmail('100-000-00146'), 'admin@clearpay.test');
@@ -67,7 +78,35 @@ void main() {
     expect(find.text('Giriş'), findsOneWidget);
     expect(find.text('E-posta'), findsWidgets);
     expect(find.text('TC (demo)'), findsOneWidget);
+    expect(find.text('Şifremi unuttum'), findsOneWidget);
     expect(find.text('Demo — sahte banka gateway.'), findsOneWidget);
+    expect(
+      find.textContaining('Firestore ping atlandı'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('language strip switches login chrome to English', (tester) async {
+    final store = MemoryTokenStore();
+    await tester.pumpWidget(_app(store: store));
+    await tester.tap(find.text('English'));
+    await tester.pump();
+    expect(find.text('Sign in'), findsWidgets);
+    expect(find.text('Forgot password'), findsOneWidget);
+    expect(find.text('Demo — fake bank gateway.'), findsOneWidget);
+  });
+
+  testWidgets('language strip switches login chrome to Deutsch and Français', (tester) async {
+    final store = MemoryTokenStore();
+    await tester.pumpWidget(_app(store: store));
+    await tester.tap(find.text('Deutsch'));
+    await tester.pump();
+    expect(find.text('Anmelden'), findsWidgets);
+    expect(find.text('Passwort vergessen'), findsOneWidget);
+    await tester.tap(find.text('Français'));
+    await tester.pump();
+    expect(find.text('Connexion'), findsWidgets);
+    expect(find.text('Mot de passe oublié'), findsOneWidget);
   });
 
   testWidgets('splash then Bireysel and Kurumsal cards', (tester) async {
@@ -150,6 +189,47 @@ void main() {
     expect(find.text('Admin'), findsWidgets);
     expect(find.text('Çıkış'), findsOneWidget);
     expect(find.text('Demo — sahte banka gateway.'), findsWidgets);
+  });
+
+  testWidgets('language strip switches overview kicker and quick-ops to English', (tester) async {
+    final store = MemoryTokenStore(_jwt(email: 'admin@clearpay.test', admin: true));
+    final api = _client(
+      store,
+      httpClient: MockClient((request) async {
+        if (request.url.path == '/api/wallet') {
+          return http.Response(
+            jsonEncode({
+              'balance': 80.5,
+              'monthOutgoing': 10,
+              'monthIncoming': 20,
+              'isFrozen': false,
+              'lastMovements': const <Object>[],
+            }),
+            200,
+          );
+        }
+        return http.Response('{}', 404);
+      }),
+    );
+    await tester.pumpWidget(_app(store: store, api: api));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Hızlı işlemler'), findsOneWidget);
+    expect(find.text('80,50 ₺'), findsOneWidget);
+
+    await tester.tap(find.text('English'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1));
+
+    expect(find.text('Overview'), findsWidgets);
+    expect(find.text('Quick actions'), findsOneWidget);
+    expect(find.text('Top up'), findsWidgets);
+    expect(find.text('Withdraw'), findsOneWidget);
+    expect(find.text('Receive QR'), findsOneWidget);
+    expect(find.text('Pay QR'), findsOneWidget);
+    expect(find.text('More'), findsOneWidget);
+    expect(find.text('80.50 ₺'), findsOneWidget);
   });
 
   test('401 invokes onUnauthorized then throws', () async {

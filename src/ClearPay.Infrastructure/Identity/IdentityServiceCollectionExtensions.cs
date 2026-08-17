@@ -65,12 +65,16 @@ public static class IdentityServiceCollectionExtensions
             options.AccessDeniedPath = "/erisim-yok";
             options.Cookie.Name = "ClearPay.Auth";
             options.Cookie.HttpOnly = true;
+            options.Cookie.SameSite = SameSiteMode.Lax;
             options.Cookie.SecurePolicy = environment.IsDevelopment()
                 ? CookieSecurePolicy.SameAsRequest
                 : CookieSecurePolicy.Always;
             options.SlidingExpiration = true;
         });
 
+        services.AddHttpClient(nameof(FirebaseIdTokenVerifier));
+        services.AddSingleton<IFirebaseIdTokenVerifier, FirebaseIdTokenVerifier>();
+        services.AddSingleton<IAccountMailer, LogAccountMailer>();
         services.AddScoped<IUserDirectory, IdentityUserDirectory>();
         return services;
     }

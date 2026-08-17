@@ -93,6 +93,7 @@
 
   const authed = document.body.getAttribute("data-wallet-hub") === "true";
   if (authed && window.signalR && typeof window.signalR.HubConnectionBuilder === "function") {
+    const pageLoadedAt = Date.now();
     const conn = new window.signalR.HubConnectionBuilder()
       .withUrl("/hubs/wallet")
       .withAutomaticReconnect()
@@ -101,13 +102,9 @@
       if (document.body.getAttribute("data-live-wallet") !== "true") {
         return;
       }
-      if (document.querySelector('form[aria-busy="true"]')) {
-        return;
-      }
-      window.clearTimeout(window.__clearpayLiveReload);
-      window.__clearpayLiveReload = window.setTimeout(() => {
-        window.location.reload();
-      }, 250);
+      // #region agent log
+      fetch('http://127.0.0.1:7320/ingest/8265b831-5f86-4494-a083-68cbc6788d32',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'021de0'},body:JSON.stringify({sessionId:'021de0',runId:'post-fix',location:'site.js:WalletChanged',message:'hint only no reload',data:{age:Date.now()-pageLoadedAt},timestamp:Date.now(),hypothesisId:'H'})}).catch(()=>{});
+      // #endregion
     });
     conn.start().then(() => {
       // #region agent log

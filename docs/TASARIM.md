@@ -37,6 +37,7 @@ Yaratıcılık: hiyerarşi, boş durum + CTA, wordmark, form ritmi, kısa hareke
 ## Wordmark
 
 Kare marka: 2rem, 8px radius, düz teal `#0F766E`, içinde beyaz **C**.  
+Launcher (T-084): navy `#1B2A4A` kare, beyaz geometrik **C**, ince teal halka; YK/Papara/World yok.  
 İsim: **ClearPay**, tracking `0.04em`, 700. Masthead’de beyaz; auth’ta navy.  
 Tagline (yalnız auth): `Demo dijital cüzdan`.
 
@@ -183,6 +184,8 @@ auth-mark   2.5rem teal kare, beyaz C; margin 0 0 0.85rem
 tagline     0.85rem muted, margin 0 0 1.25rem; metin: Demo cüzdan
 h1          Giriş — 1.75rem; lede 1rem, margin-bottom 0
 auth-form   margin-top 1.5rem
+.auth-tabs  her zaman görünür (Yükle `.tab-switch` değil — o masaüstünde gizli)
+            2 kolon hap; E-posta | TC (demo)
 .field      margin-bottom 1.1rem
 .btn-block  width 100%; margin-top 0.25rem
 auth-switch margin 1.35rem 0 0; 0.9rem
@@ -190,7 +193,9 @@ auth-footer kart DIŞI, 0.75rem muted, margin-top 1.35rem
             metin: Demo — yükleme için sahte gateway
 ```
 
-Kayıt aynı kart ritmi; dört field, hint şifre altında 0.35rem. Boş durum yok (form). Hata: `.validation-summary` 0.75rem 0.85rem padding, 1px danger.
+Kayıt aynı kart ritmi; ad, e-posta, **telefon**, Bireysel/Kurumsal (`.choice-row` iki radio), şifre + tekrar. Hint şifre altında 0.35rem. Boş durum yok (form). Hata: `.validation-summary` 0.75rem 0.85rem padding, 1px danger.
+
+T-088: TC sekmesi Mernis değil (seed `10000000146`). Flutter dil şeridi auth + çekmece; YK/Papara yok.
 
 ### 2) Özet hero (`/` `.wallet-home`)
 
@@ -321,3 +326,8 @@ Dekont: correlation tam + kopyala; yükle/çek `****son4` satırı (`AccountHint
 Yükle formunda **İptal** (Çek ile aynı, Özet’e). Topbar rol hapı: Musteri / **Admin** (`.pill-admin` ılık çerçeve). 9. ekran değil.
 
 Flutter: sol çekmece + alt sekme durur; dondurulmuş cüzdanda Havale/Yükle/Çek kapalı. JWT 401 ProblemDetails.
+
+### 13) Kartlarım — canlı önizleme (T-097, ekran 9)
+
+Kullanıcı isteği: kart bağla, yazarken kart yüzü. Rota `/kartlar`. Navy `#1B2A4A` 3D CSS kart (ön: numara gruplu / ad / SKT; CVV odakta arka yüz `rotateY(180deg)`, 220ms). Şema yazısı Visa / Mastercard / Troy (BIN; resmi logo yok). Yapı Kredi **kart adı**, şema değil. CVV input `name` yok. Kayıt son 4 + ad + şema. «Bu karttan cüzdana yükle» → `/yukle-cek?kart=`. Footer demo one-liner. Sol menü + özet daire. Flutter 3D park.
+

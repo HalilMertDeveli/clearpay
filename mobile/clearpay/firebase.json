@@ -1,1 +1,26 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"clearpay-c0485","appId":"1:443217660097:android:972cc7de1852efbde66c40","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"clearpay-c0485","configurations":{"android":"1:443217660097:android:972cc7de1852efbde66c40","ios":"1:443217660097:ios:2899c14bf073732ce66c40","windows":"1:443217660097:web:c860aa8dea6b4e41e66c40"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "clearpay-c0485",
+          "appId": "1:443217660097:android:972cc7de1852efbde66c40",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "clearpay-c0485",
+          "configurations": {
+            "android": "1:443217660097:android:972cc7de1852efbde66c40",
+            "ios": "1:443217660097:ios:2899c14bf073732ce66c40",
+            "windows": "1:443217660097:web:c860aa8dea6b4e41e66c40"
+          }
+        }
+      }
+    }
+  }
+}

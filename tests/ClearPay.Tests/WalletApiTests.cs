@@ -244,14 +244,8 @@ public sealed class WalletApiTests : IClassFixture<ClearPayWebFactory>
     {
         var page = await client.GetStringAsync("/Account/Register");
         var antiforgery = AntiforgeryTestHelper.GetToken(page);
-        var response = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = name,
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = antiforgery
-        }));
+        var response = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(antiforgery, email, name)));
         response.EnsureSuccessStatusCode();
     }
 

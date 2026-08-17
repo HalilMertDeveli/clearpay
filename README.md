@@ -10,53 +10,90 @@
 <p align="center">
   <a href="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml"><img src="https://github.com/HalilMertDeveli/clearpay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet" alt=".NET 8">
-  <img src="https://img.shields.io/badge/Flutter-mobile_app-02569B?logo=flutter" alt="Flutter mobile app">
-  <img src="https://img.shields.io/badge/Android%20%7C%20Windows%20%7C%20iOS-shipped-0F766E" alt="Android Windows iOS">
-  <img src="https://img.shields.io/badge/SQL_Server-2022-CC2927?logo=microsoftsqlserver" alt="SQL Server">
+  <img src="https://img.shields.io/badge/Flutter-JWT_client-02569B?logo=flutter" alt="Flutter JWT client">
+  <img src="https://img.shields.io/badge/SQL_Server-ledger-CC2927?logo=microsoftsqlserver" alt="SQL Server ledger">
   <img src="https://img.shields.io/badge/UI-TR%20%7C%20EN%20%7C%20DE%20%7C%20FR-1B2A4A" alt="UI languages">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
 </p>
 
-<p align="center"><b>Demo — fake gateway for top-ups.</b> Not a licensed e-money institution. Not Papara / FAST / a fake retail bank.</p>
+<p align="center">
+  <b>Demo digital wallet</b> — ASP.NET Core 8 + Flutter, one SQL Server ledger, no <code>UPDATE Balance</code>.<br>
+  Fake bank gateway. <b>Not</b> a licensed e-money institution. <b>Not</b> Papara / FAST / a retail bank clone.
+</p>
 
-## Web + mobile (shipped)
-
-This repo is **not website-only**. A **Flutter mobile app** lives in [`mobile/clearpay`](mobile/clearpay) and talks to the same ASP.NET Core 8 host.
-
-| Client | Stack | Auth | Money |
-|--------|--------|------|--------|
-| **Website** | Razor Pages, `src/ClearPay.Web` | Identity cookie | Application ports → SQL ledger |
-| **Mobile app** | Flutter 3.41, Android / Windows / iOS tree | JWT Bearer | Same ports. **No** Hive / Firestore / MySQL wallet |
-
-Same eight operations (sign in, register, summary, transfer, top-up/withdraw, movements, receipt, admin). Same `Idempotency-Key` → **409**. The phone does **not** keep a second balance. Flutter **web is not a product surface** — the browser product is Razor.
-
-How to run the app (site must be on `:5153` first): see [**Mobile app**](#mobile-app-flutter) below and [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
-
-I am Halil Mert Develi. Interview repo (Intertech, Softtech): ledger + 409 on **two clients**. MIT licence.
+I am **Halil Mert Develi**. This is the interview repo I defend (Intertech, Softtech): double-entry, idempotent HTTP, two clients, one cash register.
 
 ---
 
-## Mobile app (Flutter)
+## Why it exists
 
-**Shipped in this repository** — not a mock, not a second cash register.
+Most demo wallets store a number on `Wallet.Balance` and patch it. ClearPay does not.
 
-- Path: [`mobile/clearpay`](mobile/clearpay) (same git repo; **not** in `ClearPay.slnx`)
-- Workspace: [`ClearPay.code-workspace`](ClearPay.code-workspace) opens **ClearPay** + **ClearPay Flutter**
-- Platforms: Android emulator (`http://10.0.2.2:5153`), Windows desktop, iOS project tree. JWT to `:5153`.
-- UI: Türkçe default; drawer + bottom tabs; the same eight wallet operations as the site
+| Rule | What the code does |
+|------|-------------------|
+| **Balance is derived** | `LedgerPair.NetOf` over signed `LedgerEntry` rows. There is no balance column. |
+| **Replay is 409** | Same `Idempotency-Key` = same intent. A timeout retry must not debit twice. |
+| **One SQL transaction** | Debit, credit, transfer, idempotency, audit, and outbox commit together. |
+| **Outbox first** | The message row is in that transaction. Hangfire (and Rabbit when bound) publish after commit. |
+| **Two clients, one ledger** | Website (cookie) and Flutter (JWT) hit the same Application ports. The phone has no Hive / SQLite / Firestore wallet. |
 
-```bat
-cd /d D:\ClearPay\clearpay
+---
+
+## Two clients
+
+| | Website | Mobile app |
+|--|---------|------------|
+| Path | `src/ClearPay.Web` | [`mobile/clearpay`](mobile/clearpay) |
+| UI | Razor Pages, TR / EN / DE / FR | Flutter 3.41, TR default, same four languages |
+| Auth | ASP.NET Identity cookie | JWT Bearer (`POST /api/token`) |
+| Money | Application ports → SQL | **Same ports.** No second cash register |
+| Extra | [`/kartlar`](http://localhost:5153/kartlar) — demo linked cards (last four + scheme, no PAN) | Cards UI parked; `GET/POST /api/cards` still talks to SQL |
+
+Flutter **web is not a product**. The browser product is Razor. Android emulator uses `http://10.0.2.2:5153`; Windows / iOS use `http://localhost:5153`.
+
+---
+
+## Run it
+
+.NET 8 SDK. Development uses **SQL Server LocalDB** `(localdb)\MSSQLLocalDB` / database `ClearPay` for Identity **and** the ledger.
+
+```bash
 dotnet run --project src/ClearPay.Web --launch-profile http
 ```
 
+Open [http://localhost:5153/giris](http://localhost:5153/giris) — `admin@clearpay.test` / `Deneme123` (Development seed only).
+
 ```bat
 cd /d D:\ClearPay\clearpay\mobile\clearpay
-flutter doctor
 flutter run -d emulator-5554
 ```
 
-Optional: `flutter run -d windows`. Full client notes: [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+```bash
+dotnet test
+dotnet build ClearPay.slnx
+```
+
+OpenAPI: [http://localhost:5153/swagger](http://localhost:5153/swagger) · health: [http://localhost:5153/api/health](http://localhost:5153/api/health)
+
+Docker Desktop is optional (SQL 2022 + Redis + Rabbit). App money is **SQL Server only**. MySQL on this machine is a sidecar / Workbench tool — not the wallet. Do not commit `.env`. There is **no public Azure URL yet**; live hosting is TASK-16 (`docs/CANLI.md`) after you `az login`.
+
+---
+
+## What you can click
+
+| | Website | Flutter |
+|--|---------|---------|
+| Sign in | [`/giris`](http://localhost:5153/giris) | Giriş — email or demo TC `10000000146` |
+| Register | [`/kayit`](http://localhost:5153/kayit) | Hesap oluştur |
+| Summary | [`/`](http://localhost:5153/) | Özet — `GET /api/wallet` |
+| Transfer | [`/havale`](http://localhost:5153/havale) | Havale — `POST /api/transfers` + `Idempotency-Key` → **201 / 409** |
+| Cards | [`/kartlar`](http://localhost:5153/kartlar) | Parked (same SQL instruments via API) |
+| Top-up / withdraw | [`/yukle-cek`](http://localhost:5153/yukle-cek) | Yükle / Çek — fake gateway, including `TIMEOUT` |
+| Movements | [`/hareketler`](http://localhost:5153/hareketler) | Hareketler |
+| Receipt | [`/dekont/{id}`](http://localhost:5153/hareketler) | Dekont + PDF bytes from SQL |
+| Admin | [`/admin`](http://localhost:5153/admin) | Admin tab (role) |
+
+Language pickers are chrome (cookie `c=` on the site; local file on Flutter), not a tenth screen.
 
 ---
 
@@ -64,7 +101,7 @@ Optional: `flutter run -d windows`. Full client notes: [`mobile/clearpay/README.
 
 ![Clean Architecture layers](docs/assets/clearpay-layers.svg)
 
-Web never computes ledger math. The özet (summary) page asks `IWalletReader`. Today that adapter is `SqlWalletReader`: balance = `LedgerPair.NetOf`, this month in/out, last five rows, freeze badge. If SQL Server is down you still get the site — zeros, not a 500.
+Web never computes ledger math. The summary page asks `IWalletReader`. Today that adapter is `SqlWalletReader`: balance = `LedgerPair.NetOf`, this month in/out, last five rows, freeze badge. If SQL is down you still get the site — zeros, not a 500.
 
 ![Double-entry pair](docs/assets/clearpay-ledger.svg)
 
@@ -104,7 +141,7 @@ flowchart TB
 |-------|---------|-------|----------------|
 | UI + host | `ClearPay.Web` | Razor, cookie, culture cookie, `:5153` | Ledger net, `UPDATE Balance` |
 | Use cases | `ClearPay.Application` | Ports, DTOs, FluentValidation | Connection strings |
-| Adapters | `ClearPay.Infrastructure` | EF SQL Server (Identity + ledger, same LocalDB), gateway stubs | Razor / CSS |
+| Adapters | `ClearPay.Infrastructure` | EF SQL Server (Identity + ledger), gateway stubs | Razor / CSS |
 | Rules | `ClearPay.Domain` | `LedgerPair`, `Wallet` (no balance field) | EF, HTTP, ASP.NET |
 
 Dependencies point **inward**. Domain does not reference EF or ASP.NET.
@@ -113,11 +150,9 @@ Dependencies point **inward**. Domain does not reference EF or ASP.NET.
 
 ## Relational schema (SQL Server)
 
-**Demo — sahte banka gateway. Lisanslı e-para değil.** Not Papara / FAST / a fake retail bank. Eight screens, not a ninth.
+**Demo — fake bank gateway.** Not licensed e-money. Identity and the ledger share one LocalDB database (two EF contexts, two history tables). `Wallet.UserId` matches `AspNetUsers.Id` with **no FK** (two DbContexts). Real FKs are Identity membership plus `LedgerEntry` → `Wallet` / `Transfer`.
 
-Local Development: `(localdb)\MSSQLLocalDB` / database `ClearPay`. Identity and the ledger share that one database (two EF contexts, two history tables). **Two clients, one SQL ledger:** Razor Pages (cookie) and Flutter (JWT). Flutter `firebase_core` is client bootstrap for project `clearpay-c0485` — not a Firestore wallet. MySQL (`ConnectionStrings:MySql`) is a sidecar / Workbench tool; money does not live there.
-
-There is **no** `Wallet.Balance` column. Balance = `LedgerPair.NetOf` over signed `LedgerEntry` rows (`LedgerPair` is C#, not a table). `UPDATE Balance` is forbidden. `Wallet.UserId` is unique and matches `AspNetUsers.Id` in the same database; there is **no FK** (two DbContexts). Real FKs are Identity membership plus `LedgerEntry` → `Wallet` / `Transfer`, and `Transfer` → `Wallet` (from/to).
+`LinkedInstrument` stores **last four + scheme + label** only. PAN / CVV are never persisted.
 
 ```mermaid
 erDiagram
@@ -135,28 +170,6 @@ erDiagram
     AspNetUserRoles {
         string UserId PK
         string RoleId PK
-    }
-    AspNetUserClaims {
-        int Id PK
-        string UserId FK
-        string ClaimType
-        string ClaimValue
-    }
-    AspNetRoleClaims {
-        int Id PK
-        string RoleId FK
-        string ClaimType
-        string ClaimValue
-    }
-    AspNetUserLogins {
-        string LoginProvider PK
-        string ProviderKey PK
-        string UserId FK
-    }
-    AspNetUserTokens {
-        string UserId PK
-        string LoginProvider PK
-        string Name PK
     }
     Wallet {
         uniqueidentifier Id PK
@@ -213,50 +226,28 @@ erDiagram
         string UserId
         nvarchar Last4
         nvarchar Label
+        nvarchar Scheme
         datetimeoffset CreatedAt
-    }
-    EFMigrationsHistory {
-        nvarchar MigrationId PK
-        nvarchar ProductVersion
-    }
-    EFMigrationsHistoryIdentity {
-        nvarchar MigrationId PK
-        nvarchar ProductVersion
     }
     AspNetUsers ||--o{ AspNetUserRoles : UserId
     AspNetRoles ||--o{ AspNetUserRoles : RoleId
-    AspNetUsers ||--o{ AspNetUserClaims : UserId
-    AspNetUsers ||--o{ AspNetUserLogins : UserId
-    AspNetUsers ||--o{ AspNetUserTokens : UserId
-    AspNetRoles ||--o{ AspNetRoleClaims : RoleId
     Wallet ||--o{ LedgerEntry : WalletId
     Wallet ||--o{ Transfer : FromWalletId
     Wallet ||--o{ Transfer : ToWalletId
     Transfer |o--o{ LedgerEntry : TransferId
 ```
 
-EF history table names: `__EFMigrationsHistory` (ledger) and `__EFMigrationsHistoryIdentity` (Identity). `IdempotencyRecord.Key` is unique (replay → **409**). `LinkedInstrument` stores last-four only — no PAN.
+`IdempotencyRecord.Key` is unique (replay → **409**). History tables: `__EFMigrationsHistory` (ledger) and `__EFMigrationsHistoryIdentity`.
 
 ---
 
-## What you can click today
+## Firebase is not the cash register
 
-Same eight operations on the site and in the app. Site language: **Türkçe (default), English, Deutsch, Français**. Flutter UI default is Türkçe. Not a 9th screen.
+Flutter initializes Firebase project `clearpay-c0485`. It may write **`app_meta/ping`** (`ok`, `client`, `message`, `touchedAt`) so the console can prove the client is alive.
 
-| Operation | Website | Flutter app |
-|-----------|---------|-------------|
-| Sign in | [`/giris`](http://localhost:5153/giris) | Giriş — `POST /api/token` |
-| Register | [`/kayit`](http://localhost:5153/kayit) | Hesap oluştur — `POST /api/register` |
-| Summary | [`/`](http://localhost:5153/) | Özet, live hub + pull-to-refresh — `GET /api/wallet` |
-| Transfer | [`/havale`](http://localhost:5153/havale) | Havale + confirm — `POST /api/transfers` + `Idempotency-Key` |
-| Top-up / withdraw | [`/yukle-cek`](http://localhost:5153/yukle-cek) | Yükle / Çek — `POST /api/topup` / `withdraw` |
-| Movements | [`/hareketler`](http://localhost:5153/hareketler) | Hareketler + filter — `GET /api/movements` |
-| Receipt | [`/dekont/{id}`](http://localhost:5153/hareketler) | Dekont — `GET /api/receipts/{id}` |
-| Admin | [`/admin`](http://localhost:5153/admin) | Admin tab (role Admin) — `/api/admin/*` |
+Money does **not** go there. Balance, transfers, and receipts stay JWT → ASP.NET → SQL Server. Firestore rules deny every other path. Windows desktop skips native Firebase plugins; use the **Android emulator** to see the ping on the sign-in screen.
 
-Dev seed: `admin@clearpay.test` / `Deneme123`. Transfer **201** / replay **409**. OpenAPI: [http://localhost:5153/swagger](http://localhost:5153/swagger). Mobile README: [`mobile/clearpay/README.md`](mobile/clearpay/README.md). `GET /api/health` → `{ "status": "ok", "product": "ClearPay", "redis": "up|down|off", "rabbit": "up|down|off" }`.
-
-Redis caches the wallet summary DTO only (~60s; bust on money movement). Ledger stays SQL Server. Rabbit publishes outbox to `clearpay.outbox` when `ConnectionStrings:RabbitMq` is set; otherwise Hangfire + log. **No public Azure URL yet** — you click `az login` (see `docs/CANLI.md`).
+---
 
 ## Interview (three sentences)
 
@@ -266,44 +257,16 @@ Redis caches the wallet summary DTO only (~60s; bust on money movement). Ledger 
 
 ---
 
-## Run
-
-.NET 8 SDK. **Web Development** uses SQL Server LocalDB — `(localdb)\MSSQLLocalDB` / `ClearPay` — for both Identity and the ledger. Docker Desktop is optional (SQL Server 2022 + Redis/Rabbit).
-
-```bash
-dotnet run --project src/ClearPay.Web --launch-profile http
-```
-
-Open [http://localhost:5153](http://localhost:5153). Then the same money in Flutter (**cmd**):
-
-```bat
-cd /d mobile\clearpay
-flutter doctor
-flutter run -d windows
-```
-
-Android emulator uses `http://10.0.2.2:5153`. Flutter talks JWT to the same host; `firebase_core` (`clearpay-c0485`) does not store balance. Without LocalDB/SQL the summary stays `0,00 ₺`.
-
-```bash
-dotnet test
-dotnet build ClearPay.slnx
-```
-
-Optional Docker SQL bind is `D:\ClearPay\data\mssql` (this machine). Local SA password is in `.env.example` (Compose only). Do not commit `.env`. Do not put that password on Azure.
-
-App ledger is **SQL Server only**. MySQL (`ConnectionStrings:MySql`, Windows `MySQL84` or Compose) is a sidecar — not the wallet database. Mobile is **JWT → C# → SQL Server** — no MySQL driver and no Firestore wallet in Flutter.
-
----
-
 ## Repo map
 
 ```
 src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (no Balance)
 src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
-src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity (same LocalDB)
+src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity
 src/ClearPay.Web              Razor + localization + MapControllers
 mobile/clearpay               Flutter JWT client (not in the .slnx)
-tests/ClearPay.Tests          LedgerPair, architecture, SqlWalletReader, culture
+tests/ClearPay.Tests          LedgerPair, 409, architecture, culture
+infra/                        Bicep + deploy.ps1 (you click Azure)
 docker-compose.yml            SQL Server 2022 — not the web app
 ClearPay.slnx
 ```
@@ -314,27 +277,22 @@ ClearPay.slnx
 
 | Done | Next |
 |------|------|
-| TASK-01…15 — screens, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — Azure App Service + Azure SQL (you click `az login`; no live URL invented here) |
-| **Flutter mobile app** (`mobile/clearpay`) — JWT client, same eight operations, Android / Windows | Store listing / public HTTPS still TASK-16 |
+| TASK-01…15 — screens, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — Azure App Service + Azure SQL. You click `az login` + `.\infra\deploy.ps1`. This README does not invent a live URL. |
+| Flutter JWT app, Kartlarım (web), Firestore ping (meta only) | Store listing / public HTTPS still TASK-16 |
 
-CI restores and tests `tests/ClearPay.Tests` on `main`.
+CI on `main` restores and runs `tests/ClearPay.Tests`.
 
 ---
 
 ## Docs
 
-- [`docs/YOL.md`](docs/YOL.md) — what it is for, where it goes (career first; live URL is TASK-16)
-- [`docs/SPEC.md`](docs/SPEC.md) — screens and money rules (409, one transaction, outbox)
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — onion layers, cookie then JWT
-- [`docs/FARK.md`](docs/FARK.md) — reconciliation-first; not a Papara rival
-- [`docs/SATIS.md`](docs/SATIS.md) — 15-second pitch
-- [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
-- [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter client (same eight operations)
-- Step-by-step: [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (public in this repo). Same list in [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — on that page, Share → Publish to web so people without a Notion login can open it.
-- [`docs/ESZAMANLI.md`](docs/ESZAMANLI.md) — concurrent work (git / desks / this machine)
-- [`docs/API-ESZAMAN.md`](docs/API-ESZAMAN.md) — live wallet hub (Halil API steps; SignalR ≠ ledger)
-
-Live target: Azure App Service + Azure SQL (West Europe). There is no `azurewebsites.net` to click today.
+- [`docs/SPEC.md`](docs/SPEC.md) — screens and money rules
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — onion layers
+- [`docs/CANLI.md`](docs/CANLI.md) — Azure click list (no secrets in git)
+- [`docs/YOL.md`](docs/YOL.md) — career path; live URL is TASK-16
+- [`docs/FARK.md`](docs/FARK.md) — reconciliation-first, not a Papara rival
+- [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter client
+- [`docs/API-ESZAMAN.md`](docs/API-ESZAMAN.md) — SignalR hub (not the ledger)
 
 ## License
 

@@ -340,6 +340,64 @@ class ClearPayClient {
 
   String? get accountKind => jwtAccountKind(store.token);
 
+  Future<void> loginWithFirebase(
+    String idToken, {
+    String? fullName,
+    String? phone,
+    String? accountKind,
+  }) async {
+    final response = await _http.post(
+      _uri('/api/token/firebase'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'idToken': idToken,
+        if (fullName != null && fullName.trim().isNotEmpty) 'fullName': fullName.trim(),
+        if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
+        if (accountKind != null && accountKind.isNotEmpty) 'accountKind': accountKind,
+      }),
+    );
+    if (response.statusCode == 503) {
+      throw ApiException(503, 'Firebase yapılandırılmadı');
+    }
+    if (response.statusCode != 200) {
+      throw ApiException(response.statusCode, _problem(response.body, response.statusCode));
+    }
+    await _takeToken(response.body);
+  }
+
+  Future<void> forgotPassword({String? email, String? phone}) async {
+    final response = await _http.post(
+      _uri('/api/password/forgot'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        if (email != null && email.trim().isNotEmpty) 'email': email.trim(),
+        if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
+      }),
+    );
+    if (response.statusCode != 200) {
+      throw ApiException(response.statusCode, _problem(response.body, response.statusCode));
+    }
+  }
+
+  Future<void> resetPassword({
+    required String email,
+    required String token,
+    required String newPassword,
+  }) async {
+    final response = await _http.post(
+      _uri('/api/password/reset'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email.trim(),
+        'token': token,
+        'newPassword': newPassword,
+      }),
+    );
+    if (response.statusCode != 200) {
+      throw ApiException(response.statusCode, _problem(response.body, response.statusCode));
+    }
+  }
+
   Future<void> login(String email, String password, {String? accountKind}) async {
     final response = await _http.post(
       _uri('/api/token'),
@@ -373,6 +431,7 @@ class ClearPayClient {
     required String email,
     required String password,
     required String confirmPassword,
+    String? phone,
     String? accountKind,
   }) async {
     final response = await _http.post(
@@ -383,6 +442,7 @@ class ClearPayClient {
         'email': email.trim(),
         'password': password,
         'confirmPassword': confirmPassword,
+        if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
         if (accountKind != null && accountKind.isNotEmpty) 'accountKind': accountKind,
       }),
     );

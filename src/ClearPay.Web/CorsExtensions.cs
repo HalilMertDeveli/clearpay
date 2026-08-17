@@ -13,8 +13,11 @@ public static class CorsExtensions
         IConfiguration configuration,
         IHostEnvironment environment)
     {
-        var live = configuration.GetSection("Cors:Origins").Get<string[]>()
-            ?? ["https://clearpay.azurewebsites.net"];
+        var live = (configuration.GetSection("Cors:Origins").Get<string[]>() ?? [])
+            .Where(static origin => !string.IsNullOrWhiteSpace(origin))
+            .ToArray();
+        if (live.Length == 0)
+            live = ["https://clearpay.azurewebsites.net"];
 
         services.AddCors(options =>
         {

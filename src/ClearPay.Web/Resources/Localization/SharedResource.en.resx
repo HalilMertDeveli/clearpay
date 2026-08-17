@@ -25,14 +25,27 @@
   <data name="Welcome" xml:space="preserve"><value>Welcome</value></data>
   <data name="QuickOps" xml:space="preserve"><value>Quick actions</value></data>
   <data name="AddCard" xml:space="preserve"><value>Add card</value></data>
-  <data name="CardAddFail" xml:space="preserve"><value>Could not add the card. Enter 4 digits only — no full card number. Max 5 cards.</value></data>
-  <data name="CardAddOk" xml:space="preserve"><value>Demo card saved. Top-up and withdraw use this card as the hint.</value></data>
-  <data name="CardHint" xml:space="preserve"><value>Demo linked card: last 4 digits. No real Visa/Mastercard.</value></data>
+  <data name="CardAddFail" xml:space="preserve"><value>Could not add the card. Use a demo number (4111…) or last 4 digits. CVV is not stored. Max 5 cards.</value></data>
+  <data name="CardAddOk" xml:space="preserve"><value>Demo card linked. Top-up uses this card’s last 4 digits.</value></data>
+  <data name="CardHint" xml:space="preserve"><value>Top up from a linked card. Add new cards under My cards.</value></data>
   <data name="CardLabel" xml:space="preserve"><value>Card name</value></data>
   <data name="CardLast4" xml:space="preserve"><value>Last 4 digits</value></data>
   <data name="LinkedCard" xml:space="preserve"><value>Linked card</value></data>
-  <data name="NoLinkedCard" xml:space="preserve"><value>No card yet. Enter the last 4 digits to add one.</value></data>
+  <data name="NoLinkedCard" xml:space="preserve"><value>No card yet.</value></data>
   <data name="SelectCard" xml:space="preserve"><value>Select card</value></data>
+  <data name="NavCards" xml:space="preserve"><value>My cards</value></data>
+  <data name="CardsLede" xml:space="preserve"><value>Bind a card; the preview updates as you type. Wallet top-up uses the fake gateway.</value></data>
+  <data name="MetaCards" xml:space="preserve"><value>Linked cards. Demo — full number and CVV are not stored.</value></data>
+  <data name="CardNumber" xml:space="preserve"><value>Card number</value></data>
+  <data name="CardHolder" xml:space="preserve"><value>Name on card</value></data>
+  <data name="CardExpiry" xml:space="preserve"><value>Expiry</value></data>
+  <data name="CardCvv" xml:space="preserve"><value>CVV</value></data>
+  <data name="CardCvvHint" xml:space="preserve"><value>CVV is not saved</value></data>
+  <data name="CardNickname" xml:space="preserve"><value>Card name (e.g. Yapı Kredi)</value></data>
+  <data name="LoadFromCard" xml:space="preserve"><value>Top up wallet from this card</value></data>
+  <data name="CardSchemeUnknown" xml:space="preserve"><value>Card</value></data>
+  <data name="CardsEmptyHint" xml:space="preserve"><value>Demo number: 4111 1111 1111 1111. Troy 9792…. Yapı Kredi is a nickname, not a scheme.</value></data>
+  <data name="CardBindHint" xml:space="preserve"><value>Live preview. Stored: last 4 + name + scheme (Visa/Mastercard/Troy). No real POS.</value></data>
   <data name="ColAmount" xml:space="preserve"><value>Amount</value></data>
   <data name="ColCounterparty" xml:space="preserve"><value>Counterparty</value></data>
   <data name="ColDate" xml:space="preserve"><value>Date</value></data>
@@ -102,7 +115,7 @@
   <data name="RecentActivity" xml:space="preserve"><value>Recent activity</value></data>
   <data name="RecipientEmail" xml:space="preserve"><value>Recipient (email)</value></data>
   <data name="Register" xml:space="preserve"><value>Register</value></data>
-  <data name="RegisterLede" xml:space="preserve"><value>Open a customer account with your name and email.</value></data>
+  <data name="RegisterLede" xml:space="preserve"><value>Open a customer account with name, email, mobile, and account kind.</value></data>
   <data name="RemainingBalance" xml:space="preserve"><value>Remaining balance</value></data>
   <data name="RequestId" xml:space="preserve"><value>Request id</value></data>
   <data name="RoleCustomer" xml:space="preserve"><value>Customer</value></data>
@@ -110,7 +123,7 @@
   <data name="Send" xml:space="preserve"><value>Send</value></data>
   <data name="SendTransfer" xml:space="preserve"><value>Send transfer</value></data>
   <data name="SignIn" xml:space="preserve"><value>Sign in</value></data>
-  <data name="SignInLede" xml:space="preserve"><value>Sign in to your wallet with email and password.</value></data>
+  <data name="SignInLede" xml:space="preserve"><value>Sign in with email or demo national ID and password.</value></data>
   <data name="SignInWithApple" xml:space="preserve"><value>Sign in with Apple</value></data>
   <data name="SignInWithGoogle" xml:space="preserve"><value>Sign in with Google</value></data>
   <data name="SignOut" xml:space="preserve"><value>Sign out</value></data>
@@ -165,4 +178,16 @@
   <data name="AccountHintLabel" xml:space="preserve"><value>Account / card</value></data>
   <data name="TransferRecipientRequired" xml:space="preserve"><value>Recipient email is required.</value></data>
   <data name="EmptyQueueHint" xml:space="preserve"><value>Timeout rows stay here; requeue retries them.</value></data>
+  <data name="Phone" xml:space="preserve"><value>Phone</value></data>
+  <data name="PhoneHint" xml:space="preserve"><value>TR mobile: 5xx. No SMS / national ID check.</value></data>
+  <data name="PhoneRequired" xml:space="preserve"><value>Phone is required.</value></data>
+  <data name="PhoneTaken" xml:space="preserve"><value>This phone is already on another account.</value></data>
+  <data name="AccountKind" xml:space="preserve"><value>Account kind</value></data>
+  <data name="AccountKindHint" xml:space="preserve"><value>Same 8 operations. Not a merchant POS.</value></data>
+  <data name="AccountKindIndividual" xml:space="preserve"><value>Individual</value></data>
+  <data name="AccountKindCorporate" xml:space="preserve"><value>Corporate</value></data>
+  <data name="SignInTabEmail" xml:space="preserve"><value>Email</value></data>
+  <data name="SignInTabTc" xml:space="preserve"><value>National ID (demo)</value></data>
+  <data name="SignInTcHint" xml:space="preserve"><value>Not a government check. Demo seed 10000000146 → admin@clearpay.test</value></data>
+  <data name="SignInTcUnknown" xml:space="preserve"><value>This demo national ID is not mapped.</value></data>
 </root>

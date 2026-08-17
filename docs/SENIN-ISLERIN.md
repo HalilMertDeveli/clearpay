@@ -21,9 +21,20 @@ Bütün hesaplar **`halilmertdeveliii@gmail.com`** (Gmail). Yeni Microsoft / Goo
 
 TASK-16: [`CANLI.md`](CANLI.md) + [`YOL.md`](YOL.md) — **sıradaki tık senin.** `az login` sen; ajan hesabı açmaz, URL uydurmaz.
 
+## Yol haritası — senin tıkların (plan)
+
+Kalıcı metin: [`YOL.md`](YOL.md) (T-059). `src/` yok. TASK listesi şişmez. Bu makinede **`az` hâlâ yok** (2026-08-17 tekrar bakıldı).
+
+1. **TASK-16 HTTPS** — [Azure CLI](https://aka.ms/installazurecliwindows) kur. PowerShell: `az login` (`halilmertdeveliii@gmail.com`).  
+   `cd D:\ClearPay\clearpay` → `.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`  
+   İsim doluysa `-WebAppName hm-clearpay`. Tarayıcıda script’in yazdığı `/api/health` sonra `/giris`. URL’yi sohbete uydurma. Ayrıntı: [`CANLI.md`](CANLI.md).
+2. **Mülakat kanıtı** — URL tarayıcıda **açık olduktan sonra:** GitHub Website = canlı kök. LinkedIn **taslak B** ([`PAZARLAMA.md`](PAZARLAMA.md); kopya [`IK.md`](IK.md)). 15/30 dk: kayıt → özet → havale iki kez → **409**. Ezber: 409 / transaction / outbox.
+3. **Kapı** — Intertech, Softtech, Bileşim, TAV, İGA, uni BT, sanayi, Turkcell **.NET**. CV üç satır README. Java ilanı yok. Adres: [`GELIR.md`](GELIR.md) §5. Ajan İK paneli açmaz.
+4. **Q2 ticari** — white-label veya kapalı devre **şimdi yok**. Avukat + yeni TARTISMA. 9. ekran / satıcı paneli yok. Kendi e-para lisansı kapalı (40 / 105 milyon TL).
+
 ## Her gün
 
-1. **Visual Studio** — `C:\Users\clt\Projects\clearpay\ClearPay.slnx` (zaten bir kez açıldıysa aynı dosya).
+1. **Visual Studio** — `D:\ClearPay\clearpay\ClearPay.slnx` (C: kopyası junction; asıl repo D:).
 2. **Docker Desktop** açık tut. SQL için repo kökünde: `docker compose up -d`.
 3. **Lokal kontrol** — http://localhost:5153 — sol menü, sonra giriş / kayıt.
 4. **GitHub** hazır: `HalilMertDeveli/clearpay` (public, `main`). Yeni hesap açma.
@@ -102,11 +113,13 @@ Ajan Firebase projesi açmaz. Kasa SQL’de kalır; Firestore bakiye yok.
 ```bat
 npm install -g firebase-tools
 firebase login
-cd /d C:\Users\clt\Projects\clearpay\mobile\clearpay
+cd /d D:\ClearPay\clearpay\mobile\clearpay
 tool\configure-firebase.cmd
 ```
 
 3. Yeni Google hesabı yok. Secret’ı sohbete yapıştırma. `flutterfire` yazdığı `firebase_options.dart` / `google-services.json` istemci anahtarıdır (JWT signing key değil).
+4. **Authentication → Sign-in method → E-posta/şifre** aç (SMS/Blaze yok). Android Studio’da ekstra json üretme: dosya `mobile/clearpay/android/app/google-services.json` (paket `com.clearpay.clearpay`). iOS `GoogleService-Info.plist` Runner’da. Web `/giris` değişmez.
+5. **Firestore** (T-091): Console → Firestore Database (zaten açtın). Rules **default deny** ise uygulamada ping log’da skip olur; JWT girişi durmaz. İstersen yalnız `app_meta/ping` yazımına izin ver — **bakiye/havale koleksiyonunu public write açma**. Kasa SQL’de kalır.
 
 ## Mobil ↔ web canlı bakiye (T-071) — senin işin
 

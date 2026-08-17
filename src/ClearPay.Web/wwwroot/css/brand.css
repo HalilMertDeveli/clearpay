@@ -356,6 +356,13 @@ button[name="provider"][value="Apple"]:hover {
   transform: translate(-50%, calc(-50% - 5px));
 }
 
+.action-ico--cards::before {
+  width: 0.95rem;
+  height: 0.62rem;
+  border: 2px solid var(--navy, #1b2a4a);
+  border-radius: 3px;
+}
+
 .nav-ico--overview::before {
   width: 0.55rem;
   height: 0.55rem;
@@ -398,6 +405,13 @@ button[name="provider"][value="Apple"]:hover {
   border-radius: 2px 2px 45% 45%;
 }
 
+.nav-ico--cards::before {
+  width: 0.62rem;
+  height: 0.4rem;
+  border: 1.5px solid #fff;
+  border-radius: 2px;
+}
+
 /* Alt sekme çubuğu beyaz zeminde: glifler metin rengini alır */
 .tabbar .nav-ico {
   width: 1.5rem;
@@ -406,7 +420,8 @@ button[name="provider"][value="Apple"]:hover {
 }
 
 .tabbar .nav-ico--overview::before,
-.tabbar .nav-ico--admin::before {
+.tabbar .nav-ico--admin::before,
+.tabbar .nav-ico--cards::before {
   border-color: currentColor;
 }
 
@@ -432,7 +447,8 @@ button[name="provider"][value="Apple"]:hover {
 }
 
 .sidebar .nav-ico--overview::before,
-.sidebar .nav-ico--admin::before {
+.sidebar .nav-ico--admin::before,
+.sidebar .nav-ico--cards::before {
   border-color: currentColor;
 }
 
@@ -522,6 +538,193 @@ button[name="provider"][value="Apple"]:hover {
   background: var(--navy, #1b2a4a);
   border-color: var(--navy, #1b2a4a);
   color: #fff;
+}
+
+.cards-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.live-card-stage {
+  perspective: 920px;
+  margin: 0 0 1.15rem;
+}
+
+.live-card {
+  position: relative;
+  width: 100%;
+  max-width: 22.5rem;
+  height: 13.4rem;
+  transform-style: preserve-3d;
+  transition: transform 220ms ease;
+}
+
+.live-card-stage.is-flipped .live-card {
+  transform: rotateY(180deg);
+}
+
+.live-card-face {
+  position: absolute;
+  inset: 0;
+  padding: 1.15rem 1.2rem 1rem;
+  border-radius: 18px;
+  background: linear-gradient(160deg, #24365c 0%, #1b2a4a 62%);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(27, 42, 74, 0.12);
+  backface-visibility: hidden;
+}
+
+.live-card-back {
+  transform: rotateY(180deg);
+  padding-top: 0;
+}
+
+.live-card-brand {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.live-card-scheme {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.live-card[data-scheme="visa"] .live-card-scheme { color: #7dd3fc; }
+.live-card[data-scheme="mastercard"] .live-card-scheme { color: #fdba74; }
+.live-card[data-scheme="troy"] .live-card-scheme { color: #5eead4; }
+
+.live-card-pan {
+  margin: 2.4rem 0 0.85rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+}
+
+.live-card-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.live-card-name,
+.live-card-exp {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.live-card-exp span {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+.live-card-stripe {
+  height: 2.15rem;
+  margin: 1.35rem 0 1.1rem;
+  background: #111827;
+}
+
+.live-card-cvv-label {
+  margin: 0 1.2rem 0.25rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.live-card-cvv {
+  margin: 0 1.2rem;
+  display: inline-block;
+  min-width: 3.2rem;
+  padding: 0.2rem 0.45rem;
+  background: #fff;
+  color: #1b2a4a;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+}
+
+.live-card-back-note {
+  margin: 0.85rem 1.2rem 0;
+  font-size: 0.72rem;
+  opacity: 0.8;
+}
+
+.bound-card-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.bound-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "scheme pan" "name name" "cta cta";
+  gap: 0.2rem 0.65rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line, #d8dee8);
+  border-radius: 14px;
+}
+
+.bound-card-scheme {
+  grid-area: scheme;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal, #0f766e);
+}
+
+.bound-card-pan {
+  grid-area: pan;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bound-card-name {
+  grid-area: name;
+  color: var(--muted, #5b6b82);
+  font-size: 0.88rem;
+}
+
+.bound-card .btn {
+  grid-area: cta;
+  margin-top: 0.45rem;
+  justify-self: start;
+}
+
+@media (max-width: 900px) {
+  .cards-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-card {
+    transition: none;
+  }
+
+  .live-card-stage.is-flipped .live-card {
+    transform: none;
+  }
 }
 
 @media (max-width: 800px) {

@@ -14,6 +14,7 @@ using FluentValidation;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddProblemDetails();
+builder.Services.AddClearPayAzureHosting(builder.Environment);
 builder.Services.AddClearPayLocalization();
 builder.Services.AddClearPayIdentity(builder.Configuration, builder.Environment);
 builder.Services.AddClearPayExternalLogin(builder.Configuration);
@@ -38,6 +39,7 @@ builder.Services.AddScoped<IWalletLiveNotifier, SignalRWalletLiveNotifier>();
 
 var app = builder.Build();
 
+app.UseClearPayForwardedHeaders();
 await IdentitySeeder.EnsureCreatedAndRolesAsync(app.Services);
 if (app.Configuration.GetValue("ClearPay:ApplyLedgerMigrations", true))
 {

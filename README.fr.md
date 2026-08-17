@@ -21,7 +21,7 @@
 
 ## Web + mobile (livré)
 
-Ce dépôt **n’est pas que le site**. L’**application Flutter** est dans [`mobile/clearpay`](mobile/clearpay) et parle au même hôte ASP.NET Core 8. Huit opérations, un grand livre SQL, **pas** de second solde sur le téléphone. Détail : [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+Ce dépôt **n’est pas que le site**. L’**application Flutter** est dans [`mobile/clearpay`](mobile/clearpay) et parle au même hôte ASP.NET Core 8. **Un grand livre SQL**, **pas** de second solde sur le téléphone. Site en plus : [`/kartlar`](http://localhost:5153/kartlar) (carte démo, 4 derniers, pas de PAN). Firestore n’écrit que `app_meta/ping` — **pas** la caisse. Détail : [`README.md`](README.md) et [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
 
 **Un portefeuille, deux clients.** La même personne se connecte, vire, recharge et ouvre le reçu **sur le site** et **dans l’app Flutter**. Razor Pages (cookie) ; JSON (JWT). La partie double est dans le Domain — `Wallet` n’a **pas** de colonne `Balance`.
 

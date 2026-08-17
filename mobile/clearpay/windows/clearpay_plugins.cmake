@@ -1,7 +1,8 @@
-# T-075: do not build firebase_core on Windows. Its CMake extracts
-# firebase_cpp_sdk_windows_*.zip (~1GB) and fails ARCHIVE_EXTRACT.
-# Android still uses firebase_core. Dart initClearPayFirebase already catches
-# missing options (T-065). JWT / SQL ledger unchanged.
+# T-075 / T-091: do not build firebase_core / firebase_auth / cloud_firestore
+# on Windows. CMake extracts firebase_cpp_sdk_windows_*.zip (~1GB) and fails
+# ARCHIVE_EXTRACT. Android still uses those plugins. Dart initClearPayFirebase
+# already catches missing options (T-065); Firestore ping fail-open (T-091).
+# JWT / SQL ledger unchanged.
 
 list(APPEND FLUTTER_PLUGIN_LIST
   flutter_secure_storage_windows

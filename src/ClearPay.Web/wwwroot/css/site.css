@@ -393,6 +393,49 @@ a {
   accent-color: var(--navy);
 }
 
+.choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+  margin: 0 0 1rem;
+  padding: 0.25rem;
+  background: var(--paper, #fff);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill, 999px);
+}
+
+.auth-tabs a {
+  padding: 0.55rem 0.5rem;
+  border-radius: var(--radius-pill, 999px);
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.auth-tabset .auth-panel {
+  display: none;
+}
+
+.auth-tabset .auth-panel:target,
+.auth-tabset:not(:has(.auth-panel:target)) .auth-panel:first-of-type {
+  display: block;
+}
+
+.auth-tabset:has(#eposta:target) .auth-tabs a[href="#eposta"],
+.auth-tabset:not(:has(.auth-panel:target)) .auth-tabs a[href="#eposta"],
+.auth-tabset:has(#tc:target) .auth-tabs a[href="#tc"] {
+  background: var(--navy);
+  color: #fff;
+}
+
 .receipt-ref {
   display: flex;
   flex-wrap: wrap;

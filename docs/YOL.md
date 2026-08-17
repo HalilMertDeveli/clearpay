@@ -27,8 +27,8 @@ TASK-01…15 **Done** (ledger, havale 409, gateway, hareket/dekont, admin, outbo
 
 **Tek açık ürün TASK:** TASK-16 — Azure App Service + Azure SQL, tarayıcıda HTTPS. Ajan Portal / `az login` / DNS açmaz; URL uydurmaz.
 
-Lokal: Docker Desktop → `docker compose up -d` → `dotnet run --project src/ClearPay.Web --launch-profile http` → http://localhost:5153/giris  
-5153 `ERR_CONNECTION_REFUSED` = Kestrel kapalı, SQL hatası değil.
+Lokal: repo **`D:\ClearPay\clearpay`**. Docker Desktop → `docker compose up -d` → `dotnet run --project src/ClearPay.Web --launch-profile http` → http://localhost:5153/giris  
+5153 `ERR_CONNECTION_REFUSED` = Kestrel kapalı, SQL hatası değil. Bu makinede `az` CLI **yok** (2026-08-17); URL uydurulmaz.
 
 ---
 
@@ -45,7 +45,7 @@ Bu makinede `az` CLI yoktu; abonelik listesi uydurulmaz. Infra hazır: `infra/ma
 
 1. [Azure CLI](https://aka.ms/installazurecliwindows) kur.
 2. PowerShell: `az login` — `halilmertdeveliii@gmail.com`.
-3. Repo kökü: `.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`  
+3. `cd D:\ClearPay\clearpay` → `.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`  
    İsim doluysa `-WebAppName hm-clearpay`.
 4. GitHub Secrets: `AZURE_WEBAPP_PUBLISH_PROFILE`; Variables: `AZURE_WEBAPP_NAME`.
 5. Tarayıcıda `https://<app>.azurewebsites.net/api/health` sonra `/giris`. Bu URL’yi ajan yazmaz.
@@ -139,7 +139,7 @@ Olasılık: **izle** (şimdi doğru yol) / **park** (onay + avukat sonra) / **ka
 | 8 | **Canlı demo URL** | İzle (Halil tıklar) | Aynı site Azure’da; footer Demo | URL yokken Sales abartır |
 | 9 | **8 ekran içi cilâ** | İzle (T-056/057 landed) | Onay adımı, unfreeze, tarih, last4, Beni hatırla | Yeni menü maddesi yok |
 | 10 | **Satıcı paneli (Q2)** | Park | Tahsilat / üye iş yeri | SPEC 9. ekran; POS hikâyesine kayar |
-| 10b | **Flutter JWT istemci (T-061)** | İzle — Q2.1 | Aynı 8 ekran, aynı SQL, pull-to-refresh | Hive bakiye / SignalR 9. ekran yok |
+| 10b | **Flutter JWT istemci (T-061)** | İzle — Q2.1 | Aynı 8 ekran, aynı SQL; pull-to-refresh yedek; canlı chrome `/hubs/wallet` (T-071, tutar yok) | Hive bakiye / 9. ekran yok |
 | 11 | **Kampanya landing / “eksiksiz cüzdan”** | Kapalı (şimdi) | Ads, QR, KYC sayfası | Wedge sulanır; Ads yasağı |
 
 ### C. Teknik (kasa ve host)
@@ -184,3 +184,9 @@ Papara yarışı, FAST/POS, BDDK iddiası, LED’e ödeme, Kafka/K8s, satıcı p
 - `src/` yazmak
 - TASK-16’yı URL yokken Done yapmak
 - Q2 ekranı / lisans başvurusu başlatmak
+
+---
+
+## Doğrulama 2026-08-17 (Cursor plan)
+
+Plan dosyası değiştirilmedi. OWN durur: T-059 `YOL.md`, T-013 `GELIR.md`. Halil tık listesi: [`SENIN-ISLERIN.md`](SENIN-ISLERIN.md) *Yol haritası*. `infra/deploy.ps1` + `infra/main.bicep` var. `az` yok. TASK-16 Todo.

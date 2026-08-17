@@ -16,7 +16,7 @@ void agentDebugLog({
   // #region agent log
   final payload = jsonEncode({
     'sessionId': '021de0',
-    'runId': 'web-fix',
+    'runId': 'mobile-debug',
     'hypothesisId': hypothesisId,
     'location': location,
     'message': message,

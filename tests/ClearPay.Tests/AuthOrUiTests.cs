@@ -60,6 +60,7 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
     [InlineData("/")]
     [InlineData("/havale")]
     [InlineData("/yukle-cek")]
+    [InlineData("/kartlar")]
     [InlineData("/hareketler")]
     public async Task Menu_routes_are_200_until_login_then_redirect(string path)
     {
@@ -116,14 +117,8 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         registerGet.StatusCode.Should().Be(HttpStatusCode.OK);
         var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
 
-        var registerPost = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Ayşe Yılmaz",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        var registerPost = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Ayşe Yılmaz")));
 
         registerPost.StatusCode.Should().Be(HttpStatusCode.OK);
         var wallet = await registerPost.Content.ReadAsStringAsync();
@@ -140,7 +135,53 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
     }
 
     [Fact]
-    public async Task YukleCek_shows_demo_card_panel_without_ninth_screen()
+    public async Task Kartlar_page_is_live_preview_when_logged_in()
+    {
+        var client = CreateClient();
+        if (!await LoginPageExistsAsync(client))
+        {
+            return;
+        }
+
+        var email = $"kartlar.{Guid.NewGuid():N}@clearpay.test";
+        var registerGet = await client.GetAsync("/Account/Register");
+        var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Kartlarım Deneme")));
+
+        var html = await client.GetStringAsync("/kartlar");
+        html.Should().Contain("Kartlarım");
+        html.Should().Contain("data-card-preview");
+        html.Should().Contain("live-card");
+        html.Should().Contain("live-card-back");
+        html.Should().Contain("4111 1111 1111 1111");
+        html.Should().Contain("Yapı Kredi");
+        html.Should().Contain("card-preview.js");
+        html.Should().NotContain("name=\"NewCard.Cvv\"");
+        html.Should().NotContain("name=\"card-cvv\"");
+        html.Should().Contain("Demo — yükleme için sahte gateway");
+        html.Should().Contain("handler=Add");
+
+        var bindToken = AuthFormToken.Get(html);
+        var bind = await client.PostAsync("/kartlar?handler=Add", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["NewCard.Number"] = "4111111111111111",
+            ["NewCard.Holder"] = "AYSE YILMAZ",
+            ["NewCard.Label"] = "Yapı Kredi",
+            ["__RequestVerificationToken"] = bindToken
+        }));
+        bind.StatusCode.Should().Be(HttpStatusCode.OK);
+        var bound = await bind.Content.ReadAsStringAsync();
+        bound.Should().Contain("Visa");
+        bound.Should().Contain("****1111");
+        bound.Should().Contain("Yapı Kredi");
+        bound.Should().Contain("Bu karttan cüzdana yükle");
+        bound.Should().NotContain("4111111111111111");
+        bound.Should().Contain("/yukle-cek");
+    }
+
+    [Fact]
+    public async Task YukleCek_shows_linked_card_and_points_to_kartlar()
     {
         var client = CreateClient();
         if (!await LoginPageExistsAsync(client))
@@ -151,24 +192,18 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         var email = $"kart.{Guid.NewGuid():N}@clearpay.test";
         var registerGet = await client.GetAsync("/Account/Register");
         var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
-        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Kart Deneme",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Kart Deneme")));
 
         var html = await client.GetStringAsync("/yukle-cek");
         html.Should().Contain("id=\"kart\"");
         html.Should().Contain("demo-card");
-        html.Should().Contain("Son 4 hane");
         html.Should().Contain("Kart ekle");
         html.Should().Contain("Henüz kart yok");
+        html.Should().Contain("/kartlar");
+        html.Should().Contain("Kartlarım");
         html.Should().NotContain("asp-for=\"NewCard.Pan\"");
         html.Should().NotContain("name=\"NewCard.Cvv\"");
-        html.Should().NotContain(">Kartlar<");
         html.Should().Contain("Yükle / Çek");
         html.Should().Contain("Havale");
         html.Should().Contain("Hareketler");
@@ -186,14 +221,8 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         var email = $"bos.{Guid.NewGuid():N}@clearpay.test";
         var registerGet = await client.GetAsync("/Account/Register");
         var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
-        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Boş Cüzdan",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Boş Cüzdan")));
 
         var html = await client.GetStringAsync("/havale");
         html.Should().Contain("Kalan bakiye");
@@ -216,21 +245,14 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         var email = $"tar.{Guid.NewGuid():N}@clearpay.test";
         var registerGet = await client.GetAsync("/Account/Register");
         var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
-        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Tarih Filtre",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Tarih Filtre")));
 
         var html = await client.GetStringAsync("/hareketler");
         html.Should().Contain("name=\"Bitis\"");
         html.Should().Contain("Bitiş");
         html.Should().Contain("Havale gönder");
         html.Should().Contain("skip-link");
-        html.Should().NotContain(">Kartlar<");
     }
 
     [Fact]
@@ -247,14 +269,8 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         var email = $"pdf.{Guid.NewGuid():N}@clearpay.test";
         var registerGet = await client.GetAsync("/Account/Register");
         var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
-        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Pdf Deneme",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Pdf Deneme")));
 
         Guid correlation;
         using (var scope = _factory.Services.CreateScope())

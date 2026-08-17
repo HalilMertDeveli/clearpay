@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/locale_scope.dart';
 import '../theme.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -46,11 +47,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         opacity: _fade,
         child: ScaleTransition(
           scale: _scale,
-          child: const Center(
+          child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const BrandMark(size: 88),
+                const SizedBox(height: 20),
+                const Text(
                   'ClearPay',
                   style: TextStyle(
                     color: Colors.white,
@@ -59,10 +62,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     letterSpacing: 1.2,
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
-                  'Demo — sahte banka gateway.',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                  l10n(context).demoFooter,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
               ],
             ),

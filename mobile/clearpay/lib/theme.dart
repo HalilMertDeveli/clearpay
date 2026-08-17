@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'l10n/app_strings.dart';
+import 'l10n/locale_scope.dart';
+
 const navy = Color(0xFF1B2A4A);
 const navyHero = Color(0xFF24365C);
 const wash = Color(0xFFE8EEF5);
@@ -31,17 +34,47 @@ class DemoFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 12),
+    final text = l10n(context).demoFooter;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Text(
-        'Demo — sahte banka gateway.',
+        text,
         textAlign: TextAlign.center,
-        style: TextStyle(color: navy, fontSize: 13),
+        style: const TextStyle(color: navy, fontSize: 13),
       ),
     );
   }
 }
 
-String formatTry(num amount) {
-  return '${amount.toStringAsFixed(2).replaceAll('.', ',')} ₺';
+String formatTry(num amount, {String locale = 'tr'}) {
+  return L(locale).money(amount);
+}
+
+/// Launcher/splash mark: white C + teal ring (navy comes from the parent).
+class BrandMark extends StatelessWidget {
+  const BrandMark({super.key, this.size = 88});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: teal, width: (size * 0.055).clamp(2, 5)),
+      ),
+      child: Text(
+        'C',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: size * 0.52,
+          fontWeight: FontWeight.w800,
+          height: 1,
+        ),
+      ),
+    );
+  }
 }

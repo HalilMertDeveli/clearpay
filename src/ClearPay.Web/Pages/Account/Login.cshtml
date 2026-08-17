@@ -11,10 +11,26 @@
 <form method="post" class="auth-form" novalidate>
     <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
     <input type="hidden" asp-for="ReturnUrl" />
-    <div class="field">
-        <label asp-for="Input.Email" class="field-label">@L["Email"]</label>
-        <input asp-for="Input.Email" class="field-input" type="email" autocomplete="username" />
-        <span asp-validation-for="Input.Email" class="field-error"></span>
+    <div class="auth-tabset">
+        <nav class="auth-tabs" aria-label="@L["SignIn"]">
+            <a href="#eposta">@L["SignInTabEmail"]</a>
+            <a href="#tc">@L["SignInTabTc"]</a>
+        </nav>
+        <div id="eposta" class="auth-panel">
+            <div class="field">
+                <label asp-for="Input.Email" class="field-label">@L["Email"]</label>
+                <input asp-for="Input.Email" class="field-input" type="email" autocomplete="username" />
+                <span asp-validation-for="Input.Email" class="field-error"></span>
+            </div>
+        </div>
+        <div id="tc" class="auth-panel">
+            <div class="field">
+                <label asp-for="Input.Tc" class="field-label">@L["SignInTabTc"]</label>
+                <input asp-for="Input.Tc" class="field-input" inputmode="numeric" autocomplete="off" />
+                <span asp-validation-for="Input.Tc" class="field-error"></span>
+                <p class="field-hint">@L["SignInTcHint"]</p>
+            </div>
+        </div>
     </div>
     <div class="field">
         <label asp-for="Input.Password" class="field-label">@L["Password"]</label>

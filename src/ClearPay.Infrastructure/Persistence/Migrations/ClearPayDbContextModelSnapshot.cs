@@ -147,6 +147,11 @@ namespace ClearPay.Infrastructure.Persistence.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)");
 
+                    b.Property<string>("Scheme")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasMaxLength(450)

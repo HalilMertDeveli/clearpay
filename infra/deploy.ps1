@@ -56,17 +56,17 @@ $bytes = New-Object byte[] 32
 [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
 $jwt = [Convert]::ToBase64String($bytes)
 
-Write-Host "Setting Jwt__SigningKey (value not printed) ..."
+$url = az webapp show --resource-group $ResourceGroup --name $WebAppName --query defaultHostName --output tsv
+
+Write-Host "Setting Jwt__SigningKey and Cors origin (values not printed) ..."
 az webapp config appsettings set `
     --resource-group $ResourceGroup `
     --name $WebAppName `
-    --settings "Jwt__SigningKey=$jwt" `
+    --settings "Jwt__SigningKey=$jwt" "Cors__Origins__0=https://$url" `
     | Out-Null
 
 $plain = $null
 [GC]::Collect()
-
-$url = az webapp show --resource-group $ResourceGroup --name $WebAppName --query defaultHostName --output tsv
 Write-Host ""
 Write-Host "Q1 site: https://$url"
 Write-Host "Health:  https://$url/api/health"

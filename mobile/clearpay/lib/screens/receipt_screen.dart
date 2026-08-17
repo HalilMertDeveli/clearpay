@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../api/clearpay_client.dart';
+import '../l10n/locale_scope.dart';
 import '../platform/receipt_pdf.dart';
 import '../theme.dart';
 
@@ -66,7 +67,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Kopyalandı')),
+      SnackBar(content: Text(l10n(context).copied)),
     );
   }
 
@@ -97,31 +98,32 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = l10n(context);
     final receipt = _receipt;
     return Scaffold(
-      appBar: AppBar(title: const Text('Dekont')),
+      appBar: AppBar(title: Text(l.receipt)),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
           if (receipt != null) ...[
-            Text(formatTry(receipt.amount), style: const TextStyle(fontSize: 28, color: navy)),
+            Text(l.money(receipt.amount), style: const TextStyle(fontSize: 28, color: navy)),
             const SizedBox(height: 12),
-            Text('Tür: ${receipt.kind}'),
-            Text('Borç: ${receipt.debitParty}'),
-            Text('Alacak: ${receipt.creditParty}'),
-            Text('Zaman: ${receipt.at}'),
-            Text('Correlation: ${receipt.correlationId}'),
-            if (receipt.instrumentHint != null) Text('Hesap / kart: ${receipt.instrumentHint}'),
+            Text('${l.kindLabel}: ${receipt.kind}'),
+            Text('${l.debitParty}: ${receipt.debitParty}'),
+            Text('${l.creditParty}: ${receipt.creditParty}'),
+            Text('${l.time}: ${receipt.at}'),
+            Text('${l.correlation}: ${receipt.correlationId}'),
+            if (receipt.instrumentHint != null) Text('${l.accountCard}: ${receipt.instrumentHint}'),
             if (receipt.description != null) Text(receipt.description!),
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
               children: [
-                OutlinedButton(onPressed: _copyRef, child: const Text('Kopyala')),
+                OutlinedButton(onPressed: _copyRef, child: Text(l.copy)),
                 FilledButton(
                   onPressed: _pdfBusy ? null : _openPdf,
-                  child: Text(_pdfBusy ? '…' : 'PDF indir'),
+                  child: Text(_pdfBusy ? '…' : l.downloadPdf),
                 ),
               ],
             ),

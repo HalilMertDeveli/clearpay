@@ -2,7 +2,7 @@
 
 Kaynak: `docs/CALISMA-PLANI.md` **Faz 5**. Azure / DNS / ödeme hesabı **kullanıcı** açar; ajan şablon ve pipeline yazar.
 
-**TASK-16 sıradaki tık (Halil).** Infra (`infra/main.bicep`, `deploy.ps1`) hazır. Ajan Portal / `az login` / DNS açmaz. Abonelik yokken URL uydurulmaz. Bu makinede `az` CLI yok — liste doğrulanmadı. Yol: [`YOL.md`](YOL.md).
+**TASK-16 sıradaki tık (Halil).** Infra (`infra/main.bicep`, `deploy.ps1`) hazır. Ajan Portal / `az login` / DNS açmaz. Abonelik yokken URL uydurulmaz. Repo kökü **`D:\ClearPay\clearpay`**. Bu makinede `az` CLI yok (2026-08-17 tekrar) — liste doğrulanmadı. Yol: [`YOL.md`](YOL.md).
 
 **Operasyon kimliği (T-025):** `halilmertdeveliii@gmail.com`. Azure / GitHub / Search Console / Ads bu kutudan. Ajan yeni hesap açmaz. Bu makinede `az` CLI **yok**. Gmail’de 2026-05-11 “Your new Azure account is ready” var. Secret git’e yok.
 
@@ -37,14 +37,15 @@ Path: `/` özet, `/giris`, `/kayit`, `/havale`, `/yukle-cek`, `/hareketler`, `/a
 
 1. Azure aboneliği (öğrenci veya pay-as-you-go). F1 denemek serbest. Ajan hesap açmaz.
 2. [Azure CLI](https://aka.ms/installazurecliwindows) kur → PowerShell: **`az login`** (tarayıcı; `halilmertdeveliii@gmail.com`).
-3. Repo kökünde: **`.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`**  
+3. Repo kökü **`D:\ClearPay\clearpay`**: **`.\infra\deploy.ps1 -SqlAdminPassword (Read-Host -AsSecureString)`**  
    İsim doluysa `-WebAppName hm-clearpay`. Q2 Redis: `-IncludeQ2`. Script RG + Bicep + rastgele `Jwt__SigningKey` basar (yazdırılmaz).
-4. Portal → App Service → **Configuration** kontrol:
-   - `ConnectionStrings__ClearPay` (Bicep SQL Azure — ledger + Identity)
-   - `Jwt__SigningKey` (`deploy.ps1` basmış olmalı)
+4. Portal → App Service → **Environment variables** kontrol (değerleri sohbete yapıştırma):
+   - Connection strings: ad **`ClearPay`**, tür **SQLAzure** (Bicep basar; ASP.NET bunu `ConnectionStrings:ClearPay` okur). Eski listede `ConnectionStrings__ClearPay` de geçerli.
+   - `Jwt__SigningKey` (`deploy.ps1` basmış olmalı; 32+ karakter)
    - `ASPNETCORE_ENVIRONMENT` = `Production`
    - `Hangfire__Enabled` = `true`
    - `Hangfire__UseMemoryStorage` = `false`
+   - `Cors__Origins__0` = `https://<app>.azurewebsites.net` (Bicep / `deploy.ps1`)
 5. Portal → App Service → **Get publish profile**. GitHub repo → Settings → Secrets → `AZURE_WEBAPP_PUBLISH_PROFILE`. Settings → Variables → `AZURE_WEBAPP_NAME` = web app adı.
 6. GitHub Actions: workflow **Azure deploy** (veya `main` push; değişken boşsa job atlanır). Ajan push etmez.
 7. Tarayıcı: script’in yazdığı `https://<app>.azurewebsites.net/api/health` sonra `/giris`. URL’yi ajan uydurmaz.
@@ -59,6 +60,7 @@ Path: `/` özet, `/giris`, `/kayit`, `/havale`, `/yukle-cek`, `/hareketler`, `/a
 - `infra/q2.bicep` — Azure Cache for Redis Basic C0
 - `infra/deploy.ps1` — RG + deployment + rastgele `Jwt__SigningKey` (yazdırılmaz)
 - Production Identity: `UseSqlServer(ConnectionStrings:ClearPay)`. SQLite prod değil.
+- Production hosting (T-095): `X-Forwarded-Proto` (App Service proxy), DataProtection keys `HOME/data-protection-keys`, cookie SameSite Lax, health `/api/health`.
 
 ## App Settings isimleri (değer yok)
 
@@ -66,11 +68,12 @@ Portal’da oluştur; **değerleri git’e koyma**.
 
 | Ad | Ne | Ne zaman |
 |----|-----|----------|
-| `ConnectionStrings__ClearPay` | Azure SQL (ledger + Identity) | Q1 (Bicep basar) |
+| Connection strings `ClearPay` (SQLAzure) | Azure SQL — ledger + Identity | Q1 (Bicep; `ConnectionStrings__ClearPay` de olur) |
 | `Jwt__SigningKey` | API JWT (32+ rastgele bayt) | Q1 (`deploy.ps1`) |
 | `ASPNETCORE_ENVIRONMENT` | `Production` | Q1 |
 | `Hangfire__Enabled` | `true` (in-process worker) | Q1 (Bicep) |
 | `Hangfire__UseMemoryStorage` | `false` (Azure SQL storage) | Q1 (Bicep) |
+| `Cors__Origins__0` | `https://<app>.azurewebsites.net` | Q1 (Bicep / `deploy.ps1`) |
 | `ConnectionStrings__Redis` | `host:6380,ssl=true,password=…` | Q2 |
 | `ConnectionStrings__RabbitMq` | CloudAMQP `amqps://…` | Q2 |
 
@@ -98,6 +101,19 @@ Q2                  Redis Bicep + CloudAMQP — TASK-16 şartı değil
 ```
 
 TASK-16 kabul: tarayıcıda açık URL, giriş, boş/canlı özet. Redis şart değil.
+
+## Ajanla paylaş (değer / şifre yok)
+
+Portal veya script çıktısından **yalnız isim**. Connection string, SQL parolası, JWT, publish profile sohbete yapıştırma (GitHub Secret / Portal’de kalsın).
+
+1. `az login` oldu mu? (bu Gmail)
+2. Kaynak grubu (`rg-clearpay-weu` mi)
+3. Web app adı (`clearpay` / `clearpay-wallet` / `hm-clearpay` / başka)
+4. SQL sunucu adı (FQDN; şifre yok) — örn. `sql-….database.windows.net`
+5. Environment variables **isim** listesi (Jwt, Hangfire, Cors, Connection strings ad `ClearPay`)
+6. GitHub: `AZURE_WEBAPP_NAME` variable + `AZURE_WEBAPP_PUBLISH_PROFILE` secret **sen** koyarsın
+
+Canlıda `admin@clearpay.test` **yok** (seed yalnız Development). İlk kullanıcı `/kayit`.
 
 ## Yasak
 

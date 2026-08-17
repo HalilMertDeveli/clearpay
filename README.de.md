@@ -21,7 +21,7 @@
 
 ## Web + Mobil (geliefert)
 
-Dieses Repo ist **keine reine Website**. Die **Flutter-App** liegt in [`mobile/clearpay`](mobile/clearpay) und spricht denselben ASP.NET-Core-8-Host. Acht Operationen, ein SQL-Ledger, **kein** zweiter Saldo auf dem Telefon. Details: [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+Dieses Repo ist **keine reine Website**. Die **Flutter-App** liegt in [`mobile/clearpay`](mobile/clearpay) und spricht denselben ASP.NET-Core-8-Host. **Ein SQL-Ledger**, **kein** zweiter Saldo auf dem Telefon. Website zusätzlich: [`/kartlar`](http://localhost:5153/kartlar) (Demo-Karte, letzte 4, kein PAN). Firestore schreibt nur `app_meta/ping` — **keine** Kasse. Details: [`README.md`](README.md) und [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
 
 **Ein Wallet, zwei Clients.** Dieselbe Person meldet sich an, überweist, lädt auf und öffnet den Beleg **auf der Website** und **in der Flutter-App**. Razor Pages (Cookie); JSON (JWT). Doppelte Buchführung im Domain — `Wallet` hat **keine** Spalte `Balance`.
 

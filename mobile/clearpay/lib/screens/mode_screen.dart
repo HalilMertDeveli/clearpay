@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../auth/account_kind_store.dart';
+import '../l10n/language_strip.dart';
+import '../l10n/locale_scope.dart';
 import '../theme.dart';
 
 class ModeScreen extends StatelessWidget {
@@ -11,24 +13,28 @@ class ModeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = l10n(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('ClearPay')),
+      appBar: AppBar(
+        title: const Text('ClearPay'),
+        actions: const [Padding(padding: EdgeInsets.only(right: 8), child: LanguageStrip(light: true))],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          const Text(
-            'Nasıl devam edilsin?',
-            style: TextStyle(color: navy, fontSize: 22, fontWeight: FontWeight.w700),
+          Text(
+            l.modeTitle,
+            style: const TextStyle(color: navy, fontSize: 22, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Aynı 8 işlem, aynı SQL defteri. Kurumsal üye iş yeri / POS değil.',
-            style: TextStyle(color: muted),
+          Text(
+            l.modeLede,
+            style: const TextStyle(color: muted),
           ),
           const SizedBox(height: 20),
           _ModeCard(
             title: bireyselKind,
-            subtitle: 'Kişisel cüzdan görünümü.',
+            subtitle: l.bireyselHint,
             icon: Icons.person_outline,
             selected: store.kind == bireyselKind,
             onTap: () => onPicked(bireyselKind),
@@ -36,7 +42,7 @@ class ModeScreen extends StatelessWidget {
           const SizedBox(height: 12),
           _ModeCard(
             title: kurumsalKind,
-            subtitle: 'İş cüzdanı kromu — fatura tahsilatı yok.',
+            subtitle: l.kurumsalHint,
             icon: Icons.apartment_outlined,
             selected: store.kind == kurumsalKind,
             onTap: () => onPicked(kurumsalKind),

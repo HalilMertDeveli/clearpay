@@ -18,5 +18,7 @@ public sealed class ClearPayWebFactory : WebApplicationFactory<Program>
         builder.UseSetting("ConnectionStrings:RabbitMq", "");
         builder.UseSetting("Jwt:SigningKey", "ClearPay-Dev-Jwt-Signing-Key-32b!!");
         builder.UseSetting("Hangfire:Enabled", "false");
+        builder.UseSetting("Firebase:ProjectId", "clearpay-test");
+        builder.UseSetting("Firebase:AllowTestTokens", "true");
     }
 }

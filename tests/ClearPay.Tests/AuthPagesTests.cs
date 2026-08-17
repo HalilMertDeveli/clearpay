@@ -1,5 +1,10 @@
 using System.Net;
+using ClearPay.Application.Identity;
+using ClearPay.Domain.Identity;
+using ClearPay.Infrastructure.Identity;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ClearPay.Tests;
 
@@ -41,6 +46,9 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
         html.Should().Contain("Google ile giriş");
         html.Should().Contain("Apple ile giriş");
         html.Should().Contain("Beni hatırla");
+        html.Should().Contain("TC (demo)");
+        html.Should().Contain("10000000146");
+        html.Should().NotContain("Şifremi unuttum");
     }
 
     [Fact]
@@ -64,6 +72,9 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
 
         html.Should().Contain("Ad");
         html.Should().Contain("E-posta");
+        html.Should().Contain("Telefon");
+        html.Should().Contain("Bireysel");
+        html.Should().Contain("Kurumsal");
         html.Should().Contain("Şifre tekrar");
         html.Should().Contain("Hesap oluştur");
         html.Should().Contain("Google ile giriş");
@@ -74,6 +85,7 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
     [InlineData("/")]
     [InlineData("/havale")]
     [InlineData("/yukle-cek")]
+    [InlineData("/kartlar")]
     [InlineData("/hareketler")]
     public async Task Protected_routes_redirect_to_login(string path)
     {
@@ -84,5 +96,43 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
         response.StatusCode.Should().Be(HttpStatusCode.Redirect);
         response.Headers.Location.Should().NotBeNull();
         response.Headers.Location!.ToString().Should().Contain("/giris");
+    }
+
+    [Fact]
+    public async Task Register_stores_phone_and_account_kind()
+    {
+        var client = _factory.CreateClient(new() { HandleCookies = true });
+        var email = $"tel.{Guid.NewGuid():N}@clearpay.test";
+        var phone = RegisterForm.UniquePhone();
+        var html = await client.GetStringAsync("/Account/Register");
+        var post = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(AntiforgeryTestHelper.GetToken(html), email, "Tel Deneme", phone, AccountKinds.Kurumsal)));
+
+        post.EnsureSuccessStatusCode();
+        using var scope = _factory.Services.CreateScope();
+        var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var user = await users.FindByEmailAsync(email);
+        user.Should().NotBeNull();
+        user!.PhoneNumber.Should().Be(TurkishPhone.Normalize(phone));
+        user.AccountKind.Should().Be(AccountKinds.Kurumsal);
+    }
+
+    [Fact]
+    public async Task Login_with_demo_tc_signs_in_seed_admin()
+    {
+        var client = _factory.CreateClient(new() { HandleCookies = true });
+        var loginHtml = await client.GetStringAsync("/Account/Login");
+        var post = await client.PostAsync("/Account/Login", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Input.Tc"] = DemoTc.AdminNationalId,
+            ["Input.Password"] = "Deneme123",
+            ["__RequestVerificationToken"] = AntiforgeryTestHelper.GetToken(loginHtml)
+        }));
+
+        post.EnsureSuccessStatusCode();
+        var wallet = await post.Content.ReadAsStringAsync();
+        wallet.Should().Contain("Özet");
+        wallet.Should().Contain("masthead");
+        wallet.Should().NotContain("name=\"Input.Tc\"");
     }
 }

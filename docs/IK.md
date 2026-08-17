@@ -26,6 +26,39 @@ Repo: [github.com/HalilMertDeveli/clearpay](https://github.com/HalilMertDeveli/c
 
 ---
 
+## LinkedIn (kopyala-yapıştır)
+
+Tam playbook: [`PAZARLAMA.md`](PAZARLAMA.md). **Sen yayınlarsın.** Ajan LinkedIn açmaz.
+
+**Taslak A** — URL yokken (şimdi serbest):
+
+> ClearPay — ASP.NET Core 8 **cüzdan demosu** (sahte banka gateway). Çift kayıt defteri, aynı havale **409**, timeout’ta outbox. Lisanslı ödeme kuruluşu değil; Papara/FAST değil.  
+> Repo: https://github.com/HalilMertDeveli/clearpay  
+> Demo — sahte banka gateway.
+
+**Taslak B** — TASK-16 URL tarayıcıda açık olduktan sonra (`{CANLI_KOK}` = senin HTTPS kökün; uydurma yok):
+
+> ClearPay **demo** canlı: {CANLI_KOK}  
+> ASP.NET Core 8 cüzdan demosu — ledger, idempotency 409, sahte banka REST+SOAP. Gerçek havale / IBAN yok.  
+> Kod: https://github.com/HalilMertDeveli/clearpay  
+> Demo — sahte banka gateway.
+
+---
+
+## Kapı başvurusu — sen tıklarsın
+
+Ajan kariyer sitesi / e-posta göndermez. İlan **C# / .NET** ise:
+
+1. CV üç satır (yukarı) + repo linki.
+2. 15/30 prova lokal: http://localhost:5153/giris → havale iki kez → **409**.
+3. Kapı sırası: Intertech → Softtech → Bileşim → TAV / İGA → uni BT / sanayi / Turkcell .NET. Adres: [`GELIR.md`](GELIR.md) §5 (randevu; soğuk kapı değil).
+4. Konu satırı örneği: `Halil Mert Develi — ASP.NET Core 8 wallet demo (409 / ledger / outbox)`
+5. Gövde: taslak A + “satın alın değil, bu defteri .NET ekibinizde kurarım.” Papara klonu yok.
+
+Java/THY/Garanti Java/ASELSAN C++ — bu repo ile girilmez.
+
+---
+
 ## 15 dakika
 
 | Dk | Ne | Söyle |

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
+import '../l10n/locale_scope.dart';
 import '../theme.dart';
 
 class AdminScreen extends StatefulWidget {
@@ -70,7 +71,7 @@ class _AdminScreenState extends State<AdminScreen> {
       } else {
         await widget.api.unfreeze(_email.text);
       }
-      setState(() => _message = freeze ? 'Donduruldu.' : 'Çözüldü.');
+      setState(() => _message = freeze ? l10n(context).frozenMsg : l10n(context).unfrozenMsg);
     } on ApiException catch (e) {
       setState(() => _message = e.message);
     }
@@ -78,20 +79,21 @@ class _AdminScreenState extends State<AdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = l10n(context);
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        const Text('Cüzdan dondur', style: TextStyle(fontWeight: FontWeight.w600, color: navy)),
-        TextField(controller: _email, decoration: const InputDecoration(labelText: 'E-posta')),
+        Text(l.freezeWallet, style: const TextStyle(fontWeight: FontWeight.w600, color: navy)),
+        TextField(controller: _email, decoration: InputDecoration(labelText: l.email)),
         Row(
           children: [
-            FilledButton(onPressed: () => _toggle(true), child: const Text('Dondur')),
+            FilledButton(onPressed: () => _toggle(true), child: Text(l.freeze)),
             const SizedBox(width: 8),
-            OutlinedButton(onPressed: () => _toggle(false), child: const Text('Çöz')),
+            OutlinedButton(onPressed: () => _toggle(false), child: Text(l.unfreeze)),
           ],
         ),
         const SizedBox(height: 16),
-        const Text('Başarısız kuyruk', style: TextStyle(fontWeight: FontWeight.w600)),
+        Text(l.failedQueue, style: const TextStyle(fontWeight: FontWeight.w600)),
         for (final row in _outbox)
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -102,17 +104,17 @@ class _AdminScreenState extends State<AdminScreen> {
                 await widget.api.requeue(row.id);
                 await _reload();
               },
-              child: const Text('Kuyruğa al'),
+              child: Text(l.requeue),
             ),
           ),
         const SizedBox(height: 16),
-        const Text('Audit', style: TextStyle(fontWeight: FontWeight.w600)),
-        TextField(controller: _actor, decoration: const InputDecoration(labelText: 'Aktör ara')),
+        Text(l.audit, style: const TextStyle(fontWeight: FontWeight.w600)),
+        TextField(controller: _actor, decoration: InputDecoration(labelText: l.searchActor)),
         TextField(
           controller: _correlation,
-          decoration: const InputDecoration(labelText: 'Correlation id'),
+          decoration: InputDecoration(labelText: l.correlationId),
         ),
-        TextButton(onPressed: _reload, child: const Text('Ara')),
+        TextButton(onPressed: _reload, child: Text(l.search)),
         for (final row in _audits)
           ListTile(
             contentPadding: EdgeInsets.zero,

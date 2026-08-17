@@ -8,6 +8,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
 namespace ClearPay.Web.Controllers;
@@ -48,11 +49,26 @@ public sealed class RegisterController : ControllerBase
         }
 
         var email = request.Email.Trim();
+        var phone = TurkishPhone.Normalize(request.Phone);
+        if (phone is not null)
+        {
+            var taken = await _users.Users.AnyAsync(u => u.PhoneNumber == phone, cancellationToken)
+                .ConfigureAwait(false);
+            if (taken)
+            {
+                return Problem(
+                    title: "Conflict",
+                    detail: "Bu telefon başka bir hesapta kayıtlı.",
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+        }
+
         var user = new ApplicationUser
         {
             UserName = email,
             Email = email,
             FullName = request.FullName.Trim(),
+            PhoneNumber = phone,
             AccountKind = AccountKinds.Normalize(request.AccountKind)
         };
         var created = await _users.CreateAsync(user, request.Password).ConfigureAwait(false);

@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import '../api/clearpay_client.dart';
 import '../api/wallet_live_hub.dart';
 import '../auth/account_kind_store.dart';
+import '../auth/auth_session.dart';
 import '../auth/token_store.dart';
+import '../l10n/language_strip.dart';
+import '../l10n/locale_scope.dart';
 import '../theme.dart';
 import 'admin_screen.dart';
 import 'funding_screen.dart';
@@ -18,11 +21,13 @@ class ShellScreen extends StatefulWidget {
     required this.store,
     required this.api,
     required this.kindStore,
+    this.auth = const DisabledAuthSession(),
   });
 
   final TokenStore store;
   final ClearPayClient api;
   final AccountKindStore kindStore;
+  final AuthSession auth;
 
   @override
   State<ShellScreen> createState() => _ShellScreenState();
@@ -79,6 +84,7 @@ class _ShellScreenState extends State<ShellScreen> {
           store: widget.store,
           api: widget.api,
           kindStore: widget.kindStore,
+          auth: widget.auth,
         ),
       ),
       (_) => false,
@@ -105,6 +111,7 @@ class _ShellScreenState extends State<ShellScreen> {
   @override
   Widget build(BuildContext context) {
     final admin = widget.api.isAdmin;
+    final l = l10n(context);
     final pages = [
       OverviewScreen(
         api: widget.api,
@@ -123,16 +130,20 @@ class _ShellScreenState extends State<ShellScreen> {
       if (admin) AdminScreen(api: widget.api, liveTick: _liveTick),
     ];
     final titles = [
-      'Özet',
-      'Havale',
-      'Yükle / Çek',
-      'Hareketler',
-      if (admin) 'Admin',
+      l.overview,
+      l.transfer,
+      l.topUpWithdraw,
+      l.movements,
+      if (admin) l.admin,
     ];
     return Scaffold(
       appBar: AppBar(
         title: Text(titles[_index]),
         actions: [
+          const Padding(
+            padding: EdgeInsets.only(right: 4),
+            child: LanguageStrip(light: true),
+          ),
           Center(
             child: Padding(
               padding: const EdgeInsets.only(right: 12),
@@ -149,40 +160,40 @@ class _ShellScreenState extends State<ShellScreen> {
         onDestinationSelected: _selectDrawerDestination,
         children: [
           _DrawerBrand(email: widget.api.email, kind: _kind),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.account_balance_wallet_outlined),
-            selectedIcon: Icon(Icons.account_balance_wallet),
-            label: Text('Özet'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.account_balance_wallet_outlined),
+            selectedIcon: const Icon(Icons.account_balance_wallet),
+            label: Text(l.overview),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.swap_horiz),
-            selectedIcon: Icon(Icons.swap_horiz),
-            label: Text('Havale'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.swap_horiz),
+            selectedIcon: const Icon(Icons.swap_horiz),
+            label: Text(l.transfer),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.savings_outlined),
-            selectedIcon: Icon(Icons.savings),
-            label: Text('Yükle / Çek'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.savings_outlined),
+            selectedIcon: const Icon(Icons.savings),
+            label: Text(l.topUpWithdraw),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.receipt_long_outlined),
-            selectedIcon: Icon(Icons.receipt_long),
-            label: Text('Hareketler'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.receipt_long_outlined),
+            selectedIcon: const Icon(Icons.receipt_long),
+            label: Text(l.movements),
           ),
           ListTile(
             leading: const Icon(Icons.description_outlined),
-            title: const Text('Dekont'),
-            subtitle: const Text('Hareketler listesinden'),
+            title: Text(l.receipt),
+            subtitle: Text(l.receiptFromList),
             onTap: () {
               Navigator.of(context).pop();
               _openTab(_movementsIndex);
             },
           ),
           if (admin)
-            const NavigationDrawerDestination(
-              icon: Icon(Icons.admin_panel_settings_outlined),
-              selectedIcon: Icon(Icons.admin_panel_settings),
-              label: Text('Admin'),
+            NavigationDrawerDestination(
+              icon: const Icon(Icons.admin_panel_settings_outlined),
+              selectedIcon: const Icon(Icons.admin_panel_settings),
+              label: Text(l.admin),
             ),
           const Padding(
             padding: EdgeInsets.fromLTRB(28, 8, 28, 8),
@@ -190,7 +201,7 @@ class _ShellScreenState extends State<ShellScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.logout),
-            title: const Text('Çıkış'),
+            title: Text(l.signOut),
             onTap: () {
               Navigator.of(context).pop();
               _logout();
@@ -208,15 +219,18 @@ class _ShellScreenState extends State<ShellScreen> {
         selectedIndex: _index,
         onDestinationSelected: _openTab,
         destinations: [
-          const NavigationDestination(
-            icon: Icon(Icons.account_balance_wallet_outlined),
-            label: 'Özet',
+          NavigationDestination(
+            icon: const Icon(Icons.account_balance_wallet_outlined),
+            label: l.overview,
           ),
-          const NavigationDestination(icon: Icon(Icons.swap_horiz), label: 'Havale'),
-          const NavigationDestination(icon: Icon(Icons.savings_outlined), label: 'Yükle'),
-          const NavigationDestination(icon: Icon(Icons.receipt_long_outlined), label: 'Hareket'),
+          NavigationDestination(icon: const Icon(Icons.swap_horiz), label: l.transfer),
+          NavigationDestination(icon: const Icon(Icons.savings_outlined), label: l.topUp),
+          NavigationDestination(icon: const Icon(Icons.receipt_long_outlined), label: l.movementShort),
           if (admin)
-            const NavigationDestination(icon: Icon(Icons.admin_panel_settings_outlined), label: 'Admin'),
+            NavigationDestination(
+              icon: const Icon(Icons.admin_panel_settings_outlined),
+              label: l.admin,
+            ),
         ],
       ),
     );
@@ -249,14 +263,15 @@ class _DrawerBrand extends StatelessWidget {
                   letterSpacing: 0.8,
                 ),
               ),
-              const SizedBox(height: 4),
+              const LanguageStrip(light: true),
+              const SizedBox(height: 8),
               Text(
                 email ?? '',
                 style: const TextStyle(color: Colors.white70, fontSize: 13),
               ),
               const SizedBox(height: 6),
               Text(
-                '$kind · üye iş yeri değil',
+                '$kind · ${l10n(context).notMerchant}',
                 style: const TextStyle(color: Colors.white70, fontSize: 12),
               ),
             ],

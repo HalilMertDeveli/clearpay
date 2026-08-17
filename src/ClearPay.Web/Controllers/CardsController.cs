@@ -32,6 +32,7 @@ public sealed class CardsController : ControllerBase
                 id = c.Id,
                 last4 = c.Last4,
                 label = c.Label,
+                scheme = c.Scheme,
                 accountHint = c.AccountHint
             })
         });
@@ -48,6 +49,7 @@ public sealed class CardsController : ControllerBase
             userId,
             body?.Last4 ?? string.Empty,
             body?.Label ?? string.Empty,
+            scheme: null,
             cancellationToken).ConfigureAwait(false);
         if (added is null)
         {
@@ -62,6 +64,7 @@ public sealed class CardsController : ControllerBase
             id = added.Id,
             last4 = added.Last4,
             label = added.Label,
+            scheme = added.Scheme,
             accountHint = added.AccountHint
         });
     }
