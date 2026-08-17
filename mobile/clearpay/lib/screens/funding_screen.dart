@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api/clearpay_client.dart';
 import '../theme.dart';
+import 'receipt_screen.dart';
 
 class FundingScreen extends StatefulWidget {
   const FundingScreen({super.key, required this.api, this.liveTick = 0});
@@ -79,7 +80,7 @@ class _FundingScreenState extends State<FundingScreen> {
     }
   }
 
-  Future<void> _run(Future<void> Function({required double amount, required String account}) action) async {
+  Future<void> _run(Future<PostedMoney> Function({required double amount, required String account}) action) async {
     final amount = double.tryParse(_amount.text.replaceAll(',', '.'));
     if (amount == null || amount <= 0) {
       setState(() => _message = 'Geçerli tutar girin.');
@@ -90,9 +91,19 @@ class _FundingScreenState extends State<FundingScreen> {
       _message = null;
     });
     try {
-      await action(amount: amount, account: _account.text);
-      setState(() => _message = 'Tamam. Özetten bakiyeyi yenileyin.');
+      final posted = await action(amount: amount, account: _account.text);
+      if (!mounted) {
+        return;
+      }
+      await openReceipt(context, widget.api, posted.correlationId);
     } on ApiException catch (e) {
+      if (e.status == 409 && e.correlationId != null && e.correlationId!.isNotEmpty) {
+        if (!mounted) {
+          return;
+        }
+        await openReceipt(context, widget.api, e.correlationId!);
+        return;
+      }
       setState(() => _message = e.message);
     } finally {
       if (mounted) {
