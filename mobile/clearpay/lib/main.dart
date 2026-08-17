@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'api/clearpay_client.dart';
 import 'auth/token_store.dart';
+import 'firebase/bootstrap.dart';
 import 'screens/login_screen.dart';
 import 'screens/shell_screen.dart';
 import 'theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initClearPayFirebase();
   final store = FileTokenStore();
   await store.load();
   runApp(ClearPayApp(

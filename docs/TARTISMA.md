@@ -943,3 +943,19 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 - **Neden:** Ziyaretçi “aynı kişi, iki istemci, tek defter” görsün.
 - **Sonra hangi dosya:** `README.md` + TR/DE/FR; `mobile/clearpay/README.md`; HANDOFF append.
 
+---
+
+## T-065 — 2026-08-17 — Flutter Firebase yapılandırması (istemci; kasa değil)
+
+- **Kim:** Orchestrator + Coder (kullanıcı: Flutter için Firebase yapılandırması)
+- **Konu:** `mobile/clearpay` JWT istemci. T-061 eski reddi **Firebase ikizi / Firestore bakiye** içindi. Şimdi Google projesi + `firebase_core` mi, yoksa Auth/Firestore ikinci defter mi?
+- **Seçenekler:**
+  1. Firebase Auth + Firestore/Hive bakiye — hayır (T-061; `UPDATE Balance` ikizi; SQL ledger kırılır).
+  2. **`firebase_core` istemci init.** JWT + C# port + SQL kasa durur. 8 ekran. 9. ekran / FCM inbox yok. `google-services.json` / `firebase_options.dart` FlutterFire üretir. Ajan Firebase/Google Cloud projesi **açmaz** (GIRIS-SOSYAL / CANLI ile aynı). CLI yoksa iskelet + Halil `firebase login` + `configure-firebase.cmd`. Crashlytics/Analytics sonra; şimdi yalnız core.
+  3. Firebase’siz — kullanıcı yapılandırma istedi.
+- **Karar:** **2.** TASK-16 Todo durur. Domain’e Dart yok. `ClearPay.slnx` Flutter içermez.
+- **Neden:** 1 ikinci kasa. 3 isteği karşılamaz. 2 mülakat omurgası SQL/409; Firebase yalnızca mobil Google bağları.
+- **Sonra hangi dosya:** Coder `mobile/clearpay` (`pubspec`, `lib/firebase/**`, `main.dart`, Android Gradle koşullu plugin, `tool/configure-firebase.cmd`, README). `docs/SENIN-ISLERIN.md` tık. HANDOFF append. `src/` yok.
+
+---
+

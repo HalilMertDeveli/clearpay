@@ -89,6 +89,22 @@ flutter run -d windows
 
 Store listing / HTTPS live URL: TASK-16 (you click `az login`). CI stays `dotnet test`.
 
+## Firebase (client only)
+
+Ledger stays SQL Server. Firebase is **not** Auth/Firestore wallet.
+
+1. Same Gmail: `halilmertdeveliii@gmail.com` — [Firebase console](https://console.firebase.google.com/) → add project (or reuse ClearPay Google Cloud).
+2. Command Prompt:
+
+```bat
+npm install -g firebase-tools
+firebase login
+cd /d C:\Users\clt\Projects\clearpay\mobile\clearpay
+tool\configure-firebase.cmd
+```
+
+3. Until that runs, the app still logs in with JWT (`firebase_core` skips). Do not put a second balance in Firestore.
+
 ## License
 
 [MIT](../../LICENSE) © 2026 Halil Mert Develi

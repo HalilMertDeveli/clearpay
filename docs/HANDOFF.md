@@ -751,4 +751,11 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** GitHub `README.md` üstü; `mobile/clearpay/README.md`.
 - **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
 
+## 2026-08-17 — Flutter Firebase core (T-065; Coder)
+
+- **OWN:** TARTISMA **T-065**. `firebase_core` + `initClearPayFirebase` (eksik options JWT’yi kesmez). Auth/Firestore kasa yok. Ajan Firebase projesi açmaz. TASK-16 Todo.
+- **Landed:** `lib/firebase/bootstrap.dart` + stub `firebase_options.dart`; Android `google-services` yalnızca json varsa; `tool/configure-firebase.cmd`. JWT client continues without a Firebase project.
+- **Sen tıklarsın:** [Firebase console](https://console.firebase.google.com/) (aynı Gmail) → proje → Command Prompt: `npm install -g firebase-tools` → `firebase login` → `mobile\clearpay\tool\configure-firebase.cmd`. Windows plugin için Geliştirici Modu.
+- **Sıradaki ürün:** TASK-16 Azure URL (blok Halil).
+
 
