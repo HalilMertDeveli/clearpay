@@ -52,7 +52,9 @@ public sealed class TokenController : ControllerBase
             return Unauthorized();
         }
 
-        var user = await _users.FindByEmailAsync(request.Email.Trim()).ConfigureAwait(false);
+        var identifier = request.Email.Trim();
+        var email = DemoTc.ResolveEmail(identifier) ?? identifier;
+        var user = await _users.FindByEmailAsync(email).ConfigureAwait(false);
         if (user is null || !await _users.CheckPasswordAsync(user, request.Password).ConfigureAwait(false))
         {
             // #region agent log
@@ -70,7 +72,7 @@ public sealed class TokenController : ControllerBase
         var roles = await _users.GetRolesAsync(user).ConfigureAwait(false);
         var token = _tokens.Issue(
             user.Id,
-            user.Email ?? request.Email.Trim(),
+            user.Email ?? email,
             roles.ToList(),
             user.AccountKind);
         // #region agent log

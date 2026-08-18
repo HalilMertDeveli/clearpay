@@ -1072,3 +1072,17 @@ Kullanıcı org: Yönetim, Ürün, Yazılım, Tasarım, Kalite, Destek, Satış,
 - **Sen tıklarsın:** Push sonrası https://github.com/HalilMertDeveli/clearpay → Türkçe. Beklenen URL: `https://github.com/HalilMertDeveli/clearpay/blob/main/README.tr.md` (veya dal `…/blob/cursor/yol-haritasi-career-first/README.tr.md`). Kırık olan: `https://github.com/HalilMertDeveli/clearpay/README.tr.md` (404).
 - **Sıradaki ürün:** TASK-16 Azure (Halil publish profile). Bu fix **commit + push** ister; henüz push yok.
 
+## 2026-08-17 — E-posta ile giriş (T-107; Coder)
+
+- **OWN:** TARTISMA **T-107**. TASK-16 Todo durur. 8 ekran. TC demo durur. `UPDATE Balance` yok. Papara yok.
+- **Landed:** Flutter giriş önce `POST /api/token`; Firebase `CONFIGURATION_NOT_FOUND` JWT’yi engellemez. Web cookie `FindByEmailAsync`; dolu e-posta leftover TC’yi ezer. `/api/token` e-posta (veya demo TC map). Telefon girişte yok.
+- **Sen tıklarsın:** Siteyi yeniden başlat → http://localhost:5153/giris → **E-posta** `admin@clearpay.test` / `Deneme123`. Mobil: hot restart sonrası aynı e-posta (Firebase hata verse bile). TC `10000000146` durur.
+- **Sıradaki ürün:** TASK-16 Azure (Halil publish profile).
+
+## 2026-08-18 — Bugün kapat + CV’ye ClearPay (T-108; Orchestrator+İK)
+
+- **OWN:** TARTISMA **T-108**. TASK-16 **Todo durur** (`/api/health` 404; ajan URL uydurmaz, `az login` yok). Q1 = mülakat demosu, ciro değil. 9. ürün ekranı / Papara / `UPDATE Balance` yok.
+- **Landed:** T-107 e-posta girişi doğrulandı. README Kartlarım Flutter (park yalanı kalktı) + *CV bullets* geri; TASK-16 tık = publish profile (`deploy.ps1` ezmez). [`docs/CV-HALIL.md`](CV-HALIL.md). Masaüstü `C:\Users\clt\Desktop\Halil_Mert_Develi_CV_Paket` 01/03/04 HTML+PDF’e dürüst ClearPay maddesi. Tester: `dotnet test -c Release` **170 geçti**; `flutter test` **21 geçti**.
+- **Sen tıklarsın:** Portal `ClearPay_group` → `ClearPay` → **Get publish profile** → GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE`. Startup `dotnet ClearPay.Web.dll`; HTTPS Only On. Sonra `main` Azure deploy. CV PDF: `C:\Users\clt\Desktop\Halil_Mert_Develi_CV_Paket\00_BASVURU_PDF`. Commit/push henüz yok (sen söylemedin).
+- **Sıradaki ürün:** TASK-16 Azure health 200 + `/giris`.
+

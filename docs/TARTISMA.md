@@ -1615,4 +1615,32 @@ Tarih + kısa başlık. Alanlar sabit; madde silinmez, üzerine yazılmaz — ye
 
 ---
 
+## T-107 — 2026-08-17 — E-posta ile giriş (web + Flutter)
+
+- **Kim:** Coder (kullanıcı: e-posta ile giriş çalışmıyor)
+- **Konu:** Emülatör log: `FirebaseAuth` `halilmertdeveliii@gmail.com` → `CONFIGURATION_NOT_FOUND`; login önce Firebase, JWT `/api/token` yalnız `user-not-found` / `wrong-password` / `invalid-credential`. SQL Identity (T-058) atlanır. Web: aynı formda TC alanı doluysa e-posta yok sayılır; `PasswordSignInAsync(email)` UserName arar. TC demo (`10000000146` → `admin@clearpay.test`) durur. 9. ekran / Papara / `UPDATE Balance` yok.
+- **Seçenekler:**
+  1. Firebase e-posta sağlayıcısını zorunlu kıl / kayıt telefonunu girişe taşı — red (SQL kasa; giriş telefon istemez).
+  2. **Kazanan:** Flutter giriş **önce** `POST /api/token` (e-posta+şifre). JWT 401 ve Firebase açıksa sonra `loginWithFirebase`; AuthException’ta JWT 401 mesajı. Web: dolu geçerli e-posta TC’ye üstün; `FindByEmailAsync` + `PasswordSignInAsync(user)`. TC sekmesi boş e-postada map durur. 8 ekran. TASK-16 Todo.
+  3. TC sekmesini silmek — red (T-088 demo).
+- **Karar:** **2.**
+- **Neden:** 1 Identity’yi Firebase’e kaydırır. 3 mülakat TC’sini kırar. 2 SQL kaynak; Firebase kırıkken e-posta yine çalışır.
+- **Sonra hangi dosya:** Coder `Login.cshtml` / `Login.cshtml.cs`, `LoginRequestValidator`, `TokenController` (e-posta boş değil; telefon yok). Flutter `login_screen.dart` + test. Tester e-posta cookie + JWT. HANDOFF **append**.
+
+---
+
+## T-108 — 2026-08-18 — Bugün kapat: README çelişki + CV’ye ClearPay
+
+- **Kim:** Orchestrator + İK (kullanıcı: eksikleri düzelt, bugün bitir, mevcut CV’ye bu projeyi ekle)
+- **Konu:** TASK-16 HTTPS hâlâ 404 — “bitir” = ajan boşlukları, URL Done değil. T-107 e-posta girişi working tree’de. README “Cards UI parked” T-103 Flutter Kartlarım ile çelişiyor. README *CV bullets* silinmiş; `IK.md` hâlâ işaret ediyor. Masaüstü `Halil_Mert_Develi_CV_Paket` ClearPay yazmıyor. `deploy.ps1` T-104’te mevcut `ClearPay` sitesini ezer.
+- **Seçenekler:**
+  1. TASK-16 Done / `az login` / uydurma URL — **red**.
+  2. **Kazanan:** T-107’yi testle doğrula. README Kartlarım Flutter + CV bullets geri; TASK-16 tık = publish profile (Bicep ezilmez). İK: `docs/CV-HALIL.md` + Desktop HTML paketine dürüst ClearPay maddesi (demo, 409, outbox, Razor+JWT; lisanslı e-para / Papara değil). Q1 = mülakat demosu, ciro değil. 9. ürün ekranı / satıcı paneli yok.
+  3. Papara / “ödeme şirketi yayınladım” CV — **red**.
+- **Karar:** **2.** TASK-16 Todo durur.
+- **Neden:** 1 kural ihlali. 3 yalan. 2 ajanın kapatabileceği kanıt + CV aynı dosya formatı.
+- **Sonra hangi dosya:** README*.md, `mobile/clearpay/README.md`, `docs/IK.md`, `docs/CV-HALIL.md`. Desktop `C:\Users\clt\Desktop\Halil_Mert_Develi_CV_Paket` HTML (01/03/04). Tester `dotnet test -c Release`. HANDOFF **append**. `src/` T-107 durur (yeni para kuralı yok).
+
+---
+
 

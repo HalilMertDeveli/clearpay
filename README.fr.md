@@ -53,7 +53,7 @@ Razor Pages sur [http://localhost:5153](http://localhost:5153) (graine Developme
 
 ## Application mobile
 
-Client Flutter JWT sur l’émulateur Android `emulator-5554` → `http://10.0.2.2:5153`. Huit opérations, même SQL. **Pas** une caisse Hive / Firestore. Firestore n’écrit que `app_meta/ping`.
+Client Flutter JWT sur l’émulateur Android `emulator-5554` → `http://10.0.2.2:5153`. Mêmes écrans portefeuille que le site (Kartlarım compris), même SQL. **Pas** une caisse Hive / Firestore. Firestore n’écrit que `app_meta/ping`.
 
 <p align="center">
   <img src="docs/assets/shot-mobile.png" alt="Synthèse Flutter ClearPay sur émulateur Android" width="280">
@@ -264,7 +264,7 @@ Historique EF : `__EFMigrationsHistory` (ledger) et `__EFMigrationsHistoryIdenti
 
 ## Ce qui s’ouvre aujourd’hui
 
-Les huit mêmes opérations sur le site et dans l’app. Langues : **Türkçe (défaut), English, Deutsch, Français**. UI Flutter par défaut : Türkçe. Pas un 9ᵉ écran.
+Les mêmes opérations sur le site et dans l’app, **Kartlarım** compris (écran 9, T-097/T-103 — pas un panneau marchand). Langues : **Türkçe (défaut), English, Deutsch, Français**. UI Flutter par défaut : Türkçe.
 
 | Opération | Site | App Flutter |
 |-----------|------|-------------|
@@ -273,6 +273,7 @@ Les huit mêmes opérations sur le site et dans l’app. Langues : **Türkçe (d
 | Synthèse | [`/`](http://localhost:5153/) | Özet, pull-to-refresh — `GET /api/wallet` |
 | Virement | [`/havale`](http://localhost:5153/havale) | Havale + confirmation — `POST /api/transfers` + `Idempotency-Key` |
 | Recharger / retirer | [`/yukle-cek`](http://localhost:5153/yukle-cek) | Yükle / Çek — `POST /api/topup` / `withdraw` |
+| Cartes | [`/kartlar`](http://localhost:5153/kartlar) | Kartlarım — `GET/POST /api/cards` (4 derniers + schéma, pas de PAN) |
 | Mouvements | [`/hareketler`](http://localhost:5153/hareketler) | Hareketler + filtre — `GET /api/movements` |
 | Reçu | [`/dekont/{id}`](http://localhost:5153/hareketler) | Dekont — `GET /api/receipts/{id}` |
 | Admin | [`/admin`](http://localhost:5153/admin) | Onglet Admin (rôle Admin) — `/api/admin/*` |
@@ -337,7 +338,7 @@ ClearPay.slnx
 
 | Fait | Ensuite |
 |------|---------|
-| TASK-01…15 — écrans, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — Azure App Service + Azure SQL (`az login` à toi ; pas d’URL inventée) |
+| TASK-01…15 — écrans, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — App Service `ClearPay` existe ; `/api/health` est encore **404**. Secret GitHub `AZURE_WEBAPP_PUBLISH_PROFILE` + startup Portail `dotnet ClearPay.Web.dll`. Ne pas lancer `.\infra\deploy.ps1` (écrase le site). |
 
 La CI restore et teste `tests/ClearPay.Tests` sur `main`.
 
@@ -351,10 +352,10 @@ La CI restore et teste `tests/ClearPay.Tests` sur `main`.
 - [`docs/FARK.md`](docs/FARK.md) — rapprochement d’abord ; pas un rival Papara
 - [`docs/SATIS.md`](docs/SATIS.md) — pitch 15 secondes
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — Compose + `dotnet run`
-- [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — client Flutter (les huit mêmes opérations)
+- [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — client Flutter (mêmes écrans que le site)
 - Pas à pas : [`docs/OTURUM-PLAN.md`](docs/OTURUM-PLAN.md) (public dans ce dépôt). Même liste sur [Notion](https://www.notion.so/3bb31a8b18e4816bb34ffa405b4dec5d) — Share → Publish to web pour les lecteurs sans compte Notion.
 
-Cible live : Azure App Service + Azure SQL (West Europe). Pas d’`azurewebsites.net` à cliquer aujourd’hui.
+Cible live : Azure App Service **ClearPay**, Canada Central (T-104). `/api/health` 404 jusqu’au secret publish-profile.
 
 ## Licence
 

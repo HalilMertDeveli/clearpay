@@ -53,7 +53,7 @@ Razor Pages unter [http://localhost:5153](http://localhost:5153) (Development-Se
 
 ## Mobile App
 
-Flutter-JWT-Client auf Android-Emulator `emulator-5554` → `http://10.0.2.2:5153`. Dieselben acht Operationen, dasselbe SQL. **Keine** Hive-/Firestore-Kasse. Firestore schreibt höchstens `app_meta/ping`.
+Flutter-JWT-Client auf Android-Emulator `emulator-5554` → `http://10.0.2.2:5153`. Dieselben Wallet-Bildschirme wie die Website (inkl. Kartlarım), dasselbe SQL. **Keine** Hive-/Firestore-Kasse. Firestore schreibt höchstens `app_meta/ping`.
 
 <p align="center">
   <img src="docs/assets/shot-mobile.png" alt="ClearPay Flutter Übersicht auf dem Android-Emulator" width="280">
@@ -69,7 +69,7 @@ Flutter-JWT-Client auf Android-Emulator `emulator-5554` → `http://10.0.2.2:515
 
 ## Web + Mobil (geliefert)
 
-Dieses Repo ist **keine reine Website**. Die **Flutter-App** liegt in [`mobile/clearpay`](mobile/clearpay) und spricht denselben ASP.NET-Core-8-Host. **Ein SQL-Ledger**, **kein** zweiter Saldo auf dem Telefon. Website zusätzlich: [`/kartlar`](http://localhost:5153/kartlar) (Demo-Karte, letzte 4, kein PAN). Firestore schreibt nur `app_meta/ping` — **keine** Kasse. Details: [`README.md`](README.md) und [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
+Dieses Repo ist **keine reine Website**. Die **Flutter-App** liegt in [`mobile/clearpay`](mobile/clearpay) und spricht denselben ASP.NET-Core-8-Host. **Ein SQL-Ledger**, **kein** zweiter Saldo auf dem Telefon. Website und App: [`/kartlar`](http://localhost:5153/kartlar) (Demo-Karte, letzte 4, kein PAN). Firestore schreibt nur `app_meta/ping` — **keine** Kasse. Details: [`README.md`](README.md) und [`mobile/clearpay/README.md`](mobile/clearpay/README.md).
 
 **Ein Wallet, zwei Clients.** Dieselbe Person meldet sich an, überweist, lädt auf und öffnet den Beleg **auf der Website** und **in der Flutter-App**. Razor Pages (Cookie); JSON (JWT). Doppelte Buchführung im Domain — `Wallet` hat **keine** Spalte `Balance`.
 
@@ -337,7 +337,7 @@ ClearPay.slnx
 
 | Fertig | Als Nächstes |
 |--------|----------------|
-| TASK-01…15 — Screens, Ledger, 409, Gateway, Outbox, Redis/Rabbit, Tests, Swagger | **TASK-16** — Azure App Service + Azure SQL (`az login` klickst du; keine erfundene URL) |
+| TASK-01…15 — Screens, Ledger, 409, Gateway, Outbox, Redis/Rabbit, Tests, Swagger | **TASK-16** — App Service `ClearPay` existiert; `/api/health` ist noch **404**. GitHub-Secret `AZURE_WEBAPP_PUBLISH_PROFILE` + Portal-Startup `dotnet ClearPay.Web.dll`. `.\infra\deploy.ps1` **nicht** ausführen (überschreibt die Live-Site). |
 
 CI stellt `tests/ClearPay.Tests` auf `main` wieder her und testet.
 

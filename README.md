@@ -57,7 +57,7 @@ Razor Pages at [http://localhost:5153](http://localhost:5153) (Development seed 
 
 ## Mobile app
 
-Flutter JWT client on Android emulator `emulator-5554` → `http://10.0.2.2:5153`. Same eight operations, same SQL. **Not** a Hive / Firestore cash register. Firestore may write `app_meta/ping` only.
+Flutter JWT client on Android emulator `emulator-5554` → `http://10.0.2.2:5153`. Same wallet screens as the website (including Kartlarım), same SQL. **Not** a Hive / Firestore cash register. Firestore may write `app_meta/ping` only.
 
 <p align="center">
   <img src="docs/assets/shot-mobile.png" alt="ClearPay Flutter overview on Android emulator" width="280">
@@ -93,7 +93,7 @@ Most demo wallets store a number on `Wallet.Balance` and patch it. ClearPay does
 | UI | Razor Pages, TR / EN / DE / FR | Flutter 3.41, TR default, same four languages |
 | Auth | ASP.NET Identity cookie | JWT Bearer (`POST /api/token`) |
 | Money | Application ports → SQL | **Same ports.** No second cash register |
-| Extra | [`/kartlar`](http://localhost:5153/kartlar) — demo linked cards (last four + scheme, no PAN) | Cards UI parked; `GET/POST /api/cards` still talks to SQL |
+| Extra | [`/kartlar`](http://localhost:5153/kartlar) — demo linked cards (last four + scheme, no PAN) | Flutter **Kartlarım** — same last four + scheme; `GET/POST /api/cards`; PAN not in SQL |
 
 Flutter **web is not a product**. The browser product is Razor. Android emulator uses `http://10.0.2.2:5153`; Windows / iOS use `http://localhost:5153`.
 
@@ -307,6 +307,18 @@ Money does **not** go there. Balance, transfers, and receipts stay JWT → ASP.N
 
 ---
 
+## CV bullets (intended)
+
+Copy these into LinkedIn / a résumé. Do not add Papara, FAST, licensed e-money, or “I shipped a payments company.”
+
+- Built **ClearPay**, an ASP.NET Core 8 **wallet demo** with idempotent P2P transfers, JWT/cookie auth, and a double-entry ledger on SQL Server (`LedgerPair.NetOf`; no `UPDATE Balance`).
+- Same `Idempotency-Key` returns **409 Conflict**; ledger + outbox commit in **one SQL transaction**. Mock BankGateway over REST and SOAP. Razor Pages + Flutter JWT share that ledger. SignalR refreshes the other client (not a second cash register).
+- Shipped Docker Compose, xUnit tests, Serilog correlation, and GitHub Actions CI. Public Azure HTTPS is **TASK-16** (you add the publish-profile secret) — not a licensed e-money product.
+
+Full CV pack (TR/EN HTML): `C:\Users\clt\Desktop\Halil_Mert_Develi_CV_Paket`. Repo copy: [`docs/CV-HALIL.md`](docs/CV-HALIL.md).
+
+---
+
 ## Repo map
 
 ```
@@ -316,7 +328,7 @@ src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity
 src/ClearPay.Web              Razor + localization + MapControllers
 mobile/clearpay               Flutter JWT client (not in the .slnx)
 tests/ClearPay.Tests          LedgerPair, 409, architecture, culture
-infra/                        Bicep + deploy.ps1 (you click Azure)
+infra/                        Bicep unused on the live site (T-104); you click Azure Portal
 docker-compose.yml            SQL Server 2022 — not the web app
 ClearPay.slnx
 ```
@@ -327,8 +339,8 @@ ClearPay.slnx
 
 | Done | Next |
 |------|------|
-| TASK-01…15 — screens, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — Azure App Service + Azure SQL. You click `az login` + `.\infra\deploy.ps1`. This README does not invent a live URL. |
-| Flutter JWT app, Kartlarım (web), Firestore ping (meta only) | Store listing / public HTTPS still TASK-16 |
+| TASK-01…15 — screens, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — App Service `ClearPay` exists; `/api/health` is still **404**. You add GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` + Portal startup `dotnet ClearPay.Web.dll`. Do **not** run `.\infra\deploy.ps1` (it would replace the live site). |
+| Flutter JWT app, Kartlarım (web + Flutter), Firestore ping (meta only) | Store listing / working public HTTPS still TASK-16 |
 
 CI on `main` restores and runs `tests/ClearPay.Tests`.
 

@@ -57,7 +57,7 @@ Razor Pages: [http://localhost:5153](http://localhost:5153) (Development seed `a
 
 ## Mobil uygulama
 
-Flutter JWT istemci, Android emülatör `emulator-5554` → `http://10.0.2.2:5153`. Aynı sekiz işlem, aynı SQL. Hive / Firestore **kasa değil**. Firestore yalnız `app_meta/ping` yazabilir.
+Flutter JWT istemci, Android emülatör `emulator-5554` → `http://10.0.2.2:5153`. Sitedeki aynı cüzdan ekranları (Kartlarım dahil), aynı SQL. Hive / Firestore **kasa değil**. Firestore yalnız `app_meta/ping` yazabilir.
 
 <p align="center">
   <img src="docs/assets/shot-mobile.png" alt="ClearPay Flutter özet, Android emülatör" width="280">
@@ -93,7 +93,7 @@ Flutter JWT istemci, Android emülatör `emulator-5554` → `http://10.0.2.2:515
 | UI | Razor Pages, TR / EN / DE / FR | Flutter 3.41, Türkçe varsayılan, aynı dört dil |
 | Kimlik | ASP.NET Identity cookie | JWT Bearer (`POST /api/token`) |
 | Para | Application port → SQL | **Aynı portlar.** İkinci kasa yok |
-| Ek | [`/kartlar`](http://localhost:5153/kartlar) — demo kart (son 4 + şema, PAN yok) | Kart UI park; `GET/POST /api/cards` yine SQL |
+| Ek | [`/kartlar`](http://localhost:5153/kartlar) — demo kart (son 4 + şema, PAN yok) | Flutter **Kartlarım** — aynı son 4 + şema; `GET/POST /api/cards`; SQL’de PAN yok |
 
 Flutter **web ürün değil**. Tarayıcı ürünü Razor. Android emülatör `http://10.0.2.2:5153`; Windows / iOS `http://localhost:5153`.
 
@@ -183,6 +183,18 @@ Para oraya gitmez. Bakiye / havale / dekont JWT → ASP.NET → SQL Server. Diğ
 
 ---
 
+## CV maddeleri (kopyala)
+
+LinkedIn / özgeçmiş. Papara, FAST, lisanslı e-para, “ödeme şirketi yayınladım” **yok**.
+
+- **ClearPay** — ASP.NET Core 8 **cüzdan demosu**: idempotent P2P havale, JWT/cookie, SQL Server’da çift kayıt defteri (`LedgerPair.NetOf`; `UPDATE Balance` yok).
+- Aynı `Idempotency-Key` → **409 Conflict**; ledger + outbox **tek SQL transaction**. Sahte BankGateway REST+SOAP. Razor + Flutter JWT aynı defter. SignalR diğer istemciyi yeniler (ikinci kasa değil).
+- Docker Compose, xUnit, Serilog correlation, GitHub Actions CI. Canlı Azure HTTPS **TASK-16** (publish-profile secret sende) — lisanslı e-para ürünü değil.
+
+Tam paket (TR/EN HTML): `C:\Users\clt\Desktop\Halil_Mert_Develi_CV_Paket`. Repo kopyası: [`docs/CV-HALIL.md`](docs/CV-HALIL.md).
+
+---
+
 ## Repo haritası
 
 ```
@@ -192,7 +204,7 @@ src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity
 src/ClearPay.Web              Razor + yerelleştirme + MapControllers
 mobile/clearpay               Flutter JWT istemci (.slnx’de yok)
 tests/ClearPay.Tests          LedgerPair, 409, mimari, dil
-infra/                        Bicep + deploy.ps1 (Azure’u sen tıklarsın)
+infra/                        Canlı sitede Bicep unused (T-104); Azure’u sen tıklarsın
 docker-compose.yml            SQL Server 2022 — web uygulaması değil
 ClearPay.slnx
 ```
@@ -203,8 +215,8 @@ ClearPay.slnx
 
 | Bitti | Sıradaki |
 |------|----------|
-| TASK-01…15 — ekranlar, defter, 409, gateway, outbox, Redis/Rabbit, test, Swagger | **TASK-16** — Azure App Service + Azure SQL. Sen `az login` + `.\infra\deploy.ps1`. Bu README canlı URL uydurmaz. |
-| Flutter JWT, Kartlarım (web), Firestore ping (yalnız meta) | Mağaza / genel HTTPS hâlâ TASK-16 |
+| TASK-01…15 — ekranlar, defter, 409, gateway, outbox, Redis/Rabbit, test, Swagger | **TASK-16** — App Service `ClearPay` duruyor; `/api/health` hâlâ **404**. GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` + Portal startup `dotnet ClearPay.Web.dll`. `.\infra\deploy.ps1` **çalıştırma** (canlı siteyi ezer). |
+| Flutter JWT, Kartlarım (web + Flutter), Firestore ping (yalnız meta) | Mağaza / çalışan genel HTTPS hâlâ TASK-16 |
 
 CI `main` üzerinde `tests/ClearPay.Tests` çalıştırır.
 

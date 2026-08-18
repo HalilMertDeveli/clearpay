@@ -135,4 +135,44 @@ public sealed class AuthPagesTests : IClassFixture<ClearPayWebFactory>
         wallet.Should().Contain("masthead");
         wallet.Should().NotContain("name=\"Input.Tc\"");
     }
+
+    [Fact]
+    public async Task Login_with_email_signs_in_seed_admin()
+    {
+        var client = _factory.CreateClient(new() { HandleCookies = true });
+        var loginHtml = await client.GetStringAsync("/giris");
+        loginHtml.Should().Contain("name=\"Input.Email\"");
+        var post = await client.PostAsync("/giris", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Input.Email"] = IdentitySeeder.DevelopmentAdminEmail,
+            ["Input.Password"] = "Deneme123",
+            ["__RequestVerificationToken"] = AntiforgeryTestHelper.GetToken(loginHtml)
+        }));
+
+        post.EnsureSuccessStatusCode();
+        var wallet = await post.Content.ReadAsStringAsync();
+        wallet.Should().Contain("Özet");
+        wallet.Should().Contain("masthead");
+        wallet.Should().NotContain("name=\"Input.Email\"");
+    }
+
+    [Fact]
+    public async Task Login_with_email_ignores_leftover_unmapped_tc()
+    {
+        var client = _factory.CreateClient(new() { HandleCookies = true });
+        var loginHtml = await client.GetStringAsync("/giris");
+        var post = await client.PostAsync("/giris", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Input.Email"] = IdentitySeeder.DevelopmentAdminEmail,
+            ["Input.Tc"] = "12345678901",
+            ["Input.Password"] = "Deneme123",
+            ["__RequestVerificationToken"] = AntiforgeryTestHelper.GetToken(loginHtml)
+        }));
+
+        post.EnsureSuccessStatusCode();
+        var wallet = await post.Content.ReadAsStringAsync();
+        wallet.Should().Contain("Özet");
+        wallet.Should().NotContain("Bu demo TC tanımlı değil");
+        wallet.Should().NotContain("name=\"Input.Email\"");
+    }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:clearpay/api/clearpay_client.dart';
 import 'package:clearpay/api/wallet_live_hub.dart';
 import 'package:clearpay/auth/account_kind_store.dart';
+import 'package:clearpay/auth/auth_session.dart';
 import 'package:clearpay/auth/token_store.dart';
 import 'package:clearpay/demo/tc_login.dart';
 import 'package:clearpay/main.dart';
@@ -126,8 +127,96 @@ void main() {
     expect(postedEmail, 'admin@clearpay.test');
     expect(find.text('Hızlı işlemler'), findsOneWidget);
     expect(find.text('0,00 ₺'), findsOneWidget);
-    expect(find.textContaining('Kartlarım'), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
   });
+
+  testWidgets('email login posts JWT even when Firebase Auth is misconfigured', (tester) async {
+    final store = MemoryTokenStore();
+    var postedEmail = '';
+    var tokenPath = '';
+    var firebaseSignIn = 0;
+    final api = ClearPayClient(
+      store: store,
+      baseUrl: 'http://10.0.2.2:5153',
+      httpClient: MockClient((request) async {
+        if (request.url.path == '/api/token') {
+          tokenPath = request.url.path;
+          postedEmail = jsonDecode(request.body)['email'] as String;
+          return http.Response(
+            jsonEncode({'access_token': _jwt(email: postedEmail)}),
+            200,
+          );
+        }
+        if (request.url.path == '/api/wallet') {
+          return http.Response(
+            jsonEncode({
+              'balance': 0,
+              'monthOutgoing': 0,
+              'monthIncoming': 0,
+              'isFrozen': false,
+              'lastMovements': const <Object>[],
+            }),
+            200,
+          );
+        }
+        return http.Response('{}', 404);
+      }),
+    );
+
+    await tester.pumpWidget(
+      ClearPayApp(
+        store: store,
+        api: api,
+        kindStore: MemoryAccountKindStore(),
+        auth: _BrokenFirebaseAuth(onSignIn: () => firebaseSignIn++),
+        skipIntro: true,
+      ),
+    );
+
+    await tester.enterText(find.byType(TextField).at(0), 'admin@clearpay.test');
+    await tester.enterText(find.byType(TextField).at(1), 'Deneme123');
+    await tester.tap(find.widgetWithText(FilledButton, 'Giriş'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(postedEmail, 'admin@clearpay.test');
+    expect(tokenPath, '/api/token');
+    expect(firebaseSignIn, 0);
+    expect(find.text('Hızlı işlemler'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+  });
+}
+
+class _BrokenFirebaseAuth implements AuthSession {
+  _BrokenFirebaseAuth({this.onSignIn});
+
+  final void Function()? onSignIn;
+
+  @override
+  bool get isConfigured => true;
+
+  @override
+  Future<String> register({
+    required String email,
+    required String password,
+    String? fullName,
+  }) async {
+    throw AuthException('CONFIGURATION_NOT_FOUND', code: 'internal-error');
+  }
+
+  @override
+  Future<String> signIn({
+    required String email,
+    required String password,
+  }) async {
+    onSignIn?.call();
+    throw AuthException('CONFIGURATION_NOT_FOUND', code: 'internal-error');
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    throw AuthException('CONFIGURATION_NOT_FOUND', code: 'internal-error');
+  }
 }

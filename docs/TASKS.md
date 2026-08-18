@@ -40,6 +40,7 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - [x] UI: Kartlarım `/kartlar` — canlı CSS kart önizleme, son 4 kayıt, yükle mevcut gateway (T-097; ekran 9 kullanıcı isteği)
 - [x] UI: Visa/Mastercard kart yüzü — ISO BIN + görünüm, web + Flutter (T-103; TASK numarası değil, ekran 9 aynı)
 - [x] UI: web+Flutter Android smoke — manuel SMOKE + DualSurface xUnit + `flutter test` CI (T-100; TASK numarası değil, TASK-16 durur)
+- [x] UI: e-posta girişi — cookie FindByEmail + Flutter JWT önce Firebase CONFIGURATION_NOT_FOUND (T-107; TASK numarası değil, 8 ekran aynı)
 
 ## Notlar
 - Kaynak: `docs/CALISMA-PLANI.md`. Yönetici: `docs/YONETICI-RAPORU.md`. Fark: `docs/FARK.md`.
@@ -60,6 +61,8 @@ Orchestrator her seferinde **sıradaki Todo** işini alır, bitirince Done’a t
 - T-087: Flutter `web/` yok. Site Razor. `flutter run -d chrome` yok. TASK-16 Todo.
 - T-100: web+Flutter Android smoke (`docs/SMOKE.md`, DualSurface xUnit, `flutter test` CI). TASK-16 Todo.
 - T-088: Razor kayıt telefon+AccountKind; giriş TC demo; Flutter TR/EN/DE/FR chrome. Web forgot / QR web / Azure durur. TASK-16 Todo.
+- T-107: e-posta girişi SQL JWT/cookie; Firebase kırıkken atlanır. TC demo durur. TASK-16 Todo.
+- T-108: README Kartlarım Flutter + CV bullets; Desktop CV paketine ClearPay. TASK-16 Todo. Q1 = mülakat demosu.
 - T-090: aynı 4 dil iki yüzeyde UI’yı sürer (Flutter 8 işlem `L()`; web picker/`c=`). 5. dil / 9. ekran / Flutter Chrome yok. TASK-16 Todo.
 - T-084: Flutter launcher navy C + teal halka (mipmap/AppIcon). TASK-16 Todo.
 - T-103: Visa/Mastercard yüzü ISO BIN (web+Flutter). Resmi logo yok. PAN SQL yok. TASK-16 Todo.

@@ -50,7 +50,7 @@ public class LoginModel : PageModel
         }
 
         var email = Input.Email.Trim();
-        if (!string.IsNullOrWhiteSpace(Input.Tc))
+        if (string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(Input.Tc))
         {
             var mapped = DemoTc.ResolveEmail(Input.Tc);
             if (mapped is null)
@@ -62,8 +62,15 @@ public class LoginModel : PageModel
             email = mapped;
         }
 
+        var user = await _signInManager.UserManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            ModelState.AddModelError(string.Empty, _localizer["InvalidCredentials"]);
+            return Page();
+        }
+
         var result = await _signInManager.PasswordSignInAsync(
-            email,
+            user,
             Input.Password,
             isPersistent: Input.RememberMe,
             lockoutOnFailure: false);

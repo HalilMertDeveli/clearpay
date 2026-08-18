@@ -1,12 +1,11 @@
 # ClearPay mobile (Flutter)
 
-**Shipped.** This folder is the **Android / Windows / iOS** wallet app for ClearPay — same eight operations as the website, JWT to ASP.NET Core, **one SQL ledger**. Not a mock. Not a second cash register.
+**Shipped.** This folder is the **Android / Windows / iOS** wallet app for ClearPay — same screens as the website (including Kartlarım), JWT to ASP.NET Core, **one SQL ledger**. Not a mock. Not a second cash register.
 
 <p align="center">
-  <a href="../../README.md">English (repo)</a>
-  · <a href="../../README.tr.md">Türkçe</a>
-  · <a href="../../README.de.md">Deutsch</a>
-  · <a href="../../README.fr.md">Français</a>
+
+[English (repo)](../../README.md) · [Türkçe](../../README.tr.md) · [Deutsch](../../README.de.md) · [Français](../../README.fr.md)
+
 </p>
 
 <p align="center">
@@ -48,26 +47,27 @@ Navy `#1B2A4A`. Footer her ekranda: **Demo — sahte banka gateway.** Relational
 
 ## What you can tap today
 
-Site must be up: [http://localhost:5153](http://localhost:5153). Same eight operations as Razor.
+Site must be up: [http://localhost:5153](http://localhost:5153). Same screens as Razor (Kartlarım included).
 
 | Operation | In the app | API |
 |-----------|------------|-----|
-| Sign in | Giriş — **E-posta** / **TC (demo)** | Firebase Auth → `POST /api/token/firebase` (SQL seed fallback: `POST /api/token`) |
+| Sign in | Giriş — **E-posta** / **TC (demo)** | **Önce** `POST /api/token` (SQL Identity). Firebase yalnız JWT 401 ve Auth açıksa |
 | Mode | Splash → **Bireysel** / **Kurumsal** (üye iş yeri değil) | JWT `account_kind`; SQL `AccountKind` |
 | Register | Hesap oluştur (telefon zorunlu) | Firebase `createUser` → `POST /api/token/firebase` + Identity `PhoneNumber` |
 | Forgot | **Şifremi unuttum** (her giriş sekmesi) | Firebase `sendPasswordResetEmail` veya `POST /api/password/forgot` + `/reset` |
 | Summary | Özet (hamburger + sol çekmece, bakiye kartı, kısayol ızgarası; live hub + pull-to-refresh) | `GET /api/wallet` + `/hubs/wallet` |
 | Transfer | Havale + onay; **QR yapıştır** | `POST /api/transfers` + `Idempotency-Key` → 201 / **409** |
+| Cards | **Kartlarım** (Visa/MC/Troy yüz, son 4) | `GET/POST /api/cards` — PAN SQL yok |
 | Top-up / withdraw | Yükle / Çek + demo kart | `POST /api/topup` / `withdraw` |
 | Movements | Hareketler + filtre | `GET /api/movements` |
 | Receipt | Dekont (kopyala + **PDF indir**) | `GET /api/receipts/{id}` + `GET /api/receipts/{id}/pdf` |
 | Admin | Admin sekmesi (rol) | `/api/admin/*` |
 
-Dev: `admin@clearpay.test` / `Deneme123`. Demo telefon (SMS yok): `5550000001` → `905550000001`. Demo TC (Mernis değil): `10000000146` → aynı admin e-posta. Firebase yoksa giriş SQL `POST /api/token` fallback. **Örnek dekont** (Development seed, çift kayıt TopUp 25 ₺): `aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001`. Site: [http://localhost:5153/dekont/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001](http://localhost:5153/dekont/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001) → **PDF indir**. Flutter: giriş → Hareketler → Dekont (aynı satır) → **PDF indir** (`GET /api/receipts/{id}/pdf`, uygulama içi sahte PDF yok). Android emulator base: `http://10.0.2.2:5153`. Windows / iOS: `http://localhost:5153`. Optional `--dart-define=CLEARPAY_API=...` only — **no MySQL dart-define**. Host MySQL (`MySQL84`, `ConnectionStrings:MySql`) is tools/sidecar; this app does not add a `mysql` package or store balances (T-061 / T-077). Same path as the website: JWT → C# → SQL Server.
+Dev: `admin@clearpay.test` / `Deneme123`. Demo telefon (SMS yok): `5550000001` → `905550000001`. Demo TC (Mernis değil): `10000000146` → aynı admin e-posta. Firebase `CONFIGURATION_NOT_FOUND` olsa bile e-posta `POST /api/token` ile girer (T-107). **Örnek dekont** (Development seed, çift kayıt TopUp 25 ₺): `aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001`. Site: [http://localhost:5153/dekont/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001](http://localhost:5153/dekont/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee0001) → **PDF indir**. Flutter: giriş → Hareketler → Dekont (aynı satır) → **PDF indir** (`GET /api/receipts/{id}/pdf`, uygulama içi sahte PDF yok). Android emulator base: `http://10.0.2.2:5153`. Windows / iOS: `http://localhost:5153`. Optional `--dart-define=CLEARPAY_API=...` only — **no MySQL dart-define**. Host MySQL (`MySQL84`, `ConnectionStrings:MySql`) is tools/sidecar; this app does not add a `mysql` package or store balances (T-061 / T-077). Same path as the website: JWT → C# → SQL Server.
 
 QR: **QR al** Özet’te `clearpay://pay?to={email}` üretir (`qr_flutter`). **QR öde** yük yapıştırır / e-posta yazar, Havale formunu doldurur, mevcut onay + `POST /api/transfers`. Kamera eklentisi yok (Windows symlink). FAST kiremiti Havale’dir — TCMB FAST değil. Piyasalar / Fatura / Kredi **Park — demo değil**.
 
-Bireysel/Kurumsal **Firestore’a yazılmaz**. SQL Identity `AccountKind` + yerel `%LOCALAPPDATA%\ClearPay\account_kind.txt`. Flutter kayıt/giriş: **Firebase Auth** (T-086); cüzdan hâlâ SQL JWT. `firebase_core` + `firebase_auth` + `cloud_firestore` (`app_meta/ping` only). Windows native plugin skip (T-075).
+Bireysel/Kurumsal **Firestore’a yazılmaz**. SQL Identity `AccountKind` + yerel `%LOCALAPPDATA%\ClearPay\account_kind.txt`. Flutter giriş: **önce SQL JWT** (T-107); Firebase Auth isteğe bağlı yedek. Cüzdan hâlâ SQL JWT. `firebase_core` + `firebase_auth` + `cloud_firestore` (`app_meta/ping` only). Windows native plugin skip (T-075).
 
 ## Firebase Auth (Halil)
 

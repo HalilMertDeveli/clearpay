@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _error = null;
     });
     try {
-      var email = _email.text;
+      var email = _email.text.trim();
       if (_tab == 1) {
         final mapped = resolveDemoTcEmail(_tc.text);
         if (mapped == null) {
@@ -68,35 +68,24 @@ class _LoginScreenState extends State<LoginScreen> {
         email = mapped;
       }
       try {
-        if (widget.auth.isConfigured) {
-          try {
-            final idToken = await widget.auth.signIn(email: email, password: _password.text);
-            await widget.api.loginWithFirebase(
-              idToken,
-              accountKind: widget.kindStore.kind,
-            );
-          } on AuthException catch (e) {
-            if (e.code == 'user-not-found' ||
-                e.code == 'wrong-password' ||
-                e.code == 'invalid-credential') {
-              await widget.api.login(
-                email,
-                _password.text,
-                accountKind: widget.kindStore.kind,
-              );
-            } else {
-              throw ApiException(401, e.message);
-            }
-          }
-        } else {
-          await widget.api.login(
-            email,
-            _password.text,
+        await widget.api.login(
+          email,
+          _password.text,
+          accountKind: widget.kindStore.kind,
+        );
+      } on ApiException catch (jwtError) {
+        if (jwtError.status != 401 || !widget.auth.isConfigured) {
+          rethrow;
+        }
+        try {
+          final idToken = await widget.auth.signIn(email: email, password: _password.text);
+          await widget.api.loginWithFirebase(
+            idToken,
             accountKind: widget.kindStore.kind,
           );
+        } on AuthException {
+          throw jwtError;
         }
-      } on AuthException catch (e) {
-        throw ApiException(401, e.message);
       }
       // #region agent log
       agentDebugLog(
