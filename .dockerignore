@@ -22,3 +22,7 @@
 **/TestResults/
 **/*.log
 docker-data/
+
+# Not needed by the .NET images
+mobile/
+docs/
