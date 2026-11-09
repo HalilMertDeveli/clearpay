@@ -37,7 +37,7 @@ I am **Halil Mert Develi**. This is the interview repo I defend (Intertech, Soft
   <img src="docs/assets/clearpay-rules.png" alt="Balance is derived; replay is 409; one SQL transaction" width="920">
 </p>
 
-**Backend deep dives:** [Card payments (mock 3D Secure)](#card-payments-mock-3d-secure) · [SQL performance (measured)](#sql-performance-measured) · [Tracing a payment](#tracing-a-payment-observability) · [Docs](#docs)
+**Backend deep dives:** [Card payments (mock 3D Secure)](#card-payments-mock-3d-secure) · [SQL performance (measured)](#sql-performance-measured) · [Tracing a payment](#tracing-a-payment-observability) · [Services and messaging](#services-and-messaging-rabbitmq) · [Docs](#docs)
 
 ---
 
@@ -82,7 +82,7 @@ Most demo wallets store a number on `Wallet.Balance` and patch it. ClearPay does
 | **Balance is derived** | `LedgerPair.NetOf` over signed `LedgerEntry` rows. There is no balance column. |
 | **Replay is 409** | Same `Idempotency-Key` = same intent. A timeout retry must not debit twice. |
 | **One SQL transaction** | Debit, credit, transfer, idempotency, audit, and outbox commit together. |
-| **Outbox first** | The message row is in that transaction. Hangfire (and Rabbit when bound) publish after commit. |
+| **Outbox first** | The message row is in that transaction. After commit a Hangfire job publishes it to RabbitMQ and marks it Sent only on a publisher confirm. |
 | **Two clients, one ledger** | Website (cookie) and Flutter (JWT) hit the same Application ports. The phone has no Hive / SQLite / Firestore wallet. |
 
 ---
@@ -370,7 +370,58 @@ dotnet run --project src/ClearPay.Web --launch-profile http                # Dev
 | Traces | OpenTelemetry: ASP.NET Core, HttpClient, SqlClient, `ClearPay.Payments` (wallet + card payments, acquirer calls), `ClearPay.Messaging` → Collector → Tempo + Seq. No PAN, BIN or amount on a span. |
 | Metrics | `clearpay_payments_total`, `clearpay_payments_duration_milliseconds`, HTTP RED → Prometheus → Grafana dashboard *ClearPay - Payments* ([localhost:3000](http://localhost:3000)) |
 
-**Honest scope:** the stack runs in local Docker only (no auth, dev settings); Production config leaves `Observability` empty. RabbitMQ trace propagation (`MessageTraceContext`) is ready but not yet called by the publisher. Runbook: [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md).
+**Honest scope:** the stack runs in local Docker only (no auth, dev settings); Production config leaves `Observability` empty. The trace now crosses RabbitMQ: the outbox row stores the request's `traceparent`, the publisher puts it in a message header and the consumer span in the notification / reconciliation service continues the same trace (see [Services and messaging](#services-and-messaging-rabbitmq)). Runbook: [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md).
+
+---
+
+## Services and messaging (RabbitMQ)
+
+Notifications and nightly reconciliation run as **two separate processes** that only talk to the web app through RabbitMQ events. The web app stays one host for money (ledger, card payments, outbox).
+
+```mermaid
+flowchart LR
+  subgraph web [ClearPay.Web - one host]
+    api[Merchant API + mock 3DS]
+    db[(SQL: ClearPay<br/>Payment + OutboxMessage<br/>same transaction)]
+    relay[Hangfire outbox relay<br/>publisher confirms]
+    api --> db --> relay
+  end
+  relay -->|"persistent, MessageId = outbox id, traceparent header"| ex{{"clearpay.events topic exchange"}}
+  ex -->|"payment.* and reconciliation.mismatch_found"| nq[(notifications.events)]
+  ex -->|"payment.captured, payment.refunded"| rq[(reconciliation.payments)]
+  nq -.->|nack| nr[(".retry, TTL 5 s")]
+  nr -.->|expired| nq
+  nq -.->|"3rd failure or poison"| nd[(".dlq")]
+  rq -.->|"same retry and DLQ"| rq
+  nq --> notif[ClearPay.Notifications worker<br/>fake e-mail / SMS / webhook]
+  notif --> ndb[(SQL: ClearPayNotifications<br/>notif.NotificationLog<br/>notif.ProcessedMessage)]
+  rq --> recon[ClearPay.Reconciliation<br/>Hangfire 02:00 Europe/Istanbul]
+  recon --> rdb[(SQL: ClearPayReconciliation<br/>recon.PaymentTransaction<br/>recon.ReconciliationReport)]
+  files[/mock bank settlement CSVs/] --> recon
+  recon -.->|"EXEC usp_Ledger_GetDailyTotals, read-only"| db
+  recon -->|mismatch_found| ex
+```
+
+| What | How |
+|------|-----|
+| No lost events | Outbox row in the payment's transaction; relay marks it Sent only after a **publisher confirm**. Broker down → row stays Pending with `Attempts` / `LastError` (failed after 10 tries). |
+| Delayed retry | Consumer nacks → work queue dead-letters into a `.retry` queue with a 5 s TTL → back to the work queue. Attempt number comes from RabbitMQ's `x-death` count. |
+| Dead-letter queue | After 3 attempts, or at once for poison (bad JSON / no MessageId), the message is copied to `.dlq` with `x-clearpay-error` and acked. |
+| Idempotent consumers | `ProcessedMessage` table per service, unique `(Consumer, MessageId)`; handler rows and that row commit in **one transaction**. |
+| Nightly reconciliation | Projection of captured / refunded events vs. each acquirer's settlement CSV → `Matched` / `OnlyAtBank` / `OnlyInClearPay` / `AmountMismatch` + wallet-ledger pair check through the T-SQL team's stored procedure → report + `mismatch_found` event → notifications. |
+| Shared contracts | `ClearPay.Contracts` (event types, `PaymentEventV1`) has no dependencies; `ClearPay.Messaging` holds the RabbitMQ plumbing both sides use. |
+
+```bash
+docker compose -f docker-compose.services.yml -p clearpay-jobprep up -d --build    # SQL 2022, RabbitMQ, web, notifications, reconciliation
+./scripts/demo-card-payment.ps1 -BaseUrl http://localhost:18080 -RefundAmount 20.10   # create -> mock ACS -> OTP -> capture -> refund
+./scripts/demo-card-payment.ps1 -BaseUrl http://localhost:18080 -OrderId fail-001    # injected consumer fault -> retry x3 -> DLQ
+curl -X POST "http://localhost:18081/api/reconciliation/runs?date=2026-11-09"       # run reconciliation now; Hangfire UI on :18081/hangfire
+docker compose -f docker-compose.services.yml -p clearpay-jobprep down -v
+```
+
+Verified on that stack (details in the docs): the capture request's `TraceId` shows up unchanged in the notification consumer's log; the `fail-` order went attempt 1 → 2 → 3 → `notifications.events.dlq`; with RabbitMQ stopped a payment still succeeded and its outbox rows waited as Pending, then drained when the broker came back; the reconciliation run produced one of each outcome and the ops e-mail. Broker tests (retry → DLQ, poison, duplicate MessageId, trace parent) also run in CI against a RabbitMQ service container.
+
+**Honest scope:** banks, settlement files, e-mail, SMS and webhooks are **mock** — the settlement CSV is generated from ClearPay's own projection with documented anomalies (amount ending .37 / .73 / .66), because the mock acquirers keep no state. One SQL Server instance with **one database per service** in the compose demo; the only cross-database touch is the read-only stored procedure call. Single RabbitMQ node, fixed 5 s retry delay, no auth on the reconciliation API (internal network only). Details: [`docs/MESSAGING.md`](docs/MESSAGING.md), [`docs/RECONCILIATION.md`](docs/RECONCILIATION.md).
 
 ---
 
@@ -378,7 +429,7 @@ dotnet run --project src/ClearPay.Web --launch-profile http                # Dev
 
 1. Same `Idempotency-Key` is the same intent: the second HTTP is **409 Conflict** so a timeout retry does not debit twice.
 2. Debit, credit, transfer row, idempotency, audit, and outbox commit in **one SQL transaction**; there is no `UPDATE Balance` — balance is `LedgerPair.NetOf`.
-3. The outbox row is written in that same transaction so a timeout cannot lose the message; Hangfire (and Rabbit when bound) publish after commit.
+3. The outbox row is written in that same transaction so a timeout cannot lose the message; after commit it goes to RabbitMQ with a publisher confirm, and consumers drop duplicates by MessageId.
 
 ---
 
@@ -401,11 +452,18 @@ src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (no Balance), Paym
 src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway, IPaymentGateway, IAcquirerAdapter
 src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity, Payments/ (mock banks), Persistence/Sql (stored procedures), Observability/
 src/ClearPay.Web              Razor + localization + MapControllers, Observability/ (Serilog + OpenTelemetry), Pages/Payments (mock ACS, demo shop)
+src/ClearPay.Contracts        Event types and payloads shared by producer and consumers (no dependencies)
+src/ClearPay.Messaging        RabbitMQ topology, confirming publisher, consumer host (retry / DLQ), ProcessedMessage idempotency, trace headers
+src/ClearPay.Notifications    Worker service: payment + reconciliation events -> fake e-mail / SMS / webhook (notif schema)
+src/ClearPay.Reconciliation   Nightly settlement reconciliation: Hangfire job + dashboard, projection consumer, API (recon schema)
 mobile/clearpay               Flutter JWT client (not in the .slnx)
-tests/ClearPay.Tests          LedgerPair, 409, architecture, culture, payments, stored procedures, tracing
+tests/ClearPay.Tests          LedgerPair, 409, architecture, culture, payments, stored procedures, tracing, outbox
+tests/ClearPay.Services.Tests Notifications, reconciliation, retry policy; RabbitMQ integration tests (CLEARPAY_TEST_RABBITMQ)
 scripts/perf/                 Seed + measurement scripts for docs/SQL-PERF.md (throwaway SQL Server)
+scripts/demo-card-payment.ps1 One mock 3DS payment end to end (create, ACS, OTP, capture, refund)
 infra/                        Bicep unused on the live site (T-104); you click Azure Portal
 docker-compose.yml            SQL Server 2022 — not the web app
+docker-compose.services.yml   Web + notifications + reconciliation + RabbitMQ + throwaway SQL (demo stack)
 docker-compose.observability.yml  Seq + OTel Collector + Tempo + Prometheus + Grafana (local)
 infra/observability/          Collector, Tempo, Prometheus, Grafana provisioning + dashboard
 ClearPay.slnx
@@ -419,9 +477,10 @@ ClearPay.slnx
 |------|------|
 | TASK-01…15 — screens, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — App Service `ClearPay` exists; `/api/health` is still **404**. You add GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` + Portal startup `dotnet ClearPay.Web.dll`. Do **not** run `.\infra\deploy.ps1` (it would replace the live site). |
 | Flutter JWT app, Kartlarım (web + Flutter), Firestore ping (meta only) | Store listing / working public HTTPS still TASK-16 |
-| Mock 3D Secure card payments (3 mock banks, refund / partial refund / void), ledger stored procedures with measured plans, Serilog + OpenTelemetry tracing | RabbitMQ retry + dead-letter queue + idempotent consumers; nightly reconciliation job (Hangfire); notifications and reconciliation as a separate service |
+| Mock 3D Secure card payments (3 mock banks, refund / partial refund / void), ledger stored procedures with measured plans, Serilog + OpenTelemetry tracing | Run the services stack with the observability stack and capture one trace screenshot for this README |
+| RabbitMQ with publisher confirms, TTL retry queue + dead-letter queue, idempotent consumers; notifications and nightly reconciliation (Hangfire, Europe/Istanbul) as separate services | Exponential retry tiers, a DLQ re-drive tool, an ops screen to resolve reconciliation differences; real SFTP settlement files are out of scope |
 
-CI on `main` restores and runs `tests/ClearPay.Tests`.
+CI on `main` runs `tests/ClearPay.Tests` (with a throwaway SQL Server) and `tests/ClearPay.Services.Tests` (with a throwaway RabbitMQ), and builds the two service images.
 
 ---
 
@@ -432,6 +491,8 @@ CI on `main` restores and runs `tests/ClearPay.Tests`.
 - [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — mock card payments: 3D Secure, acquirer adapters, refunds
 - [`docs/SQL-PERF.md`](docs/SQL-PERF.md) — stored procedures, indexes, measured before / after with execution plans
 - [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) — find a payment by TraceId; error-analysis runbook
+- [`docs/MESSAGING.md`](docs/MESSAGING.md) — RabbitMQ topology, outbox publishing, retry / DLQ, idempotent consumers, live run
+- [`docs/RECONCILIATION.md`](docs/RECONCILIATION.md) — nightly settlement reconciliation, mock bank files, ledger check, live run
 - [`docs/CANLI.md`](docs/CANLI.md) — Azure click list (no secrets in git)
 - [`docs/YOL.md`](docs/YOL.md) — career path; live URL is TASK-16
 - [`docs/FARK.md`](docs/FARK.md) — reconciliation-first, not a Papara rival

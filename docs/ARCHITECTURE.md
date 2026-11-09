@@ -51,6 +51,8 @@ Sol menü SPEC ile aynı: Özet, Havale, Yükle/Çek, Hareketler; Admin yalnızc
 
 Razor ve JSON API aynı ASP.NET Core 8 uygulamasında. Mülakat omurgası “mikroservis ağı” değil; çift kayıt, 409 ve outbox tek SQL transaction içinde kanıtlanır. Tek deploy: Azure App Service. Kafka / K8s / ayrı Payments servisi Q1 yasak.
 
+**Para tek host'ta kalır; para olmayan iki iş ayrı servistir** (aşağıda “Ayrı servisler”). Bu, “her şeyi mikroservise böl” değil: ledger ve kart ödemesi transaction sınırı ister, bildirim ve mutabakat istemez.
+
 ## Neden Identity cookie, sonra JWT
 
 - **Site (tarayıcı):** ASP.NET Identity + HttpOnly cookie (`ClearPay.Auth`). Form POST, anti-forgery, sliding expiration. TASK-03.
@@ -83,11 +85,11 @@ Coder: `Program.cs` içinde `builder.Services.AddClearPay(builder.Configuration)
 | | Q1 | Q2 |
 |--|----|-----|
 | Gerçeklik kaynağı | SQL + outbox satırı | Aynı; broker kopya değil |
-| Kuyruk | Hangfire, outbox tablosu (TASK-11) | Rabbit `clearpay.outbox` (T-048; yoksa log). Canlı CloudAMQP Q2 |
+| Kuyruk | Hangfire, outbox tablosu (TASK-11) | Rabbit `clearpay.events` topic exchange, publisher confirm; broker kapalıysa satır Pending kalır ([`MESSAGING.md`](MESSAGING.md)). Canlı CloudAMQP Q2 |
 | Cache | Redis özet DTO (`localhost:6379`; yoksa SQL) | Aynı; havale sonrası invalidate (TASK-06) |
 | Canlı | App Service + Azure SQL | + Azure Cache for Redis |
 
-Compose: SQL gün 1. Redis özet cache T-041 (kasa SQL). Rabbit publisher T-048 (`ConnectionStrings:RabbitMq`; düşerse log). Canlı broker Q1 şart değil — ledger commit olduysa mesaj kaybolmaz (önce DB, sonra yayın). Redis bakiyeyi hızlandırır, ledger’ın yerini tutmaz. Health: `redis` + `rabbit` = `up` / `down` / `off`.
+Compose: SQL gün 1. Redis özet cache T-041 (kasa SQL). Rabbit publisher (`ConnectionStrings:RabbitMq`; boşsa yalnızca log — o durumda tüketici de yoktur; doluysa broker düşünce outbox satırı bekler, “log'a düşüp Sent” yolu kaldırıldı). Canlı broker Q1 şart değil — ledger commit olduysa mesaj kaybolmaz (önce DB, sonra yayın). Redis bakiyeyi hızlandırır, ledger’ın yerini tutmaz. Health: `redis` + `rabbit` = `up` / `down` / `off`.
 
 ## Kartlı ödeme modülü (mock acquiring)
 
@@ -109,3 +111,23 @@ OCP: yeni banka = yeni `IAcquirerAdapter` + bir routing satırı; gateway'de `sw
 (`Infrastructure/Observability/TracedPaymentExecutors.cs`, `TracedCardPayments.cs`). Domain, Application ve
 `SqlPaymentGateway` OpenTelemetry bilmez; span ve metrik isimleri `ClearPayTelemetry`'de tek yerde. Ayrıntı:
 [`OBSERVABILITY.md`](OBSERVABILITY.md).
+
+## Ayrı servisler: bildirim ve mutabakat
+
+| Proje | Tür | Ne yapar | Verisi |
+|-------|-----|----------|--------|
+| `ClearPay.Contracts` | class library, bağımlılık yok | Olay tipleri (`EventTypes`), `PaymentEventV1`, `ReconciliationMismatchFoundV1`, JSON ayarı | — |
+| `ClearPay.Messaging` | class library | RabbitMQ topolojisi, confirm'li publisher, consumer host (retry / DLQ), `ProcessedMessage` idempotency, `MessageTraceContext` | — |
+| `ClearPay.Notifications` | worker service (ayrı process) | `notifications.events` kuyruğundan ödeme ve mutabakat olaylarını tüketir; sahte e-posta / SMS / webhook | `notif` şeması (compose'ta `ClearPayNotifications` veritabanı) |
+| `ClearPay.Reconciliation` | küçük web host (ayrı process) | Projeksiyon consumer'ı, Hangfire gece job'ı + dashboard, rapor API'si | `recon` + `ReconHangfire` şeması (compose'ta `ClearPayReconciliation`) |
+
+Sınır kuralları:
+
+- Servisler web uygulamasının tablolarına **yazmaz ve okumaz**; web'den gelen her şey RabbitMQ olayıdır.
+  Tek istisna: mutabakatın ledger kontrolü `dbo.usp_Ledger_GetDailyTotals`'a **EXECUTE** (salt okuma, ayrı bağlantı dizesi).
+- Servisler `ClearPay.Infrastructure` / `Domain`'e referans vermez (yalnızca `Contracts` + `Messaging`). Web tarafı
+  `Infrastructure` → `Contracts` + `Messaging` referansı alır; `Application` hâlâ yalnızca `Domain`'e bağlıdır
+  (`IOutboxPublisher` port'u RabbitMQ bilmez).
+- Aynı SQL Server instance'ı kullanılabilir (demo böyle); servis başına ayrı veritabanı veya en azından ayrı şema.
+  Ayrı instance'a taşımak bağlantı dizesi değişikliğidir.
+- Ayrıntı: [`MESSAGING.md`](MESSAGING.md), [`RECONCILIATION.md`](RECONCILIATION.md).

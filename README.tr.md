@@ -82,7 +82,7 @@ Flutter JWT istemci, Android emülatör `emulator-5554` → `http://10.0.2.2:515
 | **Bakiye türetilir** | İmzalı `LedgerEntry` satırları üzerinde `LedgerPair.NetOf`. Bakiye kolonu yok. |
 | **Tekrar 409** | Aynı `Idempotency-Key` = aynı niyet. Timeout retry bakiyeyi iki kez düşürmez. |
 | **Tek SQL işlemi** | Borç, alacak, havale, idempotency, audit ve outbox birlikte commit. |
-| **Önce outbox** | Mesaj satırı aynı transaction’da. Hangfire (Rabbit bağlıysa o) commit’ten sonra yayınlar. |
+| **Önce outbox** | Mesaj satırı aynı transaction’da. Commit’ten sonra Hangfire job’u RabbitMQ’ya yayınlar; confirm gelmeden satır `Sent` olmaz. |
 | **İki istemci, bir defter** | Site (cookie) ve Flutter (JWT) aynı Application portlarına gider. Telefonda Hive / SQLite / Firestore kasa yok. |
 
 ---
@@ -198,7 +198,29 @@ Sequence diyagramı: [`README.md`](README.md#card-payments-mock-3d-secure). Ayr�
 
 ## Tracing (izlenebilirlik)
 
-Her yanıtta `X-Trace-Id` ve `X-Correlation-Id` var. Seq'te ya da Grafana/Tempo'da aratınca istek log satırı, `payment topup` / `payment transfer` span'i ve altındaki SQL span'leri gelir. Sahte 3D Secure kart ödemesi: `payment card_create` → `payment card_3ds` → child `acquirer authorize` (banka adı, normalize ve ham yanıt kodu) → `payment card_capture` / `card_refund`. Sahte imza ve `IssuerUnavailable` span'i hata yapar; span'de PAN, BIN, tutar yok. Yığın (Seq, OTel Collector, Tempo, Prometheus, Grafana) yalnızca **lokal Docker**: `docker compose -f docker-compose.observability.yml -p clearpay-obs up -d`. Runbook: [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md).
+Her yanıtta `X-Trace-Id` ve `X-Correlation-Id` var. Seq'te ya da Grafana/Tempo'da aratınca istek log satırı, `payment topup` / `payment transfer` span'i ve altındaki SQL span'leri gelir. Sahte 3D Secure kart ödemesi: `payment card_create` → `payment card_3ds` → child `acquirer authorize` (banka adı, normalize ve ham yanıt kodu) → `payment card_capture` / `card_refund`. Sahte imza ve `IssuerUnavailable` span'i hata yapar; span'de PAN, BIN, tutar yok. Yığın (Seq, OTel Collector, Tempo, Prometheus, Grafana) yalnızca **lokal Docker**: `docker compose -f docker-compose.observability.yml -p clearpay-obs up -d`. Trace RabbitMQ'dan da geçer: outbox satırı isteğin `traceparent`'ını saklar, consumer span'i aynı trace'i sürdürür. Runbook: [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md).
+
+---
+
+## Servisler ve mesajlaşma (RabbitMQ)
+
+Bildirim ve gece mutabakatı **iki ayrı process**'tir; web uygulamasıyla yalnızca RabbitMQ olaylarıyla konuşur. Para (ledger, kart ödemesi, outbox) tek host'ta kalır. Mimari diyagram: [İngilizce README](README.md#services-and-messaging-rabbitmq).
+
+| Ne | Nasıl |
+|----|-------|
+| Olay kaybolmaz | Outbox satırı ödemeyle aynı transaction'da; Hangfire job'u **publisher confirm** gelmeden `Sent` yazmaz. Broker kapalıysa satır `Pending` bekler (`Attempts`, `LastError`). |
+| Gecikmeli retry | Consumer nack → `.retry` kuyruğu (TTL 5 sn) → iş kuyruğuna geri. Deneme sayısı RabbitMQ'nun `x-death` sayacından. |
+| Dead-letter queue | 3 denemeden sonra ya da zehirli mesajda hemen `.dlq` (hata header'ı ile). |
+| Idempotent consumer | Servis başına `ProcessedMessage` tablosu, `(Consumer, MessageId)` unique; işlem + kayıt tek transaction. |
+| Gece mutabakatı | Hangfire `0 2 * * *` Europe/Istanbul: projeksiyon ↔ banka settlement CSV → eşleşen / sadece bankada / sadece bizde / tutar farkı + T-SQL ekibinin SP'siyle ledger kontrolü → rapor + `mismatch_found` olayı → bildirim. |
+
+```bash
+docker compose -f docker-compose.services.yml -p clearpay-jobprep up -d --build
+./scripts/demo-card-payment.ps1 -BaseUrl http://localhost:18080 -OrderId fail-001   # hata enjeksiyonu → retry ×3 → DLQ
+curl -X POST "http://localhost:18081/api/reconciliation/runs?date=2026-11-09"      # Hangfire: http://localhost:18081/hangfire
+```
+
+**Dürüst kapsam:** bankalar, settlement dosyaları, e-posta/SMS/webhook **sahte** (CSV, ClearPay'in kendi projeksiyonundan belgelenmiş anormalliklerle üretilir). Demo'da tek SQL Server instance'ı, servis başına ayrı veritabanı. Tek RabbitMQ node'u. Ayrıntı: [`docs/MESSAGING.md`](docs/MESSAGING.md), [`docs/RECONCILIATION.md`](docs/RECONCILIATION.md).
 
 ---
 
@@ -206,7 +228,7 @@ Her yanıtta `X-Trace-Id` ve `X-Correlation-Id` var. Seq'te ya da Grafana/Tempo'
 
 1. Aynı `Idempotency-Key` aynı niyettir: ikinci HTTP **409 Conflict** — timeout retry bakiyeyi iki kez düşürmez.
 2. Borç, alacak, havale, idempotency, audit ve outbox **tek SQL transaction**; `UPDATE Balance` yok — bakiye `LedgerPair.NetOf`.
-3. Outbox satırı aynı transaction’da yazılır; Hangfire (Rabbit bağlıysa o) commit’ten sonra yayınlar.
+3. Outbox satırı aynı transaction’da yazılır; commit’ten sonra publisher confirm ile RabbitMQ’ya gider, consumer’lar tekrarı MessageId ile atar.
 
 ---
 
@@ -229,11 +251,17 @@ src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (Balance yok)
 src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
 src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity
 src/ClearPay.Web              Razor + yerelleştirme + MapControllers
+src/ClearPay.Contracts        Olay tipleri ve gövdeleri (producer + consumer ortak, bağımlılık yok)
+src/ClearPay.Messaging        RabbitMQ topolojisi, confirm'li publisher, consumer (retry / DLQ), ProcessedMessage
+src/ClearPay.Notifications    Worker servis: olay → sahte e-posta / SMS / webhook (notif şeması)
+src/ClearPay.Reconciliation   Gece mutabakatı: Hangfire job + dashboard, projeksiyon, API (recon şeması)
 mobile/clearpay               Flutter JWT istemci (.slnx’de yok)
-tests/ClearPay.Tests          LedgerPair, 409, mimari, dil, kart ödemesi, stored procedure, tracing
+tests/ClearPay.Tests          LedgerPair, 409, mimari, dil, kart ödemesi, stored procedure, tracing, outbox
+tests/ClearPay.Services.Tests Bildirim, mutabakat, retry politikası; RabbitMQ entegrasyon testleri
 scripts/perf/                 docs/SQL-PERF.md için seed + ölçüm script'leri (geçici SQL Server)
 infra/                        Canlı sitede Bicep unused (T-104); Azure’u sen tıklarsın
 docker-compose.yml            SQL Server 2022 — web uygulaması değil
+docker-compose.services.yml   Web + bildirim + mutabakat + RabbitMQ + geçici SQL (demo yığını)
 docker-compose.observability.yml  Seq + OTel Collector + Tempo + Prometheus + Grafana (lokal)
 ClearPay.slnx
 ```
@@ -246,9 +274,10 @@ ClearPay.slnx
 |------|----------|
 | TASK-01…15 — ekranlar, defter, 409, gateway, outbox, Redis/Rabbit, test, Swagger | **TASK-16** — App Service `ClearPay` duruyor; `/api/health` hâlâ **404**. GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` + Portal startup `dotnet ClearPay.Web.dll`. `.\infra\deploy.ps1` **çalıştırma** (canlı siteyi ezer). |
 | Flutter JWT, Kartlarım (web + Flutter), Firestore ping (yalnız meta) | Mağaza / çalışan genel HTTPS hâlâ TASK-16 |
-| Sahte 3D Secure kartlı ödeme (3 sahte banka, iade / kısmi iade / iptal), ledger stored procedure'leri + ölçülmüş planlar, Serilog + OpenTelemetry tracing | RabbitMQ retry + dead-letter queue + idempotent consumer; gece mutabakat job'ı (Hangfire); bildirim ve mutabakatı ayrı servise çıkarmak |
+| Sahte 3D Secure kartlı ödeme (3 sahte banka, iade / kısmi iade / iptal), ledger stored procedure'leri + ölçülmüş planlar, Serilog + OpenTelemetry tracing | Servis yığınını gözlemlenebilirlik yığınıyla birlikte çalıştırıp README'ye bir trace ekran görüntüsü koymak |
+| RabbitMQ: publisher confirm, TTL'li retry kuyruğu + DLQ, idempotent consumer; bildirim ve gece mutabakatı (Hangfire, Europe/Istanbul) ayrı servis | Kademeli (üstel) retry, DLQ'dan yeniden gönderme aracı, farkları çözme ekranı; gerçek SFTP settlement kapsam dışı |
 
-CI `main` üzerinde `tests/ClearPay.Tests` çalıştırır.
+CI `main` üzerinde `tests/ClearPay.Tests` (geçici SQL Server ile) ve `tests/ClearPay.Services.Tests` (geçici RabbitMQ ile) çalıştırır, iki servis imajını derler.
 
 ---
 
@@ -259,6 +288,8 @@ CI `main` üzerinde `tests/ClearPay.Tests` çalıştırır.
 - [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — sahte kartlı ödeme: 3D Secure, banka adaptörleri, iade
 - [`docs/SQL-PERF.md`](docs/SQL-PERF.md) — stored procedure, index, önce / sonra ölçüm ve execution plan'lar
 - [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) — TraceId ile ödemeyi bulmak; hata analizi runbook'u
+- [`docs/MESSAGING.md`](docs/MESSAGING.md) — RabbitMQ topolojisi, outbox yayını, retry / DLQ, idempotent consumer, canlı deneme
+- [`docs/RECONCILIATION.md`](docs/RECONCILIATION.md) — gece mutabakatı, sahte banka dosyaları, ledger kontrolü, canlı deneme
 - [`docs/CANLI.md`](docs/CANLI.md) — Azure tık listesi (secret git’te yok)
 - [`docs/YOL.md`](docs/YOL.md) — kariyer yolu; canlı URL TASK-16
 - [`docs/FARK.md`](docs/FARK.md) — mutabakat önce; Papara rakibi değil

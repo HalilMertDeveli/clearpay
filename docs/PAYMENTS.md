@@ -166,8 +166,10 @@ Tutarlar `decimal(18,2)`; `> 0` ve en fazla iki ondalık (kuruş) kuralı Domain
 ## Outbox olayları
 
 Her durum değişikliği ile aynı `SaveChanges` içinde mevcut `OutboxMessage` tablosuna bir satır yazılır
-(`CorrelationId = paymentId`, `Status = Pending`). Mevcut Hangfire outbox job'ı bunları yayınlar (Rabbit varsa Rabbit,
-yoksa log). Ödeme olaylarını ayrı kuyruğa/consumer'a bağlamak bir sonraki iş.
+(`CorrelationId = paymentId`, `Status = Pending`). Hangfire outbox job'ı bunları `clearpay.events` topic exchange'ine
+publisher confirm ile yayınlar (routing key = Type). Gövde ortak sözleşme `ClearPay.Contracts.PaymentEventV1`
+(`providerReference`, `occurredAt` dahil; PAN/BIN yok). Tüketiciler: `ClearPay.Notifications` (webhook / e-posta)
+ve `ClearPay.Reconciliation` (captured + refunded → gece mutabakatı). Ayrıntı: [`MESSAGING.md`](MESSAGING.md).
 
 | Type | Ne zaman |
 |------|----------|
@@ -176,7 +178,7 @@ yoksa log). Ödeme olaylarını ayrı kuyruğa/consumer'a bağlamak bir sonraki 
 | `clearpay.payment.failed` | 3DS N veya banka reddi (payload `failureCode`, `extra.rawCode`) |
 | `clearpay.payment.captured` | Capture |
 | `clearpay.payment.voided` | Void |
-| `clearpay.payment.refunded` | İade onaylandı (payload `extra.refundId`, `refundAmount`) |
+| `clearpay.payment.refunded` | İade onaylandı (payload `extra.refundId`, `extra.refundAmount`, `extra.code`) |
 | `clearpay.payment.refund_failed` | İade bankada reddedildi, rezervasyon serbest |
 
 ## İzlenebilirlik (tracing)

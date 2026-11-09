@@ -21,7 +21,7 @@ metriğini nasıl bulduğunu ve bir hata geldiğinde hangi sırayla bakılacağ�
 | OpenTelemetry metrics | `ClearPayTelemetry` | `clearpay.payments` counter ve `clearpay.payments.duration` histogram (tag: `payment.kind`, `payment.outcome`) + ASP.NET Core HTTP metrikleri. |
 | Ödeme span'leri | `src/ClearPay.Infrastructure/Observability/TracedPaymentExecutors.cs` | `ITransferExecutor` / `IFundingExecutor` için **decorator**. Ledger kodu OpenTelemetry bilmez. Span'de alıcı e-postası, açıklama, IBAN yok. |
 | Kart ödemesi span'leri | `src/ClearPay.Infrastructure/Observability/TracedCardPayments.cs` | `IPaymentGateway` için decorator: `payment card_create`, `card_3ds`, `card_capture`, `card_void`, `card_refund` span'leri + aynı `clearpay.payments` metrikleri. Her `IAcquirerAdapter` (MockBankA/B, MockPspC) ayrıca sarılır: `acquirer authorize/capture/void/refund` **Client** span'i, tag'ler `acquirer.name`, `acquirer.response_code` (normalize), `acquirer.raw_code` (bankanın kendi kodu). PAN, BIN, tutar, OTP, HMAC span'de yok. |
-| RabbitMQ trace yayılımı | `src/ClearPay.Infrastructure/Observability/MessageTraceContext.cs` | `TraceContextPropagator` ile W3C `traceparent` header'ını mesaja yazar / okur. `StartPublish` (Producer span) ve `StartConsume` (Consumer span, parent = header). RabbitMQ.Client header'ları `byte[]` döndürdüğü için ikisi de desteklenir. **Henüz outbox publisher'a bağlanmadı** — RabbitMQ işi ayrı dalda; o kod bu yardımcıyı çağıracak. |
+| RabbitMQ trace yayılımı | `src/ClearPay.Messaging/MessageTraceContext.cs` (servisler Infrastructure'a bağlanmasın diye buraya taşındı; publish span'inin parent'ı outbox satırındaki `TraceParent`) | `TraceContextPropagator` ile W3C `traceparent` header'ını mesaja yazar / okur. `StartPublish` (Producer span) ve `StartConsume` (Consumer span, parent = header). RabbitMQ.Client header'ları `byte[]` döndürdüğü için ikisi de desteklenir. Outbox publisher ve iki servisin consumer'ı bunu çağırır — bkz. [`MESSAGING.md`](MESSAGING.md). |
 
 Ayarlar (`appsettings*.json` → `Observability`):
 
@@ -157,7 +157,7 @@ sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"
 | Gateway timeout oranı | `clearpay_payments_total{payment_outcome="TimedOut"}` | `BankGateway:SimulateTimeout` açık mı? Sahte gateway bunu kasıtlı üretir. |
 | Üye işyeri "3DS sonrası ödeme düştü" diyor | TraceQL `{ name = "payment card_3ds" && span.clearpay.payment_id = "…" }` | `payment.outcome=InvalidSignature` ise form yolda değişmiş (400, ödeme `Pending3DS`'te kalır). `PaymentFailed` ise `payment.failure_code`'a bak: `3DS_FAILED` → OTP; değilse child `acquirer authorize` span'inde `acquirer.raw_code`. |
 | Bir banka her şeyi reddediyor | `sum by (payment_kind, payment_outcome) (rate(clearpay_payments_total{payment_kind="card_3ds"}[5m]))` | TraceQL `{ name = "acquirer authorize" && span.acquirer.name = "MockBankB" && span.acquirer.response_code != "Approved" }` → raw code dağılımı. |
-| Mesaj kuyruğunda kaybolan iş | (RabbitMQ dalı birleşince) consumer span'i, producer ile **aynı TraceId**'de olmalı | `MessageTraceContext.StartPublish/StartConsume` çağrılmıyorsa trace kopar — kod incelemesinde kontrol. |
+| Mesaj kuyruğunda kaybolan iş | Consumer span'i (`notifications.events process`, `reconciliation.payments process`) HTTP isteğiyle **aynı TraceId**'dedir; consumer log satırı da `trace <TraceId>` yazar | Trace yoksa: outbox satırı hâlâ `Pending` mi (`Attempts`, `LastError`)? Mesaj `.dlq`'da mı (`x-clearpay-error` header)? Bkz. [`MESSAGING.md`](MESSAGING.md). |
 
 Genel sıra: **header → Seq (ne) → Tempo (nerede) → Prometheus (ne sıklıkta) → kod**.
 
@@ -171,6 +171,6 @@ Genel sıra: **header → Seq (ne) → Tempo (nerede) → Prometheus (ne sıklı
 ## Bilinen sınırlar
 
 - Yığın lokal; Azure App Service'te OTLP/Seq hedefi tanımlı değil (Production'da `Observability` boş).
-- RabbitMQ publish/consume henüz `MessageTraceContext` kullanmıyor (ayrı dal).
+- Servislerin (notifications, reconciliation) OTLP exporter'ı `Observability:OtlpEndpoint` ile açılır; compose demosunda boş bırakıldı. Trace sürekliliği log satırındaki trace id ve entegrasyon testiyle doğrulandı; Tempo ekran görüntüsü yok.
 - Hangfire job'ları ayrı trace olarak görünmez (Hangfire için resmi OTel instrumentation eklenmedi).
 - Tempo tek process, 24 saat retention; üretim düzeni değildir.
