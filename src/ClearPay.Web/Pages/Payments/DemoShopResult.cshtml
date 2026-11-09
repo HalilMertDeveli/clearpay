@@ -1,0 +1,59 @@
+@page "/demo-magaza/sonuc"
+@model ClearPay.Web.Pages.Payments.DemoShopResultModel
+@{
+    Layout = "_PaymentsLayout";
+    ViewData["Title"] = "Ödeme sonucu";
+    var p = Model.Payment!;
+    var good = p.Status is "Authorized" or "Captured" or "PartiallyRefunded" or "Refunded";
+    var tr = System.Globalization.CultureInfo.GetCultureInfo("tr-TR");
+}
+<div class="card">
+    <div class="brand"><span></span>Demo Mağaza · sonuç</div>
+    <p>Durum: <span class="@(good ? "status-ok" : "status-bad")">@p.Status</span></p>
+    @if (Model.Message is not null)
+    {
+        <p class="hint">Son işlem: @Model.Message</p>
+    }
+    <dl>
+        <dt>Sipariş</dt><dd>@p.MerchantOrderId</dd>
+        <dt>Tutar</dt><dd>@p.Amount.ToString("N2", tr) @p.Currency</dd>
+        <dt>Banka/PSP</dt><dd>@p.Provider</dd>
+        <dt>Provizyon</dt><dd>@(p.ProviderReference ?? "—")</dd>
+        <dt>Capture</dt><dd>@p.CapturedAmount.ToString("N2", tr)</dd>
+        <dt>İade</dt><dd>@p.RefundedAmount.ToString("N2", tr)</dd>
+        @if (p.FailureCode is not null)
+        {
+            <dt>Hata</dt><dd>@p.FailureCode — @p.FailureMessage</dd>
+        }
+    </dl>
+
+    @if (p.Status == "Authorized")
+    {
+        <div class="row">
+            <form method="post" asp-page-handler="Capture" asp-route-paymentId="@p.PaymentId" style="flex:1"><button type="submit">Capture (tahsil et)</button></form>
+            <form method="post" asp-page-handler="Void" asp-route-paymentId="@p.PaymentId" style="flex:1"><button type="submit" class="secondary">İptal (void)</button></form>
+        </div>
+    }
+    else if (p.Status is "Captured" or "PartiallyRefunded")
+    {
+        <form method="post" asp-page-handler="Refund" asp-route-paymentId="@p.PaymentId">
+            <label for="refund">İade tutarı (kalan @((p.CapturedAmount - p.RefundedAmount).ToString("N2", tr)))</label>
+            <input id="refund" name="RefundAmount" value="@Model.RefundAmount" inputmode="decimal" />
+            <div class="row"><button type="submit">İade et</button></div>
+        </form>
+    }
+
+    @if (p.Refunds.Count > 0)
+    {
+        <table>
+            <thead><tr><th>İade</th><th>Tutar</th><th>Durum</th></tr></thead>
+            <tbody>
+                @foreach (var r in p.Refunds)
+                {
+                    <tr><td>@r.RefundId.ToString()[..8]</td><td>@r.Amount.ToString("N2", tr)</td><td>@r.Status</td></tr>
+                }
+            </tbody>
+        </table>
+    }
+    <p class="hint"><a href="/demo-magaza">Yeni ödeme</a></p>
+</div>

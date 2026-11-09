@@ -28,10 +28,13 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AllowAnonymousToFolder("/Account");
     options.Conventions.AllowAnonymousToPage("/Error");
     options.Conventions.AllowAnonymousToPage("/SetCulture");
+    options.Conventions.AllowAnonymousToFolder("/Payments");
     options.Conventions.AddPageRoute("/Account/Login", "/giris");
     options.Conventions.AddPageRoute("/Account/Register", "/kayit");
 }).AddViewLocalization();
 builder.Services.AddControllers();
+builder.Services.Configure<ClearPay.Web.Payments.PaymentMerchantOptions>(
+    builder.Configuration.GetSection(ClearPay.Web.Payments.PaymentMerchantOptions.SectionName));
 builder.Services.AddClearPayCors(builder.Configuration, builder.Environment);
 builder.Services.AddClearPaySwagger();
 builder.Services.AddSignalR();

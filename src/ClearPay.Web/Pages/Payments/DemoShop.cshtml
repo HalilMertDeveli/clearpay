@@ -1,0 +1,27 @@
+@page "/demo-magaza"
+@model ClearPay.Web.Pages.Payments.DemoShopModel
+@{
+    Layout = "_PaymentsLayout";
+    ViewData["Title"] = "Demo mağaza";
+}
+<div class="card">
+    <div class="brand"><span></span>Demo Mağaza · ödeme</div>
+    <p class="hint">Üye işyeri → ClearPay gateway → sahte banka ACS (3D Secure) → callback → mağazaya dönüş.</p>
+    @if (Model.Error is not null)
+    {
+        <p class="status-bad">@Model.Error</p>
+    }
+    <form method="post">
+        <label for="amount">Tutar (TRY)</label>
+        <input id="amount" name="Amount" value="@Model.Amount" inputmode="decimal" />
+        <label for="card">Test kartı</label>
+        <select id="card" name="CardNumber">
+            @foreach (var card in ClearPay.Web.Pages.Payments.DemoShopModel.TestCards)
+            {
+                <option value="@card.Number" selected="@(card.Number == Model.CardNumber)">@card.Number — @card.Label</option>
+            }
+        </select>
+        <p class="hint">Kuruş tetikleyicileri (her sahte bankada): <code>,51</code> yetersiz bakiye, <code>,05</code> red, <code>,91</code> banka erişilemez. Gerçek kart kullanmayın.</p>
+        <div class="row"><button type="submit">Öde (3D Secure)</button></div>
+    </form>
+</div>
