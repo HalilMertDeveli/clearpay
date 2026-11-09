@@ -88,3 +88,16 @@ Coder: `Program.cs` içinde `builder.Services.AddClearPay(builder.Configuration)
 | Canlı | App Service + Azure SQL | + Azure Cache for Redis |
 
 Compose: SQL gün 1. Redis özet cache T-041 (kasa SQL). Rabbit publisher T-048 (`ConnectionStrings:RabbitMq`; düşerse log). Canlı broker Q1 şart değil — ledger commit olduysa mesaj kaybolmaz (önce DB, sonra yayın). Redis bakiyeyi hızlandırır, ledger’ın yerini tutmaz. Health: `redis` + `rabbit` = `up` / `down` / `off`.
+
+## Kartlı ödeme modülü (mock acquiring)
+
+Ayrı servis değil; aynı host ve aynı SQL. Cüzdan ledger'ına dokunmaz (kart ödemesi `LedgerEntry` yazmaz). Ayrıntı: [`PAYMENTS.md`](PAYMENTS.md).
+
+| Katman | Tip |
+|--------|-----|
+| Domain | `Payment` (durum makinesi, `Version` concurrency token), `PaymentRefund`, `PaymentStateMachine` |
+| Application | `IPaymentGateway`, `IAcquirerAdapter`, `AcquirerRouter` (BIN), `ThreeDsSigner` (HMAC) |
+| Infrastructure | `SqlPaymentGateway`, `MockBankAAdapter` / `MockBankBAdapter` / `MockPspCAdapter`; olaylar mevcut `OutboxMessage` tablosuna |
+| Web | `PaymentsController` (`X-Merchant-Key`), `ThreeDsCallbackController`, `/mock-acs/{id}`, `/demo-magaza` (anonim demo sayfaları, SPEC cüzdan ekran listesinin dışında) |
+
+OCP: yeni banka = yeni `IAcquirerAdapter` + bir routing satırı; gateway'de `switch` yok.
