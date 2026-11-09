@@ -82,6 +82,9 @@ public static class ObservabilityExtensions
         app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseSerilogRequestLogging(o =>
         {
+            // preserveStaticLogger: true keeps Log.Logger silent (safe for parallel test hosts),
+            // so hand the middleware the host's own logger explicitly.
+            o.Logger = app.Services.GetRequiredService<Serilog.ILogger>();
             o.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0} ms";
             o.GetLevel = (ctx, _, ex) =>
                 ex is not null || ctx.Response.StatusCode >= 500 ? LogEventLevel.Error
