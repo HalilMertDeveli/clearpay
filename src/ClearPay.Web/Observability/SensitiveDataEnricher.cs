@@ -17,7 +17,8 @@ public sealed partial class SensitiveDataEnricher : ILogEventEnricher
     private static readonly HashSet<string> SensitiveNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "Password", "NewPassword", "CurrentPassword", "Pan", "CardNumber", "Cvv", "Cvc",
-        "Token", "AccessToken", "RefreshToken", "IdToken", "Authorization", "Secret", "ClientSecret", "PrivateKey"
+        "Token", "AccessToken", "RefreshToken", "IdToken", "Authorization", "Secret", "ClientSecret", "PrivateKey",
+        "ApiKey", "MerchantKey", "X-Merchant-Key", "AcsSecret", "Signature", "Otp"
     };
 
     [GeneratedRegex(@"(?<![0-9])(?:[0-9][ -]?){12,18}[0-9](?![0-9])")]

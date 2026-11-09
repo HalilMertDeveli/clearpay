@@ -234,5 +234,8 @@ Tarayıcıdan: [`/demo-magaza`](http://localhost:5153/demo-magaza) → test kart
 - Banka, PSP, ACS, SMS: hepsi sahte ve aynı süreçte. Gerçek EMV 3DS mesajları (AReq/ARes/CReq/CRes) yok; akış onların sadeleştirilmiş hâli.
 - PAN API'de bir kez alınır (BIN + son 4 için), saklanmaz; yine de PCI kapsamı iddia edilmez.
 - Üye işyerine bildirim: tarayıcı redirect'i + outbox olayı. Sunucudan sunucuya webhook yok.
-- Kısmi capture, taksit, çoklu para birimi kuru, chargeback, settlement/mutabakat dosyası yok (mutabakat ayrı iş).
+- Kısmi capture, taksit, çoklu para birimi kuru, chargeback yok. Settlement/mutabakat ayrı serviste: [`RECONCILIATION.md`](RECONCILIATION.md).
 - İade isteğinde ayrı bir `Idempotency-Key` yok; aynı iadeyi iki kez göndermek iki iade dener (limit yine korunur).
+- Banka çağrısı exception fırlatırsa (gerçek bir adaptörde timeout) iade rezervasyonu `Pending` kalır ve tutar kilitli durur;
+  sahte adaptörler exception fırlatmaz. Gerçek sistemde bunu bankaya durum sorgusu yapan bir temizlik işi çözer (burada yok).
+- Paralel çift 3DS callback'te iki istek de banka provizyonunu çağırabilir; SQL'e yine tek sonuç ve tek olay yazılır (yukarıdaki tablo).
