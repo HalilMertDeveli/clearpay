@@ -22,8 +22,20 @@ internal sealed class LedgerEntryConfiguration : IEntityTypeConfiguration<Ledger
         builder.Ignore(e => e.IsDebit);
         builder.Ignore(e => e.IsCredit);
 
+        // docs/SQL-PERF.md: covering index for the summary + statement procs (no key lookups).
         builder.HasIndex(e => new { e.WalletId, e.CreatedAt })
-            .HasDatabaseName(LedgerSchema.LedgerEntryWalletCreated);
+            .HasDatabaseName(LedgerSchema.LedgerEntryWalletCreated)
+            .IncludeProperties(e => new { e.Amount, e.Kind, e.CorrelationId, e.PairId });
+
+        // Counterparty lookup (statement page, receipt): pair -> other wallet.
+        builder.HasIndex(e => e.PairId)
+            .HasDatabaseName(LedgerSchema.LedgerEntryPairId)
+            .IncludeProperties(e => new { e.WalletId, e.Amount });
+
+        // Day-level totals for reconciliation (usp_Ledger_GetDailyTotals).
+        builder.HasIndex(e => e.CreatedAt)
+            .HasDatabaseName(LedgerSchema.LedgerEntryCreatedAt)
+            .IncludeProperties(e => new { e.Kind, e.Amount });
 
         builder.HasOne<Wallet>()
             .WithMany()
