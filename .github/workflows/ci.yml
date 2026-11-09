@@ -8,6 +8,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Throwaway SQL Server for the stored procedure tests (LedgerProceduresSqlServerTests).
+    # CI-only dev password; the container dies with the job.
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: "Ci_Throwaway_1!"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Ci_Throwaway_1!' -Q 'SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      CLEARPAY_TEST_SQLSERVER: "Server=localhost,1433;User Id=sa;Password=Ci_Throwaway_1!;TrustServerCertificate=True"
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-dotnet@v5
