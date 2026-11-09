@@ -101,3 +101,11 @@ Ayrı servis değil; aynı host ve aynı SQL. Cüzdan ledger'ına dokunmaz (kart
 | Web | `PaymentsController` (`X-Merchant-Key`), `ThreeDsCallbackController`, `/mock-acs/{id}`, `/demo-magaza` (anonim demo sayfaları, SPEC cüzdan ekran listesinin dışında) |
 
 OCP: yeni banka = yeni `IAcquirerAdapter` + bir routing satırı; gateway'de `switch` yok.
+
+## Gözlemlenebilirlik (decorator, katmanlara dokunmadan)
+
+`builder.AddClearPayObservability()` `AddClearPay`'den **sonra** çağrılır ve şu portları decorator ile sarar:
+`ITransferExecutor`, `IFundingExecutor`, `IPaymentGateway` ve her `IAcquirerAdapter`
+(`Infrastructure/Observability/TracedPaymentExecutors.cs`, `TracedCardPayments.cs`). Domain, Application ve
+`SqlPaymentGateway` OpenTelemetry bilmez; span ve metrik isimleri `ClearPayTelemetry`'de tek yerde. Ayrıntı:
+[`OBSERVABILITY.md`](OBSERVABILITY.md).

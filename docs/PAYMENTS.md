@@ -179,6 +179,15 @@ yoksa log). Ödeme olaylarını ayrı kuyruğa/consumer'a bağlamak bir sonraki 
 | `clearpay.payment.refunded` | İade onaylandı (payload `extra.refundId`, `refundAmount`) |
 | `clearpay.payment.refund_failed` | İade bankada reddedildi, rezervasyon serbest |
 
+## İzlenebilirlik (tracing)
+
+`IPaymentGateway` ve üç adaptörün her biri gözlemlenebilirlik katmanında decorator ile sarılır
+(`TracedCardPayments.cs`); gateway ve adaptör kodu OpenTelemetry bilmez. Bir ödeme şöyle görünür:
+`payment card_create` → `payment card_3ds` (child: `acquirer authorize`, Client span) → `payment card_capture`
+(child: `acquirer capture`) → `payment card_refund`. Metrik: `clearpay_payments_total{payment_kind="card_3ds", payment_outcome="PaymentFailed"}` gibi.
+Sahte imza, eşzamanlılık çakışması ve `IssuerUnavailable` span'i hata olarak işaretler. Span'de PAN, BIN, tutar, OTP ve HMAC yok.
+Ayrıntı ve runbook: [`OBSERVABILITY.md`](OBSERVABILITY.md).
+
 ## API (üye işyeri)
 
 Kimlik: `X-Merchant-Key` başlığı (`Payments:Merchants`). Development: `demo-shop` / `dev-demo-shop-key`.
@@ -212,6 +221,7 @@ Tarayıcıdan: [`/demo-magaza`](http://localhost:5153/demo-magaza) → test kart
 | `PaymentDomainTests` | Geçiş tablosu, kuruş kuralı, void/iade sırası, kısmi iade limiti, rezervasyon/serbest bırakma |
 | `AcquirerAdapterTests` | Üç ham format → aynı normalize kod, router en uzun önek, hatalı config, HMAC kurcalama |
 | `PaymentGatewayTests` | SQLite üzerinde gerçek EF: mutlu yol + outbox sırası, OTP hatası, banka retleri, sahte imza, çift ve paralel callback, void kuralları, başka işyeri, reddedilen iade, eşzamanlı iade yarışları, eski kopya ile kayıt |
+| `CardPaymentTracingTests` | Decorator kayıtları, uçtan uca span ağacı (create → 3ds → acquirer authorize → capture), sahte imza = hata span'i, yanlış OTP = `PaymentFailed`, metrik etiketleri, span'de kart verisi yok |
 | `ThreeDsFlowTests` | HTTP uçtan uca: API anahtarı, ACS sayfası + antiforgery, imzalı form, 302, çift callback, kurcalanmış imza 400, capture/void/iade kodları, demo mağaza |
 
 `dotnet test ClearPay.slnx`. Migration (`AddCardPayments`) ayrıca geçici bir SQL Server 2022 container'ında

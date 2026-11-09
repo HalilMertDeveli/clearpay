@@ -37,6 +37,8 @@ I am **Halil Mert Develi**. This is the interview repo I defend (Intertech, Soft
   <img src="docs/assets/clearpay-rules.png" alt="Balance is derived; replay is 409; one SQL transaction" width="920">
 </p>
 
+**Backend deep dives:** [Card payments (mock 3D Secure)](#card-payments-mock-3d-secure) · [SQL performance (measured)](#sql-performance-measured) · [Tracing a payment](#tracing-a-payment-observability) · [Docs](#docs)
+
 ---
 
 ## Website
@@ -198,44 +200,6 @@ Dependencies point **inward**. Domain does not reference EF or ASP.NET.
 
 ---
 
-## Ödeme akışı (3D Secure)
-
-**Mock card acquiring, not a real bank.** A merchant starts a card payment, the shopper goes through a fake 3D Secure page, and the result comes back signed. The three banks (`MockBankA`, `MockBankB`, `MockPspC`), the ACS page and the SMS code are stubs that run in the same host. No real card is charged. The PAN is used only for BIN routing and the last four digits, then it is dropped.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant S as Shopper browser
-    participant M as Merchant
-    participant G as ClearPay gateway
-    participant A as Mock ACS
-    participant B as Mock bank / PSP adapter
-    M->>G: POST /api/payments (X-Merchant-Key)
-    G-->>M: 201 Pending3DS + redirectUrl
-    M-->>S: redirect to /mock-acs/{id}
-    S->>A: OTP (123456 = success)
-    A-->>S: auto-post {result, HMAC-SHA256}
-    S->>G: POST /api/payments/3ds/callback
-    G->>G: verify HMAC with stored amount + 3DS id
-    G->>B: authorize (only if 3DS = Y)
-    B-->>G: raw code, normalized
-    G-->>S: 302 merchant returnUrl (Authorized / Failed)
-    M->>G: capture · void · refunds
-```
-
-| Rule | What the code does |
-|------|-------------------|
-| **Explicit state machine** | `Created → Pending3DS → Authorized/Failed → Captured → PartiallyRefunded/Refunded`, plus `Authorized → Voided`. Any other move is a domain error (409). |
-| **Signed callback** | HMAC over `paymentId`, 3DS id, result and amount, compared in constant time. A tampered result gets 400 and the payment stays `Pending3DS`. |
-| **Idempotent callback** | A second callback does nothing and returns the same redirect: no second bank call, no second event. Parallel duplicates lose on the `Version` concurrency token. |
-| **One contract, three banks** | ISO 8583 codes, XML and JSON answers are normalized behind `IAcquirerAdapter`. A BIN router picks the adapter. |
-| **Refund limit under concurrency** | The refund amount is reserved and committed first, then the bank is called, then the refund is settled. Total refunds never exceed the captured amount. |
-| **Outbox** | Every state change writes a `clearpay.payment.*` row into `OutboxMessage` in the same `SaveChanges`. |
-
-Click through it at [`/demo-magaza`](http://localhost:5153/demo-magaza) (Development; merchant key `dev-demo-shop-key`). Test cards, trigger amounts and known limits are in [`docs/PAYMENTS.md`](docs/PAYMENTS.md).
-
----
-
 ## Relational schema (SQL Server)
 
 **Demo — fake bank gateway.** Not licensed e-money. Identity and the ledger share one LocalDB database (two EF contexts, two history tables). `Wallet.UserId` matches `AspNetUsers.Id` with **no FK** (two DbContexts). Real FKs are Identity membership plus `LedgerEntry` → `Wallet` / `Transfer`.
@@ -329,6 +293,52 @@ erDiagram
 
 ---
 
+## Firebase is not the cash register
+
+Flutter initializes Firebase project `clearpay-c0485`. It may write **`app_meta/ping`** (`ok`, `client`, `message`, `touchedAt`) so the console can prove the client is alive.
+
+Money does **not** go there. Balance, transfers, and receipts stay JWT → ASP.NET → SQL Server. Firestore rules deny every other path. Windows desktop skips native Firebase plugins; use the **Android emulator** to see the ping on the sign-in screen.
+
+---
+
+## Card payments (mock 3D Secure)
+
+**Mock card acquiring, not a real bank.** A merchant starts a card payment, the shopper goes through a fake 3D Secure page, and the result comes back signed. The three banks (`MockBankA`, `MockBankB`, `MockPspC`), the ACS page and the SMS code are stubs that run in the same host. No real card is charged. The PAN is used only for BIN routing and the last four digits, then it is dropped.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant S as Shopper browser
+    participant M as Merchant
+    participant G as ClearPay gateway
+    participant A as Mock ACS
+    participant B as Mock bank / PSP adapter
+    M->>G: POST /api/payments (X-Merchant-Key)
+    G-->>M: 201 Pending3DS + redirectUrl
+    M-->>S: redirect to /mock-acs/{id}
+    S->>A: OTP (123456 = success)
+    A-->>S: auto-post {result, HMAC-SHA256}
+    S->>G: POST /api/payments/3ds/callback
+    G->>G: verify HMAC with stored amount + 3DS id
+    G->>B: authorize (only if 3DS = Y)
+    B-->>G: raw code, normalized
+    G-->>S: 302 merchant returnUrl (Authorized / Failed)
+    M->>G: capture · void · refunds
+```
+
+| Rule | What the code does |
+|------|-------------------|
+| **Explicit state machine** | `Created → Pending3DS → Authorized/Failed → Captured → PartiallyRefunded/Refunded`, plus `Authorized → Voided`. Any other move is a domain error (409). |
+| **Signed callback** | HMAC over `paymentId`, 3DS id, result and amount, compared in constant time. A tampered result gets 400 and the payment stays `Pending3DS`. |
+| **Idempotent callback** | A second callback does nothing and returns the same redirect: no second bank call, no second event. Parallel duplicates lose on the `Version` concurrency token. |
+| **One contract, three banks** | ISO 8583 codes, XML and JSON answers are normalized behind `IAcquirerAdapter`. A BIN router picks the adapter. |
+| **Refund limit under concurrency** | The refund amount is reserved and committed first, then the bank is called, then the refund is settled. Total refunds never exceed the captured amount. |
+| **Outbox** | Every state change writes a `clearpay.payment.*` row into `OutboxMessage` in the same `SaveChanges`. |
+
+Click through it at [`/demo-magaza`](http://localhost:5153/demo-magaza) (Development; merchant key `dev-demo-shop-key`). Test cards, trigger amounts and known limits are in [`docs/PAYMENTS.md`](docs/PAYMENTS.md).
+
+---
+
 ## SQL performance (measured)
 
 The summary and statement screens used to load **every ledger row of the wallet** into C#. They now call T-SQL stored procedures (`usp_Wallet_GetSummary`, `usp_Wallet_GetStatementPage`; `usp_Ledger_GetDailyTotals` is ready for reconciliation) backed by a covering `(WalletId, CreatedAt)` index plus `PairId` and `CreatedAt` indexes — one EF migration, `CREATE OR ALTER` scripts in [`Persistence/Sql`](src/ClearPay.Infrastructure/Persistence/Sql).
@@ -345,17 +355,9 @@ Full before / after table, method, costs (index space, write probe inconclusive)
 
 ---
 
-## Firebase is not the cash register
-
-Flutter initializes Firebase project `clearpay-c0485`. It may write **`app_meta/ping`** (`ok`, `client`, `message`, `touchedAt`) so the console can prove the client is alive.
-
-Money does **not** go there. Balance, transfers, and receipts stay JWT → ASP.NET → SQL Server. Firestore rules deny every other path. Windows desktop skips native Firebase plugins; use the **Android emulator** to see the ping on the sign-in screen.
-
----
-
 ## Tracing a payment (observability)
 
-Every response carries `X-Trace-Id` and `X-Correlation-Id`. Paste either into Seq or Grafana/Tempo and you get the request log line, the `payment topup` / `payment transfer` span, and the SQL spans under it — including the single `INSERT [AuditLog] [IdempotencyRecord] [LedgerEntry] [OutboxMessage]` batch.
+Every response carries `X-Trace-Id` and `X-Correlation-Id`. Paste either into Seq or Grafana/Tempo and you get the request log line, the `payment topup` / `payment transfer` span, and the SQL spans under it — including the single `INSERT [AuditLog] [IdempotencyRecord] [LedgerEntry] [OutboxMessage]` batch. A mock 3D Secure card payment shows up as `payment card_create` → `payment card_3ds` → child `acquirer authorize` (bank name, normalized and raw response code) → `payment card_capture` / `card_refund`; a forged 3DS signature or an unavailable issuer marks the span as an error.
 
 ```bash
 docker compose -f docker-compose.observability.yml -p clearpay-obs up -d   # Seq, OTel Collector, Tempo, Prometheus, Grafana
@@ -365,7 +367,7 @@ dotnet run --project src/ClearPay.Web --launch-profile http                # Dev
 | | |
 |--|--|
 | Logs | Serilog → console + Seq ([localhost:8341](http://localhost:8341)), enriched with `TraceId`, `SpanId`, `CorrelationId`, opaque `UserId`. PAN-looking numbers and secret-named properties are masked. |
-| Traces | OpenTelemetry: ASP.NET Core, HttpClient, SqlClient, `ClearPay.Payments`, `ClearPay.Messaging` → Collector → Tempo + Seq |
+| Traces | OpenTelemetry: ASP.NET Core, HttpClient, SqlClient, `ClearPay.Payments` (wallet + card payments, acquirer calls), `ClearPay.Messaging` → Collector → Tempo + Seq. No PAN, BIN or amount on a span. |
 | Metrics | `clearpay_payments_total`, `clearpay_payments_duration_milliseconds`, HTTP RED → Prometheus → Grafana dashboard *ClearPay - Payments* ([localhost:3000](http://localhost:3000)) |
 
 **Honest scope:** the stack runs in local Docker only (no auth, dev settings); Production config leaves `Observability` empty. RabbitMQ trace propagation (`MessageTraceContext`) is ready but not yet called by the publisher. Runbook: [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md).
@@ -395,12 +397,13 @@ Full CV pack (TR/EN HTML): `C:\Users\clt\Desktop\Halil_Mert_Develi_CV_Paket`. Re
 ## Repo map
 
 ```
-src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (no Balance)
-src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
-src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity
-src/ClearPay.Web              Razor + localization + MapControllers
+src/ClearPay.Domain           LedgerEntry, LedgerPair, Wallet (no Balance), Payments/ (card payment state machine)
+src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway, IPaymentGateway, IAcquirerAdapter
+src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity, Payments/ (mock banks), Persistence/Sql (stored procedures), Observability/
+src/ClearPay.Web              Razor + localization + MapControllers, Observability/ (Serilog + OpenTelemetry), Pages/Payments (mock ACS, demo shop)
 mobile/clearpay               Flutter JWT client (not in the .slnx)
-tests/ClearPay.Tests          LedgerPair, 409, architecture, culture
+tests/ClearPay.Tests          LedgerPair, 409, architecture, culture, payments, stored procedures, tracing
+scripts/perf/                 Seed + measurement scripts for docs/SQL-PERF.md (throwaway SQL Server)
 infra/                        Bicep unused on the live site (T-104); you click Azure Portal
 docker-compose.yml            SQL Server 2022 — not the web app
 docker-compose.observability.yml  Seq + OTel Collector + Tempo + Prometheus + Grafana (local)
@@ -416,6 +419,7 @@ ClearPay.slnx
 |------|------|
 | TASK-01…15 — screens, ledger, 409, gateway, outbox, Redis/Rabbit, tests, Swagger | **TASK-16** — App Service `ClearPay` exists; `/api/health` is still **404**. You add GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` + Portal startup `dotnet ClearPay.Web.dll`. Do **not** run `.\infra\deploy.ps1` (it would replace the live site). |
 | Flutter JWT app, Kartlarım (web + Flutter), Firestore ping (meta only) | Store listing / working public HTTPS still TASK-16 |
+| Mock 3D Secure card payments (3 mock banks, refund / partial refund / void), ledger stored procedures with measured plans, Serilog + OpenTelemetry tracing | RabbitMQ retry + dead-letter queue + idempotent consumers; nightly reconciliation job (Hangfire); notifications and reconciliation as a separate service |
 
 CI on `main` restores and runs `tests/ClearPay.Tests`.
 
@@ -425,12 +429,12 @@ CI on `main` restores and runs `tests/ClearPay.Tests`.
 
 - [`docs/SPEC.md`](docs/SPEC.md) — screens and money rules
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — onion layers
+- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — mock card payments: 3D Secure, acquirer adapters, refunds
 - [`docs/SQL-PERF.md`](docs/SQL-PERF.md) — stored procedures, indexes, measured before / after with execution plans
 - [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) — find a payment by TraceId; error-analysis runbook
 - [`docs/CANLI.md`](docs/CANLI.md) — Azure click list (no secrets in git)
 - [`docs/YOL.md`](docs/YOL.md) — career path; live URL is TASK-16
 - [`docs/FARK.md`](docs/FARK.md) — reconciliation-first, not a Papara rival
-- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — mock card payments: 3D Secure, acquirer adapters, refunds
 - [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter client
 - [`docs/API-ESZAMAN.md`](docs/API-ESZAMAN.md) — SignalR hub (not the ledger)
 

@@ -4,7 +4,7 @@
 metriğini nasıl bulduğunu ve bir hata geldiğinde hangi sırayla bakılacağını anlatır.
 
 > **Dürüstlük notu.** Yığın (Seq, OpenTelemetry Collector, Tempo, Prometheus, Grafana) **lokal Docker**'da
-> çalışır; Azure'da bağlı bir Seq/Grafana yok. Banka gateway'i hâlâ sahte (`RestBankGateway` / `SoapBankGateway`).
+> çalışır; Azure'da bağlı bir Seq/Grafana yok. Banka gateway'i hâlâ sahte (`RestBankGateway` / `SoapBankGateway`), kart ödemesindeki ACS ve üç banka/PSP adaptörü de sahte (bkz. [`PAYMENTS.md`](PAYMENTS.md)).
 > Kimlik doğrulaması kapalı (Seq `NOAUTHENTICATION`, Grafana anonim admin) — sadece geliştirme içindir.
 
 ## Ne eklendi
@@ -16,10 +16,11 @@ metriğini nasıl bulduğunu ve bir hata geldiğinde hangi sırayla bakılacağ�
 | `TraceEnricher` | `Observability/TraceEnricher.cs` | Her log olayına `TraceId`, `SpanId` ekler. |
 | `CorrelationIdMiddleware` | `Observability/CorrelationIdMiddleware.cs` | Yanıta `X-Correlation-Id` ve `X-Trace-Id` yazar. Gelen `X-Correlation-Id` güvenliyse (≤64, `[A-Za-z0-9-_.]`) korunur; değilse TraceId kullanılır. |
 | `SensitiveDataEnricher` | `Observability/SensitiveDataEnricher.cs` | `Password`, `Token`, `CardNumber`, `Cvv` … adlı property'ler `***`; metin içindeki Luhn-geçerli 13–19 haneli sayı (PAN) `****1111` olur. |
-| Kullanıcı alanları | request log | Sadece opak `UserId` (Identity GUID) ve varsa `merchant_id` claim'i. E-posta, ad, TC kimlik, IP **loglanmaz**. |
+| Kullanıcı alanları | request log | Sadece opak `UserId` (Identity GUID) ve üye işyeri id'si (`merchant_id` claim'i ya da `X-Merchant-Key` filtresinin bulduğu `MerchantId`). E-posta, ad, TC kimlik, IP **loglanmaz**. |
 | OpenTelemetry tracing | `ObservabilityExtensions` | ASP.NET Core, HttpClient, SqlClient (EF Core SQL Server komutları) + `ClearPay.Payments`, `ClearPay.Messaging` kaynakları. OTLP gRPC ile Collector'a. |
 | OpenTelemetry metrics | `ClearPayTelemetry` | `clearpay.payments` counter ve `clearpay.payments.duration` histogram (tag: `payment.kind`, `payment.outcome`) + ASP.NET Core HTTP metrikleri. |
 | Ödeme span'leri | `src/ClearPay.Infrastructure/Observability/TracedPaymentExecutors.cs` | `ITransferExecutor` / `IFundingExecutor` için **decorator**. Ledger kodu OpenTelemetry bilmez. Span'de alıcı e-postası, açıklama, IBAN yok. |
+| Kart ödemesi span'leri | `src/ClearPay.Infrastructure/Observability/TracedCardPayments.cs` | `IPaymentGateway` için decorator: `payment card_create`, `card_3ds`, `card_capture`, `card_void`, `card_refund` span'leri + aynı `clearpay.payments` metrikleri. Her `IAcquirerAdapter` (MockBankA/B, MockPspC) ayrıca sarılır: `acquirer authorize/capture/void/refund` **Client** span'i, tag'ler `acquirer.name`, `acquirer.response_code` (normalize), `acquirer.raw_code` (bankanın kendi kodu). PAN, BIN, tutar, OTP, HMAC span'de yok. |
 | RabbitMQ trace yayılımı | `src/ClearPay.Infrastructure/Observability/MessageTraceContext.cs` | `TraceContextPropagator` ile W3C `traceparent` header'ını mesaja yazar / okur. `StartPublish` (Producer span) ve `StartConsume` (Consumer span, parent = header). RabbitMQ.Client header'ları `byte[]` döndürdüğü için ikisi de desteklenir. **Henüz outbox publisher'a bağlanmadı** — RabbitMQ işi ayrı dalda; o kod bu yardımcıyı çağıracak. |
 
 Ayarlar (`appsettings*.json` → `Observability`):
@@ -112,6 +113,23 @@ POST api/topup                      Microsoft.AspNetCore
 
 Son satır mülakat cümlesinin kanıtı: ledger, idempotency, audit ve outbox **aynı** batch'te.
 
+Sahte 3D Secure kart ödemesinde (testlerle doğrulanan span ağacı, `CardPaymentTracingTests`):
+
+```
+POST api/payments                         payment card_create   outcome=Created, status=Pending3DS, provider=MockBankB
+POST api/payments/3ds/callback            payment card_3ds      outcome=Ok, status=Authorized
+                                          └─ acquirer authorize  (Client) acquirer.name=MockBankB, response_code=Approved
+POST api/payments/{id}/capture            payment card_capture
+                                          └─ acquirer capture
+```
+
+Kart ödemesinde `payment.outcome`, `PaymentResultKind`'tır (`Created`, `Ok`, `InvalidSignature`,
+`RefundLimitExceeded`, `ConcurrencyConflict` …). Callback'in kendisi başarılı olsa da ödeme `Failed` olduysa
+(yanlış OTP, banka reddi) outcome **`PaymentFailed`** yazılır; dashboard bunu başarı saymaz.
+Span'i **hata** (`status = error`) olarak işaretlenenler: sahte imza (`InvalidSignature`), eşzamanlılık çakışması
+(`ConcurrencyConflict`), banka `IssuerUnavailable` / okunamayan yanıt ve her exception. Kart reddi, iade limiti gibi
+iş kuralı cevapları hata değildir.
+
 TraceQL ile arama (Grafana Explore veya dashboard'daki tablo):
 
 ```
@@ -137,6 +155,8 @@ sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"
 | 5xx artışı | Dashboard "HTTP 5xx" + route paneli | Seq: `@Level = 'Error'` → exception; Tempo: `status = error` trace'i → hangi span (SQL? gateway?) hata verdi. |
 | Yavaşlık | Dashboard "Payment p95 latency" | TraceQL `duration > 500ms` → en uzun child span (genelde SQL). İlgili sorgu metni span tag'inde (`db.query.text` ya da eski semconv'da `db.statement`; parametreli). |
 | Gateway timeout oranı | `clearpay_payments_total{payment_outcome="TimedOut"}` | `BankGateway:SimulateTimeout` açık mı? Sahte gateway bunu kasıtlı üretir. |
+| Üye işyeri "3DS sonrası ödeme düştü" diyor | TraceQL `{ name = "payment card_3ds" && span.clearpay.payment_id = "…" }` | `payment.outcome=InvalidSignature` ise form yolda değişmiş (400, ödeme `Pending3DS`'te kalır). `PaymentFailed` ise `payment.failure_code`'a bak: `3DS_FAILED` → OTP; değilse child `acquirer authorize` span'inde `acquirer.raw_code`. |
+| Bir banka her şeyi reddediyor | `sum by (payment_kind, payment_outcome) (rate(clearpay_payments_total{payment_kind="card_3ds"}[5m]))` | TraceQL `{ name = "acquirer authorize" && span.acquirer.name = "MockBankB" && span.acquirer.response_code != "Approved" }` → raw code dağılımı. |
 | Mesaj kuyruğunda kaybolan iş | (RabbitMQ dalı birleşince) consumer span'i, producer ile **aynı TraceId**'de olmalı | `MessageTraceContext.StartPublish/StartConsume` çağrılmıyorsa trace kopar — kod incelemesinde kontrol. |
 
 Genel sıra: **header → Seq (ne) → Tempo (nerede) → Prometheus (ne sıklıkta) → kod**.
@@ -144,7 +164,7 @@ Genel sıra: **header → Seq (ne) → Tempo (nerede) → Prometheus (ne sıklı
 ## Kişisel veri kuralları
 
 - Loga kart numarası, CVV, şifre, token, e-posta, TC kimlik yazılmaz. `SensitiveDataEnricher` sadece **son savunma hattı**dır; maskeleme exception mesajlarına uygulanmaz.
-- Span tag'leri: `enduser.id` (opak Identity id), `payment.kind`, `payment.outcome`, `clearpay.correlation_id`, `clearpay.transfer_id`. Tutar ve alıcı span'de yok.
+- Span tag'leri: `enduser.id` (opak Identity id), `payment.kind`, `payment.outcome`, `clearpay.correlation_id`, `clearpay.transfer_id`; kart ödemesinde `clearpay.payment_id`, `clearpay.merchant_id`, `payment.provider`, `payment.status`, `payment.failure_code`, `acquirer.*`. Tutar, alıcı, PAN/BIN/son dört hane span'de yok.
 - Metrik etiketleri düşük kardinaliteli: sadece `payment_kind` ve `payment_outcome` (kullanıcı id'si metrikte yok).
 - SQL span'lerinde EF'nin parametreli sorgu metni var, parametre değerleri yok.
 

@@ -37,6 +37,8 @@ Ben **Halil Mert Develi**. Mülakatta savunduğum repo (Intertech, Softtech): ç
   <img src="docs/assets/clearpay-rules.png" alt="Bakiye türetilir; tekrar 409; tek SQL işlemi" width="920">
 </p>
 
+**Backend ayrıntıları:** [Ödeme akışı (3D Secure)](#ödeme-akışı-3d-secure) · [SQL performansı](#sql-performansı-ölçüldü) · [Tracing](#tracing-izlenebilirlik) · [Belgeler](#belgeler)
+
 ---
 
 ## Site
@@ -159,6 +161,22 @@ Web ledger hesabı yapmaz. Özet `IWalletReader` sorar. Adapter `SqlWalletReader
 
 ---
 
+## İlişkisel şema (SQL Server)
+
+**Demo — sahte banka gateway.** Lisanslı e-para değil. Identity ve defter aynı LocalDB (`ClearPay`, iki EF bağlamı). `Wallet.UserId` = `AspNetUsers.Id`, **FK yok**. `LinkedInstrument` yalnız **son 4 + şema + etiket**. PAN / CVV yok.
+
+Şema diyagramı: [`README.md` — Relational schema](README.md#relational-schema-sql-server). `IdempotencyRecord.Key` benzersiz (tekrar → **409**).
+
+---
+
+## Firebase kasa değil
+
+Flutter Firebase projesi `clearpay-c0485`. Konsolu kanıtlamak için **`app_meta/ping`** yazabilir (`ok`, `client`, `message`, `touchedAt`).
+
+Para oraya gitmez. Bakiye / havale / dekont JWT → ASP.NET → SQL Server. Diğer Firestore yolları deny. Windows masaüstü native eklentiyi atlar; ping’i **Android emülatörde** giriş satırında gör.
+
+---
+
 ## Ödeme akışı (3D Secure)
 
 **Sahte kartlı ödeme (mock acquiring), gerçek banka değil.** Üye işyeri ödeme başlatır → ClearPay gateway ödemeyi `Pending3DS` yapar → müşteri sahte banka ACS sayfasında OTP girer (`123456` başarılı) → ACS HMAC imzalı sonucu callback'e post eder → gateway imzayı doğrular, sahte bankadan provizyon alır, müşteriyi işyerinin dönüş adresine yönlendirir. Ardından capture, void (iptal), iade ve kısmi iade.
@@ -168,15 +186,7 @@ Web ledger hesabı yapmaz. Özet `IWalletReader` sorar. Adapter `SqlWalletReader
 - İade toplamı capture'ı aşamaz; eşzamanlı iadeye karşı önce rezervasyon + `Version` concurrency token.
 - Her durum değişikliği aynı `SaveChanges` içinde `OutboxMessage`'a `clearpay.payment.*` olayı yazar.
 
-Sequence diyagramı: [`README.md`](README.md#ödeme-akışı-3d-secure). Ayrıntı, test kartları, tetikleyici tutarlar ve sınırlar: [`docs/PAYMENTS.md`](docs/PAYMENTS.md). Demo: [`/demo-magaza`](http://localhost:5153/demo-magaza).
-
----
-
-## İlişkisel şema (SQL Server)
-
-**Demo — sahte banka gateway.** Lisanslı e-para değil. Identity ve defter aynı LocalDB (`ClearPay`, iki EF bağlamı). `Wallet.UserId` = `AspNetUsers.Id`, **FK yok**. `LinkedInstrument` yalnız **son 4 + şema + etiket**. PAN / CVV yok.
-
-Şema diyagramı: [`README.md` — Relational schema](README.md#relational-schema-sql-server). `IdempotencyRecord.Key` benzersiz (tekrar → **409**).
+Sequence diyagramı: [`README.md`](README.md#card-payments-mock-3d-secure). Ayrıntı, test kartları, tetikleyici tutarlar ve sınırlar: [`docs/PAYMENTS.md`](docs/PAYMENTS.md). Demo: [`/demo-magaza`](http://localhost:5153/demo-magaza).
 
 ---
 
@@ -186,11 +196,9 @@ Sequence diyagramı: [`README.md`](README.md#ödeme-akışı-3d-secure). Ayrınt
 
 ---
 
-## Firebase kasa değil
+## Tracing (izlenebilirlik)
 
-Flutter Firebase projesi `clearpay-c0485`. Konsolu kanıtlamak için **`app_meta/ping`** yazabilir (`ok`, `client`, `message`, `touchedAt`).
-
-Para oraya gitmez. Bakiye / havale / dekont JWT → ASP.NET → SQL Server. Diğer Firestore yolları deny. Windows masaüstü native eklentiyi atlar; ping’i **Android emülatörde** giriş satırında gör.
+Her yanıtta `X-Trace-Id` ve `X-Correlation-Id` var. Seq'te ya da Grafana/Tempo'da aratınca istek log satırı, `payment topup` / `payment transfer` span'i ve altındaki SQL span'leri gelir. Sahte 3D Secure kart ödemesi: `payment card_create` → `payment card_3ds` → child `acquirer authorize` (banka adı, normalize ve ham yanıt kodu) → `payment card_capture` / `card_refund`. Sahte imza ve `IssuerUnavailable` span'i hata yapar; span'de PAN, BIN, tutar yok. Yığın (Seq, OTel Collector, Tempo, Prometheus, Grafana) yalnızca **lokal Docker**: `docker compose -f docker-compose.observability.yml -p clearpay-obs up -d`. Runbook: [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md).
 
 ---
 
@@ -222,9 +230,11 @@ src/ClearPay.Application      IWalletReader, ITransferExecutor, IBankGateway
 src/ClearPay.Infrastructure   SqlWalletReader, EF SQL Server, Identity
 src/ClearPay.Web              Razor + yerelleştirme + MapControllers
 mobile/clearpay               Flutter JWT istemci (.slnx’de yok)
-tests/ClearPay.Tests          LedgerPair, 409, mimari, dil
+tests/ClearPay.Tests          LedgerPair, 409, mimari, dil, kart ödemesi, stored procedure, tracing
+scripts/perf/                 docs/SQL-PERF.md için seed + ölçüm script'leri (geçici SQL Server)
 infra/                        Canlı sitede Bicep unused (T-104); Azure’u sen tıklarsın
 docker-compose.yml            SQL Server 2022 — web uygulaması değil
+docker-compose.observability.yml  Seq + OTel Collector + Tempo + Prometheus + Grafana (lokal)
 ClearPay.slnx
 ```
 
@@ -236,6 +246,7 @@ ClearPay.slnx
 |------|----------|
 | TASK-01…15 — ekranlar, defter, 409, gateway, outbox, Redis/Rabbit, test, Swagger | **TASK-16** — App Service `ClearPay` duruyor; `/api/health` hâlâ **404**. GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE` + Portal startup `dotnet ClearPay.Web.dll`. `.\infra\deploy.ps1` **çalıştırma** (canlı siteyi ezer). |
 | Flutter JWT, Kartlarım (web + Flutter), Firestore ping (yalnız meta) | Mağaza / çalışan genel HTTPS hâlâ TASK-16 |
+| Sahte 3D Secure kartlı ödeme (3 sahte banka, iade / kısmi iade / iptal), ledger stored procedure'leri + ölçülmüş planlar, Serilog + OpenTelemetry tracing | RabbitMQ retry + dead-letter queue + idempotent consumer; gece mutabakat job'ı (Hangfire); bildirim ve mutabakatı ayrı servise çıkarmak |
 
 CI `main` üzerinde `tests/ClearPay.Tests` çalıştırır.
 
@@ -245,10 +256,12 @@ CI `main` üzerinde `tests/ClearPay.Tests` çalıştırır.
 
 - [`docs/SPEC.md`](docs/SPEC.md) — ekran ve para kuralları
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — soğan katmanları
+- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — sahte kartlı ödeme: 3D Secure, banka adaptörleri, iade
+- [`docs/SQL-PERF.md`](docs/SQL-PERF.md) — stored procedure, index, önce / sonra ölçüm ve execution plan'lar
+- [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) — TraceId ile ödemeyi bulmak; hata analizi runbook'u
 - [`docs/CANLI.md`](docs/CANLI.md) — Azure tık listesi (secret git’te yok)
 - [`docs/YOL.md`](docs/YOL.md) — kariyer yolu; canlı URL TASK-16
 - [`docs/FARK.md`](docs/FARK.md) — mutabakat önce; Papara rakibi değil
-- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — sahte kartlı ödeme: 3D Secure, banka adaptörleri, iade
 - [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter istemci
 
 ## Lisans
