@@ -1,0 +1,78 @@
+# Observability stack for local "live error analysis" (docs/OBSERVABILITY.md).
+# Separate from docker-compose.yml so SQL/Redis/Rabbit and this stack start independently.
+#
+#   docker compose -f docker-compose.observability.yml -p clearpay-obs up -d
+#   dotnet run --project src/ClearPay.Web --launch-profile http     # Development points at :5341 and :4317
+#   docker compose -f docker-compose.observability.yml -p clearpay-obs down -v
+#
+# Flow: app --Serilog--> Seq (logs)
+#       app --OTLP gRPC--> OpenTelemetry Collector --> Tempo (traces) + Seq (traces) + Prometheus (metrics)
+#       Grafana reads Tempo + Prometheus (provisioned, anonymous admin: local dev only).
+#
+# Host ports (3200 is often taken, so Tempo's API is published on 3210):
+#   5341  Seq ingestion      8341  Seq UI/API
+#   4317  OTLP gRPC          4318  OTLP HTTP
+#   3000  Grafana            3210  Tempo HTTP API     9090  Prometheus
+services:
+  seq:
+    image: datalust/seq:2024.3
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"   # local dev only
+    ports:
+      - "5341:5341"
+      - "8341:80"
+    volumes:
+      - seq-data:/data
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.114.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./infra/observability/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    depends_on:
+      - tempo
+      - seq
+
+  tempo:
+    image: grafana/tempo:2.6.1
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./infra/observability/tempo.yaml:/etc/tempo.yaml:ro
+      - tempo-data:/var/tempo
+    ports:
+      - "3210:3200"
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-lifecycle
+    volumes:
+      - ./infra/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - otel-collector
+
+  grafana:
+    image: grafana/grafana:11.3.1
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"     # local dev only
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - ./infra/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - tempo
+      - prometheus
+
+volumes:
+  seq-data:
+  tempo-data:
