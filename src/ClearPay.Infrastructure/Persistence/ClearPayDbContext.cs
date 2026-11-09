@@ -43,6 +43,7 @@ public sealed class ClearPayDbContext : DbContext
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         BumpPaymentVersions();
+        StampOutboxTraceContext();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
@@ -51,7 +52,24 @@ public sealed class ClearPayDbContext : DbContext
         CancellationToken cancellationToken = default)
     {
         BumpPaymentVersions();
+        StampOutboxTraceContext();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    /// <summary>
+    /// Every outbox insert remembers the current W3C trace (the HTTP request span). One place instead of
+    /// four writers (transfer, top-up, withdraw, card payments), so no event can forget it.
+    /// </summary>
+    private void StampOutboxTraceContext()
+    {
+        var current = System.Diagnostics.Activity.Current;
+        if (current is null || current.IdFormat != System.Diagnostics.ActivityIdFormat.W3C)
+            return;
+        foreach (var entry in ChangeTracker.Entries<OutboxMessage>())
+        {
+            if (entry.State == EntityState.Added && entry.Entity.TraceParent is null)
+                entry.Entity.TraceParent = current.Id;
+        }
     }
 
     /// <summary>

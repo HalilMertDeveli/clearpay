@@ -6,6 +6,7 @@ using ClearPay.Application.Banking;
 using ClearPay.Application.Funding;
 using ClearPay.Application.Ports;
 using ClearPay.Application.Transfers;
+using ClearPay.Messaging;
 using ClearPay.Infrastructure.Observability;
 using ClearPay.Web.Observability;
 using FluentAssertions;

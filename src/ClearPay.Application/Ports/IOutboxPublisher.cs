@@ -1,10 +1,22 @@
 namespace ClearPay.Application.Ports;
 
-/// <summary>TASK-11: deliver one outbox payload. TASK-12 may bind Rabbit.</summary>
+/// <summary>
+/// Delivers one outbox row to the broker. Must throw when delivery is not confirmed, so the
+/// row stays Pending and the next worker run tries again (at-least-once; consumers dedupe by <see cref="OutboxEnvelope.MessageId"/>).
+/// </summary>
 public interface IOutboxPublisher
 {
-    Task PublishAsync(string type, string payload, Guid correlationId, CancellationToken cancellationToken = default);
+    Task PublishAsync(OutboxEnvelope message, CancellationToken cancellationToken = default);
 }
+
+/// <summary>An outbox row on its way out. <see cref="MessageId"/> = outbox row id, stable across re-sends.</summary>
+public sealed record OutboxEnvelope(
+    Guid MessageId,
+    string Type,
+    string Payload,
+    Guid CorrelationId,
+    DateTimeOffset OccurredAt,
+    string? TraceParent = null);
 
 public interface IOutboxProcessor
 {

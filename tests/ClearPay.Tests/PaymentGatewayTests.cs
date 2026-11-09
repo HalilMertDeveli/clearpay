@@ -116,6 +116,21 @@ public sealed class PaymentGatewayTests : IDisposable
             "clearpay.payment.refunded");
         (await _db.OutboxMessages.AllAsync(m => m.Status == OutboxStatus.Pending && m.CorrelationId == created.PaymentId))
             .Should().BeTrue();
+
+        // The payloads are the shared contract the notification / reconciliation services deserialize.
+        var rows = (await _db.OutboxMessages.AsNoTracking().ToListAsync()).OrderBy(m => m.OccurredAt).ToList();
+        var capturedEvent = ClearPay.Contracts.ContractJson.Deserialize<ClearPay.Contracts.PaymentEventV1>(
+            rows.Single(m => m.Type == ClearPay.Contracts.EventTypes.PaymentCaptured).Payload);
+        capturedEvent.PaymentId.Should().Be(created.PaymentId);
+        capturedEvent.CapturedAmount.Should().Be(100m);
+        capturedEvent.Provider.Should().Be(MockBankAAdapter.ProviderName);
+        capturedEvent.ProviderReference.Should().StartWith("A-AUTH-");
+        var refundEvents = rows.Where(m => m.Type == ClearPay.Contracts.EventTypes.PaymentRefunded)
+            .Select(m => ClearPay.Contracts.ContractJson.Deserialize<ClearPay.Contracts.PaymentEventV1>(m.Payload))
+            .ToList();
+        refundEvents.Select(e => e.Extra!.RefundAmount).Should().Equal(30.25m, 69.75m);
+        refundEvents.Should().OnlyContain(e => e.Extra!.RefundId != null && e.Extra.Code == "Approved");
+        rows.Should().OnlyContain(m => !m.Payload.Contains("411111"), "no BIN or PAN in events");
     }
 
     [Fact]

@@ -17,6 +17,10 @@ internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outb
         builder.Property(m => m.CorrelationId).IsRequired();
         builder.Property(m => m.OccurredAt).IsRequired();
         builder.Property(m => m.Status).IsRequired();
+        builder.Property(m => m.Attempts).IsRequired().HasDefaultValue(0);
+        builder.Property(m => m.LastError).HasMaxLength(1000);
+        // W3C traceparent is 55 chars ("00-<32 hex>-<16 hex>-01").
+        builder.Property(m => m.TraceParent).HasMaxLength(64);
         builder.HasIndex(m => new { m.Status, m.OccurredAt })
             .HasDatabaseName(LedgerSchema.OutboxStatusOccurred);
     }

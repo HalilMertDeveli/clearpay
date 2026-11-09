@@ -23,4 +23,16 @@ public sealed class OutboxMessage
 
     /// <summary>Null = unpublished. Worker sets this after a successful publish.</summary>
     public DateTimeOffset? ProcessedAt { get; set; }
+
+    /// <summary>Failed publish attempts. The row stays Pending (broker down ≠ lost event) until the limit, then Failed.</summary>
+    public int Attempts { get; set; }
+
+    /// <summary>Last publish error, for the admin queue view and logs. Null after a clean publish.</summary>
+    public string? LastError { get; set; }
+
+    /// <summary>
+    /// W3C <c>traceparent</c> of the request that wrote the row (set by the DbContext on insert).
+    /// The worker publishes later on another thread; this keeps HTTP → outbox → RabbitMQ → consumer in one trace.
+    /// </summary>
+    public string? TraceParent { get; set; }
 }

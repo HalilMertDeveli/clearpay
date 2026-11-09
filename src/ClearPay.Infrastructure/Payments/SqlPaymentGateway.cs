@@ -1,4 +1,4 @@
-using System.Text.Json;
+using ClearPay.Contracts;
 using ClearPay.Application.Payments;
 using ClearPay.Application.Ports;
 using ClearPay.Domain.Ledger;
@@ -136,7 +136,7 @@ public sealed class SqlPaymentGateway : IPaymentGateway
             else
             {
                 payment.Fail(result.Code.ToString(), result.Message, now);
-                AddEvent(payment, "failed", now, new { rawCode = result.RawCode });
+                AddEvent(payment, "failed", now, new PaymentEventExtra(RawCode: result.RawCode));
             }
 
             _logger.LogInformation(
@@ -312,7 +312,7 @@ public sealed class SqlPaymentGateway : IPaymentGateway
                 payment,
                 result.IsApproved ? "refunded" : "refund_failed",
                 now,
-                new { refundId, refundAmount = refund.Amount, code = result.Code.ToString() });
+                new PaymentEventExtra(RefundId: refundId, RefundAmount: refund.Amount, Code: result.Code.ToString()));
 
             try
             {
@@ -328,26 +328,27 @@ public sealed class SqlPaymentGateway : IPaymentGateway
         }
     }
 
-    private void AddEvent(Payment payment, string name, DateTimeOffset now, object? extra = null)
+    private void AddEvent(Payment payment, string name, DateTimeOffset now, PaymentEventExtra? extra = null)
     {
         _db.OutboxMessages.Add(new OutboxMessage
         {
             Id = Guid.NewGuid(),
             Type = EventPrefix + name,
-            Payload = JsonSerializer.Serialize(new
-            {
-                paymentId = payment.Id,
-                merchantId = payment.MerchantId,
-                merchantOrderId = payment.MerchantOrderId,
-                status = payment.Status.ToString(),
-                amount = payment.Amount,
-                currency = payment.Currency,
-                provider = payment.Provider,
-                capturedAmount = payment.CapturedAmount,
-                refundedAmount = payment.RefundedAmount,
-                failureCode = payment.FailureCode,
-                extra
-            }),
+            // Shared contract (ClearPay.Contracts): the notification and reconciliation services read this type.
+            Payload = ContractJson.Serialize(new PaymentEventV1(
+                payment.Id,
+                payment.MerchantId,
+                payment.MerchantOrderId,
+                payment.Status.ToString(),
+                payment.Amount,
+                payment.Currency,
+                payment.Provider,
+                payment.CapturedAmount,
+                payment.RefundedAmount,
+                payment.FailureCode,
+                payment.ProviderReference,
+                now,
+                extra)),
             CorrelationId = payment.Id,
             OccurredAt = now,
             Status = OutboxStatus.Pending

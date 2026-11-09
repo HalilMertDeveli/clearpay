@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
+using ClearPay.Messaging;
 using StackExchange.Redis;
 
 namespace ClearPay.Infrastructure.DependencyInjection;
@@ -195,21 +195,19 @@ public static class ServiceCollectionExtensions
 
     private static void AddRabbit(IServiceCollection services, IConfiguration configuration)
     {
+        // No broker configured (tests, laptop demo): log the event and mark the row Sent — there are no consumers.
+        // Broker configured: always the Rabbit publisher, even if the broker is down right now. It throws on a
+        // failed confirm and the outbox row stays Pending until RabbitMQ is back (no silent fallback).
+        var amqp = configuration.GetConnectionString("RabbitMq");
         services.AddSingleton<LoggingOutboxPublisher>();
-        var connection = RabbitConnectionFactory.TryCreate(configuration.GetConnectionString("RabbitMq"));
-        if (connection is null)
+        services.AddClearPayRabbit(amqp, "clearpay-web");
+        services.AddSingleton(sp => new RabbitRuntimeStatus(sp.GetRequiredService<RabbitConnectionProvider>()));
+        if (string.IsNullOrWhiteSpace(amqp))
         {
-            var empty = configuration.GetConnectionString("RabbitMq");
-            services.AddSingleton(new RabbitRuntimeStatus(string.IsNullOrWhiteSpace(empty) ? "off" : "down"));
             services.AddScoped<IOutboxPublisher>(sp => sp.GetRequiredService<LoggingOutboxPublisher>());
             return;
         }
 
-        services.AddSingleton(connection);
-        services.AddSingleton(new RabbitRuntimeStatus("up"));
-        services.AddSingleton<IOutboxPublisher>(sp => new RabbitOutboxPublisher(
-            sp.GetRequiredService<IConnection>(),
-            sp.GetRequiredService<ILogger<RabbitOutboxPublisher>>(),
-            sp.GetRequiredService<LoggingOutboxPublisher>()));
+        services.AddSingleton<IOutboxPublisher, RabbitOutboxPublisher>();
     }
 }

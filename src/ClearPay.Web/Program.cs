@@ -44,6 +44,9 @@ builder.Services.AddScoped<IWalletLiveNotifier, SignalRWalletLiveNotifier>();
 
 var app = builder.Build();
 
+// Connect to RabbitMQ once now so /api/health is honest from the first request; a down broker is not fatal.
+app.Services.GetRequiredService<ClearPay.Messaging.RabbitConnectionProvider>().TryWarmUp();
+
 app.UseClearPayForwardedHeaders();
 app.UseClearPayObservability();
 await IdentitySeeder.EnsureCreatedAndRolesAsync(app.Services);

@@ -11,11 +11,13 @@ namespace ClearPay.Infrastructure.Observability;
 public static class ClearPayTelemetry
 {
     public const string PaymentsSourceName = "ClearPay.Payments";
-    public const string MessagingSourceName = "ClearPay.Messaging";
+    public const string MessagingSourceName = global::ClearPay.Messaging.MessagingTelemetry.SourceName;
     public const string MeterName = "ClearPay.Payments";
 
     public static readonly ActivitySource Payments = new(PaymentsSourceName);
-    public static readonly ActivitySource Messaging = new(MessagingSourceName);
+
+    /// <summary>Same instance the shared messaging library (publisher / consumers) uses.</summary>
+    public static readonly ActivitySource Messaging = global::ClearPay.Messaging.MessagingTelemetry.Source;
 
     private static readonly Meter Meter = new(MeterName);
 
