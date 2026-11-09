@@ -1,5 +1,7 @@
 using System.Security.Claims;
+using ClearPay.Application.Payments;
 using ClearPay.Application.Ports;
+using ClearPay.Web.Payments;
 using ClearPay.Infrastructure.Observability;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
@@ -72,6 +74,8 @@ public static class ObservabilityExtensions
 
         builder.Services.Decorate<ITransferExecutor>(inner => new TracedTransferExecutor(inner));
         builder.Services.Decorate<IFundingExecutor>(inner => new TracedFundingExecutor(inner));
+        builder.Services.Decorate<IPaymentGateway>(inner => new TracedPaymentGateway(inner));
+        builder.Services.DecorateAll<IAcquirerAdapter>(inner => new TracedAcquirerAdapter(inner));
         return builder;
     }
 
@@ -96,7 +100,9 @@ public static class ObservabilityExtensions
                 var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (!string.IsNullOrEmpty(userId))
                     diagnostic.Set("UserId", userId);
-                var merchantId = ctx.User.FindFirstValue("merchant_id");
+                // Card merchants authenticate with X-Merchant-Key, not a claim: the filter leaves the id in Items.
+                var merchantId = ctx.User.FindFirstValue("merchant_id")
+                                 ?? ctx.Items[MerchantKeyFilter.MerchantItemKey] as string;
                 if (!string.IsNullOrEmpty(merchantId))
                     diagnostic.Set("MerchantId", merchantId);
                 diagnostic.Set("Endpoint", ctx.GetEndpoint()?.DisplayName ?? "(none)");
@@ -169,6 +175,31 @@ public static class ObservabilityExtensions
             typeof(TService),
             sp => decorate((TService)CreateOriginal(sp, original)),
             original.Lifetime);
+        return services;
+    }
+
+    /// <summary>Wraps every registration of <typeparamref name="TService"/> (e.g. all three mock acquirers).</summary>
+    internal static IServiceCollection DecorateAll<TService>(
+        this IServiceCollection services,
+        Func<TService, TService> decorate)
+        where TService : class
+    {
+        var found = false;
+        for (var i = 0; i < services.Count; i++)
+        {
+            var original = services[i];
+            if (original.ServiceType != typeof(TService))
+                continue;
+            found = true;
+            services[i] = ServiceDescriptor.Describe(
+                typeof(TService),
+                sp => decorate((TService)CreateOriginal(sp, original)),
+                original.Lifetime);
+        }
+
+        if (!found)
+            throw new InvalidOperationException(
+                $"{typeof(TService).Name} is not registered; call AddClearPay before AddClearPayObservability.");
         return services;
     }
 

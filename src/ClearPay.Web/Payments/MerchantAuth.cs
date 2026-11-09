@@ -40,7 +40,7 @@ public sealed class MerchantKeyFilter : IAuthorizationFilter
 {
     public const string HeaderName = "X-Merchant-Key";
 
-    private const string ItemKey = "clearpay.merchantId";
+    public const string MerchantItemKey = "clearpay.merchantId";
 
     private readonly PaymentMerchantOptions _options;
 
@@ -50,7 +50,7 @@ public sealed class MerchantKeyFilter : IAuthorizationFilter
     }
 
     public static string MerchantId(HttpContext context) =>
-        context.Items[ItemKey] as string ?? throw new InvalidOperationException("Merchant filter did not run.");
+        context.Items[MerchantItemKey] as string ?? throw new InvalidOperationException("Merchant filter did not run.");
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
@@ -73,6 +73,6 @@ public sealed class MerchantKeyFilter : IAuthorizationFilter
             return;
         }
 
-        context.HttpContext.Items[ItemKey] = merchant.Id;
+        context.HttpContext.Items[MerchantItemKey] = merchant.Id;
     }
 }

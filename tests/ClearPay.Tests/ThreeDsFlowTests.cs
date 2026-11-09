@@ -149,7 +149,7 @@ public sealed class ThreeDsFlowTests : IClassFixture<ClearPayWebFactory>
     private HttpClient Browser() =>
         _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, HandleCookies = true });
 
-    private static async Task<(Guid PaymentId, string RedirectUrl)> CreatePaymentAsync(
+    internal static async Task<(Guid PaymentId, string RedirectUrl)> CreatePaymentAsync(
         HttpClient client,
         decimal amount,
         string card)
@@ -169,7 +169,7 @@ public sealed class ThreeDsFlowTests : IClassFixture<ClearPayWebFactory>
     }
 
     /// <summary>GET the ACS page, post the OTP, and read the hidden fields the page would auto-submit.</summary>
-    private static async Task<Dictionary<string, string>> SubmitOtpAsync(HttpClient client, string acsUrl, string otp)
+    internal static async Task<Dictionary<string, string>> SubmitOtpAsync(HttpClient client, string acsUrl, string otp)
     {
         var page = await client.GetStringAsync(acsUrl);
         page.Should().Contain("123456", "the demo OTP hint is shown");
@@ -202,7 +202,7 @@ public sealed class ThreeDsFlowTests : IClassFixture<ClearPayWebFactory>
         return doc.RootElement.Clone();
     }
 
-    private static Task<HttpResponseMessage> Merchant(HttpClient client, HttpMethod method, string url, object? body = null)
+    internal static Task<HttpResponseMessage> Merchant(HttpClient client, HttpMethod method, string url, object? body = null)
     {
         var request = new HttpRequestMessage(method, url);
         request.Headers.Add("X-Merchant-Key", MerchantKey);
