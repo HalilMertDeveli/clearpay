@@ -114,7 +114,7 @@ Kabul **ürün dilinde**. Teknik 409 / ledger: SPEC + Payments. Task bitişi: PL
 
 **Kabul**
 - **Geri** → hareketler. Yeni menü maddesi yok.
-- Correlation id düz metin (kopyalanabilir). PDF/e-posta şart değil.
+- Correlation id düz metin (kopyalanabilir). PDF aynı fişin belgesi (T-079, `/dekont/{id}?handler=Pdf`); e-posta yok.
 
 ### US-08 — Admin (ekran 8, TASK-10)
 

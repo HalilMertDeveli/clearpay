@@ -1,5 +1,5 @@
-/* ClearPay brand layer — T-040 + T-053 (mobil bankacılık) + T-055 (demo kart yüzü) + T-057 (onay / iskelet).
-   Load after site.css. Yumuşak gölge serbest; gradient bakiye + .demo-card. */
+/* ClearPay brand layer — T-040 + T-053 (mobil) + T-055 (demo kart) + T-057 (onay) + T-072 (internet-şube kromu).
+   Load after site.css. Yumuşak gölge serbest; gradient bakiye + .demo-card. YK/Worldcard asset yok. */
 
 :root {
   --brand-navy: #1b2a4a;
@@ -27,7 +27,8 @@
 /* Kart yükseltmesi — 1px çizgi durur, gölge onu yumuşatır */
 .stat-card,
 .panel,
-.panel-inline {
+.panel-inline,
+.ops-rail {
   box-shadow: var(--elev-1);
 }
 
@@ -73,6 +74,11 @@ form[aria-busy="true"] .field-input {
   letter-spacing: 0;
   font-weight: 700;
   font-size: 0.85rem;
+}
+
+.pill-admin {
+  border-color: var(--brand-warm);
+  color: #fff;
 }
 
 .page-kicker {
@@ -350,6 +356,13 @@ button[name="provider"][value="Apple"]:hover {
   transform: translate(-50%, calc(-50% - 5px));
 }
 
+.action-ico--cards::before {
+  width: 0.95rem;
+  height: 0.62rem;
+  border: 2px solid var(--navy, #1b2a4a);
+  border-radius: 3px;
+}
+
 .nav-ico--overview::before {
   width: 0.55rem;
   height: 0.55rem;
@@ -392,6 +405,13 @@ button[name="provider"][value="Apple"]:hover {
   border-radius: 2px 2px 45% 45%;
 }
 
+.nav-ico--cards::before {
+  width: 0.62rem;
+  height: 0.4rem;
+  border: 1.5px solid #fff;
+  border-radius: 2px;
+}
+
 /* Alt sekme çubuğu beyaz zeminde: glifler metin rengini alır */
 .tabbar .nav-ico {
   width: 1.5rem;
@@ -400,7 +420,8 @@ button[name="provider"][value="Apple"]:hover {
 }
 
 .tabbar .nav-ico--overview::before,
-.tabbar .nav-ico--admin::before {
+.tabbar .nav-ico--admin::before,
+.tabbar .nav-ico--cards::before {
   border-color: currentColor;
 }
 
@@ -415,6 +436,33 @@ button[name="provider"][value="Apple"]:hover {
 }
 
 .tabbar .nav-ico--activity::before {
+  background: currentColor;
+  box-shadow: 0 3px 0 currentColor, 0 6px 0 currentColor;
+}
+
+/* T-072: sol menü kâğıt zeminde; glifler navy */
+.sidebar .nav-ico {
+  background: rgba(27, 42, 74, 0.08);
+  color: var(--navy, #1b2a4a);
+}
+
+.sidebar .nav-ico--overview::before,
+.sidebar .nav-ico--admin::before,
+.sidebar .nav-ico--cards::before {
+  border-color: currentColor;
+}
+
+.sidebar .nav-ico--send::before {
+  border-top-color: currentColor;
+  border-right-color: currentColor;
+}
+
+.sidebar .nav-ico--topup::before,
+.sidebar .nav-ico--topup::after {
+  background: currentColor;
+}
+
+.sidebar .nav-ico--activity::before {
   background: currentColor;
   box-shadow: 0 3px 0 currentColor, 0 6px 0 currentColor;
 }
@@ -490,6 +538,285 @@ button[name="provider"][value="Apple"]:hover {
   background: var(--navy, #1b2a4a);
   border-color: var(--navy, #1b2a4a);
   color: #fff;
+}
+
+.cards-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.live-card-stage {
+  perspective: 920px;
+  margin: 0 0 1.15rem;
+}
+
+.live-card {
+  position: relative;
+  width: 100%;
+  max-width: 22.5rem;
+  height: 13.4rem;
+  transform-style: preserve-3d;
+  transition: transform 220ms ease;
+}
+
+.live-card-stage.is-flipped .live-card {
+  transform: rotateY(180deg);
+}
+
+.live-card-face {
+  position: absolute;
+  inset: 0;
+  padding: 1.15rem 1.2rem 1rem;
+  border-radius: 18px;
+  background: linear-gradient(160deg, #24365c 0%, #1b2a4a 62%);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(27, 42, 74, 0.12);
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.live-card-back {
+  transform: rotateY(180deg);
+  padding-top: 0;
+}
+
+.live-card-brand {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.live-card-scheme {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.scheme-mark {
+  display: none;
+  position: absolute;
+  top: 0.95rem;
+  right: 1.05rem;
+  width: 3.4rem;
+  height: 2.1rem;
+}
+
+.scheme-orb {
+  position: absolute;
+  top: 0.15rem;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+}
+
+.scheme-orb--a {
+  left: 0;
+  background: #eb001b;
+}
+
+.scheme-orb--b {
+  left: 1.15rem;
+  background: #f79e1b;
+  mix-blend-mode: screen;
+}
+
+.live-card[data-scheme="visa"] .live-card-face,
+.demo-card[data-scheme="visa"] {
+  background: linear-gradient(155deg, #1a237e 0%, #0d47a1 48%, #1565c0 100%);
+}
+
+.live-card[data-scheme="visa"] .live-card-scheme,
+.demo-card[data-scheme="visa"] .demo-card-badge {
+  font-style: italic;
+  letter-spacing: 0.22em;
+  color: #fff;
+  opacity: 1;
+}
+
+.live-card[data-scheme="mastercard"] .live-card-face,
+.demo-card[data-scheme="mastercard"] {
+  background: linear-gradient(155deg, #3a3a3a 0%, #1a1a1a 70%);
+}
+
+.live-card[data-scheme="mastercard"] .live-card-scheme,
+.demo-card[data-scheme="mastercard"] .demo-card-badge {
+  opacity: 0;
+}
+
+.live-card[data-scheme="mastercard"] .scheme-mark,
+.demo-card[data-scheme="mastercard"] .scheme-mark,
+.bound-card[data-scheme="mastercard"] .bound-card-mark {
+  display: block;
+}
+
+.live-card[data-scheme="troy"] .live-card-face,
+.demo-card[data-scheme="troy"] {
+  background: linear-gradient(155deg, #0f766e 0%, #134e4a 100%);
+}
+
+.live-card[data-scheme="visa"] .live-card-scheme { color: #fff; }
+.live-card[data-scheme="troy"] .live-card-scheme { color: #99f6e4; }
+
+.live-card-pan {
+  margin: 2.4rem 0 0.85rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+}
+
+.live-card-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.live-card-name,
+.live-card-exp {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.live-card-exp span {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+.live-card-stripe {
+  height: 2.15rem;
+  margin: 1.35rem 0 1.1rem;
+  background: #111827;
+}
+
+.live-card-cvv-label {
+  margin: 0 1.2rem 0.25rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.live-card-cvv {
+  margin: 0 1.2rem;
+  display: inline-block;
+  min-width: 3.2rem;
+  padding: 0.2rem 0.45rem;
+  background: #fff;
+  color: #1b2a4a;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+}
+
+.live-card-back-note {
+  margin: 0.85rem 1.2rem 0;
+  font-size: 0.72rem;
+  opacity: 0.8;
+}
+
+.bound-card-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.bound-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "scheme pan" "name name" "cta cta";
+  gap: 0.2rem 0.65rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line, #d8dee8);
+  border-radius: 14px;
+}
+
+.bound-card-scheme {
+  grid-area: scheme;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal, #0f766e);
+}
+
+.bound-card-mark {
+  display: none;
+  grid-area: scheme;
+  position: relative;
+  width: 2.4rem;
+  height: 1.4rem;
+  justify-self: start;
+}
+
+.bound-card[data-scheme="mastercard"] .bound-card-scheme {
+  opacity: 0;
+}
+
+.bound-card[data-scheme="visa"] .bound-card-scheme {
+  font-style: italic;
+  letter-spacing: 0.14em;
+  color: #0d47a1;
+}
+
+.bound-card-mark .scheme-orb {
+  width: 1.25rem;
+  height: 1.25rem;
+  top: 0.05rem;
+}
+
+.bound-card-mark .scheme-orb--b {
+  left: 0.75rem;
+}
+
+.bound-card-pan {
+  grid-area: pan;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bound-card-name {
+  grid-area: name;
+  color: var(--muted, #5b6b82);
+  font-size: 0.88rem;
+}
+
+.bound-card .btn {
+  grid-area: cta;
+  margin-top: 0.45rem;
+  justify-self: start;
+}
+
+@media (max-width: 900px) {
+  .cards-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-card {
+    transition: none;
+  }
+
+  .live-card-stage.is-flipped .live-card {
+    transform: none;
+  }
 }
 
 @media (max-width: 800px) {

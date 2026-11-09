@@ -63,7 +63,8 @@
         }
     </dl>
     <div class="form-actions">
-        <button type="button" class="btn" data-print>@L["PrintReceipt"]</button>
+        <a class="btn" asp-page="/Dekont" asp-route-correlationId="@r.CorrelationId" asp-page-handler="Pdf">@L["DownloadPdf"]</a>
+        <button type="button" class="btn btn-ghost" data-print>@L["PrintReceipt"]</button>
         <a class="btn btn-ghost" asp-page="/Hareketler">@L["BackToWallet"]</a>
     </div>
 </section>

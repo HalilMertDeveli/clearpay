@@ -21,15 +21,31 @@
   <data name="AvailableBalance" xml:space="preserve"><value>Kullanılabilir bakiye</value></data>
   <data name="BackToWallet" xml:space="preserve"><value>Cüzdana dön</value></data>
   <data name="Cancel" xml:space="preserve"><value>İptal</value></data>
+  <data name="WebChannel" xml:space="preserve"><value>İnternet</value></data>
+  <data name="Welcome" xml:space="preserve"><value>Hoş geldiniz</value></data>
+  <data name="QuickOps" xml:space="preserve"><value>Hızlı işlemler</value></data>
   <data name="AddCard" xml:space="preserve"><value>Kart ekle</value></data>
-  <data name="CardAddFail" xml:space="preserve"><value>Kart eklenemedi. Yalnızca 4 hane yazın; tam kart numarası yok. En fazla 5 kart.</value></data>
-  <data name="CardAddOk" xml:space="preserve"><value>Demo kart kaydedildi. Yükle/çek bu karta bağlanır.</value></data>
-  <data name="CardHint" xml:space="preserve"><value>Sahte kayıtlı kart: son 4 hane. Gerçek Visa/Mastercard yok.</value></data>
+  <data name="CardAddFail" xml:space="preserve"><value>Kart eklenemedi. Demo numara (4111…) veya son 4 hane. CVV kaydedilmez. En fazla 5 kart.</value></data>
+  <data name="CardAddOk" xml:space="preserve"><value>Demo kart bağlandı. Yükle bu kartın son 4 hanesini kullanır.</value></data>
+  <data name="CardHint" xml:space="preserve"><value>Bağlı karttan cüzdana yükleyin. Yeni kart: Kartlarım.</value></data>
   <data name="CardLabel" xml:space="preserve"><value>Kart adı</value></data>
   <data name="CardLast4" xml:space="preserve"><value>Son 4 hane</value></data>
   <data name="LinkedCard" xml:space="preserve"><value>Kayıtlı kart</value></data>
-  <data name="NoLinkedCard" xml:space="preserve"><value>Henüz kart yok. Son 4 haneyi yazıp ekleyin.</value></data>
+  <data name="NoLinkedCard" xml:space="preserve"><value>Henüz kart yok.</value></data>
   <data name="SelectCard" xml:space="preserve"><value>Kart seç</value></data>
+  <data name="NavCards" xml:space="preserve"><value>Kartlarım</value></data>
+  <data name="CardsLede" xml:space="preserve"><value>Kart bağlayın; yazarken önizleme güncellenir. Cüzdana yükleme sahte gateway ile olur.</value></data>
+  <data name="MetaCards" xml:space="preserve"><value>Kayıtlı kartlar. Demo — tam numara ve CVV saklanmaz.</value></data>
+  <data name="CardNumber" xml:space="preserve"><value>Kart numarası</value></data>
+  <data name="CardHolder" xml:space="preserve"><value>Kart üzerindeki ad</value></data>
+  <data name="CardExpiry" xml:space="preserve"><value>Son kullanma</value></data>
+  <data name="CardCvv" xml:space="preserve"><value>CVV</value></data>
+  <data name="CardCvvHint" xml:space="preserve"><value>CVV kaydedilmez</value></data>
+  <data name="CardNickname" xml:space="preserve"><value>Kart adı (ör. Yapı Kredi)</value></data>
+  <data name="LoadFromCard" xml:space="preserve"><value>Bu karttan cüzdana yükle</value></data>
+  <data name="CardSchemeUnknown" xml:space="preserve"><value>Kart</value></data>
+  <data name="CardsEmptyHint" xml:space="preserve"><value>Demo numara: 4111 1111 1111 1111. Troy 9792… Yapı Kredi bir kart adı, şema değil.</value></data>
+  <data name="CardBindHint" xml:space="preserve"><value>Önizleme canlıdır. Kayıt yalnız son 4 + ad + şema (Visa/Mastercard/Troy). Gerçek POS yok.</value></data>
   <data name="ColAmount" xml:space="preserve"><value>Tutar</value></data>
   <data name="ColCounterparty" xml:space="preserve"><value>Karşı taraf</value></data>
   <data name="ColDate" xml:space="preserve"><value>Tarih</value></data>
@@ -99,14 +115,15 @@
   <data name="RecentActivity" xml:space="preserve"><value>Son hareketler</value></data>
   <data name="RecipientEmail" xml:space="preserve"><value>Alıcı (e-posta)</value></data>
   <data name="Register" xml:space="preserve"><value>Kayıt</value></data>
-  <data name="RegisterLede" xml:space="preserve"><value>Adınız ve e-posta adresinizle müşteri hesabı açın.</value></data>
+  <data name="RegisterLede" xml:space="preserve"><value>Ad, e-posta, telefon ve hesap türü ile müşteri hesabı açın.</value></data>
   <data name="RemainingBalance" xml:space="preserve"><value>Kalan bakiye</value></data>
   <data name="RequestId" xml:space="preserve"><value>İstek no</value></data>
   <data name="RoleCustomer" xml:space="preserve"><value>Musteri</value></data>
+  <data name="RoleAdmin" xml:space="preserve"><value>Admin</value></data>
   <data name="Send" xml:space="preserve"><value>Gönder</value></data>
   <data name="SendTransfer" xml:space="preserve"><value>Havale gönder</value></data>
   <data name="SignIn" xml:space="preserve"><value>Giriş</value></data>
-  <data name="SignInLede" xml:space="preserve"><value>E-posta ve şifrenizle cüzdanınıza bağlanın.</value></data>
+  <data name="SignInLede" xml:space="preserve"><value>E-posta veya demo TC ve şifrenizle cüzdanınıza bağlanın.</value></data>
   <data name="SignInWithApple" xml:space="preserve"><value>Apple ile giriş</value></data>
   <data name="SignInWithGoogle" xml:space="preserve"><value>Google ile giriş</value></data>
   <data name="SignOut" xml:space="preserve"><value>Çıkış</value></data>
@@ -115,6 +132,7 @@
   <data name="CopyRef" xml:space="preserve"><value>Kopyala</value></data>
   <data name="Copied" xml:space="preserve"><value>Kopyalandı</value></data>
   <data name="PrintReceipt" xml:space="preserve"><value>Yazdır</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>PDF indir</value></data>
   <data name="AccessDeniedTitle" xml:space="preserve"><value>Erişim yok</value></data>
   <data name="AccessDeniedHint" xml:space="preserve"><value>Bu sayfa için yetkiniz yok. Cüzdan özetine dönebilirsiniz.</value></data>
   <data name="SocialEmailRequired" xml:space="preserve"><value>Sağlayıcı e-posta göndermedi. E-posta ve şifre ile kaydolun.</value></data>
@@ -160,4 +178,16 @@
   <data name="AccountHintLabel" xml:space="preserve"><value>Hesap / kart</value></data>
   <data name="TransferRecipientRequired" xml:space="preserve"><value>Alıcı e-postası gerekli.</value></data>
   <data name="EmptyQueueHint" xml:space="preserve"><value>Timeout satırları burada durur; kuyruğa al ile yeniden dener.</value></data>
+  <data name="Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="PhoneHint" xml:space="preserve"><value>Türkiye cep: 5xx. SMS / Mernis yok.</value></data>
+  <data name="PhoneRequired" xml:space="preserve"><value>Telefon zorunludur.</value></data>
+  <data name="PhoneTaken" xml:space="preserve"><value>Bu telefon başka bir hesapta kayıtlı.</value></data>
+  <data name="AccountKind" xml:space="preserve"><value>Hesap türü</value></data>
+  <data name="AccountKindHint" xml:space="preserve"><value>Aynı 8 işlem. Kurumsal üye iş yeri / POS değil.</value></data>
+  <data name="AccountKindIndividual" xml:space="preserve"><value>Bireysel</value></data>
+  <data name="AccountKindCorporate" xml:space="preserve"><value>Kurumsal</value></data>
+  <data name="SignInTabEmail" xml:space="preserve"><value>E-posta</value></data>
+  <data name="SignInTabTc" xml:space="preserve"><value>TC (demo)</value></data>
+  <data name="SignInTcHint" xml:space="preserve"><value>Mernis değil. Demo seed 10000000146 → admin@clearpay.test</value></data>
+  <data name="SignInTcUnknown" xml:space="preserve"><value>Bu demo TC tanımlı değil. Mernis yok.</value></data>
 </root>

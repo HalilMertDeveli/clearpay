@@ -30,7 +30,7 @@ Aynı dört proje, n-tier bilenlere **isim eşlemesi**dir — ikinci BLL/DAL ağ
 
 Bağımlılık: Web → Application + Infrastructure; Infrastructure → Application → Domain. Domain dışarı bakmaz.
 
-Bugün (TASK-04): Identity SQLite (`App_Data/identity.db`). Ledger SQL Server `ClearPayDbContext` + `InitialLedger` migration (Wallet, LedgerEntry, Transfer, IdempotencyRecord, AuditLog, OutboxMessage). Özet bakiyesi hâlâ `IWalletReader` → `EmptyWalletReader` (sıfır; canlı net TASK-05). `SqlOptions` Web `Program.cs`’te değil, `AddClearPay(configuration)` içinde bağlanır. SQL yoksa Identity çalışır; migrate atlanır.
+Bugün: Identity + ledger aynı SQL Server `ClearPay` (`AppIdentityDbContext` AspNet* + `ClearPayDbContext` kasa; T-058). Test factory `ClearPay:UseSqliteLedger=true` → SQLite. `SqlOptions` Web `Program.cs`’te değil, `AddClearPay(configuration)` içinde bağlanır. SQL yoksa site ayağa kalkmaz (Identity SQL).
 
 ## Ekran haritası (SPEC ↔ Razor)
 
@@ -51,17 +51,19 @@ Sol menü SPEC ile aynı: Özet, Havale, Yükle/Çek, Hareketler; Admin yalnızc
 
 Razor ve JSON API aynı ASP.NET Core 8 uygulamasında. Mülakat omurgası “mikroservis ağı” değil; çift kayıt, 409 ve outbox tek SQL transaction içinde kanıtlanır. Tek deploy: Azure App Service. Kafka / K8s / ayrı Payments servisi Q1 yasak.
 
+**Para tek host'ta kalır; para olmayan iki iş ayrı servistir** (aşağıda “Ayrı servisler”). Bu, “her şeyi mikroservise böl” değil: ledger ve kart ödemesi transaction sınırı ister, bildirim ve mutabakat istemez.
+
 ## Neden Identity cookie, sonra JWT
 
 - **Site (tarayıcı):** ASP.NET Identity + HttpOnly cookie (`ClearPay.Auth`). Form POST, anti-forgery, sliding expiration. TASK-03.
-- **JSON API:** JWT + OpenAPI. `POST /api/transfers` + `Idempotency-Key` (201 / 409). TASK-06 landed. Swagger UI `/swagger` (T-050). Harici client cookie’ye bağlanmaz.
+- **JSON API:** JWT + OpenAPI. `POST /api/transfers` + `Idempotency-Key` (201 / 409). TASK-06 landed. Q2 Flutter: `GET /api/wallet`, movements, receipts; `POST /api/topup` / `withdraw` (T-061). Live chrome (T-071): `/hubs/wallet` — cookie (Razor) veya JWT `access_token` query (Flutter). Payload yenileme ipucu; bakiye `GET /api/wallet`. Swagger UI `/swagger` (T-050). Harici client cookie’ye bağlanmaz.
 - Aynı kullanıcı deposu; iki protokol. Razor JWT taşımaz; para API’si tarayıcı cookie’sini birincil kimlik saymaz.
 
 ## Neden ledger Web’de değil
 
 Para kuralları Domain + Application’dadır (Payments ajanı). Web yalnızca HTTP: sayfa veya 201/409. Çift kayıt, bakiye invarianti, freeze, iade ve outbox insert **aynı SQL transaction**’da Infrastructure’da biter. Ledger PageModel’de olsa 409 ve invariant UI’ye kilitlenir; “UPDATE Balance” yolu açılır — yasak.
 
-Şema (TASK-04 landed): `Wallet` (1 user = 1 wallet, bakiye kolonu yok), `LedgerEntry`, `Transfer`, `IdempotencyRecord` (Key unique), `AuditLog`, `OutboxMessage` (Status; worker TASK-11). İndeks: `LedgerEntry(WalletId, CreatedAt)`. Identity SQLite ayrı; ledger SQL Server. `EmptyWalletReader` durur; havale API yok.
+Şema (TASK-04 landed): `Wallet` (1 user = 1 wallet, bakiye kolonu yok), `LedgerEntry`, `Transfer`, `IdempotencyRecord` (Key unique), `AuditLog`, `OutboxMessage` (Status; worker TASK-11). İndeks: `LedgerEntry(WalletId, CreatedAt)`. Identity AspNet* aynı SQL Server `ClearPay` (T-058); testler SQLite.
 
 ## SOLID haritası
 
@@ -83,8 +85,49 @@ Coder: `Program.cs` içinde `builder.Services.AddClearPay(builder.Configuration)
 | | Q1 | Q2 |
 |--|----|-----|
 | Gerçeklik kaynağı | SQL + outbox satırı | Aynı; broker kopya değil |
-| Kuyruk | Hangfire, outbox tablosu (TASK-11) | Rabbit `clearpay.outbox` (T-048; yoksa log). Canlı CloudAMQP Q2 |
+| Kuyruk | Hangfire, outbox tablosu (TASK-11) | Rabbit `clearpay.events` topic exchange, publisher confirm; broker kapalıysa satır Pending kalır ([`MESSAGING.md`](MESSAGING.md)). Canlı CloudAMQP Q2 |
 | Cache | Redis özet DTO (`localhost:6379`; yoksa SQL) | Aynı; havale sonrası invalidate (TASK-06) |
 | Canlı | App Service + Azure SQL | + Azure Cache for Redis |
 
-Compose: SQL gün 1. Redis özet cache T-041 (kasa SQL). Rabbit publisher T-048 (`ConnectionStrings:RabbitMq`; düşerse log). Canlı broker Q1 şart değil — ledger commit olduysa mesaj kaybolmaz (önce DB, sonra yayın). Redis bakiyeyi hızlandırır, ledger’ın yerini tutmaz. Health: `redis` + `rabbit` = `up` / `down` / `off`.
+Compose: SQL gün 1. Redis özet cache T-041 (kasa SQL). Rabbit publisher (`ConnectionStrings:RabbitMq`; boşsa yalnızca log — o durumda tüketici de yoktur; doluysa broker düşünce outbox satırı bekler, “log'a düşüp Sent” yolu kaldırıldı). Canlı broker Q1 şart değil — ledger commit olduysa mesaj kaybolmaz (önce DB, sonra yayın). Redis bakiyeyi hızlandırır, ledger’ın yerini tutmaz. Health: `redis` + `rabbit` = `up` / `down` / `off`.
+
+## Kartlı ödeme modülü (mock acquiring)
+
+Ayrı servis değil; aynı host ve aynı SQL. Cüzdan ledger'ına dokunmaz (kart ödemesi `LedgerEntry` yazmaz). Ayrıntı: [`PAYMENTS.md`](PAYMENTS.md).
+
+| Katman | Tip |
+|--------|-----|
+| Domain | `Payment` (durum makinesi, `Version` concurrency token), `PaymentRefund`, `PaymentStateMachine` |
+| Application | `IPaymentGateway`, `IAcquirerAdapter`, `AcquirerRouter` (BIN), `ThreeDsSigner` (HMAC) |
+| Infrastructure | `SqlPaymentGateway`, `MockBankAAdapter` / `MockBankBAdapter` / `MockPspCAdapter`; olaylar mevcut `OutboxMessage` tablosuna |
+| Web | `PaymentsController` (`X-Merchant-Key`), `ThreeDsCallbackController`, `/mock-acs/{id}`, `/demo-magaza` (anonim demo sayfaları, SPEC cüzdan ekran listesinin dışında) |
+
+OCP: yeni banka = yeni `IAcquirerAdapter` + bir routing satırı; gateway'de `switch` yok.
+
+## Gözlemlenebilirlik (decorator, katmanlara dokunmadan)
+
+`builder.AddClearPayObservability()` `AddClearPay`'den **sonra** çağrılır ve şu portları decorator ile sarar:
+`ITransferExecutor`, `IFundingExecutor`, `IPaymentGateway` ve her `IAcquirerAdapter`
+(`Infrastructure/Observability/TracedPaymentExecutors.cs`, `TracedCardPayments.cs`). Domain, Application ve
+`SqlPaymentGateway` OpenTelemetry bilmez; span ve metrik isimleri `ClearPayTelemetry`'de tek yerde. Ayrıntı:
+[`OBSERVABILITY.md`](OBSERVABILITY.md).
+
+## Ayrı servisler: bildirim ve mutabakat
+
+| Proje | Tür | Ne yapar | Verisi |
+|-------|-----|----------|--------|
+| `ClearPay.Contracts` | class library, bağımlılık yok | Olay tipleri (`EventTypes`), `PaymentEventV1`, `ReconciliationMismatchFoundV1`, JSON ayarı | — |
+| `ClearPay.Messaging` | class library | RabbitMQ topolojisi, confirm'li publisher, consumer host (retry / DLQ), `ProcessedMessage` idempotency, `MessageTraceContext` | — |
+| `ClearPay.Notifications` | worker service (ayrı process) | `notifications.events` kuyruğundan ödeme ve mutabakat olaylarını tüketir; sahte e-posta / SMS / webhook | `notif` şeması (compose'ta `ClearPayNotifications` veritabanı) |
+| `ClearPay.Reconciliation` | küçük web host (ayrı process) | Projeksiyon consumer'ı, Hangfire gece job'ı + dashboard, rapor API'si | `recon` + `ReconHangfire` şeması (compose'ta `ClearPayReconciliation`) |
+
+Sınır kuralları:
+
+- Servisler web uygulamasının tablolarına **yazmaz ve okumaz**; web'den gelen her şey RabbitMQ olayıdır.
+  Tek istisna: mutabakatın ledger kontrolü `dbo.usp_Ledger_GetDailyTotals`'a **EXECUTE** (salt okuma, ayrı bağlantı dizesi).
+- Servisler `ClearPay.Infrastructure` / `Domain`'e referans vermez (yalnızca `Contracts` + `Messaging`). Web tarafı
+  `Infrastructure` → `Contracts` + `Messaging` referansı alır; `Application` hâlâ yalnızca `Domain`'e bağlıdır
+  (`IOutboxPublisher` port'u RabbitMQ bilmez).
+- Aynı SQL Server instance'ı kullanılabilir (demo böyle); servis başına ayrı veritabanı veya en azından ayrı şema.
+  Ayrı instance'a taşımak bağlantı dizesi değişikliğidir.
+- Ayrıntı: [`MESSAGING.md`](MESSAGING.md), [`RECONCILIATION.md`](RECONCILIATION.md).

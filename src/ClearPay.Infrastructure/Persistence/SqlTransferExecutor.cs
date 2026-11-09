@@ -22,19 +22,22 @@ public sealed class SqlTransferExecutor : ITransferExecutor
     private readonly IIdempotencyStore _idempotency;
     private readonly IClock _clock;
     private readonly IWalletSummaryCache _cache;
+    private readonly IWalletLiveNotifier _live;
 
     public SqlTransferExecutor(
         ClearPayDbContext db,
         IUserDirectory users,
         IIdempotencyStore idempotency,
         IClock clock,
-        IWalletSummaryCache cache)
+        IWalletSummaryCache cache,
+        IWalletLiveNotifier live)
     {
         _db = db;
         _users = users;
         _idempotency = idempotency;
         _clock = clock;
         _cache = cache;
+        _live = live;
     }
 
     public async Task<TransferOutcome> ExecuteAsync(
@@ -216,6 +219,12 @@ public sealed class SqlTransferExecutor : ITransferExecutor
 
         await _cache.InvalidateAsync(command.ActorUserId, cancellationToken).ConfigureAwait(false);
         await _cache.InvalidateAsync(recipientUserId, cancellationToken).ConfigureAwait(false);
+        await _live.NotifyAsync(
+            new WalletLiveNotice(
+                "transfer",
+                correlationId,
+                new[] { command.ActorUserId, recipientUserId }),
+            cancellationToken).ConfigureAwait(false);
         return TransferOutcome.Created(transferId, correlationId);
     }
 

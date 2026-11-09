@@ -1,0 +1,45 @@
+@page "/mock-acs/{paymentId:guid}"
+@model ClearPay.Web.Pages.Payments.MockAcsModel
+@{
+    Layout = "_PaymentsLayout";
+    ViewData["Title"] = "3D Secure";
+    ViewData["Accent"] = Model.Accent;
+    var p = Model.Payment!;
+}
+<div class="card">
+    <div class="brand"><span></span>@Model.BankName · 3D Secure (mock ACS)</div>
+
+    @if (Model.Result is { } r)
+    {
+        <p>@(r.Result == "Y" ? "Doğrulama başarılı. Mağazaya dönülüyor…" : "Doğrulama başarısız. Mağazaya dönülüyor…")</p>
+        <form id="acs-result" method="post" action="/api/payments/3ds/callback">
+            <input type="hidden" name="paymentId" value="@r.PaymentId" />
+            <input type="hidden" name="threeDsTransactionId" value="@r.ThreeDsTransactionId" />
+            <input type="hidden" name="result" value="@r.Result" />
+            <input type="hidden" name="signature" value="@r.Signature" />
+            <noscript><button type="submit">Devam</button></noscript>
+        </form>
+        <script>document.getElementById("acs-result").submit();</script>
+    }
+    else if (p.Status != "Pending3DS")
+    {
+        <p>Bu ödeme için doğrulama zaten tamamlandı (durum: <strong>@p.Status</strong>).</p>
+    }
+    else
+    {
+        <dl>
+            <dt>İşyeri</dt><dd>@p.MerchantId</dd>
+            <dt>Tutar</dt><dd>@p.Amount.ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("tr-TR")) @p.Currency</dd>
+            <dt>Kart</dt><dd>@p.CardBin** **** @p.CardLast4</dd>
+        </dl>
+        <form method="post">
+            <label for="otp">SMS doğrulama kodu</label>
+            <input id="otp" name="Otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" autofocus />
+            <p class="hint">Demo: doğru kod <code>@ClearPay.Web.Pages.Payments.MockAcsModel.DemoOtp</code>, başka her kod başarısız sayılır. Gerçek SMS gönderilmez.</p>
+            <div class="row">
+                <button type="submit" name="action" value="confirm">Onayla</button>
+                <button type="submit" name="action" value="cancel" class="secondary">İptal</button>
+            </div>
+        </form>
+    }
+</div>

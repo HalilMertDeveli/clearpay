@@ -72,14 +72,8 @@ public sealed class LocalizationTests : IClassFixture<ClearPayWebFactory>
         var email = $"en.{Guid.NewGuid():N}@clearpay.test";
         var registerGet = await client.GetStringAsync("/kayit");
         var registerToken = AntiforgeryTestHelper.GetToken(registerGet);
-        var registerPost = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Ada Lovelace",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = registerToken
-        }));
+        var registerPost = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(registerToken, email, "Ada Lovelace")));
 
         registerPost.StatusCode.Should().Be(HttpStatusCode.OK);
         var wallet = await registerPost.Content.ReadAsStringAsync();
@@ -108,6 +102,27 @@ public sealed class LocalizationTests : IClassFixture<ClearPayWebFactory>
         {
             CultureInfo.CurrentUICulture = previous;
         }
+    }
+
+    [Fact]
+    public async Task English_cookie_switches_register_chrome()
+    {
+        var client = _factory.CreateClient(new() { HandleCookies = true });
+        var login = await client.GetStringAsync("/giris");
+        var token = AntiforgeryTestHelper.GetToken(login);
+        await client.PostAsync("/culture", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["culture"] = "en",
+            ["returnUrl"] = "/kayit",
+            ["__RequestVerificationToken"] = token
+        }));
+
+        var html = await client.GetStringAsync("/kayit");
+        html.Should().Contain("lang=\"en\"");
+        html.Should().Contain("Create account");
+        html.Should().Contain("Phone");
+        html.Should().Contain("Individual");
+        html.Should().Contain("Corporate");
     }
 
     [Fact]

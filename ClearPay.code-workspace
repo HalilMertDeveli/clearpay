@@ -1,0 +1,15 @@
+{
+  "folders": [
+    {
+      "name": "ClearPay",
+      "path": "."
+    },
+    {
+      "name": "ClearPay Flutter",
+      "path": "mobile/clearpay"
+    }
+  ],
+  "settings": {
+    "dotnet.defaultSolution": "ClearPay.slnx"
+  }
+}

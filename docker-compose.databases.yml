@@ -1,5 +1,7 @@
 # Extra local engines only. Do not merge into docker-compose.yml
-# (that file owns SQL :1433 + Redis + RabbitMQ).
+# (that file owns SQL :1433 + Redis + RabbitMQ). T-020 / T-077.
+# Prefer Windows service MySQL84 when it already owns :3306; do not start this
+# mysql container at the same time. Compose MySQL is the sidecar if native is off.
 # Start: docker compose -f docker-compose.databases.yml up -d
 # Oracle XE needs ~2GB RAM and 5-15 min on first start (EULA accepted via ORACLE_PASSWORD).
 # Data on D: (T-021). App does not use MySQL/Oracle; ledger stays MSSQL.

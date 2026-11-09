@@ -57,6 +57,7 @@ public sealed class ClearPayDbContextTests
         card!.GetTableName().Should().Be("LinkedInstrument");
         card.FindProperty("Pan").Should().BeNull();
         card.FindProperty("Cvv").Should().BeNull();
+        card.FindProperty(nameof(LinkedInstrument.Scheme)).Should().NotBeNull();
         card.GetIndexes().Should().Contain(i =>
             i.IsUnique
             && i.GetDatabaseName() == LedgerSchema.LinkedInstrumentUserLast4Unique);

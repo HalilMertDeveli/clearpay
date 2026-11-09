@@ -34,6 +34,34 @@ public sealed class ArchitectureTests
     }
 
     [Fact]
+    public void Contracts_csproj_has_no_packages_or_project_references()
+    {
+        var xml = XDocument.Load(Path.Combine(Root, "src", "ClearPay.Contracts", "ClearPay.Contracts.csproj"));
+        xml.Descendants("PackageReference").Should().BeEmpty();
+        xml.Descendants("ProjectReference").Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("ClearPay.Notifications")]
+    [InlineData("ClearPay.Reconciliation")]
+    public void Services_reference_only_contracts_and_messaging(string service)
+    {
+        // The services talk to the web app through RabbitMQ, never through its Domain / Infrastructure / tables.
+        var refs = ProjectRefs("src", service, service + ".csproj").Select(r => r.Replace('\\', '/')).ToList();
+        refs.Should().BeEquivalentTo(
+            "../ClearPay.Contracts/ClearPay.Contracts.csproj",
+            "../ClearPay.Messaging/ClearPay.Messaging.csproj");
+    }
+
+    [Fact]
+    public void Messaging_references_only_contracts()
+    {
+        ProjectRefs("src", "ClearPay.Messaging", "ClearPay.Messaging.csproj")
+            .Select(r => r.Replace('\\', '/'))
+            .Should().Equal("../ClearPay.Contracts/ClearPay.Contracts.csproj");
+    }
+
+    [Fact]
     public void Web_references_application_and_infrastructure_not_domain_directly()
     {
         var refs = ProjectRefs("src", "ClearPay.Web", "ClearPay.Web.csproj");
@@ -76,6 +104,14 @@ public sealed class ArchitectureTests
         var program = File.ReadAllText(Path.Combine(Root, "src", "ClearPay.Web", "Program.cs"));
         program.Should().NotContain("SqlOptions");
         program.Should().NotContain("new RestBankGateway");
+    }
+
+    [Fact]
+    public void Domain_contains_no_dart()
+    {
+        var domain = Path.Combine(Root, "src", "ClearPay.Domain");
+        Directory.EnumerateFiles(domain, "*.dart", SearchOption.AllDirectories).Should().BeEmpty();
+        File.ReadAllText(Path.Combine(Root, "ClearPay.slnx")).Should().NotContain("mobile");
     }
 
     private static IReadOnlyList<string> ProjectRefs(params string[] relativeCsproj)

@@ -10,6 +10,7 @@ public interface IActivityReader
         DateTimeOffset? to,
         string? kind,
         int page,
+        int pageSize = 20,
         CancellationToken cancellationToken = default);
 
     Task<ReceiptDto?> GetReceiptAsync(

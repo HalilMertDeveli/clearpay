@@ -22,19 +22,22 @@ public sealed class SqlFundingExecutor : IFundingExecutor
     private readonly IIdempotencyStore _idempotency;
     private readonly IClock _clock;
     private readonly IWalletSummaryCache _cache;
+    private readonly IWalletLiveNotifier _live;
 
     public SqlFundingExecutor(
         ClearPayDbContext db,
         IBankGateway gateway,
         IIdempotencyStore idempotency,
         IClock clock,
-        IWalletSummaryCache cache)
+        IWalletSummaryCache cache,
+        IWalletLiveNotifier live)
     {
         _db = db;
         _gateway = gateway;
         _idempotency = idempotency;
         _clock = clock;
         _cache = cache;
+        _live = live;
     }
 
     public async Task<FundingOutcome> ExecuteAsync(
@@ -196,6 +199,12 @@ public sealed class SqlFundingExecutor : IFundingExecutor
         }
 
         await _cache.InvalidateAsync(command.ActorUserId, cancellationToken).ConfigureAwait(false);
+        await _live.NotifyAsync(
+            new WalletLiveNotice(
+                command.Operation == BankOperation.TopUp ? "topup" : "withdraw",
+                correlationId,
+                new[] { command.ActorUserId }),
+            cancellationToken).ConfigureAwait(false);
         return FundingOutcome.Created(correlationId, gateway.Reference);
     }
 

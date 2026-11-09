@@ -17,7 +17,8 @@ Kaynak: kariyer planı (ClearPay kilit) + ekran listesi. Kod LED sitesine yazıl
 | Log | Serilog + correlation id + `AuditLog` |
 | Test | xUnit, FluentAssertions, WebApplicationFactory |
 | Q1 kuyruk | Outbox tablosu + Hangfire retry (tasarım gün 1, işleyen TASK-11) |
-| Q2 | Redis, RabbitMQ (Compose gün 1 ayakta; canlı bağ Q2) |
+| Q2 kuyruk | Redis, RabbitMQ (Compose gün 1 ayakta; canlı bağ Q2) |
+| Q2 istemci | Flutter JWT (`mobile/clearpay`); C# motor durur; slnx dışı (T-061) |
 | Entegrasyon | Sahte `BankGateway`: REST sonra SOAP |
 | CI / canlı | GitHub Actions; Azure App Service (Linux) + Azure SQL |
 

@@ -72,10 +72,12 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|8.0'
+      appCommandLine: 'dotnet ClearPay.Web.dll'
       alwaysOn: false
       ftpsState: 'Disabled'
       minTlsVersion: '1.2'
       http20Enabled: true
+      healthCheckPath: '/api/health'
       appSettings: [
         {
           name: 'ASPNETCORE_ENVIRONMENT'
@@ -88,6 +90,10 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'Hangfire__UseMemoryStorage'
           value: 'false'
+        }
+        {
+          name: 'Cors__Origins__0'
+          value: 'https://${webAppName}.azurewebsites.net'
         }
       ]
       connectionStrings: [

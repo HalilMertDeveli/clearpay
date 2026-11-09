@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="ClearPay">
+  <!-- T-084 launcher source: navy square, teal ring, white C. Not YK/Papara/World. -->
+  <rect width="1024" height="1024" fill="#1B2A4A"/>
+  <circle cx="512" cy="512" r="338" fill="none" stroke="#0F766E" stroke-width="28"/>
+  <text x="512" y="548" text-anchor="middle" fill="#FFFFFF" font-family="Inter, Segoe UI, sans-serif" font-size="560" font-weight="800">C</text>
+</svg>

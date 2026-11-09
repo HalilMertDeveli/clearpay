@@ -1,0 +1,480 @@
+<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" Version="1.564" Build="16.0.4305.5">
+  <BatchSequence>
+    <Batch>
+      <Statements>
+        <StmtSimple StatementText="SELECT&#xD;&#xA;        e.Kind,&#xD;&#xA;        EntryCount  = COUNT_BIG(*),&#xD;&#xA;        CreditTotal = ISNULL(SUM(CASE WHEN e.Amount &gt; 0 THEN e.Amount END), 0),&#xD;&#xA;        DebitTotal  = ISNULL(SUM(CASE WHEN e.Amount &lt; 0 THEN -e.Amount END), 0),&#xD;&#xA;        Net         = SUM(e.Amount)&#xD;&#xA;    FROM dbo.LedgerEntry AS e&#xD;&#xA;    WHERE e.CreatedAt &gt;= @DayStart&#xD;&#xA;      AND e.CreatedAt &lt;  @DayEnd&#xD;&#xA;    GROUP BY e.Kind&#xD;&#xA;    ORDER BY e.Kind" StatementId="1" StatementCompId="6" StatementType="SELECT" StatementSqlHandle="0x0900AAD7D74B84ADF3CEED2902C543A2CED90000000000000000000000000000000000000000000000000000" DatabaseContextSettingsId="4" ParentObjectId="1253579504" StatementParameterizationType="0" RetrievedFromCache="true" StatementSubTreeCost="0.0488079" StatementEstRows="3" SecurityPolicyApplied="false" StatementOptmLevel="FULL" QueryHash="0xAF29984D4E9C61FC" QueryPlanHash="0xD45AF7C6A6DAEABA" StatementOptmEarlyAbortReason="GoodEnoughPlanFound" CardinalityEstimationModelVersion="160">
+          <StatementSetOptions QUOTED_IDENTIFIER="true" ARITHABORT="false" CONCAT_NULL_YIELDS_NULL="true" ANSI_NULLS="true" ANSI_PADDING="true" ANSI_WARNINGS="true" NUMERIC_ROUNDABORT="false">
+          </StatementSetOptions>
+          <QueryPlan DegreeOfParallelism="1" MemoryGrant="1584" CachedPlanSize="72" CompileTime="1" CompileCPU="1" CompileMemory="496">
+            <MemoryGrantInfo SerialRequiredMemory="1536" SerialDesiredMemory="1584" RequiredMemory="1536" DesiredMemory="1584" RequestedMemory="1584" GrantWaitTime="0" MaxQueryMemory="2073600" GrantedMemory="1584" MaxUsedMemory="256" LastRequestedMemory="1584" IsMemoryGrantFeedbackAdjusted="No: Accurate Grant">
+            </MemoryGrantInfo>
+            <OptimizerHardwareDependentProperties EstimatedAvailableMemoryGrant="64327" EstimatedPagesCached="80409" EstimatedAvailableDegreeOfParallelism="10" MaxCompileMemory="8570720">
+            </OptimizerHardwareDependentProperties>
+            <OptimizerStatsUsage>
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:37.73" ModificationCount="0" SamplingPercent="14.3075" Statistics="[_WA_Sys_00000007_4316F928]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]">
+              </StatisticsInfo>
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:59.06" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_CreatedAt]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]">
+              </StatisticsInfo>
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:28.12" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_TransferId]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]">
+              </StatisticsInfo>
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:59.80" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_PairId]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]">
+              </StatisticsInfo>
+              <StatisticsInfo LastUpdate="2026-11-09T11:39:00.31" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_WalletId_CreatedAt]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]">
+              </StatisticsInfo>
+            </OptimizerStatsUsage>
+            <QueryTimeStats ElapsedTime="0" CpuTime="0">
+            </QueryTimeStats>
+            <RelOp NodeId="0" PhysicalOp="Sort" LogicalOp="Sort" EstimateRows="3" EstimateIO="0.0112613" EstimateCPU="0.000107488" AvgRowSize="70" EstimatedTotalSubtreeCost="0.0488079" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+              <OutputList>
+                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                </ColumnReference>
+                <ColumnReference Column="Expr1001">
+                </ColumnReference>
+                <ColumnReference Column="Expr1004">
+                </ColumnReference>
+                <ColumnReference Column="Expr1005">
+                </ColumnReference>
+                <ColumnReference Column="Expr1006">
+                </ColumnReference>
+              </OutputList>
+              <MemoryFractions Input="0.666667" Output="1">
+              </MemoryFractions>
+              <RunTimeInformation>
+                <RunTimeCountersPerThread Thread="0" ActualRows="3" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRebinds="1" ActualRewinds="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="544" OutputMemoryGrant="176" UsedMemoryGrant="16" ActualExecutionMode="Row">
+                </RunTimeCountersPerThread>
+              </RunTimeInformation>
+              <Sort Distinct="0">
+                <OrderBy>
+                  <OrderByColumn Ascending="1">
+                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                    </ColumnReference>
+                  </OrderByColumn>
+                </OrderBy>
+                <RelOp NodeId="1" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="3" EstimateIO="0" EstimateCPU="3e-07" AvgRowSize="70" EstimatedTotalSubtreeCost="0.0374392" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                  <OutputList>
+                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                    </ColumnReference>
+                    <ColumnReference Column="Expr1001">
+                    </ColumnReference>
+                    <ColumnReference Column="Expr1004">
+                    </ColumnReference>
+                    <ColumnReference Column="Expr1005">
+                    </ColumnReference>
+                    <ColumnReference Column="Expr1006">
+                    </ColumnReference>
+                  </OutputList>
+                  <ComputeScalar>
+                    <DefinedValues>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1005">
+                        </ColumnReference>
+                        <ScalarOperator ScalarString="isnull([Expr1002],(0.00))">
+                          <Intrinsic FunctionName="isnull">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="Expr1002">
+                                </ColumnReference>
+                              </Identifier>
+                            </ScalarOperator>
+                            <ScalarOperator>
+                              <Const ConstValue="(0.00)">
+                              </Const>
+                            </ScalarOperator>
+                          </Intrinsic>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1006">
+                        </ColumnReference>
+                        <ScalarOperator ScalarString="isnull([Expr1003],(0.00))">
+                          <Intrinsic FunctionName="isnull">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="Expr1003">
+                                </ColumnReference>
+                              </Identifier>
+                            </ScalarOperator>
+                            <ScalarOperator>
+                              <Const ConstValue="(0.00)">
+                              </Const>
+                            </ScalarOperator>
+                          </Intrinsic>
+                        </ScalarOperator>
+                      </DefinedValue>
+                    </DefinedValues>
+                    <RelOp NodeId="2" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="3" EstimateIO="0" EstimateCPU="0" AvgRowSize="70" EstimatedTotalSubtreeCost="0.0374389" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                      <OutputList>
+                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                        </ColumnReference>
+                        <ColumnReference Column="Expr1001">
+                        </ColumnReference>
+                        <ColumnReference Column="Expr1002">
+                        </ColumnReference>
+                        <ColumnReference Column="Expr1003">
+                        </ColumnReference>
+                        <ColumnReference Column="Expr1004">
+                        </ColumnReference>
+                      </OutputList>
+                      <ComputeScalar>
+                        <DefinedValues>
+                          <DefinedValue>
+                            <ColumnReference Column="Expr1002">
+                            </ColumnReference>
+                            <ScalarOperator ScalarString="CASE WHEN [Expr1019]=(0) THEN NULL ELSE [Expr1020] END">
+                              <IF>
+                                <Condition>
+                                  <ScalarOperator>
+                                    <Compare CompareOp="EQ">
+                                      <ScalarOperator>
+                                        <Identifier>
+                                          <ColumnReference Column="Expr1019">
+                                          </ColumnReference>
+                                        </Identifier>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Const ConstValue="(0)">
+                                        </Const>
+                                      </ScalarOperator>
+                                    </Compare>
+                                  </ScalarOperator>
+                                </Condition>
+                                <Then>
+                                  <ScalarOperator>
+                                    <Const ConstValue="NULL">
+                                    </Const>
+                                  </ScalarOperator>
+                                </Then>
+                                <Else>
+                                  <ScalarOperator>
+                                    <Identifier>
+                                      <ColumnReference Column="Expr1020">
+                                      </ColumnReference>
+                                    </Identifier>
+                                  </ScalarOperator>
+                                </Else>
+                              </IF>
+                            </ScalarOperator>
+                          </DefinedValue>
+                          <DefinedValue>
+                            <ColumnReference Column="Expr1003">
+                            </ColumnReference>
+                            <ScalarOperator ScalarString="CASE WHEN [Expr1021]=(0) THEN NULL ELSE [Expr1022] END">
+                              <IF>
+                                <Condition>
+                                  <ScalarOperator>
+                                    <Compare CompareOp="EQ">
+                                      <ScalarOperator>
+                                        <Identifier>
+                                          <ColumnReference Column="Expr1021">
+                                          </ColumnReference>
+                                        </Identifier>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Const ConstValue="(0)">
+                                        </Const>
+                                      </ScalarOperator>
+                                    </Compare>
+                                  </ScalarOperator>
+                                </Condition>
+                                <Then>
+                                  <ScalarOperator>
+                                    <Const ConstValue="NULL">
+                                    </Const>
+                                  </ScalarOperator>
+                                </Then>
+                                <Else>
+                                  <ScalarOperator>
+                                    <Identifier>
+                                      <ColumnReference Column="Expr1022">
+                                      </ColumnReference>
+                                    </Identifier>
+                                  </ScalarOperator>
+                                </Else>
+                              </IF>
+                            </ScalarOperator>
+                          </DefinedValue>
+                        </DefinedValues>
+                        <RelOp NodeId="3" PhysicalOp="Hash Match" LogicalOp="Aggregate" EstimateRows="3" EstimateIO="0" EstimateCPU="0.0255152" AvgRowSize="70" EstimatedTotalSubtreeCost="0.0374389" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                          <OutputList>
+                            <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                            </ColumnReference>
+                            <ColumnReference Column="Expr1001">
+                            </ColumnReference>
+                            <ColumnReference Column="Expr1004">
+                            </ColumnReference>
+                            <ColumnReference Column="Expr1019">
+                            </ColumnReference>
+                            <ColumnReference Column="Expr1020">
+                            </ColumnReference>
+                            <ColumnReference Column="Expr1021">
+                            </ColumnReference>
+                            <ColumnReference Column="Expr1022">
+                            </ColumnReference>
+                          </OutputList>
+                          <MemoryFractions Input="1" Output="0.333333">
+                          </MemoryFractions>
+                          <RunTimeInformation>
+                            <RunTimeCountersPerThread Thread="0" ActualRows="3" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1072" OutputMemoryGrant="1040" UsedMemoryGrant="248" ActualExecutionMode="Row">
+                            </RunTimeCountersPerThread>
+                          </RunTimeInformation>
+                          <Hash>
+                            <DefinedValues>
+                              <DefinedValue>
+                                <ColumnReference Column="Expr1001">
+                                </ColumnReference>
+                                <ScalarOperator ScalarString="COUNT(*)">
+                                  <Aggregate Distinct="0" AggType="COUNT*">
+                                  </Aggregate>
+                                </ScalarOperator>
+                              </DefinedValue>
+                              <DefinedValue>
+                                <ColumnReference Column="Expr1019">
+                                </ColumnReference>
+                                <ScalarOperator ScalarString="COUNT_BIG([Expr1007])">
+                                  <Aggregate Distinct="0" AggType="COUNT_BIG">
+                                    <ScalarOperator>
+                                      <Identifier>
+                                        <ColumnReference Column="Expr1007">
+                                        </ColumnReference>
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </Aggregate>
+                                </ScalarOperator>
+                              </DefinedValue>
+                              <DefinedValue>
+                                <ColumnReference Column="Expr1020">
+                                </ColumnReference>
+                                <ScalarOperator ScalarString="SUM([Expr1007])">
+                                  <Aggregate Distinct="0" AggType="SUM">
+                                    <ScalarOperator>
+                                      <Identifier>
+                                        <ColumnReference Column="Expr1007">
+                                        </ColumnReference>
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </Aggregate>
+                                </ScalarOperator>
+                              </DefinedValue>
+                              <DefinedValue>
+                                <ColumnReference Column="Expr1021">
+                                </ColumnReference>
+                                <ScalarOperator ScalarString="COUNT_BIG([Expr1008])">
+                                  <Aggregate Distinct="0" AggType="COUNT_BIG">
+                                    <ScalarOperator>
+                                      <Identifier>
+                                        <ColumnReference Column="Expr1008">
+                                        </ColumnReference>
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </Aggregate>
+                                </ScalarOperator>
+                              </DefinedValue>
+                              <DefinedValue>
+                                <ColumnReference Column="Expr1022">
+                                </ColumnReference>
+                                <ScalarOperator ScalarString="SUM([Expr1008])">
+                                  <Aggregate Distinct="0" AggType="SUM">
+                                    <ScalarOperator>
+                                      <Identifier>
+                                        <ColumnReference Column="Expr1008">
+                                        </ColumnReference>
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </Aggregate>
+                                </ScalarOperator>
+                              </DefinedValue>
+                              <DefinedValue>
+                                <ColumnReference Column="Expr1004">
+                                </ColumnReference>
+                                <ScalarOperator ScalarString="SUM([ClearPayPerf].[dbo].[LedgerEntry].[Amount] as [e].[Amount])">
+                                  <Aggregate Distinct="0" AggType="SUM">
+                                    <ScalarOperator>
+                                      <Identifier>
+                                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount">
+                                        </ColumnReference>
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </Aggregate>
+                                </ScalarOperator>
+                              </DefinedValue>
+                            </DefinedValues>
+                            <HashKeysBuild>
+                              <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                              </ColumnReference>
+                            </HashKeysBuild>
+                            <RelOp NodeId="4" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="1645.81" EstimateIO="0" EstimateCPU="0.000164581" AvgRowSize="38" EstimatedTotalSubtreeCost="0.0119236" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                              <OutputList>
+                                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount">
+                                </ColumnReference>
+                                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                                </ColumnReference>
+                                <ColumnReference Column="Expr1007">
+                                </ColumnReference>
+                                <ColumnReference Column="Expr1008">
+                                </ColumnReference>
+                              </OutputList>
+                              <ComputeScalar>
+                                <DefinedValues>
+                                  <DefinedValue>
+                                    <ColumnReference Column="Expr1007">
+                                    </ColumnReference>
+                                    <ScalarOperator ScalarString="CASE WHEN [ClearPayPerf].[dbo].[LedgerEntry].[Amount] as [e].[Amount]&gt;(0.00) THEN [ClearPayPerf].[dbo].[LedgerEntry].[Amount] as [e].[Amount] ELSE NULL END">
+                                      <IF>
+                                        <Condition>
+                                          <ScalarOperator>
+                                            <Compare CompareOp="GT">
+                                              <ScalarOperator>
+                                                <Identifier>
+                                                  <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount">
+                                                  </ColumnReference>
+                                                </Identifier>
+                                              </ScalarOperator>
+                                              <ScalarOperator>
+                                                <Const ConstValue="(0.00)">
+                                                </Const>
+                                              </ScalarOperator>
+                                            </Compare>
+                                          </ScalarOperator>
+                                        </Condition>
+                                        <Then>
+                                          <ScalarOperator>
+                                            <Identifier>
+                                              <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount">
+                                              </ColumnReference>
+                                            </Identifier>
+                                          </ScalarOperator>
+                                        </Then>
+                                        <Else>
+                                          <ScalarOperator>
+                                            <Const ConstValue="NULL">
+                                            </Const>
+                                          </ScalarOperator>
+                                        </Else>
+                                      </IF>
+                                    </ScalarOperator>
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Column="Expr1008">
+                                    </ColumnReference>
+                                    <ScalarOperator ScalarString="CASE WHEN [ClearPayPerf].[dbo].[LedgerEntry].[Amount] as [e].[Amount]&lt;(0.00) THEN  -[ClearPayPerf].[dbo].[LedgerEntry].[Amount] as [e].[Amount] ELSE NULL END">
+                                      <IF>
+                                        <Condition>
+                                          <ScalarOperator>
+                                            <Compare CompareOp="LT">
+                                              <ScalarOperator>
+                                                <Identifier>
+                                                  <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount">
+                                                  </ColumnReference>
+                                                </Identifier>
+                                              </ScalarOperator>
+                                              <ScalarOperator>
+                                                <Const ConstValue="(0.00)">
+                                                </Const>
+                                              </ScalarOperator>
+                                            </Compare>
+                                          </ScalarOperator>
+                                        </Condition>
+                                        <Then>
+                                          <ScalarOperator>
+                                            <Arithmetic Operation="MINUS">
+                                              <ScalarOperator>
+                                                <Identifier>
+                                                  <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount">
+                                                  </ColumnReference>
+                                                </Identifier>
+                                              </ScalarOperator>
+                                            </Arithmetic>
+                                          </ScalarOperator>
+                                        </Then>
+                                        <Else>
+                                          <ScalarOperator>
+                                            <Const ConstValue="NULL">
+                                            </Const>
+                                          </ScalarOperator>
+                                        </Else>
+                                      </IF>
+                                    </ScalarOperator>
+                                  </DefinedValue>
+                                </DefinedValues>
+                                <RelOp NodeId="5" PhysicalOp="Index Seek" LogicalOp="Index Seek" EstimateRows="1645.81" EstimatedRowsRead="1645.81" EstimateIO="0.00979167" EstimateCPU="0.0019674" AvgRowSize="20" EstimatedTotalSubtreeCost="0.0117591" TableCardinality="600000" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                  <OutputList>
+                                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount">
+                                    </ColumnReference>
+                                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                                    </ColumnReference>
+                                  </OutputList>
+                                  <RunTimeInformation>
+                                    <RunTimeCountersPerThread Thread="0" ActualRows="1650" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="1" ActualLogicalReads="13" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="1650" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row">
+                                    </RunTimeCountersPerThread>
+                                  </RunTimeInformation>
+                                  <IndexScan Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                    <DefinedValues>
+                                      <DefinedValue>
+                                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount">
+                                        </ColumnReference>
+                                      </DefinedValue>
+                                      <DefinedValue>
+                                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                                        </ColumnReference>
+                                      </DefinedValue>
+                                    </DefinedValues>
+                                    <Object Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Index="[IX_LedgerEntry_CreatedAt]" Alias="[e]" IndexKind="NonClustered" Storage="RowStore">
+                                    </Object>
+                                    <SeekPredicates>
+                                      <SeekPredicateNew>
+                                        <SeekKeys>
+                                          <StartRange ScanType="GE">
+                                            <RangeColumns>
+                                              <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt">
+                                              </ColumnReference>
+                                            </RangeColumns>
+                                            <RangeExpressions>
+                                              <ScalarOperator ScalarString="[@DayStart]">
+                                                <Identifier>
+                                                  <ColumnReference Column="@DayStart">
+                                                  </ColumnReference>
+                                                </Identifier>
+                                              </ScalarOperator>
+                                            </RangeExpressions>
+                                          </StartRange>
+                                          <EndRange ScanType="LT">
+                                            <RangeColumns>
+                                              <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt">
+                                              </ColumnReference>
+                                            </RangeColumns>
+                                            <RangeExpressions>
+                                              <ScalarOperator ScalarString="[@DayEnd]">
+                                                <Identifier>
+                                                  <ColumnReference Column="@DayEnd">
+                                                  </ColumnReference>
+                                                </Identifier>
+                                              </ScalarOperator>
+                                            </RangeExpressions>
+                                          </EndRange>
+                                        </SeekKeys>
+                                      </SeekPredicateNew>
+                                    </SeekPredicates>
+                                  </IndexScan>
+                                </RelOp>
+                              </ComputeScalar>
+                            </RelOp>
+                          </Hash>
+                        </RelOp>
+                      </ComputeScalar>
+                    </RelOp>
+                  </ComputeScalar>
+                </RelOp>
+              </Sort>
+            </RelOp>
+            <ParameterList>
+              <ColumnReference Column="@DayEnd" ParameterDataType="datetimeoffset(7)" ParameterCompiledValue="'2026-10-16 00:00:00.0000000 +00:00'" ParameterRuntimeValue="'2026-10-16 00:00:00.0000000 +00:00'">
+              </ColumnReference>
+              <ColumnReference Column="@DayStart" ParameterDataType="datetimeoffset(7)" ParameterCompiledValue="'2026-10-15 00:00:00.0000000 +00:00'" ParameterRuntimeValue="'2026-10-15 00:00:00.0000000 +00:00'">
+              </ColumnReference>
+            </ParameterList>
+          </QueryPlan>
+        </StmtSimple>
+      </Statements>
+    </Batch>
+  </BatchSequence>
+</ShowPlanXML>

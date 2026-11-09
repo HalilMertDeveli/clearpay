@@ -1,0 +1,86 @@
+﻿[
+    {
+        "State":  "no-index",
+        "Query":  "q0-legacy-ef-load-treasury",
+        "RowsReturned":  120000,
+        "LogicalReads":  10783,
+        "ReadsByTable":  "LedgerEntry=10783",
+        "CpuMsMedian":  1038,
+        "ElapsedMsMedian":  535,
+        "ClientMsMedian":  537.2,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120000)",
+        "PlanFile":  "docs/sqlplans/no-index-q0-legacy-ef-load-treasury.sqlplan"
+    },
+    {
+        "State":  "no-index",
+        "Query":  "q1-summary-customer",
+        "RowsReturned":  1,
+        "LogicalReads":  10783,
+        "ReadsByTable":  "LedgerEntry=10783",
+        "CpuMsMedian":  47,
+        "ElapsedMsMedian":  13,
+        "ClientMsMedian":  15.1,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120)",
+        "PlanFile":  "docs/sqlplans/no-index-q1-summary-customer.sqlplan"
+    },
+    {
+        "State":  "no-index",
+        "Query":  "q1-summary-treasury",
+        "RowsReturned":  1,
+        "LogicalReads":  10783,
+        "ReadsByTable":  "LedgerEntry=10783",
+        "CpuMsMedian":  297,
+        "ElapsedMsMedian":  150,
+        "ClientMsMedian":  152.2,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120000)",
+        "PlanFile":  "docs/sqlplans/no-index-q1-summary-treasury.sqlplan"
+    },
+    {
+        "State":  "no-index",
+        "Query":  "q2-statement-customer-p1",
+        "RowsReturned":  20,
+        "LogicalReads":  126645,
+        "ReadsByTable":  "LedgerEntry=126605, Wallet=40, Worktable=0",
+        "CpuMsMedian":  505,
+        "ElapsedMsMedian":  90,
+        "ClientMsMedian":  93,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120) | Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120) | Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 20) | Clustered Index Seek Wallet.PK_Wallet (rows 20)",
+        "PlanFile":  "docs/sqlplans/no-index-q2-statement-customer-p1.sqlplan"
+    },
+    {
+        "State":  "no-index",
+        "Query":  "q2-statement-treasury-p1",
+        "RowsReturned":  20,
+        "LogicalReads":  137981,
+        "ReadsByTable":  "LedgerEntry=137941, Wallet=40, Worktable=0",
+        "CpuMsMedian":  545,
+        "ElapsedMsMedian":  82,
+        "ClientMsMedian":  83.5,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120000) | Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120000) | Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 20) | Clustered Index Seek Wallet.PK_Wallet (rows 20)",
+        "PlanFile":  "docs/sqlplans/no-index-q2-statement-treasury-p1.sqlplan"
+    },
+    {
+        "State":  "no-index",
+        "Query":  "q2-statement-treasury-filtered-p3",
+        "RowsReturned":  20,
+        "LogicalReads":  120229,
+        "ReadsByTable":  "LedgerEntry=120189, Wallet=40, Worktable=0",
+        "CpuMsMedian":  426,
+        "ElapsedMsMedian":  69,
+        "ClientMsMedian":  70.7,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 7645) | Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 7645) | Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 20) | Clustered Index Seek Wallet.PK_Wallet (rows 20)",
+        "PlanFile":  "docs/sqlplans/no-index-q2-statement-treasury-filtered-p3.sqlplan"
+    },
+    {
+        "State":  "no-index",
+        "Query":  "q3-daily-totals",
+        "RowsReturned":  3,
+        "LogicalReads":  10783,
+        "ReadsByTable":  "LedgerEntry=10783, Worktable=0",
+        "CpuMsMedian":  52,
+        "ElapsedMsMedian":  13,
+        "ClientMsMedian":  14.8,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 1650)",
+        "PlanFile":  "docs/sqlplans/no-index-q3-daily-totals.sqlplan"
+    }
+]

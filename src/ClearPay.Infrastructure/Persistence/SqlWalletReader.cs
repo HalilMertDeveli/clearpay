@@ -8,16 +8,22 @@ namespace ClearPay.Infrastructure.Persistence;
 /// <summary>
 /// TASK-05: özet from ledger net. No <c>UPDATE Balance</c>. PageModels do not call this type.
 /// SQL unreachable → empty zeros (Identity-only site still loads).
+/// SQL Server: totals and last 5 come from <c>usp_Wallet_GetSummary</c> / <c>usp_Wallet_GetStatementPage</c>
+/// (aggregated in SQL, not by loading every ledger row). SQLite (tests): same numbers via LINQ.
 /// </summary>
 public sealed class SqlWalletReader : IWalletReader
 {
+    private const int LastMovementCount = 5;
+
     private readonly ClearPayDbContext _db;
     private readonly IClock _clock;
+    private readonly LedgerProcedures _procedures;
 
     public SqlWalletReader(ClearPayDbContext db, IClock clock)
     {
         _db = db;
         _clock = clock;
+        _procedures = new LedgerProcedures(db);
     }
 
     public async Task<WalletSummary?> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default)
@@ -37,19 +43,23 @@ public sealed class SqlWalletReader : IWalletReader
         if (wallet is null)
             wallet = await EnsureWalletAsync(userId, cancellationToken).ConfigureAwait(false);
 
+        var now = _clock.UtcNow;
+        var monthStart = new DateTimeOffset(now.Year, now.Month, 1, 0, 0, 0, TimeSpan.Zero);
+
+        if (_procedures.IsAvailable)
+            return await FromProceduresAsync(wallet, userId, monthStart, cancellationToken).ConfigureAwait(false);
+
         var entries = await _db.LedgerEntries
             .AsNoTracking()
             .Where(e => e.WalletId == wallet.Id)
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        var now = _clock.UtcNow;
-        var monthStart = new DateTimeOffset(now.Year, now.Month, 1, 0, 0, 0, TimeSpan.Zero);
         var inMonth = entries.Where(e => e.CreatedAt >= monthStart).ToList();
 
         var last = entries
             .OrderByDescending(e => e.CreatedAt)
-            .Take(5)
+            .Take(LastMovementCount)
             .Select(e => new WalletMovement(e.CreatedAt, e.Kind.ToString(), e.Amount, e.CorrelationId))
             .ToList();
 
@@ -59,6 +69,33 @@ public sealed class SqlWalletReader : IWalletReader
             Balance: LedgerPair.NetOf(entries, wallet.Id),
             MonthOutgoing: decimal.Negate(inMonth.Where(e => e.Amount < 0m).Sum(e => e.Amount)),
             MonthIncoming: inMonth.Where(e => e.Amount > 0m).Sum(e => e.Amount),
+            IsFrozen: wallet.IsFrozen,
+            LastMovements: last);
+    }
+
+    private async Task<WalletSummary> FromProceduresAsync(
+        Wallet wallet,
+        string userId,
+        DateTimeOffset monthStart,
+        CancellationToken cancellationToken)
+    {
+        var totals = await _procedures
+            .GetWalletSummaryAsync(wallet.Id, monthStart, cancellationToken)
+            .ConfigureAwait(false);
+        var lastRows = await _procedures
+            .GetStatementPageAsync(wallet.Id, null, null, null, 0, LastMovementCount, cancellationToken)
+            .ConfigureAwait(false);
+
+        var last = lastRows
+            .Select(r => new WalletMovement(r.CreatedAt, ((LedgerEntryKind)r.Kind).ToString(), r.Amount, r.CorrelationId))
+            .ToList();
+
+        return new WalletSummary(
+            WalletId: wallet.Id,
+            UserId: userId,
+            Balance: totals.Balance,
+            MonthOutgoing: totals.MonthOutgoing,
+            MonthIncoming: totals.MonthIncoming,
             IsFrozen: wallet.IsFrozen,
             LastMovements: last);
     }

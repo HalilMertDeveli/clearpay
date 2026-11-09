@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "443217660097",
+    "project_id": "clearpay-c0485",
+    "storage_bucket": "clearpay-c0485.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443217660097:android:972cc7de1852efbde66c40",
+        "android_client_info": {
+          "package_name": "com.clearpay.clearpay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgDIvboO5I4JT7ATGtZPmxaYqOqgRsSUk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,4 +4,5 @@ public sealed record LinkedInstrumentDto(
     Guid Id,
     string Last4,
     string Label,
-    string AccountHint);
+    string AccountHint,
+    string? Scheme = null);

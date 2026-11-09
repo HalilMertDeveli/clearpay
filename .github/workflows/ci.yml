@@ -8,6 +8,34 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Throwaway SQL Server for the stored procedure tests (LedgerProceduresSqlServerTests).
+    # CI-only dev password; the container dies with the job.
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: "Ci_Throwaway_1!"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Ci_Throwaway_1!' -Q 'SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 12
+      # Throwaway broker for the retry / DLQ / idempotency tests (RabbitIntegrationTests).
+      rabbitmq:
+        image: rabbitmq:3.13-alpine
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      CLEARPAY_TEST_SQLSERVER: "Server=localhost,1433;User Id=sa;Password=Ci_Throwaway_1!;TrustServerCertificate=True"
+      CLEARPAY_TEST_RABBITMQ: "amqp://guest:guest@localhost:5672/"
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-dotnet@v5
@@ -19,3 +47,27 @@ jobs:
         run: dotnet build tests/ClearPay.Tests/ClearPay.Tests.csproj --no-restore --configuration Release
       - name: Test
         run: dotnet test tests/ClearPay.Tests/ClearPay.Tests.csproj --no-build --configuration Release
+      - name: Build services
+        run: dotnet build tests/ClearPay.Services.Tests/ClearPay.Services.Tests.csproj --configuration Release
+      - name: Test services (notifications, reconciliation, RabbitMQ)
+        run: dotnet test tests/ClearPay.Services.Tests/ClearPay.Services.Tests.csproj --no-build --configuration Release
+      - name: Build service images
+        run: |
+          docker build -f src/ClearPay.Notifications/Dockerfile -t clearpay-notifications:ci .
+          docker build -f src/ClearPay.Reconciliation/Dockerfile -t clearpay-reconciliation:ci .
+
+  flutter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile/clearpay
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Pub get
+        run: flutter pub get
+      - name: Test
+        run: flutter test

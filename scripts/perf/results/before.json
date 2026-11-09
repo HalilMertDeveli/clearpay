@@ -1,0 +1,86 @@
+﻿[
+    {
+        "State":  "before",
+        "Query":  "q0-legacy-ef-load-treasury",
+        "RowsReturned":  120000,
+        "LogicalReads":  10783,
+        "ReadsByTable":  "LedgerEntry=10783",
+        "CpuMsMedian":  1040,
+        "ElapsedMsMedian":  466,
+        "ClientMsMedian":  467.2,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120000)",
+        "PlanFile":  "docs/sqlplans/before-q0-legacy-ef-load-treasury.sqlplan"
+    },
+    {
+        "State":  "before",
+        "Query":  "q1-summary-customer",
+        "RowsReturned":  1,
+        "LogicalReads":  372,
+        "ReadsByTable":  "LedgerEntry=372",
+        "CpuMsMedian":  0,
+        "ElapsedMsMedian":  0,
+        "ClientMsMedian":  1.4,
+        "PlanAccess":  "Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 120) | Key Lookup LedgerEntry.PK_LedgerEntry (rows 120)",
+        "PlanFile":  "docs/sqlplans/before-q1-summary-customer.sqlplan"
+    },
+    {
+        "State":  "before",
+        "Query":  "q1-summary-treasury",
+        "RowsReturned":  1,
+        "LogicalReads":  368223,
+        "ReadsByTable":  "LedgerEntry=368223",
+        "CpuMsMedian":  289,
+        "ElapsedMsMedian":  291,
+        "ClientMsMedian":  292.4,
+        "PlanAccess":  "Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 120000) | Key Lookup LedgerEntry.PK_LedgerEntry (rows 120000)",
+        "PlanFile":  "docs/sqlplans/before-q1-summary-treasury.sqlplan"
+    },
+    {
+        "State":  "before",
+        "Query":  "q2-statement-customer-p1",
+        "RowsReturned":  20,
+        "LogicalReads":  105530,
+        "ReadsByTable":  "LedgerEntry=105490, Wallet=40",
+        "CpuMsMedian":  293,
+        "ElapsedMsMedian":  296,
+        "ClientMsMedian":  297.8,
+        "PlanAccess":  "Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 120) | Key Lookup LedgerEntry.PK_LedgerEntry (rows 120) | Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 20) | Key Lookup LedgerEntry.PK_LedgerEntry (rows 20) | Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 20) | Clustered Index Seek Wallet.PK_Wallet (rows 20)",
+        "PlanFile":  "docs/sqlplans/before-q2-statement-customer-p1.sqlplan"
+    },
+    {
+        "State":  "before",
+        "Query":  "q2-statement-treasury-p1",
+        "RowsReturned":  20,
+        "LogicalReads":  127269,
+        "ReadsByTable":  "LedgerEntry=127229, Wallet=40",
+        "CpuMsMedian":  362,
+        "ElapsedMsMedian":  319,
+        "ClientMsMedian":  321.3,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120000) | Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 20) | Key Lookup LedgerEntry.PK_LedgerEntry (rows 20) | Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 20) | Clustered Index Seek Wallet.PK_Wallet (rows 20)",
+        "PlanFile":  "docs/sqlplans/before-q2-statement-treasury-p1.sqlplan"
+    },
+    {
+        "State":  "before",
+        "Query":  "q2-statement-treasury-filtered-p3",
+        "RowsReturned":  20,
+        "LogicalReads":  109699,
+        "ReadsByTable":  "LedgerEntry=109659, Wallet=40",
+        "CpuMsMedian":  309,
+        "ElapsedMsMedian":  267,
+        "ClientMsMedian":  269,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 7645) | Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 79) | Key Lookup LedgerEntry.PK_LedgerEntry (rows 60) | Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 20) | Clustered Index Seek Wallet.PK_Wallet (rows 20)",
+        "PlanFile":  "docs/sqlplans/before-q2-statement-treasury-filtered-p3.sqlplan"
+    },
+    {
+        "State":  "before",
+        "Query":  "q3-daily-totals",
+        "RowsReturned":  3,
+        "LogicalReads":  10783,
+        "ReadsByTable":  "LedgerEntry=10783, Worktable=0",
+        "CpuMsMedian":  40,
+        "ElapsedMsMedian":  10,
+        "ClientMsMedian":  11.6,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 1650)",
+        "PlanFile":  "docs/sqlplans/before-q3-daily-totals.sqlplan"
+    }
+]

@@ -1,0 +1,114 @@
+# ClearPay "split services" demo: web + notifications + reconciliation + RabbitMQ + a throwaway SQL Server.
+# Separate from docker-compose.yml (your persistent dev SQL on D:\ClearPay\data) on purpose: nothing here
+# has a volume, `down` deletes all of it.
+#
+#   docker compose -f docker-compose.services.yml -p clearpay-jobprep up -d --build
+#   ./scripts/demo-card-payment.ps1 -BaseUrl http://localhost:18080            # one 3DS payment end to end
+#   docker compose -f docker-compose.services.yml -p clearpay-jobprep logs -f notifications
+#   docker compose -f docker-compose.services.yml -p clearpay-jobprep down -v
+#
+# Host ports (chosen so they do not clash with the default dev stack on 1433 / 5672 / 15672):
+#   18080 web (merchant API, mock ACS, /demo-magaza)      18081 reconciliation API + Hangfire dashboard /hangfire
+#   5673  RabbitMQ AMQP                                    15673 RabbitMQ management UI (guest / guest)
+#   14333 SQL Server (sa, password below)
+#
+# Data ownership (one SQL Server instance, one database per service):
+#   ClearPay               web app: wallet ledger, Identity, card payments, outbox      (dbo)
+#   ClearPayNotifications  notifications service: NotificationLog, ProcessedMessage    (notif)
+#   ClearPayReconciliation reconciliation service: projection, reports, Hangfire       (recon, ReconHangfire)
+# The services talk to the web app only through RabbitMQ. The one exception is the reconciliation
+# ledger check, which EXECUTEs dbo.usp_Ledger_GetDailyTotals (read-only) - see docs/RECONCILIATION.md.
+#
+# Dev-only credentials (same defaults as .env.example). Do not reuse them anywhere real.
+x-sql-password: &sql-password "${MSSQL_SA_PASSWORD:-ClearPay_Dev1!}"
+
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: *sql-password
+    ports:
+      - "127.0.0.1:14333:1433"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER:-guest}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASS:-guest}"
+    ports:
+      - "127.0.0.1:5673:5672"
+      - "127.0.0.1:15673:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  web:
+    build:
+      context: .
+      dockerfile: src/ClearPay.Web/Dockerfile
+    environment:
+      # Development = the demo merchant key (dev-demo-shop-key) and mock ACS secret from appsettings.Development.json.
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__ClearPay: "Server=sql,1433;Database=ClearPay;User Id=sa;Password=${MSSQL_SA_PASSWORD:-ClearPay_Dev1!};TrustServerCertificate=True;Encrypt=True;Connect Timeout=5"
+      ConnectionStrings__Identity: "Server=sql,1433;Database=ClearPay;User Id=sa;Password=${MSSQL_SA_PASSWORD:-ClearPay_Dev1!};TrustServerCertificate=True;Encrypt=True;Connect Timeout=5"
+      ConnectionStrings__RabbitMq: "amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/"
+      ConnectionStrings__Redis: ""
+      Hangfire__Enabled: "true"
+      Hangfire__UseMemoryStorage: "true"   # the outbox relay runs every minute
+      Observability__SeqUrl: ""
+      Observability__OtlpEndpoint: ""
+    ports:
+      - "127.0.0.1:18080:8080"
+    depends_on:
+      sql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  notifications:
+    build:
+      context: .
+      dockerfile: src/ClearPay.Notifications/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      ConnectionStrings__Notifications: "Server=sql,1433;Database=ClearPayNotifications;User Id=sa;Password=${MSSQL_SA_PASSWORD:-ClearPay_Dev1!};TrustServerCertificate=True;Encrypt=True;Connect Timeout=5"
+      ConnectionStrings__RabbitMq: "amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/"
+      # Demo fault injection: payments whose merchant order id starts with "fail-" make the consumer throw,
+      # so retry (notifications.events.retry, 5 s TTL) -> DLQ (notifications.events.dlq) can be shown. "" = off.
+      Notifications__FailMerchantOrderPrefix: "${NOTIFICATIONS_FAIL_PREFIX-fail-}"
+      Observability__OtlpEndpoint: ""
+    depends_on:
+      sql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  reconciliation:
+    build:
+      context: .
+      dockerfile: src/ClearPay.Reconciliation/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Reconciliation: "Server=sql,1433;Database=ClearPayReconciliation;User Id=sa;Password=${MSSQL_SA_PASSWORD:-ClearPay_Dev1!};TrustServerCertificate=True;Encrypt=True;Connect Timeout=5"
+      # Read-only ledger check (EXEC dbo.usp_Ledger_GetDailyTotals). Production: a login with only that EXECUTE grant.
+      ConnectionStrings__LedgerReadOnly: "Server=sql,1433;Database=ClearPay;User Id=sa;Password=${MSSQL_SA_PASSWORD:-ClearPay_Dev1!};TrustServerCertificate=True;Encrypt=True;Connect Timeout=5;ApplicationIntent=ReadOnly"
+      ConnectionStrings__RabbitMq: "amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/"
+      Reconciliation__DashboardOpenToAll: "true"   # local demo only: Hangfire dashboard without login
+      Observability__OtlpEndpoint: ""
+    ports:
+      - "127.0.0.1:18081:8080"
+    depends_on:
+      sql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      web:
+        condition: service_started   # the ledger SP is created by the web app's migrations

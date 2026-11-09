@@ -2,9 +2,9 @@
 
 ClearPay **işveren değil**. Bu dosya **aday** (Halil) içindir: CV, 15/30 dakika script, 409 / transaction / outbox cevapları, hangi firmaya basılır.
 
-Kaynak CV: [`README.md`](../README.md) *CV bullets (intended)* — kelime kelime. Pitch: [`SATIS.md`](SATIS.md). Fark: [`FARK.md`](FARK.md). Motor: [`SPEC.md`](SPEC.md). Neden: [`OGRENME.md`](OGRENME.md).
+Kaynak CV: [`README.md`](../README.md) *CV bullets (intended)* — kelime kelime. Tam HTML paket: `C:\Users\clt\Desktop\Halil_Mert_Develi_CV_Paket` (T-108). Repo kopyası: [`CV-HALIL.md`](CV-HALIL.md). Pitch: [`SATIS.md`](SATIS.md). Fark: [`FARK.md`](FARK.md). Motor: [`SPEC.md`](SPEC.md). Neden: [`OGRENME.md`](OGRENME.md).
 
-**Kilit:** Demo — sahte banka gateway. Lisanslı cüzdan değil. TASK-06 (409 HTTP) ve TASK-11 (outbox worker) bitmeden “kanıtladım” deme.
+**Kilit:** Demo — sahte banka gateway. Lisanslı cüzdan değil. TASK-06 (409 HTTP) ve TASK-11 (outbox worker) **Done** — mülakatta gösterebilirsin. Canlı URL = TASK-16 (sen Portal publish profile; `deploy.ps1` mevcut siteyi ezer).
 
 ---
 
@@ -12,17 +12,50 @@ Kaynak CV: [`README.md`](../README.md) *CV bullets (intended)* — kelime kelime
 
 LinkedIn / CV / e-posta. Üç satır, README ile aynı:
 
-- Built ClearPay, an ASP.NET Core 8 wallet with idempotent P2P transfers, JWT/cookie auth, and a double-entry ledger on SQL Server.
-- Integrated a mock bank gateway over REST and SOAP; used an outbox + queue so payment completion is not lost on timeout.
-- Shipped Docker Compose, xUnit tests, Serilog correlation, and CI/CD to Azure App Service.
+- Built **ClearPay**, an ASP.NET Core 8 **wallet demo** with idempotent P2P transfers, JWT/cookie auth, and a double-entry ledger on SQL Server (`LedgerPair.NetOf`; no `UPDATE Balance`).
+- Same `Idempotency-Key` returns **409 Conflict**; ledger + outbox commit in **one SQL transaction**. Mock BankGateway over REST and SOAP. Razor Pages + Flutter JWT share that ledger. SignalR refreshes the other client (not a second cash register).
+- Shipped Docker Compose, xUnit tests, Serilog correlation, and GitHub Actions CI. Public Azure HTTPS is **TASK-16** (you add the publish-profile secret) — not a licensed e-money product.
 
-**Şimdi (dürüst):** iskelet + Identity WIP; ledger Domain’de var; HTTP 409 = TASK-06; outbox worker = TASK-11; Azure URL = TASK-16. Mülakatta “kural kilitli, kod TASK-06/11’de kanıt” de. Bitince README cümlesi durur; abartı ekleme.
+**Şimdi (dürüst):** Q1 kod TASK-01…15 Done (409 HTTP, outbox worker, CI). Azure URL = TASK-16 — sen Portal **Get publish profile** → GitHub secret `AZURE_WEBAPP_PUBLISH_PROFILE`. `.\infra\deploy.ps1` **çalıştırma** (T-104: mevcut `ClearPay` sitesini ezer). Bitince README cümlesi durur; abartı ekleme.
 
 Kullanma: Papara clone, FAST integration, licensed e-money, production wallet, BDDK.
 
 Headline (isteğe): `ASP.NET Core 8 · idempotent wallet demo · double-entry ledger`
 
 Repo: [github.com/HalilMertDeveli/clearpay](https://github.com/HalilMertDeveli/clearpay) — public, `main`.
+
+---
+
+## LinkedIn (kopyala-yapıştır)
+
+Tam playbook: [`PAZARLAMA.md`](PAZARLAMA.md). **Sen yayınlarsın.** Ajan LinkedIn açmaz.
+
+**Taslak A** — URL yokken (şimdi serbest):
+
+> ClearPay — ASP.NET Core 8 **cüzdan demosu** (sahte banka gateway). Çift kayıt defteri, aynı havale **409**, timeout’ta outbox. Lisanslı ödeme kuruluşu değil; Papara/FAST değil.  
+> Repo: https://github.com/HalilMertDeveli/clearpay  
+> Demo — sahte banka gateway.
+
+**Taslak B** — TASK-16 URL tarayıcıda açık olduktan sonra (`{CANLI_KOK}` = senin HTTPS kökün; uydurma yok):
+
+> ClearPay **demo** canlı: {CANLI_KOK}  
+> ASP.NET Core 8 cüzdan demosu — ledger, idempotency 409, sahte banka REST+SOAP. Gerçek havale / IBAN yok.  
+> Kod: https://github.com/HalilMertDeveli/clearpay  
+> Demo — sahte banka gateway.
+
+---
+
+## Kapı başvurusu — sen tıklarsın
+
+Ajan kariyer sitesi / e-posta göndermez. İlan **C# / .NET** ise:
+
+1. CV üç satır (yukarı) + repo linki.
+2. 15/30 prova lokal: http://localhost:5153/giris → havale iki kez → **409**.
+3. Kapı sırası: Intertech → Softtech → Bileşim → TAV / İGA → uni BT / sanayi / Turkcell .NET. Adres: [`GELIR.md`](GELIR.md) §5 (randevu; soğuk kapı değil).
+4. Konu satırı örneği: `Halil Mert Develi — ASP.NET Core 8 wallet demo (409 / ledger / outbox)`
+5. Gövde: taslak A + “satın alın değil, bu defteri .NET ekibinizde kurarım.” Papara klonu yok.
+
+Java/THY/Garanti Java/ASELSAN C++ — bu repo ile girilmez.
 
 ---
 
@@ -49,7 +82,7 @@ Kesme cümlesi (15s, SATIS): *Defter sizin. Bakiye güncellendi demiyoruz. Demo.
 | 15–20 | Ledger | Çift kayıt (`LedgerEntry` +/−, `PairId`). Bakiye = `NetOf`. İade = ters kayıt. Freeze: gönderemez / çekemez. Audit + correlation id. |
 | 20–24 | Gateway | Sahte `BankGateway`: REST **ve** SOAP, **aynı sözleşme** (timeout dahil). Gerçek FAST/POS yok. |
 | 24–27 | Demo | Mümkünse: kayıt → özet `0,00 ₺` → (TASK-06+) aynı havale iki kez → **409**. Footer: Demo — sahte banka gateway. |
-| 27–30 | Soru | “Neden 200 replay değil?” → ikinci kesinti yok. “Neden Java yok?” → hedef .NET kapısı. “Ne zaman Azure?” → TASK-16, hesabı ben açarım. |
+| 27–30 | Soru | “Neden 200 replay değil?” → ikinci kesinti yok. “Neden Java yok?” → hedef .NET kapısı. “Ne zaman Azure?” → TASK-16, Portal publish profile; `deploy.ps1` bu siteyi ezmez. |
 
 Canlı site yoksa GitHub + SPEC para kuralları. Uydurma ekran yok.
 
@@ -118,7 +151,7 @@ Aynı kapı: banka yazılım evleri, holding BT, .NET ilanı açık diğer kurum
 
 - İşe alıyoruz / ClearPay’de açık pozisyon
 - Papara alternatifi, BDDK, gerçek FAST/POS/IBAN
-- “409’u production’da kanıtladım” (TASK-06/11 öncesi)
+- “409’u production Azure’da kanıtladım” (TASK-16 URL yokken)
 - Maaş bandı, başlık uydurma, rakip firma iç bilgi
 
 Sales 15s pitch ve site copy: `SATIS.md`. İK script’i ezberletir; Sales pazar cümlesini yazar — çelişirse **demo + üçlü** kazanır.

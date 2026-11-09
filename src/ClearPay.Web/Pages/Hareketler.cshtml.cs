@@ -40,6 +40,8 @@ public class HareketlerModel : PageModel
         DateTimeOffset? to = Bitis is DateTime end
             ? new DateTimeOffset(DateTime.SpecifyKind(end.Date.AddDays(1), DateTimeKind.Utc))
             : null;
-        Result = await _activity.ListAsync(userId, from, to, Tur, Sayfa, cancellationToken).ConfigureAwait(false);
+        Result = await _activity
+            .ListAsync(userId, from, to, Tur, Sayfa, pageSize: 20, cancellationToken)
+            .ConfigureAwait(false);
     }
 }

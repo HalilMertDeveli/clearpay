@@ -1,6 +1,12 @@
 using System.Net;
+using ClearPay.Domain.Ledger;
+using ClearPay.Infrastructure.Identity;
+using ClearPay.Infrastructure.Persistence;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ClearPay.Tests;
 
@@ -54,6 +60,7 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
     [InlineData("/")]
     [InlineData("/havale")]
     [InlineData("/yukle-cek")]
+    [InlineData("/kartlar")]
     [InlineData("/hareketler")]
     public async Task Menu_routes_are_200_until_login_then_redirect(string path)
     {
@@ -110,14 +117,8 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         registerGet.StatusCode.Should().Be(HttpStatusCode.OK);
         var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
 
-        var registerPost = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Ayşe Yılmaz",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        var registerPost = await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Ayşe Yılmaz")));
 
         registerPost.StatusCode.Should().Be(HttpStatusCode.OK);
         var wallet = await registerPost.Content.ReadAsStringAsync();
@@ -126,11 +127,95 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         wallet.Should().Contain("Bu ay giden");
         wallet.Should().Contain("Bu ay gelen");
         wallet.Should().Contain("Yükle / Çek");
+        wallet.Should().Contain("masthead");
+        wallet.Should().Contain("Hızlı işlemler");
+        wallet.Should().Contain("İnternet");
+        wallet.Should().NotContain("Worldcard");
         wallet.Should().NotContain(">Admin<");
     }
 
     [Fact]
-    public async Task YukleCek_shows_demo_card_panel_without_ninth_screen()
+    public async Task Kartlar_page_is_live_preview_when_logged_in()
+    {
+        var client = CreateClient();
+        if (!await LoginPageExistsAsync(client))
+        {
+            return;
+        }
+
+        var email = $"kartlar.{Guid.NewGuid():N}@clearpay.test";
+        var registerGet = await client.GetAsync("/Account/Register");
+        var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Kartlarım Deneme")));
+
+        var html = await client.GetStringAsync("/kartlar");
+        html.Should().Contain("Kartlarım");
+        html.Should().Contain("data-card-preview");
+        html.Should().Contain("live-card");
+        html.Should().Contain("live-card-back");
+        html.Should().Contain("4111 1111 1111 1111");
+        html.Should().Contain("Yapı Kredi");
+        html.Should().Contain("card-preview.js");
+        html.Should().NotContain("name=\"NewCard.Cvv\"");
+        html.Should().NotContain("name=\"card-cvv\"");
+        html.Should().Contain("Demo — yükleme için sahte gateway");
+        html.Should().Contain("handler=Add");
+
+        var bindToken = AuthFormToken.Get(html);
+        var bind = await client.PostAsync("/kartlar?handler=Add", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["NewCard.Number"] = "4111111111111111",
+            ["NewCard.Holder"] = "AYSE YILMAZ",
+            ["NewCard.Label"] = "Yapı Kredi",
+            ["__RequestVerificationToken"] = bindToken
+        }));
+        bind.StatusCode.Should().Be(HttpStatusCode.OK);
+        var bound = await bind.Content.ReadAsStringAsync();
+        bound.Should().Contain("Visa");
+        bound.Should().Contain("data-scheme=\"visa\"");
+        bound.Should().Contain("scheme-orb");
+        bound.Should().Contain("****1111");
+        bound.Should().Contain("Yapı Kredi");
+        bound.Should().Contain("Bu karttan cüzdana yükle");
+        bound.Should().NotContain("4111111111111111");
+        bound.Should().Contain("/yukle-cek");
+    }
+
+    [Fact]
+    public async Task Kartlar_mastercard_bin_stores_scheme_not_pan()
+    {
+        var client = CreateClient();
+        if (!await LoginPageExistsAsync(client))
+        {
+            return;
+        }
+
+        var email = $"kartlar.mc.{Guid.NewGuid():N}@clearpay.test";
+        var registerGet = await client.GetAsync("/Account/Register");
+        var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Mastercard Deneme")));
+
+        var html = await client.GetStringAsync("/kartlar");
+        var bindToken = AuthFormToken.Get(html);
+        var bind = await client.PostAsync("/kartlar?handler=Add", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["NewCard.Number"] = "5555555555554444",
+            ["NewCard.Holder"] = "ALI VELI",
+            ["NewCard.Label"] = "MC Demo",
+            ["__RequestVerificationToken"] = bindToken
+        }));
+        bind.StatusCode.Should().Be(HttpStatusCode.OK);
+        var bound = await bind.Content.ReadAsStringAsync();
+        bound.Should().Contain("Mastercard");
+        bound.Should().Contain("data-scheme=\"mastercard\"");
+        bound.Should().Contain("****4444");
+        bound.Should().NotContain("5555555555554444");
+    }
+
+    [Fact]
+    public async Task YukleCek_shows_linked_card_and_points_to_kartlar()
     {
         var client = CreateClient();
         if (!await LoginPageExistsAsync(client))
@@ -141,24 +226,18 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         var email = $"kart.{Guid.NewGuid():N}@clearpay.test";
         var registerGet = await client.GetAsync("/Account/Register");
         var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
-        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Kart Deneme",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Kart Deneme")));
 
         var html = await client.GetStringAsync("/yukle-cek");
         html.Should().Contain("id=\"kart\"");
         html.Should().Contain("demo-card");
-        html.Should().Contain("Son 4 hane");
         html.Should().Contain("Kart ekle");
         html.Should().Contain("Henüz kart yok");
+        html.Should().Contain("/kartlar");
+        html.Should().Contain("Kartlarım");
         html.Should().NotContain("asp-for=\"NewCard.Pan\"");
         html.Should().NotContain("name=\"NewCard.Cvv\"");
-        html.Should().NotContain(">Kartlar<");
         html.Should().Contain("Yükle / Çek");
         html.Should().Contain("Havale");
         html.Should().Contain("Hareketler");
@@ -176,14 +255,8 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         var email = $"bos.{Guid.NewGuid():N}@clearpay.test";
         var registerGet = await client.GetAsync("/Account/Register");
         var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
-        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Boş Cüzdan",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Boş Cüzdan")));
 
         var html = await client.GetStringAsync("/havale");
         html.Should().Contain("Kalan bakiye");
@@ -206,21 +279,64 @@ public sealed class AuthOrUiTests : IClassFixture<ClearPayWebFactory>
         var email = $"tar.{Guid.NewGuid():N}@clearpay.test";
         var registerGet = await client.GetAsync("/Account/Register");
         var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
-        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["Input.FullName"] = "Tarih Filtre",
-            ["Input.Email"] = email,
-            ["Input.Password"] = "Deneme123",
-            ["Input.ConfirmPassword"] = "Deneme123",
-            ["__RequestVerificationToken"] = token
-        }));
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Tarih Filtre")));
 
         var html = await client.GetStringAsync("/hareketler");
         html.Should().Contain("name=\"Bitis\"");
         html.Should().Contain("Bitiş");
         html.Should().Contain("Havale gönder");
         html.Should().Contain("skip-link");
-        html.Should().NotContain(">Kartlar<");
+    }
+
+    [Fact]
+    public async Task Dekont_page_offers_pdf_of_existing_ledger_row()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = true,
+            HandleCookies = true
+        });
+        if (!await LoginPageExistsAsync(client))
+            return;
+
+        var email = $"pdf.{Guid.NewGuid():N}@clearpay.test";
+        var registerGet = await client.GetAsync("/Account/Register");
+        var token = AuthFormToken.Get(await registerGet.Content.ReadAsStringAsync());
+        await client.PostAsync("/Account/Register", new FormUrlEncodedContent(
+            RegisterForm.Cookie(token, email, "Pdf Deneme")));
+
+        Guid correlation;
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var userId = (await users.FindByEmailAsync(email))!.Id;
+            var db = scope.ServiceProvider.GetRequiredService<ClearPayDbContext>();
+            var wallet = await db.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+            if (wallet is null)
+            {
+                wallet = new Wallet { Id = Guid.NewGuid(), UserId = userId, CreatedAt = DateTimeOffset.UtcNow };
+                db.Wallets.Add(wallet);
+            }
+
+            var treasury = new Wallet { Id = Guid.NewGuid(), UserId = "fund-pdf-" + Guid.NewGuid().ToString("N"), CreatedAt = DateTimeOffset.UtcNow };
+            db.Wallets.Add(treasury);
+            correlation = Guid.NewGuid();
+            var (debit, credit) = LedgerPair.Create(treasury.Id, wallet.Id, 25m, correlation, LedgerEntryKind.TopUp);
+            db.LedgerEntries.AddRange(debit, credit);
+            await db.SaveChangesAsync();
+        }
+
+        var html = await client.GetStringAsync($"/dekont/{correlation}");
+        html.Should().Contain("PDF indir");
+        html.Should().Contain("handler=Pdf");
+        html.Should().NotContain("Worldcard");
+
+        var pdf = await client.GetAsync($"/dekont/{correlation}?handler=Pdf");
+        pdf.StatusCode.Should().Be(HttpStatusCode.OK);
+        pdf.Content.Headers.ContentType!.MediaType.Should().Be("application/pdf");
+        var bytes = await pdf.Content.ReadAsByteArrayAsync();
+        System.Text.Encoding.ASCII.GetString(bytes, 0, 4).Should().Be("%PDF");
     }
 
     [Fact]

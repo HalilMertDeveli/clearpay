@@ -10,6 +10,12 @@ public static class LedgerSchema
     /// <summary>PLAN: LedgerEntry(WalletId, CreatedAt).</summary>
     public const string LedgerEntryWalletCreated = "IX_LedgerEntry_WalletId_CreatedAt";
 
+    /// <summary>Counterparty lookup by pair (INCLUDE WalletId, Amount). See docs/SQL-PERF.md.</summary>
+    public const string LedgerEntryPairId = "IX_LedgerEntry_PairId";
+
+    /// <summary>Day-level reconciliation totals (INCLUDE Kind, Amount). See docs/SQL-PERF.md.</summary>
+    public const string LedgerEntryCreatedAt = "IX_LedgerEntry_CreatedAt";
+
     /// <summary>PLAN: IdempotencyRecord(Key) unique — duplicate → 409.</summary>
     public const string IdempotencyKeyUnique = "UX_IdempotencyRecord_Key";
 
@@ -29,4 +35,6 @@ public static class LedgerSchema
     public const int LinkedLast4Length = 4;
 
     public const int LinkedLabelMaxLength = 40;
+
+    public const int LinkedSchemeMaxLength = 16;
 }

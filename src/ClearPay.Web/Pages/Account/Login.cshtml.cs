@@ -1,4 +1,5 @@
 using ClearPay.Application.Identity;
+using ClearPay.Domain.Identity;
 using ClearPay.Infrastructure.Identity;
 using ClearPay.Web.Localization;
 using FluentValidation;
@@ -48,11 +49,35 @@ public class LoginModel : PageModel
             return Page();
         }
 
+        var email = Input.Email.Trim();
+        if (string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(Input.Tc))
+        {
+            var mapped = DemoTc.ResolveEmail(Input.Tc);
+            if (mapped is null)
+            {
+                ModelState.AddModelError("Input.Tc", _localizer["SignInTcUnknown"]);
+                return Page();
+            }
+
+            email = mapped;
+        }
+
+        var user = await _signInManager.UserManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            ModelState.AddModelError(string.Empty, _localizer["InvalidCredentials"]);
+            return Page();
+        }
+
         var result = await _signInManager.PasswordSignInAsync(
-            Input.Email.Trim(),
+            user,
             Input.Password,
             isPersistent: Input.RememberMe,
             lockoutOnFailure: false);
+
+        // #region agent log
+        AgentDebugLog.Write("K", "Login.cshtml.cs:OnPostAsync", "cookie login", new { ok = result.Succeeded, locked = result.IsLockedOut });
+        // #endregion
 
         if (result.Succeeded)
         {

@@ -33,11 +33,22 @@ public sealed class LinkedInstrumentStoreTests : IDisposable
         dto!.Last4.Should().Be("1234");
         dto.AccountHint.Should().Be("****1234");
         dto.Label.Should().Be("Maas");
+        dto.Scheme.Should().Be(CardNetwork.Unknown);
 
         var row = await _db.LinkedInstruments.AsNoTracking().SingleAsync();
         row.Last4.Should().Be("1234");
         typeof(LinkedInstrument).GetProperty("Pan").Should().BeNull();
         typeof(LinkedInstrument).GetProperty("Cvv").Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Add_stores_scheme_without_pan()
+    {
+        var dto = await _store.AddAsync("user-1", "1111", "Yapı Kredi", CardNetwork.Visa);
+        dto.Should().NotBeNull();
+        dto!.Scheme.Should().Be(CardNetwork.Visa);
+        dto.Label.Should().Be("Yapı Kredi");
+        (await _db.LinkedInstruments.AsNoTracking().SingleAsync()).Scheme.Should().Be(CardNetwork.Visa);
     }
 
     [Fact]

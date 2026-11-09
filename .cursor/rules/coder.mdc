@@ -1,6 +1,6 @@
 ---
 description: Coder — ASP.NET Core Razor Pages + Web API
-globs: src/**/*.{cs,cshtml,css,js,json}
+globs: src/**/*.{cs,cshtml,css,js,json},mobile/**/*.dart
 alwaysApply: false
 ---
 

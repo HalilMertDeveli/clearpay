@@ -1,3 +1,11 @@
+# T-104: zip deploy to the Portal App Service. Do not run infra/deploy.ps1 over it.
+# Variable AZURE_WEBAPP_NAME = ClearPay  (site name, not the unique hostname)
+# Secret AZURE_WEBAPP_PUBLISH_PROFILE = Portal → App Service ClearPay → Get publish profile
+#   → GitHub Settings → Secrets and variables → Actions → New repository secret
+# Live: https://clearpay-eecuaqc7c5ehbmb5.canadacentral-01.azurewebsites.net
+# Triggers on main (push) and workflow_dispatch. Merge this branch to main for deploy-on-push.
+# Portal if appCommandLine is still null: Configuration → General settings → Startup Command
+#   = dotnet ClearPay.Web.dll
 name: Azure deploy
 
 on:

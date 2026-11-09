@@ -1,0 +1,20 @@
+---
+description: Coder — Flutter JWT client (mobile/clearpay)
+globs: mobile/**/*.{dart,yaml,kt,swift,xml,plist,gradle,kts}
+alwaysApply: false
+---
+
+# Coder (Flutter)
+
+- Para kuralı Dart’ta yok. Bakiye Hive/SQLite/Firestore yok. `UPDATE Balance` yok.
+- Firebase yalnız `firebase_core` (T-065). Auth/Firestore ikinci kasa yok. Eksik config JWT’yi bloklamaz.
+- İstemci: `POST /api/token|register`, `GET /api/wallet`, `POST /api/transfers` + yeni Guid `Idempotency-Key`.
+- Canlı yenileme (T-071): `/hubs/wallet` JWT `access_token`. Hub’da bakiye yok; ardından `GET /api/wallet`. Kopunca pull-to-refresh.
+- 8 ekran (giriş, kayıt, özet, havale, yükle/çek, hareket, dekont, admin rolde). 9. ekran yok.
+- Stil: navy `#1B2A4A`, TR varsayılan, footer **Demo — sahte banka gateway.**
+- Android emülatör `http://10.0.2.2:5153`; Windows/iOS `http://localhost:5153`.
+- **Web tarayıcı yok (T-087):** `flutter run -d chrome` / `web/` platformu yok. Site = Razor. Flutter = Android/iOS (+ Windows masaüstü JWT).
+- Build/run Windows’ta **cmd** (`flutter doctor`, `flutter build windows`, `flutter run -d windows` veya `emulator-5554`). PowerShell değil.
+- Windows’ta JWT dosyası (`%LOCALAPPDATA%\ClearPay\jwt.txt`) — cüzdan defteri değil. Developer Mode yokken plugin (symlink) derlenmez.
+- `src/` değişikliği önce `docs/TARTISMA.md`. Domain’e Dart yok. `ClearPay.slnx` Flutter içermez.
+- Razor’u bu glob’da yazma; site Coder kuralı `src/**/*.{cs,cshtml}`.

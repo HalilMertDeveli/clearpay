@@ -14,6 +14,7 @@ public sealed class TransferExecutorTests : IDisposable
     private readonly SqliteConnection _connection;
     private readonly ClearPayDbContext _db;
     private readonly RecordingCache _cache;
+    private readonly RecordingLive _live;
     private readonly MapDirectory _users;
     private readonly SqlTransferExecutor _executor;
     private readonly FixedClock _clock;
@@ -30,8 +31,9 @@ public sealed class TransferExecutorTests : IDisposable
         _clock = new FixedClock(new DateTimeOffset(2026, 8, 14, 12, 0, 0, TimeSpan.Zero));
         _cache = new RecordingCache();
         _users = new MapDirectory();
+        _live = new RecordingLive();
         var store = new SqlIdempotencyStore(_db, _clock);
-        _executor = new SqlTransferExecutor(_db, _users, store, _clock, _cache);
+        _executor = new SqlTransferExecutor(_db, _users, store, _clock, _cache, _live);
     }
 
     [Fact]
@@ -62,6 +64,9 @@ public sealed class TransferExecutorTests : IDisposable
         (await _db.OutboxMessages.CountAsync(m => m.Status == OutboxStatus.Pending)).Should().Be(1);
         (await _db.AuditLogs.CountAsync()).Should().Be(1);
         _cache.Invalidated.Should().Equal(senderId, recipientId);
+        _live.Notices.Should().HaveCount(1);
+        _live.Notices[0].Reason.Should().Be("transfer");
+        _live.Notices[0].UserIds.Should().BeEquivalentTo(new[] { senderId, recipientId });
     }
 
     [Fact]
@@ -187,6 +192,17 @@ public sealed class TransferExecutorTests : IDisposable
             cancellationToken.ThrowIfCancellationRequested();
             var match = _map.FirstOrDefault(p => p.Value == userId);
             return Task.FromResult(match.Key is null ? null : match.Key);
+        }
+    }
+
+    private sealed class RecordingLive : IWalletLiveNotifier
+    {
+        public List<WalletLiveNotice> Notices { get; } = [];
+
+        public Task NotifyAsync(WalletLiveNotice notice, CancellationToken cancellationToken = default)
+        {
+            Notices.Add(notice);
+            return Task.CompletedTask;
         }
     }
 

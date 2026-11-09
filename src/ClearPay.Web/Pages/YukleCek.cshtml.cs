@@ -47,9 +47,6 @@ public class YukleCekModel : PageModel
     [BindProperty]
     public FundingInput Withdraw { get; set; } = new();
 
-    [BindProperty]
-    public CardInput NewCard { get; set; } = new();
-
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
         TopUp.IdempotencyKey = Guid.NewGuid().ToString("N");
@@ -63,24 +60,6 @@ public class YukleCekModel : PageModel
 
     public Task<IActionResult> OnPostWithdrawAsync(CancellationToken cancellationToken) =>
         ExecuteAsync(BankOperation.Withdraw, Withdraw, cancellationToken);
-
-    public async Task<IActionResult> OnPostAddCardAsync(CancellationToken cancellationToken)
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
-        var added = await _cards.AddAsync(userId, NewCard.Last4, NewCard.Label, cancellationToken)
-            .ConfigureAwait(false);
-        if (added is null)
-        {
-            await LoadAsync(cancellationToken).ConfigureAwait(false);
-            ModelState.AddModelError(string.Empty, _localizer["CardAddFail"]);
-            TopUp.IdempotencyKey = Guid.NewGuid().ToString("N");
-            Withdraw.IdempotencyKey = Guid.NewGuid().ToString("N");
-            return Page();
-        }
-
-        TempData["Flash"] = _localizer["CardAddOk"].Value;
-        return RedirectToPage(new { kart = added.Last4 });
-    }
 
     private async Task<IActionResult> ExecuteAsync(
         BankOperation operation,
@@ -186,12 +165,5 @@ public class YukleCekModel : PageModel
         public string Account { get; set; } = string.Empty;
 
         public string IdempotencyKey { get; set; } = string.Empty;
-    }
-
-    public sealed class CardInput
-    {
-        public string Last4 { get; set; } = string.Empty;
-
-        public string Label { get; set; } = string.Empty;
     }
 }

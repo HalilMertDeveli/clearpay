@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.21" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.21" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.21" />
+    <PackageReference Include="OpenTelemetry.Api" Version="1.20.1" />
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.21">
@@ -26,6 +27,13 @@
   <ItemGroup>
     <ProjectReference Include="..\ClearPay.Application\ClearPay.Application.csproj" />
     <ProjectReference Include="..\ClearPay.Domain\ClearPay.Domain.csproj" />
+    <ProjectReference Include="..\ClearPay.Contracts\ClearPay.Contracts.csproj" />
+    <ProjectReference Include="..\ClearPay.Messaging\ClearPay.Messaging.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- T-SQL stored procedures (CREATE OR ALTER), run by the AddLedgerReadProcedures migration. -->
+    <EmbeddedResource Include="Persistence/Sql/*.sql" />
   </ItemGroup>
 
   <PropertyGroup>

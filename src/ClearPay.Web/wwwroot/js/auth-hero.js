@@ -7,7 +7,9 @@
 
   document.documentElement.classList.add("auth-motion");
 
-  anime
+  const reveal = () => document.documentElement.classList.remove("auth-motion");
+  try {
+    anime
     .timeline({ easing: "easeOutQuad" })
     .add({
       targets: ".auth-orb",
@@ -43,4 +45,11 @@
       },
       "-=80"
     );
+    window.setTimeout(reveal, 900);
+  } catch (err) {
+    // #region agent log
+    fetch('http://127.0.0.1:7320/ingest/8265b831-5f86-4494-a083-68cbc6788d32',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'021de0'},body:JSON.stringify({sessionId:'021de0',location:'auth-hero.js',message:'anime failed, revealed login',data:{ok:false,errorType:String(err&&err.name||'Error')},timestamp:Date.now(),hypothesisId:'H'})}).catch(()=>{});
+    // #endregion
+    reveal();
+  }
 })();

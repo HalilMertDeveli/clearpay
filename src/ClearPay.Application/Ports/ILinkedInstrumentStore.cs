@@ -13,5 +13,6 @@ public interface ILinkedInstrumentStore
         string userId,
         string last4,
         string label,
+        string? scheme = null,
         CancellationToken cancellationToken = default);
 }

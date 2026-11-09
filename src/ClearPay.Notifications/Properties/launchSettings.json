@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ClearPay.Notifications": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

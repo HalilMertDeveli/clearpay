@@ -2,7 +2,7 @@
 
 **Kilit:** ClearPay lisanslı ödeme / e-para kuruluşu **değildir**. Ekrandaki tutarlar demo. Bu belge banka ve iş yeri sunumu içindir; hukuki tavsiye değildir. 6493 / TCMB işi avukata.
 
-Karar: [`TARTISMA.md`](TARTISMA.md) **T-013**. Wedge: [`FARK.md`](FARK.md). Mülakat pitch: [`SATIS.md`](SATIS.md). Kapı listesi: [`IK.md`](IK.md). Para kuralları: [`SPEC.md`](SPEC.md).
+Karar: [`TARTISMA.md`](TARTISMA.md) **T-013**. Yol (nereye gider): [`YOL.md`](YOL.md) (T-059). Wedge: [`FARK.md`](FARK.md). Mülakat pitch: [`SATIS.md`](SATIS.md). Kapı listesi: [`IK.md`](IK.md). Para kuralları: [`SPEC.md`](SPEC.md).
 
 Footer cümlesi sunumda da: **Demo — yükleme için sahte gateway.**
 
@@ -14,7 +14,7 @@ Footer cümlesi sunumda da: **Demo — yükleme için sahte gateway.**
 |-------|--------|
 | Ürün | ASP.NET Core 8 mutabakat-öncelikli **cüzdan demosu** |
 | Para | Sahte gateway. Müşteri fonu, IBAN, FAST, POS **yok** |
-| Kanıt | TASK-03 giriş/kayıt. Ledger HTTP = TASK-06. Outbox worker = TASK-11. URL = TASK-16 |
+| Kanıt | TASK-01…15 Done. 409 HTTP + outbox worker var. URL = TASK-16 ([`YOL.md`](YOL.md)). |
 | Satış iddiası | “Papara alternatifi / BDDK lisanslı / FAST entegre” **yasak** |
 
 Banka veya iş yerine **şimdi** götürülecek şey: repo + 15 saniye wedge + “şu motoru kapalı devre / iç defter olarak lisanslarız.” Canlı tahsilat sözleşmesi **yok**.
@@ -172,15 +172,13 @@ Düzenleyici (müşteri değil): TCMB ödeme sistemleri mevzuatı, TÖDEB üyele
 
 ## 7. Yapılacaklar (sıra)
 
-Kod TASK sırası değişmez (`TASKS.md`). Bu liste **ticari**.
+Kod TASK sırası: kalan **TASK-16** (`TASKS.md`). Yol ve kapı: [`YOL.md`](YOL.md) (T-059). Bu liste **ticari mertebe**.
 
-1. **Şimdi:** Bankaya “lisanslı cüzdan” deme. 15s metni ezberle. Kapı listesi `IK.md`.
-2. **TASK-06 + TASK-11:** 409 ve outbox kanıtı olmadan “satın alın” yok.
-3. **TASK-16:** HTTPS demo URL; sunumda localhost yok.
-4. **İlk ticari konuşma:** bir üniversite BT veya bir OSB yemekhane — sınırlı ağ. Avukat: 6493 m.12/2(h), 50 milyon TL bildirim.
-5. **Şirket:** fatura keseceksen Ltd/şahıs; ajan şirket açmaz.
-6. **Q2 (ayrı karar):** satıcı ekranı, QR kasa — SPEC’e 9. ekran **kullanıcı onayı** ile.
-7. **Asla şimdi:** ödeme kuruluşu başvurusu, Ads “ucuz havale”, gerçek IBAN.
+1. **Şimdi:** [`CANLI.md`](CANLI.md) — `az login` + `.\infra\deploy.ps1`. 15s pitch `SATIS.md`. Kapı `IK.md`.
+2. **URL tarayıcıda:** GitHub Website + LinkedIn taslak B (`PAZARLAMA.md`). Lokalhost paylaşma.
+3. **1–3 ay:** .NET kapılarına CV+repo (sen başvurursun).
+4. **Q2 park:** kapalı devre / white-label — avukat + yeni TARTISMA; 9. ekran yok.
+5. **Asla şimdi:** ödeme kuruluşu başvurusu, Ads “ucuz havale”, gerçek IBAN.
 
 ---
 

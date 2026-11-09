@@ -1,10 +1,15 @@
+using ClearPay.Application.Payments;
 using ClearPay.Application.Ports;
 using ClearPay.Infrastructure.Banking;
 using ClearPay.Infrastructure.Caching;
 using ClearPay.Infrastructure.Identity;
+using ClearPay.Infrastructure.Documents;
 using ClearPay.Infrastructure.Jobs;
 using ClearPay.Infrastructure.Messaging;
+using ClearPay.Infrastructure.Payments;
+using ClearPay.Infrastructure.Payments.Acquirers;
 using ClearPay.Infrastructure.Persistence;
+using ClearPay.Infrastructure.Realtime;
 using ClearPay.Infrastructure.Time;
 using Hangfire;
 using Hangfire.MemoryStorage;
@@ -13,7 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
+using ClearPay.Messaging;
 using StackExchange.Redis;
 
 namespace ClearPay.Infrastructure.DependencyInjection;
@@ -47,6 +52,8 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IClock, SystemClock>();
         services.AddSingleton<IJwtTokenIssuer, JwtTokenIssuer>();
+        services.AddSingleton<IReceiptPdf, SimplePdfReceiptRenderer>();
+        services.AddScoped<IWalletLiveNotifier, NoOpWalletLiveNotifier>();
         AddRedisCache(services, configuration);
         AddRabbit(services, configuration);
         services.AddScoped<SqlWalletReader>();
@@ -55,12 +62,14 @@ public static class ServiceCollectionExtensions
             sp.GetRequiredService<IWalletSummaryCache>()));
         services.AddScoped<IIdempotencyStore, SqlIdempotencyStore>();
         services.AddScoped<ITransferExecutor, SqlTransferExecutor>();
+        services.AddScoped<ITransferLookup, SqlTransferLookup>();
         services.AddScoped<IFundingExecutor, SqlFundingExecutor>();
         services.AddScoped<ILinkedInstrumentStore, SqlLinkedInstrumentStore>();
         services.AddScoped<IActivityReader, SqlActivityReader>();
         services.AddScoped<IAdminPanel, SqlAdminPanel>();
         services.AddScoped<IOutboxProcessor, SqlOutboxProcessor>();
         services.AddScoped<OutboxHangfireJob>();
+        AddPayments(services, configuration);
 
         services.AddScoped<RestBankGateway>();
         services.AddScoped<SoapBankGateway>();
@@ -138,6 +147,38 @@ public static class ServiceCollectionExtensions
         }
     }
 
+    /// <summary>
+    /// Mock card acquiring: three adapters behind one <see cref="IAcquirerAdapter"/> contract,
+    /// a BIN router, the 3DS HMAC signer, and the SQL gateway. Adding a bank = one more AddSingleton here.
+    /// </summary>
+    private static void AddPayments(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IAcquirerAdapter, MockBankAAdapter>();
+        services.AddSingleton<IAcquirerAdapter, MockBankBAdapter>();
+        services.AddSingleton<IAcquirerAdapter, MockPspCAdapter>();
+
+        var routing = configuration.GetSection(PaymentRoutingOptions.SectionName).Get<PaymentRoutingOptions>()
+            ?? new PaymentRoutingOptions();
+        if (routing.BinRoutes.Count == 0)
+        {
+            routing.BinRoutes = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["4"] = MockBankAAdapter.ProviderName,
+                ["5"] = MockBankBAdapter.ProviderName,
+                ["2"] = MockBankBAdapter.ProviderName,
+                ["9792"] = MockPspCAdapter.ProviderName
+            };
+        }
+
+        services.AddSingleton(routing);
+        services.AddSingleton<AcquirerRouter>();
+
+        var threeDs = configuration.GetSection(ThreeDsOptions.SectionName).Get<ThreeDsOptions>() ?? new ThreeDsOptions();
+        services.AddSingleton(threeDs);
+        services.AddSingleton<ThreeDsSigner>();
+        services.AddScoped<IPaymentGateway, SqlPaymentGateway>();
+    }
+
     private static void AddRedisCache(IServiceCollection services, IConfiguration configuration)
     {
         var mux = RedisMultiplexerFactory.TryCreate(configuration.GetConnectionString("Redis"));
@@ -154,21 +195,19 @@ public static class ServiceCollectionExtensions
 
     private static void AddRabbit(IServiceCollection services, IConfiguration configuration)
     {
+        // No broker configured (tests, laptop demo): log the event and mark the row Sent — there are no consumers.
+        // Broker configured: always the Rabbit publisher, even if the broker is down right now. It throws on a
+        // failed confirm and the outbox row stays Pending until RabbitMQ is back (no silent fallback).
+        var amqp = configuration.GetConnectionString("RabbitMq");
         services.AddSingleton<LoggingOutboxPublisher>();
-        var connection = RabbitConnectionFactory.TryCreate(configuration.GetConnectionString("RabbitMq"));
-        if (connection is null)
+        services.AddClearPayRabbit(amqp, "clearpay-web");
+        services.AddSingleton(sp => new RabbitRuntimeStatus(sp.GetRequiredService<RabbitConnectionProvider>()));
+        if (string.IsNullOrWhiteSpace(amqp))
         {
-            var empty = configuration.GetConnectionString("RabbitMq");
-            services.AddSingleton(new RabbitRuntimeStatus(string.IsNullOrWhiteSpace(empty) ? "off" : "down"));
             services.AddScoped<IOutboxPublisher>(sp => sp.GetRequiredService<LoggingOutboxPublisher>());
             return;
         }
 
-        services.AddSingleton(connection);
-        services.AddSingleton(new RabbitRuntimeStatus("up"));
-        services.AddSingleton<IOutboxPublisher>(sp => new RabbitOutboxPublisher(
-            sp.GetRequiredService<IConnection>(),
-            sp.GetRequiredService<ILogger<RabbitOutboxPublisher>>(),
-            sp.GetRequiredService<LoggingOutboxPublisher>()));
+        services.AddSingleton<IOutboxPublisher, RabbitOutboxPublisher>();
     }
 }
