@@ -167,6 +167,12 @@ Web ledger hesabı yapmaz. Özet `IWalletReader` sorar. Adapter `SqlWalletReader
 
 ---
 
+## SQL performansı (ölçüldü)
+
+Özet ve hareketler ekranı eskiden cüzdanın **bütün** ledger satırlarını C#’a çekiyordu. Artık stored procedure çağırıyor (`usp_Wallet_GetSummary`, `usp_Wallet_GetStatementPage`; `usp_Ledger_GetDailyTotals` mutabakat için hazır) ve covering `(WalletId, CreatedAt)` + `PairId` + `CreatedAt` index’leri var. Geçici SQL Server 2022 container’ında, 600.000 satır, 120.000 satırlık hazine cüzdanı: özet **368.223 → 1.392** logical read (291 → 30 ms), hareket sayfası **127.269 → 1.495** (319 → 15 ms), günlük toplam **10.783 → 13**. Tablo, yöntem, maliyet ve gerçek `.sqlplan` dosyaları: [`docs/SQL-PERF.md`](docs/SQL-PERF.md). Demo veri; production benchmark değil.
+
+---
+
 ## Firebase kasa değil
 
 Flutter Firebase projesi `clearpay-c0485`. Konsolu kanıtlamak için **`app_meta/ping`** yazabilir (`ok`, `client`, `message`, `touchedAt`).

@@ -1,0 +1,525 @@
+<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" Version="1.564" Build="16.0.4305.5">
+  <BatchSequence>
+    <Batch>
+      <Statements>
+        <StmtSimple StatementText="SELECT @Total = COUNT(*)&#xD;&#xA;    FROM dbo.LedgerEntry AS e&#xD;&#xA;    WHERE e.WalletId = @WalletId&#xD;&#xA;      AND (@From IS NULL OR e.CreatedAt &gt;= @From)&#xD;&#xA;      AND (@To   IS NULL OR e.CreatedAt &lt;  @To)&#xD;&#xA;      AND (@Kind IS NULL OR e.Kind = @Kind)&#xD;&#xA;    OPTION (RECOMPILE)" StatementId="1" StatementCompId="15" StatementType="SELECT" StatementSqlHandle="0x0900B8D4FFEA7BC629AF7072F7DC68A77D660000000000000000000000000000000000000000000000000000" DatabaseContextSettingsId="4" ParentObjectId="1269579561" StatementParameterizationType="0" RetrievedFromCache="false" StatementSubTreeCost="1.4434" StatementEstRows="1" SecurityPolicyApplied="false" StatementOptmLevel="FULL" QueryHash="0x5192DC776D8D167C" QueryPlanHash="0xEE0D679E06CA862A" CardinalityEstimationModelVersion="160">
+          <StatementSetOptions QUOTED_IDENTIFIER="true" ARITHABORT="false" CONCAT_NULL_YIELDS_NULL="true" ANSI_NULLS="true" ANSI_PADDING="true" ANSI_WARNINGS="true" NUMERIC_ROUNDABORT="false">
+          </StatementSetOptions>
+          <QueryPlan DegreeOfParallelism="1" CachedPlanSize="32" CompileTime="1" CompileCPU="1" CompileMemory="328">
+            <MemoryGrantInfo SerialRequiredMemory="0" SerialDesiredMemory="0" GrantedMemory="0" MaxUsedMemory="0">
+            </MemoryGrantInfo>
+            <OptimizerHardwareDependentProperties EstimatedAvailableMemoryGrant="64327" EstimatedPagesCached="80409" EstimatedAvailableDegreeOfParallelism="10" MaxCompileMemory="8570720">
+            </OptimizerHardwareDependentProperties>
+            <OptimizerStatsUsage>
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:59.06" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_CreatedAt]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]">
+              </StatisticsInfo>
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:28.12" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_TransferId]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]">
+              </StatisticsInfo>
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:59.80" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_PairId]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]">
+              </StatisticsInfo>
+              <StatisticsInfo LastUpdate="2026-11-09T11:39:00.31" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_WalletId_CreatedAt]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]">
+              </StatisticsInfo>
+            </OptimizerStatsUsage>
+            <QueryTimeStats ElapsedTime="13" CpuTime="13">
+            </QueryTimeStats>
+            <RelOp NodeId="0" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="1" EstimateIO="0" EstimateCPU="0" AvgRowSize="11" EstimatedTotalSubtreeCost="1.4434" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+              <OutputList>
+                <ColumnReference Column="Expr1001">
+                </ColumnReference>
+              </OutputList>
+              <ComputeScalar>
+                <DefinedValues>
+                  <DefinedValue>
+                    <ColumnReference Column="Expr1001">
+                    </ColumnReference>
+                    <ScalarOperator ScalarString="CONVERT_IMPLICIT(int,[Expr1007],0)">
+                      <Convert DataType="int" Style="0" Implicit="1">
+                        <ScalarOperator>
+                          <Identifier>
+                            <ColumnReference Column="Expr1007">
+                            </ColumnReference>
+                          </Identifier>
+                        </ScalarOperator>
+                      </Convert>
+                    </ScalarOperator>
+                  </DefinedValue>
+                </DefinedValues>
+                <RelOp NodeId="1" PhysicalOp="Stream Aggregate" LogicalOp="Aggregate" EstimateRows="1" EstimateIO="0" EstimateCPU="0.0720005" AvgRowSize="11" EstimatedTotalSubtreeCost="1.4434" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                  <OutputList>
+                    <ColumnReference Column="Expr1007">
+                    </ColumnReference>
+                  </OutputList>
+                  <RunTimeInformation>
+                    <RunTimeCountersPerThread Thread="0" ActualRows="1" Batches="0" ActualElapsedms="13" ActualCPUms="13" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row">
+                    </RunTimeCountersPerThread>
+                  </RunTimeInformation>
+                  <StreamAggregate>
+                    <DefinedValues>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1007">
+                        </ColumnReference>
+                        <ScalarOperator ScalarString="Count(*)">
+                          <Aggregate AggType="countstar" Distinct="0">
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                    </DefinedValues>
+                    <RelOp NodeId="2" PhysicalOp="Index Seek" LogicalOp="Index Seek" EstimateRows="120000" EstimatedRowsRead="120000" EstimateIO="1.02564" EstimateCPU="0.132157" AvgRowSize="21" EstimatedTotalSubtreeCost="1.1578" TableCardinality="600000" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                      <OutputList>
+                      </OutputList>
+                      <RunTimeInformation>
+                        <RunTimeCountersPerThread Thread="0" ActualRows="120000" Batches="0" ActualElapsedms="10" ActualCPUms="10" ActualScans="1" ActualLogicalReads="1392" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="120000" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row">
+                        </RunTimeCountersPerThread>
+                      </RunTimeInformation>
+                      <IndexScan Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                        <DefinedValues>
+                        </DefinedValues>
+                        <Object Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Index="[IX_LedgerEntry_WalletId_CreatedAt]" Alias="[e]" IndexKind="NonClustered" Storage="RowStore">
+                        </Object>
+                        <SeekPredicates>
+                          <SeekPredicateNew>
+                            <SeekKeys>
+                              <Prefix ScanType="EQ">
+                                <RangeColumns>
+                                  <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="WalletId">
+                                  </ColumnReference>
+                                </RangeColumns>
+                                <RangeExpressions>
+                                  <ScalarOperator ScalarString="[@WalletId]">
+                                    <Identifier>
+                                      <ColumnReference Column="@WalletId">
+                                      </ColumnReference>
+                                    </Identifier>
+                                  </ScalarOperator>
+                                </RangeExpressions>
+                              </Prefix>
+                            </SeekKeys>
+                          </SeekPredicateNew>
+                        </SeekPredicates>
+                        <Predicate>
+                          <ScalarOperator ScalarString="([@From] IS NULL OR [ClearPayPerf].[dbo].[LedgerEntry].[CreatedAt] as [e].[CreatedAt]&gt;=[@From]) AND ([@To] IS NULL OR [ClearPayPerf].[dbo].[LedgerEntry].[CreatedAt] as [e].[CreatedAt]&lt;[@To]) AND ([@Kind] IS NULL OR [ClearPayPerf].[dbo].[LedgerEntry].[Kind] as [e].[Kind]=[@Kind])">
+                            <Logical Operation="AND">
+                              <ScalarOperator>
+                                <Logical Operation="OR">
+                                  <ScalarOperator>
+                                    <Identifier>
+                                      <ColumnReference Column="ConstExpr1002">
+                                        <ScalarOperator>
+                                          <Compare CompareOp="IS">
+                                            <ScalarOperator>
+                                              <Identifier>
+                                                <ColumnReference Column="@From">
+                                                </ColumnReference>
+                                              </Identifier>
+                                            </ScalarOperator>
+                                            <ScalarOperator>
+                                              <Const ConstValue="NULL">
+                                              </Const>
+                                            </ScalarOperator>
+                                          </Compare>
+                                        </ScalarOperator>
+                                      </ColumnReference>
+                                    </Identifier>
+                                  </ScalarOperator>
+                                  <ScalarOperator>
+                                    <Compare CompareOp="GE">
+                                      <ScalarOperator>
+                                        <Identifier>
+                                          <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt">
+                                          </ColumnReference>
+                                        </Identifier>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Identifier>
+                                          <ColumnReference Column="@From">
+                                          </ColumnReference>
+                                        </Identifier>
+                                      </ScalarOperator>
+                                    </Compare>
+                                  </ScalarOperator>
+                                </Logical>
+                              </ScalarOperator>
+                              <ScalarOperator>
+                                <Logical Operation="OR">
+                                  <ScalarOperator>
+                                    <Identifier>
+                                      <ColumnReference Column="ConstExpr1003">
+                                        <ScalarOperator>
+                                          <Compare CompareOp="IS">
+                                            <ScalarOperator>
+                                              <Identifier>
+                                                <ColumnReference Column="@To">
+                                                </ColumnReference>
+                                              </Identifier>
+                                            </ScalarOperator>
+                                            <ScalarOperator>
+                                              <Const ConstValue="NULL">
+                                              </Const>
+                                            </ScalarOperator>
+                                          </Compare>
+                                        </ScalarOperator>
+                                      </ColumnReference>
+                                    </Identifier>
+                                  </ScalarOperator>
+                                  <ScalarOperator>
+                                    <Compare CompareOp="LT">
+                                      <ScalarOperator>
+                                        <Identifier>
+                                          <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt">
+                                          </ColumnReference>
+                                        </Identifier>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Identifier>
+                                          <ColumnReference Column="@To">
+                                          </ColumnReference>
+                                        </Identifier>
+                                      </ScalarOperator>
+                                    </Compare>
+                                  </ScalarOperator>
+                                </Logical>
+                              </ScalarOperator>
+                              <ScalarOperator>
+                                <Logical Operation="OR">
+                                  <ScalarOperator>
+                                    <Identifier>
+                                      <ColumnReference Column="ConstExpr1004">
+                                        <ScalarOperator>
+                                          <Compare CompareOp="IS">
+                                            <ScalarOperator>
+                                              <Identifier>
+                                                <ColumnReference Column="@Kind">
+                                                </ColumnReference>
+                                              </Identifier>
+                                            </ScalarOperator>
+                                            <ScalarOperator>
+                                              <Const ConstValue="NULL">
+                                              </Const>
+                                            </ScalarOperator>
+                                          </Compare>
+                                        </ScalarOperator>
+                                      </ColumnReference>
+                                    </Identifier>
+                                  </ScalarOperator>
+                                  <ScalarOperator>
+                                    <Compare CompareOp="EQ">
+                                      <ScalarOperator>
+                                        <Identifier>
+                                          <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind">
+                                          </ColumnReference>
+                                        </Identifier>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Identifier>
+                                          <ColumnReference Column="@Kind">
+                                          </ColumnReference>
+                                        </Identifier>
+                                      </ScalarOperator>
+                                    </Compare>
+                                  </ScalarOperator>
+                                </Logical>
+                              </ScalarOperator>
+                            </Logical>
+                          </ScalarOperator>
+                        </Predicate>
+                      </IndexScan>
+                    </RelOp>
+                  </StreamAggregate>
+                </RelOp>
+              </ComputeScalar>
+            </RelOp>
+            <ParameterList>
+              <ColumnReference Column="@Total" ParameterDataType="int" ParameterCompiledValue="NULL" ParameterRuntimeValue="(120000)">
+              </ColumnReference>
+              <ColumnReference Column="@Kind" ParameterDataType="int" ParameterCompiledValue="NULL" ParameterRuntimeValue="NULL">
+              </ColumnReference>
+              <ColumnReference Column="@To" ParameterDataType="datetimeoffset(7)" ParameterCompiledValue="NULL" ParameterRuntimeValue="NULL">
+              </ColumnReference>
+              <ColumnReference Column="@From" ParameterDataType="datetimeoffset(7)" ParameterCompiledValue="NULL" ParameterRuntimeValue="NULL">
+              </ColumnReference>
+              <ColumnReference Column="@WalletId" ParameterDataType="uniqueidentifier" ParameterCompiledValue="{guid'F4F57FE0-5869-4971-B4B4-3869F97FD5F2'}" ParameterRuntimeValue="{guid'F4F57FE0-5869-4971-B4B4-3869F97FD5F2'}">
+              </ColumnReference>
+            </ParameterList>
+          </QueryPlan>
+        </StmtSimple>
+        <StmtSimple StatementText="WITH page AS&#xD;&#xA;    (&#xD;&#xA;        SELECT e.Id, e.CreatedAt, e.Kind, e.Amount, e.CorrelationId, e.PairId&#xD;&#xA;        FROM dbo.LedgerEntry AS e&#xD;&#xA;        WHERE e.WalletId = @WalletId&#xD;&#xA;          AND (@From IS NULL OR e.CreatedAt &gt;= @From)&#xD;&#xA;          AND (@To   IS NULL OR e.CreatedAt &lt;  @To)&#xD;&#xA;          AND (@Kind IS NULL OR e.Kind = @Kind)&#xD;&#xA;        ORDER BY e.CreatedAt DESC, e.Id DESC&#xD;&#xA;        OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY&#xD;&#xA;    )&#xD;&#xA;    SELECT&#xD;&#xA;        p.Id,&#xD;&#xA;        p.CreatedAt,&#xD;&#xA;        p.Kind,&#xD;&#xA;        p.Amount,&#xD;&#xA;        p.CorrelationId,&#xD;&#xA;        p.PairId,&#xD;&#xA;        CounterpartyUserId = cw.UserId,&#xD;&#xA;        TotalCount         = @Total&#xD;&#xA;    FROM page AS p&#xD;&#xA;    OUTER APPLY&#xD;&#xA;    (&#xD;&#xA;        SELECT TOP (1) c.WalletId&#xD;&#xA;        FROM dbo.LedgerEntry AS c&#xD;&#xA;        WHERE c.PairId = p.PairId&#xD;&#xA;          AND c.WalletId &lt;&gt; @WalletId&#xD;&#xA;    ) AS cp&#xD;&#xA;    LEFT JOIN dbo.Wallet AS cw ON cw.Id = cp.WalletId&#xD;&#xA;    ORDER BY p.CreatedAt DESC, p.Id DESC&#xD;&#xA;    OPTION (RECOMPILE)" StatementId="2" StatementCompId="16" StatementType="SELECT" StatementSqlHandle="0x09005FF0AF0FCA0BB653E8EEDE4BD93A09890000000000000000000000000000000000000000000000000000" DatabaseContextSettingsId="4" ParentObjectId="1269579561" StatementParameterizationType="0" RetrievedFromCache="false" StatementSubTreeCost="0.0476185" StatementEstRows="20" SecurityPolicyApplied="false" StatementOptmLevel="FULL" QueryHash="0xFB824B4DE0539308" QueryPlanHash="0x7A9BEF03F437BF64" StatementOptmEarlyAbortReason="GoodEnoughPlanFound" CardinalityEstimationModelVersion="160">
+          <StatementSetOptions QUOTED_IDENTIFIER="true" ARITHABORT="false" CONCAT_NULL_YIELDS_NULL="true" ANSI_NULLS="true" ANSI_PADDING="true" ANSI_WARNINGS="true" NUMERIC_ROUNDABORT="false" />
+          <QueryPlan DegreeOfParallelism="1" CachedPlanSize="48" CompileTime="2" CompileCPU="2" CompileMemory="632">
+            <MemoryGrantInfo SerialRequiredMemory="0" SerialDesiredMemory="0" GrantedMemory="0" MaxUsedMemory="0" />
+            <OptimizerHardwareDependentProperties EstimatedAvailableMemoryGrant="64327" EstimatedPagesCached="80409" EstimatedAvailableDegreeOfParallelism="10" MaxCompileMemory="8570720" />
+            <OptimizerStatsUsage>
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:59.06" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_CreatedAt]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]" />
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:28.12" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_TransferId]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]" />
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:28.23" ModificationCount="0" SamplingPercent="100" Statistics="[PK_Wallet]" Table="[Wallet]" Schema="[dbo]" Database="[ClearPayPerf]" />
+              <StatisticsInfo LastUpdate="2026-11-09T11:38:59.80" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_PairId]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]" />
+              <StatisticsInfo LastUpdate="2026-11-09T11:39:00.31" ModificationCount="0" SamplingPercent="100" Statistics="[IX_LedgerEntry_WalletId_CreatedAt]" Table="[LedgerEntry]" Schema="[dbo]" Database="[ClearPayPerf]" />
+            </OptimizerStatsUsage>
+            <QueryTimeStats ElapsedTime="0" CpuTime="0" />
+            <RelOp NodeId="0" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="20" EstimateIO="0" EstimateCPU="2e-06" AvgRowSize="536" EstimatedTotalSubtreeCost="0.0476185" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+              <OutputList>
+                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Id" />
+                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount" />
+                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="PairId" />
+                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CorrelationId" />
+                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind" />
+                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt" />
+                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[Wallet]" Alias="[cw]" Column="UserId" />
+                <ColumnReference Column="Expr1004" />
+              </OutputList>
+              <ComputeScalar>
+                <DefinedValues>
+                  <DefinedValue>
+                    <ColumnReference Column="Expr1004" />
+                    <ScalarOperator ScalarString="(120000)">
+                      <Const ConstValue="(120000)" />
+                    </ScalarOperator>
+                  </DefinedValue>
+                </DefinedValues>
+                <RelOp NodeId="1" PhysicalOp="Nested Loops" LogicalOp="Left Outer Join" EstimateRows="20" EstimateIO="0" EstimateCPU="8.36e-05" AvgRowSize="532" EstimatedTotalSubtreeCost="0.0476165" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                  <OutputList>
+                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Id" />
+                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount" />
+                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="PairId" />
+                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CorrelationId" />
+                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind" />
+                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt" />
+                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[Wallet]" Alias="[cw]" Column="UserId" />
+                  </OutputList>
+                  <RunTimeInformation>
+                    <RunTimeCountersPerThread Thread="0" ActualRows="20" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                  </RunTimeInformation>
+                  <NestedLoops Optimized="0">
+                    <OuterReferences>
+                      <ColumnReference Column="Expr1002" />
+                    </OuterReferences>
+                    <RelOp NodeId="2" PhysicalOp="Nested Loops" LogicalOp="Left Outer Join" EstimateRows="20" EstimateIO="0" EstimateCPU="8.36e-05" AvgRowSize="94" EstimatedTotalSubtreeCost="0.0412459" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                      <OutputList>
+                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Id" />
+                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount" />
+                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="PairId" />
+                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CorrelationId" />
+                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind" />
+                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt" />
+                        <ColumnReference Column="Expr1002" />
+                      </OutputList>
+                      <RunTimeInformation>
+                        <RunTimeCountersPerThread Thread="0" ActualRows="20" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                      </RunTimeInformation>
+                      <NestedLoops Optimized="0">
+                        <OuterReferences>
+                          <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="PairId" />
+                        </OuterReferences>
+                        <RelOp NodeId="3" PhysicalOp="Top" LogicalOp="Top" EstimateRows="20" EstimateIO="0" EstimateCPU="2e-06" AvgRowSize="78" EstimatedTotalSubtreeCost="0.0034679" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                          <OutputList>
+                            <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Id" />
+                            <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount" />
+                            <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="PairId" />
+                            <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CorrelationId" />
+                            <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind" />
+                            <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt" />
+                          </OutputList>
+                          <RunTimeInformation>
+                            <RunTimeCountersPerThread Thread="0" ActualRows="20" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                          </RunTimeInformation>
+                          <Top RowCount="0" IsPercent="0" WithTies="0">
+                            <TopExpression>
+                              <ScalarOperator ScalarString="(20)">
+                                <Const ConstValue="(20)" />
+                              </ScalarOperator>
+                            </TopExpression>
+                            <RelOp NodeId="4" PhysicalOp="Index Seek" LogicalOp="Index Seek" EstimateRows="20" EstimateRowsWithoutRowGoal="120000" EstimatedRowsRead="120000" EstimateIO="1.02564" EstimateCPU="0.132157" AvgRowSize="78" EstimatedTotalSubtreeCost="0.0034659" TableCardinality="600000" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                              <OutputList>
+                                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Id" />
+                                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount" />
+                                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="PairId" />
+                                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CorrelationId" />
+                                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind" />
+                                <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt" />
+                              </OutputList>
+                              <RunTimeInformation>
+                                <RunTimeCountersPerThread Thread="0" ActualRows="20" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="1" ActualLogicalReads="3" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="20" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Row" />
+                              </RunTimeInformation>
+                              <IndexScan Ordered="1" ScanDirection="BACKWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                <DefinedValues>
+                                  <DefinedValue>
+                                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Id" />
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Amount" />
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="PairId" />
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CorrelationId" />
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="Kind" />
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="CreatedAt" />
+                                  </DefinedValue>
+                                </DefinedValues>
+                                <Object Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Index="[IX_LedgerEntry_WalletId_CreatedAt]" Alias="[e]" IndexKind="NonClustered" Storage="RowStore" />
+                                <SeekPredicates>
+                                  <SeekPredicateNew>
+                                    <SeekKeys>
+                                      <Prefix ScanType="EQ">
+                                        <RangeColumns>
+                                          <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="WalletId" />
+                                        </RangeColumns>
+                                        <RangeExpressions>
+                                          <ScalarOperator ScalarString="{guid'F4F57FE0-5869-4971-B4B4-3869F97FD5F2'}">
+                                            <Const ConstValue="{guid'F4F57FE0-5869-4971-B4B4-3869F97FD5F2'}" />
+                                          </ScalarOperator>
+                                        </RangeExpressions>
+                                      </Prefix>
+                                    </SeekKeys>
+                                  </SeekPredicateNew>
+                                </SeekPredicates>
+                              </IndexScan>
+                            </RelOp>
+                          </Top>
+                        </RelOp>
+                        <RelOp NodeId="5" PhysicalOp="Top" LogicalOp="Top" EstimateRows="1" EstimateIO="0" EstimateCPU="1e-07" AvgRowSize="23" EstimatedTotalSubtreeCost="0.0376944" Parallel="0" EstimateRebinds="19" EstimateRewinds="1.64063e-05" EstimatedExecutionMode="Row">
+                          <OutputList>
+                            <ColumnReference Column="Expr1002" />
+                          </OutputList>
+                          <RunTimeInformation>
+                            <RunTimeCountersPerThread Thread="0" ActualRows="20" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualEndOfScans="0" ActualExecutions="20" ActualExecutionMode="Row" />
+                          </RunTimeInformation>
+                          <Top RowCount="0" IsPercent="0" WithTies="0">
+                            <TopExpression>
+                              <ScalarOperator ScalarString="(1)">
+                                <Const ConstValue="(1)" />
+                              </ScalarOperator>
+                            </TopExpression>
+                            <RelOp NodeId="6" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="1" EstimateRowsWithoutRowGoal="1.78885" EstimateIO="0" EstimateCPU="1.78885e-07" AvgRowSize="23" EstimatedTotalSubtreeCost="0.0376924" Parallel="0" EstimateRebinds="19" EstimateRewinds="1.64063e-05" EstimatedExecutionMode="Row">
+                              <OutputList>
+                                <ColumnReference Column="Expr1002" />
+                              </OutputList>
+                              <ComputeScalar>
+                                <DefinedValues>
+                                  <DefinedValue>
+                                    <ColumnReference Column="Expr1002" />
+                                    <ScalarOperator ScalarString="[ClearPayPerf].[dbo].[LedgerEntry].[WalletId] as [c].[WalletId]">
+                                      <Identifier>
+                                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[c]" Column="WalletId" />
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </DefinedValue>
+                                </DefinedValues>
+                                <RelOp NodeId="7" PhysicalOp="Index Seek" LogicalOp="Index Seek" EstimateRows="1" EstimateRowsWithoutRowGoal="1.78885" EstimatedRowsRead="2" EstimateIO="0.003125" EstimateCPU="0.0001592" AvgRowSize="23" EstimatedTotalSubtreeCost="0.0376707" TableCardinality="600000" Parallel="0" EstimateRebinds="19" EstimateRewinds="1.64063e-05" EstimatedExecutionMode="Row">
+                                  <OutputList>
+                                    <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[c]" Column="WalletId" />
+                                  </OutputList>
+                                  <RunTimeInformation>
+                                    <RunTimeCountersPerThread Thread="0" ActualRows="20" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="20" ActualLogicalReads="60" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="32" ActualEndOfScans="0" ActualExecutions="20" ActualExecutionMode="Row" />
+                                  </RunTimeInformation>
+                                  <IndexScan Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                    <DefinedValues>
+                                      <DefinedValue>
+                                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[c]" Column="WalletId" />
+                                      </DefinedValue>
+                                    </DefinedValues>
+                                    <Object Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Index="[IX_LedgerEntry_PairId]" Alias="[c]" IndexKind="NonClustered" Storage="RowStore" />
+                                    <SeekPredicates>
+                                      <SeekPredicateNew>
+                                        <SeekKeys>
+                                          <Prefix ScanType="EQ">
+                                            <RangeColumns>
+                                              <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[c]" Column="PairId" />
+                                            </RangeColumns>
+                                            <RangeExpressions>
+                                              <ScalarOperator ScalarString="[ClearPayPerf].[dbo].[LedgerEntry].[PairId] as [e].[PairId]">
+                                                <Identifier>
+                                                  <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[e]" Column="PairId" />
+                                                </Identifier>
+                                              </ScalarOperator>
+                                            </RangeExpressions>
+                                          </Prefix>
+                                        </SeekKeys>
+                                      </SeekPredicateNew>
+                                    </SeekPredicates>
+                                    <Predicate>
+                                      <ScalarOperator ScalarString="[ClearPayPerf].[dbo].[LedgerEntry].[WalletId] as [c].[WalletId]&lt;{guid'F4F57FE0-5869-4971-B4B4-3869F97FD5F2'} OR [ClearPayPerf].[dbo].[LedgerEntry].[WalletId] as [c].[WalletId]&gt;{guid'F4F57FE0-5869-4971-B4B4-3869F97FD5F2'}">
+                                        <Logical Operation="OR">
+                                          <ScalarOperator>
+                                            <Compare CompareOp="LT">
+                                              <ScalarOperator>
+                                                <Identifier>
+                                                  <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[c]" Column="WalletId" />
+                                                </Identifier>
+                                              </ScalarOperator>
+                                              <ScalarOperator>
+                                                <Const ConstValue="{guid'F4F57FE0-5869-4971-B4B4-3869F97FD5F2'}" />
+                                              </ScalarOperator>
+                                            </Compare>
+                                          </ScalarOperator>
+                                          <ScalarOperator>
+                                            <Compare CompareOp="GT">
+                                              <ScalarOperator>
+                                                <Identifier>
+                                                  <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[LedgerEntry]" Alias="[c]" Column="WalletId" />
+                                                </Identifier>
+                                              </ScalarOperator>
+                                              <ScalarOperator>
+                                                <Const ConstValue="{guid'F4F57FE0-5869-4971-B4B4-3869F97FD5F2'}" />
+                                              </ScalarOperator>
+                                            </Compare>
+                                          </ScalarOperator>
+                                        </Logical>
+                                      </ScalarOperator>
+                                    </Predicate>
+                                  </IndexScan>
+                                </RelOp>
+                              </ComputeScalar>
+                            </RelOp>
+                          </Top>
+                        </RelOp>
+                      </NestedLoops>
+                    </RelOp>
+                    <RelOp NodeId="8" PhysicalOp="Clustered Index Seek" LogicalOp="Clustered Index Seek" EstimateRows="1" EstimatedRowsRead="1" EstimateIO="0.003125" EstimateCPU="0.0001581" AvgRowSize="461" EstimatedTotalSubtreeCost="0.006287" TableCardinality="5001" Parallel="0" EstimateRebinds="0" EstimateRewinds="19" EstimatedExecutionMode="Row">
+                      <OutputList>
+                        <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[Wallet]" Alias="[cw]" Column="UserId" />
+                      </OutputList>
+                      <RunTimeInformation>
+                        <RunTimeCountersPerThread Thread="0" ActualRows="20" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="40" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="20" ActualEndOfScans="0" ActualExecutions="20" ActualExecutionMode="Row" />
+                      </RunTimeInformation>
+                      <IndexScan Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                        <DefinedValues>
+                          <DefinedValue>
+                            <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[Wallet]" Alias="[cw]" Column="UserId" />
+                          </DefinedValue>
+                        </DefinedValues>
+                        <Object Database="[ClearPayPerf]" Schema="[dbo]" Table="[Wallet]" Index="[PK_Wallet]" Alias="[cw]" IndexKind="Clustered" Storage="RowStore" />
+                        <SeekPredicates>
+                          <SeekPredicateNew>
+                            <SeekKeys>
+                              <Prefix ScanType="EQ">
+                                <RangeColumns>
+                                  <ColumnReference Database="[ClearPayPerf]" Schema="[dbo]" Table="[Wallet]" Alias="[cw]" Column="Id" />
+                                </RangeColumns>
+                                <RangeExpressions>
+                                  <ScalarOperator ScalarString="[Expr1002]">
+                                    <Identifier>
+                                      <ColumnReference Column="Expr1002" />
+                                    </Identifier>
+                                  </ScalarOperator>
+                                </RangeExpressions>
+                              </Prefix>
+                            </SeekKeys>
+                          </SeekPredicateNew>
+                        </SeekPredicates>
+                      </IndexScan>
+                    </RelOp>
+                  </NestedLoops>
+                </RelOp>
+              </ComputeScalar>
+            </RelOp>
+          </QueryPlan>
+        </StmtSimple>
+      </Statements>
+    </Batch>
+  </BatchSequence>
+</ShowPlanXML>

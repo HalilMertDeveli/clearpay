@@ -291,6 +291,22 @@ erDiagram
 
 ---
 
+## SQL performance (measured)
+
+The summary and statement screens used to load **every ledger row of the wallet** into C#. They now call T-SQL stored procedures (`usp_Wallet_GetSummary`, `usp_Wallet_GetStatementPage`; `usp_Ledger_GetDailyTotals` is ready for reconciliation) backed by a covering `(WalletId, CreatedAt)` index plus `PairId` and `CreatedAt` indexes — one EF migration, `CREATE OR ALTER` scripts in [`Persistence/Sql`](src/ClearPay.Infrastructure/Persistence/Sql).
+
+Measured on a throwaway SQL Server 2022 container, 600,000 ledger rows, hot treasury wallet = 120,000 rows (warm cache, laptop):
+
+| Query (treasury wallet) | Logical reads before → after | Elapsed before → after | Plan before → after |
+|-------------------------|-----------------------------:|-----------------------:|---------------------|
+| Summary (balance + month in/out) | 368,223 → **1,392** | 291 ms → **30 ms** | Seek + 120k Key Lookups → covering Seek |
+| Statement page 1 | 127,269 → **1,495** | 319 ms → **15 ms** | Clustered Scan + per-row counterparty scans → Seeks |
+| Daily totals (1 day) | 10,783 → **13** | 10 ms → **0 ms** | Clustered Scan → Seek |
+
+Full before / after table, method, costs (index space, write probe inconclusive) and the actual `.sqlplan` files: [`docs/SQL-PERF.md`](docs/SQL-PERF.md). Reproduce with `scripts/perf/run-perf.ps1`. Demo data, not a production benchmark.
+
+---
+
 ## Firebase is not the cash register
 
 Flutter initializes Firebase project `clearpay-c0485`. It may write **`app_meta/ping`** (`ok`, `client`, `message`, `touchedAt`) so the console can prove the client is alive.
@@ -350,6 +366,7 @@ CI on `main` restores and runs `tests/ClearPay.Tests`.
 
 - [`docs/SPEC.md`](docs/SPEC.md) — screens and money rules
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — onion layers
+- [`docs/SQL-PERF.md`](docs/SQL-PERF.md) — stored procedures, indexes, measured before / after with execution plans
 - [`docs/CANLI.md`](docs/CANLI.md) — Azure click list (no secrets in git)
 - [`docs/YOL.md`](docs/YOL.md) — career path; live URL is TASK-16
 - [`docs/FARK.md`](docs/FARK.md) — reconciliation-first, not a Papara rival
