@@ -52,7 +52,11 @@ public sealed class TracedPaymentGateway : IPaymentGateway
         try
         {
             var outcome = await call().ConfigureAwait(false);
-            var result = outcome.Kind.ToString();
+            // The 3DS callback "succeeds" (Ok) even when the shopper typed a wrong OTP or the bank said no;
+            // the payment is then Failed. Give that its own outcome so dashboards do not count it as success.
+            var result = outcome.Kind == PaymentResultKind.Ok && outcome.Payment?.Status == "Failed"
+                ? "PaymentFailed"
+                : outcome.Kind.ToString();
             activity?.SetTag("payment.outcome", result);
             if (outcome.Payment is { } payment)
             {

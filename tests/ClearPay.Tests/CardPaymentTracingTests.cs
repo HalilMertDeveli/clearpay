@@ -91,6 +91,25 @@ public sealed class CardPaymentTracingTests : IClassFixture<ClearPayWebFactory>,
     }
 
     [Fact]
+    public async Task Wrong_otp_is_traced_as_payment_failed_not_as_success()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        var (paymentId, acsUrl) = await ThreeDsFlowTests.CreatePaymentAsync(client, 15.00m, "4111111111111111");
+        var fields = await ThreeDsFlowTests.SubmitOtpAsync(client, acsUrl, "000000");
+        (await client.PostAsync("/api/payments/3ds/callback", new FormUrlEncodedContent(fields))).StatusCode
+            .Should().Be(HttpStatusCode.Redirect);
+
+        var span = _stopped.Single(a => a.DisplayName == "payment card_3ds"
+                                        && (string?)a.GetTagItem("clearpay.payment_id") == paymentId.ToString());
+        span.GetTagItem("payment.outcome").Should().Be("PaymentFailed");
+        span.GetTagItem("payment.status").Should().Be("Failed");
+        span.GetTagItem("payment.failure_code").Should().Be("3DS_FAILED");
+        _stopped.Should().NotContain(a => a.DisplayName == "acquirer authorize"
+                                          && (string?)a.GetTagItem("clearpay.payment_id") == paymentId.ToString(),
+            "a failed 3DS never reaches the bank");
+    }
+
+    [Fact]
     public async Task Gateway_decorator_records_card_metrics_and_marks_conflicts_as_errors()
     {
         var merchant = "m-" + Guid.NewGuid().ToString("N");

@@ -30,14 +30,14 @@
     {
       "id": 2,
       "type": "stat",
-      "title": "Not created (declined / timeout / replay)",
+      "title": "Not successful (declined / timeout / replay / forged 3DS)",
       "description": "Every outcome other than Created: InsufficientFunds, TimedOut, Replay, GatewayFailed ...",
       "gridPos": { "x": 6, "y": 0, "w": 6, "h": 5 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(increase(clearpay_payments_total{payment_outcome!=\"Created\"}[$__range])) or vector(0)",
+          "expr": "sum(increase(clearpay_payments_total{payment_outcome!~\"Created|Ok\"}[$__range])) or vector(0)",
           "instant": true
         }
       ],
