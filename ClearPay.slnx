@@ -5,9 +5,12 @@
     <Project Path="src/ClearPay.Domain/ClearPay.Domain.csproj" />
     <Project Path="src/ClearPay.Infrastructure/ClearPay.Infrastructure.csproj" />
     <Project Path="src/ClearPay.Messaging/ClearPay.Messaging.csproj" />
+    <Project Path="src/ClearPay.Notifications/ClearPay.Notifications.csproj" />
+    <Project Path="src/ClearPay.Reconciliation/ClearPay.Reconciliation.csproj" />
     <Project Path="src/ClearPay.Web/ClearPay.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/ClearPay.Services.Tests/ClearPay.Services.Tests.csproj" />
     <Project Path="tests/ClearPay.Tests/ClearPay.Tests.csproj" />
   </Folder>
 </Solution>

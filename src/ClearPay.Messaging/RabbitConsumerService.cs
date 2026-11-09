@@ -137,12 +137,8 @@ public sealed class RabbitConsumerService<THandler> : BackgroundService
         activity?.SetTag("messaging.message.id", props.MessageId);
         activity?.SetTag("clearpay.attempt", attempt);
         var traceId = activity?.TraceId.ToString() ?? MessageTraceContext.Extract(props.Headers).TraceId.ToString();
-        using var logScope = _logger.BeginScope(new Dictionary<string, object?>
-        {
-            ["MessageId"] = props.MessageId,
-            ["MessageType"] = type,
-            ["TraceId"] = traceId
-        });
+        // Template scope: structured sinks get MessageId / MessageType as properties, the console prints it readably.
+        using var logScope = _logger.BeginScope("message {MessageId} {MessageType}", props.MessageId, type);
 
         try
         {
@@ -177,7 +173,7 @@ public sealed class RabbitConsumerService<THandler> : BackgroundService
             if (ConsumerFailurePolicy.Decide(ex, attempt, _options.MaxAttempts) == FailureAction.Retry)
             {
                 _logger.LogWarning(
-                    "Attempt {Attempt}/{MaxAttempts} of {MessageType} {MessageId} failed: {Error}. Retrying in {Delay}s via {RetryQueue}",
+                    "Attempt {Attempt}/{MaxAttempts} of {MessageType} {MessageId} failed ({Error}); retrying in {Delay}s via {RetryQueue}",
                     attempt, _options.MaxAttempts, type, props.MessageId, ex.Message,
                     _options.RetryDelay.TotalSeconds, _options.RetryQueue);
                 channel.BasicNack(delivery.DeliveryTag, multiple: false, requeue: false);
