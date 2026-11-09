@@ -1,0 +1,86 @@
+﻿[
+    {
+        "State":  "after",
+        "Query":  "q0-legacy-ef-load-treasury",
+        "RowsReturned":  120000,
+        "LogicalReads":  10783,
+        "ReadsByTable":  "LedgerEntry=10783",
+        "CpuMsMedian":  867,
+        "ElapsedMsMedian":  328,
+        "ClientMsMedian":  330.1,
+        "PlanAccess":  "Clustered Index Scan LedgerEntry.PK_LedgerEntry (rows 120000)",
+        "PlanFile":  "docs/sqlplans/after-q0-legacy-ef-load-treasury.sqlplan"
+    },
+    {
+        "State":  "after",
+        "Query":  "q1-summary-customer",
+        "RowsReturned":  1,
+        "LogicalReads":  6,
+        "ReadsByTable":  "LedgerEntry=6",
+        "CpuMsMedian":  0,
+        "ElapsedMsMedian":  0,
+        "ClientMsMedian":  1.4,
+        "PlanAccess":  "Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 120)",
+        "PlanFile":  "docs/sqlplans/after-q1-summary-customer.sqlplan"
+    },
+    {
+        "State":  "after",
+        "Query":  "q1-summary-treasury",
+        "RowsReturned":  1,
+        "LogicalReads":  1392,
+        "ReadsByTable":  "LedgerEntry=1392",
+        "CpuMsMedian":  29,
+        "ElapsedMsMedian":  30,
+        "ClientMsMedian":  31.8,
+        "PlanAccess":  "Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 120000)",
+        "PlanFile":  "docs/sqlplans/after-q1-summary-treasury.sqlplan"
+    },
+    {
+        "State":  "after",
+        "Query":  "q2-statement-customer-p1",
+        "RowsReturned":  20,
+        "LogicalReads":  110,
+        "ReadsByTable":  "LedgerEntry=70, Wallet=40",
+        "CpuMsMedian":  2,
+        "ElapsedMsMedian":  4,
+        "ClientMsMedian":  6.9,
+        "PlanAccess":  "Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 120) | Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 20) | Index Seek LedgerEntry.IX_LedgerEntry_PairId (rows 20) | Clustered Index Seek Wallet.PK_Wallet (rows 20)",
+        "PlanFile":  "docs/sqlplans/after-q2-statement-customer-p1.sqlplan"
+    },
+    {
+        "State":  "after",
+        "Query":  "q2-statement-treasury-p1",
+        "RowsReturned":  20,
+        "LogicalReads":  1495,
+        "ReadsByTable":  "LedgerEntry=1455, Wallet=40",
+        "CpuMsMedian":  14,
+        "ElapsedMsMedian":  15,
+        "ClientMsMedian":  17.1,
+        "PlanAccess":  "Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 120000) | Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 20) | Index Seek LedgerEntry.IX_LedgerEntry_PairId (rows 20) | Clustered Index Seek Wallet.PK_Wallet (rows 20)",
+        "PlanFile":  "docs/sqlplans/after-q2-statement-treasury-p1.sqlplan"
+    },
+    {
+        "State":  "after",
+        "Query":  "q2-statement-treasury-filtered-p3",
+        "RowsReturned":  20,
+        "LogicalReads":  1497,
+        "ReadsByTable":  "LedgerEntry=1457, Wallet=40",
+        "CpuMsMedian":  10,
+        "ElapsedMsMedian":  12,
+        "ClientMsMedian":  13.8,
+        "PlanAccess":  "Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 7645) | Index Seek LedgerEntry.IX_LedgerEntry_WalletId_CreatedAt (rows 60) | Index Seek LedgerEntry.IX_LedgerEntry_PairId (rows 20) | Clustered Index Seek Wallet.PK_Wallet (rows 20)",
+        "PlanFile":  "docs/sqlplans/after-q2-statement-treasury-filtered-p3.sqlplan"
+    },
+    {
+        "State":  "after",
+        "Query":  "q3-daily-totals",
+        "RowsReturned":  3,
+        "LogicalReads":  13,
+        "ReadsByTable":  "LedgerEntry=13, Workfile=0, Worktable=0",
+        "CpuMsMedian":  0,
+        "ElapsedMsMedian":  0,
+        "ClientMsMedian":  1.9,
+        "PlanAccess":  "Index Seek LedgerEntry.IX_LedgerEntry_CreatedAt (rows 1650)",
+        "PlanFile":  "docs/sqlplans/after-q3-daily-totals.sqlplan"
+    }
+]
