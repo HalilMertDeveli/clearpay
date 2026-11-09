@@ -12,11 +12,13 @@ public sealed class SqlActivityReader : IActivityReader
 
     private readonly ClearPayDbContext _db;
     private readonly IUserDirectory _users;
+    private readonly LedgerProcedures _procedures;
 
     public SqlActivityReader(ClearPayDbContext db, IUserDirectory users)
     {
         _db = db;
         _users = users;
+        _procedures = new LedgerProcedures(db);
     }
 
     public async Task<ActivityPage> ListAsync(
@@ -43,6 +45,11 @@ public sealed class SqlActivityReader : IActivityReader
             return new ActivityPage([], 1, pageSize, 0);
 
         page = Math.Max(page, 1);
+        if (_procedures.IsAvailable)
+            return await ListFromProcedureAsync(wallet.Id, from, to, kind, page, pageSize, cancellationToken)
+                .ConfigureAwait(false);
+
+        // SQLite (tests): EF cannot ORDER BY DateTimeOffset there, so filter/page in memory.
         var query = _db.LedgerEntries.AsNoTracking().Where(e => e.WalletId == wallet.Id);
         var rows = await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         if (from is DateTimeOffset start)
@@ -84,6 +91,48 @@ public sealed class SqlActivityReader : IActivityReader
                 row.Amount,
                 "Completed"));
         }
+
+        return new ActivityPage(items, page, pageSize, total);
+    }
+
+    /// <summary>
+    /// SQL Server: one call to <c>usp_Wallet_GetStatementPage</c> — filter, count, page and
+    /// counterparty in SQL (docs/SQL-PERF.md). Same <see cref="ActivityPage"/> shape as the LINQ path.
+    /// </summary>
+    private async Task<ActivityPage> ListFromProcedureAsync(
+        Guid walletId,
+        DateTimeOffset? from,
+        DateTimeOffset? to,
+        string? kind,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        int? kindFilter = TryParseKind(kind, out var parsed) ? (int)parsed : null;
+        var rows = await _procedures
+            .GetStatementPageAsync(walletId, from, to, kindFilter, (page - 1) * pageSize, pageSize, cancellationToken)
+            .ConfigureAwait(false);
+
+        var items = new List<ActivityItem>(rows.Count);
+        foreach (var row in rows)
+        {
+            items.Add(new ActivityItem(
+                row.CreatedAt,
+                row.CorrelationId,
+                ((LedgerEntryKind)row.Kind).ToString(),
+                await LabelAsync(row.CounterpartyUserId ?? "", cancellationToken).ConfigureAwait(false),
+                row.Amount,
+                "Completed"));
+        }
+
+        // A page past the end has no rows to carry TotalCount; ask for the first row just to count.
+        var total = rows.Count > 0
+            ? rows[0].TotalCount
+            : page == 1
+                ? 0
+                : (await _procedures
+                    .GetStatementPageAsync(walletId, from, to, kindFilter, 0, 1, cancellationToken)
+                    .ConfigureAwait(false)).FirstOrDefault()?.TotalCount ?? 0;
 
         return new ActivityPage(items, page, pageSize, total);
     }
