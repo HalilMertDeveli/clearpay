@@ -159,6 +159,19 @@ Web ledger hesabı yapmaz. Özet `IWalletReader` sorar. Adapter `SqlWalletReader
 
 ---
 
+## Ödeme akışı (3D Secure)
+
+**Sahte kartlı ödeme (mock acquiring), gerçek banka değil.** Üye işyeri ödeme başlatır → ClearPay gateway ödemeyi `Pending3DS` yapar → müşteri sahte banka ACS sayfasında OTP girer (`123456` başarılı) → ACS HMAC imzalı sonucu callback'e post eder → gateway imzayı doğrular, sahte bankadan provizyon alır, müşteriyi işyerinin dönüş adresine yönlendirir. Ardından capture, void (iptal), iade ve kısmi iade.
+
+- Üç sahte banka/PSP (`MockBankA` ISO 8583 kodları, `MockBankB` XML, `MockPspC` JSON) tek `IAcquirerAdapter` arayüzünde normalize edilir; BIN router seçer.
+- Callback idempotent: ikinci callback ne bankayı tekrar çağırır ne ikinci olay yazar.
+- İade toplamı capture'ı aşamaz; eşzamanlı iadeye karşı önce rezervasyon + `Version` concurrency token.
+- Her durum değişikliği aynı `SaveChanges` içinde `OutboxMessage`'a `clearpay.payment.*` olayı yazar.
+
+Sequence diyagramı: [`README.md`](README.md#ödeme-akışı-3d-secure). Ayrıntı, test kartları, tetikleyici tutarlar ve sınırlar: [`docs/PAYMENTS.md`](docs/PAYMENTS.md). Demo: [`/demo-magaza`](http://localhost:5153/demo-magaza).
+
+---
+
 ## İlişkisel şema (SQL Server)
 
 **Demo — sahte banka gateway.** Lisanslı e-para değil. Identity ve defter aynı LocalDB (`ClearPay`, iki EF bağlamı). `Wallet.UserId` = `AspNetUsers.Id`, **FK yok**. `LinkedInstrument` yalnız **son 4 + şema + etiket**. PAN / CVV yok.
@@ -229,6 +242,7 @@ CI `main` üzerinde `tests/ClearPay.Tests` çalıştırır.
 - [`docs/CANLI.md`](docs/CANLI.md) — Azure tık listesi (secret git’te yok)
 - [`docs/YOL.md`](docs/YOL.md) — kariyer yolu; canlı URL TASK-16
 - [`docs/FARK.md`](docs/FARK.md) — mutabakat önce; Papara rakibi değil
+- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — sahte kartlı ödeme: 3D Secure, banka adaptörleri, iade
 - [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter istemci
 
 ## Lisans

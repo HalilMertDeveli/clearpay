@@ -198,6 +198,44 @@ Dependencies point **inward**. Domain does not reference EF or ASP.NET.
 
 ---
 
+## Ödeme akışı (3D Secure)
+
+**Mock card acquiring, not a real bank.** A merchant starts a card payment, the shopper goes through a fake 3D Secure page, and the result comes back signed. The three banks (`MockBankA`, `MockBankB`, `MockPspC`), the ACS page and the SMS code are stubs that run in the same host. No real card is charged. The PAN is used only for BIN routing and the last four digits, then it is dropped.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant S as Shopper browser
+    participant M as Merchant
+    participant G as ClearPay gateway
+    participant A as Mock ACS
+    participant B as Mock bank / PSP adapter
+    M->>G: POST /api/payments (X-Merchant-Key)
+    G-->>M: 201 Pending3DS + redirectUrl
+    M-->>S: redirect to /mock-acs/{id}
+    S->>A: OTP (123456 = success)
+    A-->>S: auto-post {result, HMAC-SHA256}
+    S->>G: POST /api/payments/3ds/callback
+    G->>G: verify HMAC with stored amount + 3DS id
+    G->>B: authorize (only if 3DS = Y)
+    B-->>G: raw code, normalized
+    G-->>S: 302 merchant returnUrl (Authorized / Failed)
+    M->>G: capture · void · refunds
+```
+
+| Rule | What the code does |
+|------|-------------------|
+| **Explicit state machine** | `Created → Pending3DS → Authorized/Failed → Captured → PartiallyRefunded/Refunded`, plus `Authorized → Voided`. Any other move is a domain error (409). |
+| **Signed callback** | HMAC over `paymentId`, 3DS id, result and amount, compared in constant time. A tampered result gets 400 and the payment stays `Pending3DS`. |
+| **Idempotent callback** | A second callback does nothing and returns the same redirect: no second bank call, no second event. Parallel duplicates lose on the `Version` concurrency token. |
+| **One contract, three banks** | ISO 8583 codes, XML and JSON answers are normalized behind `IAcquirerAdapter`. A BIN router picks the adapter. |
+| **Refund limit under concurrency** | The refund amount is reserved and committed first, then the bank is called, then the refund is settled. Total refunds never exceed the captured amount. |
+| **Outbox** | Every state change writes a `clearpay.payment.*` row into `OutboxMessage` in the same `SaveChanges`. |
+
+Click through it at [`/demo-magaza`](http://localhost:5153/demo-magaza) (Development; merchant key `dev-demo-shop-key`). Test cards, trigger amounts and known limits are in [`docs/PAYMENTS.md`](docs/PAYMENTS.md).
+
+---
+
 ## Relational schema (SQL Server)
 
 **Demo — fake bank gateway.** Not licensed e-money. Identity and the ledger share one LocalDB database (two EF contexts, two history tables). `Wallet.UserId` matches `AspNetUsers.Id` with **no FK** (two DbContexts). Real FKs are Identity membership plus `LedgerEntry` → `Wallet` / `Transfer`.
@@ -353,6 +391,7 @@ CI on `main` restores and runs `tests/ClearPay.Tests`.
 - [`docs/CANLI.md`](docs/CANLI.md) — Azure click list (no secrets in git)
 - [`docs/YOL.md`](docs/YOL.md) — career path; live URL is TASK-16
 - [`docs/FARK.md`](docs/FARK.md) — reconciliation-first, not a Papara rival
+- [`docs/PAYMENTS.md`](docs/PAYMENTS.md) — mock card payments: 3D Secure, acquirer adapters, refunds
 - [`mobile/clearpay/README.md`](mobile/clearpay/README.md) — Flutter client
 - [`docs/API-ESZAMAN.md`](docs/API-ESZAMAN.md) — SignalR hub (not the ledger)
 

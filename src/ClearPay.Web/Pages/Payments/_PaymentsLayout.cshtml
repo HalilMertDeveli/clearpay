@@ -1,0 +1,42 @@
+@{
+    var title = ViewData["Title"] as string ?? "Mock payment";
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>@title — ClearPay mock</title>
+    <style>
+        :root { color-scheme: light; --ink: #1B2A4A; --muted: #5b6475; --line: #d9dee8; --ok: #0f7b4b; --bad: #b42318; --accent: @(ViewData["Accent"] as string ?? "#1B2A4A"); }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f4f6fa; color: var(--ink); }
+        .mock-banner { background: #fff4ce; color: #5c4400; font-size: .85rem; text-align: center; padding: .5rem 1rem; border-bottom: 1px solid #f0d98a; }
+        main { max-width: 460px; margin: 2rem auto; padding: 0 16px; }
+        .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; }
+        .brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; color: var(--accent); margin-bottom: 1rem; }
+        .brand span { display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: var(--accent); }
+        dl { display: grid; grid-template-columns: auto 1fr; gap: .35rem 1rem; margin: 0 0 1.25rem; font-size: .95rem; }
+        dt { color: var(--muted); }
+        dd { margin: 0; font-variant-numeric: tabular-nums; }
+        label { display: block; font-weight: 600; margin-bottom: .35rem; }
+        input, select { width: 100%; padding: .65rem .75rem; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; }
+        .row { display: flex; gap: .5rem; flex-wrap: wrap; }
+        button { flex: 1; padding: .7rem 1rem; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: #fff; font-size: 1rem; cursor: pointer; }
+        button.secondary { background: #fff; color: var(--accent); }
+        .hint { font-size: .85rem; color: var(--muted); }
+        .status-ok { color: var(--ok); font-weight: 700; }
+        .status-bad { color: var(--bad); font-weight: 700; }
+        code { background: #eef1f6; padding: .1rem .3rem; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; font-size: .9rem; margin-top: .5rem; }
+        td, th { text-align: left; padding: .35rem .25rem; border-bottom: 1px solid var(--line); }
+    </style>
+</head>
+<body>
+    <div class="mock-banner">MOCK / DEMO — not a real bank, no real card is charged. ClearPay portfolio project.</div>
+    <main>
+        @RenderBody()
+    </main>
+</body>
+</html>

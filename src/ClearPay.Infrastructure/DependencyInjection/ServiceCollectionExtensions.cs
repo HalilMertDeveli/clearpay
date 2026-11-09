@@ -1,3 +1,4 @@
+using ClearPay.Application.Payments;
 using ClearPay.Application.Ports;
 using ClearPay.Infrastructure.Banking;
 using ClearPay.Infrastructure.Caching;
@@ -5,6 +6,8 @@ using ClearPay.Infrastructure.Identity;
 using ClearPay.Infrastructure.Documents;
 using ClearPay.Infrastructure.Jobs;
 using ClearPay.Infrastructure.Messaging;
+using ClearPay.Infrastructure.Payments;
+using ClearPay.Infrastructure.Payments.Acquirers;
 using ClearPay.Infrastructure.Persistence;
 using ClearPay.Infrastructure.Realtime;
 using ClearPay.Infrastructure.Time;
@@ -66,6 +69,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAdminPanel, SqlAdminPanel>();
         services.AddScoped<IOutboxProcessor, SqlOutboxProcessor>();
         services.AddScoped<OutboxHangfireJob>();
+        AddPayments(services, configuration);
 
         services.AddScoped<RestBankGateway>();
         services.AddScoped<SoapBankGateway>();
@@ -141,6 +145,38 @@ public static class ServiceCollectionExtensions
         {
             // Boot must not die; Pending outbox stays in SQL until the next successful start.
         }
+    }
+
+    /// <summary>
+    /// Mock card acquiring: three adapters behind one <see cref="IAcquirerAdapter"/> contract,
+    /// a BIN router, the 3DS HMAC signer, and the SQL gateway. Adding a bank = one more AddSingleton here.
+    /// </summary>
+    private static void AddPayments(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IAcquirerAdapter, MockBankAAdapter>();
+        services.AddSingleton<IAcquirerAdapter, MockBankBAdapter>();
+        services.AddSingleton<IAcquirerAdapter, MockPspCAdapter>();
+
+        var routing = configuration.GetSection(PaymentRoutingOptions.SectionName).Get<PaymentRoutingOptions>()
+            ?? new PaymentRoutingOptions();
+        if (routing.BinRoutes.Count == 0)
+        {
+            routing.BinRoutes = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["4"] = MockBankAAdapter.ProviderName,
+                ["5"] = MockBankBAdapter.ProviderName,
+                ["2"] = MockBankBAdapter.ProviderName,
+                ["9792"] = MockPspCAdapter.ProviderName
+            };
+        }
+
+        services.AddSingleton(routing);
+        services.AddSingleton<AcquirerRouter>();
+
+        var threeDs = configuration.GetSection(ThreeDsOptions.SectionName).Get<ThreeDsOptions>() ?? new ThreeDsOptions();
+        services.AddSingleton(threeDs);
+        services.AddSingleton<ThreeDsSigner>();
+        services.AddScoped<IPaymentGateway, SqlPaymentGateway>();
     }
 
     private static void AddRedisCache(IServiceCollection services, IConfiguration configuration)
