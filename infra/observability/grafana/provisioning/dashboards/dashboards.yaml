@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: clearpay
+    folder: ClearPay
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

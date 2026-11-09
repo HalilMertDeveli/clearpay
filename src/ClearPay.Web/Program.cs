@@ -7,6 +7,7 @@ using ClearPay.Infrastructure.Persistence;
 using ClearPay.Web;
 using ClearPay.Application.Ports;
 using ClearPay.Web.Localization;
+using ClearPay.Web.Observability;
 using ClearPay.Web.OpenApi;
 using ClearPay.Web.Realtime;
 using FluentValidation;
@@ -21,6 +22,7 @@ builder.Services.AddClearPayExternalLogin(builder.Configuration);
 builder.Services.AddClearPayJwt(builder.Configuration, builder.Environment);
 builder.Services.AddClearPay(builder.Configuration);
 builder.Services.AddClearPayHangfire(builder.Configuration);
+builder.AddClearPayObservability();
 builder.Services.AddValidatorsFromAssembly(typeof(ApplicationAssembly).Assembly);
 builder.Services.AddRazorPages(options =>
 {
@@ -43,6 +45,7 @@ builder.Services.AddScoped<IWalletLiveNotifier, SignalRWalletLiveNotifier>();
 var app = builder.Build();
 
 app.UseClearPayForwardedHeaders();
+app.UseClearPayObservability();
 await IdentitySeeder.EnsureCreatedAndRolesAsync(app.Services);
 if (app.Configuration.GetValue("ClearPay:ApplyLedgerMigrations", true))
 {

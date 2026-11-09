@@ -353,6 +353,25 @@ Money does **not** go there. Balance, transfers, and receipts stay JWT → ASP.N
 
 ---
 
+## Tracing a payment (observability)
+
+Every response carries `X-Trace-Id` and `X-Correlation-Id`. Paste either into Seq or Grafana/Tempo and you get the request log line, the `payment topup` / `payment transfer` span, and the SQL spans under it — including the single `INSERT [AuditLog] [IdempotencyRecord] [LedgerEntry] [OutboxMessage]` batch.
+
+```bash
+docker compose -f docker-compose.observability.yml -p clearpay-obs up -d   # Seq, OTel Collector, Tempo, Prometheus, Grafana
+dotnet run --project src/ClearPay.Web --launch-profile http                # Development exports to :5341 / :4317
+```
+
+| | |
+|--|--|
+| Logs | Serilog → console + Seq ([localhost:8341](http://localhost:8341)), enriched with `TraceId`, `SpanId`, `CorrelationId`, opaque `UserId`. PAN-looking numbers and secret-named properties are masked. |
+| Traces | OpenTelemetry: ASP.NET Core, HttpClient, SqlClient, `ClearPay.Payments`, `ClearPay.Messaging` → Collector → Tempo + Seq |
+| Metrics | `clearpay_payments_total`, `clearpay_payments_duration_milliseconds`, HTTP RED → Prometheus → Grafana dashboard *ClearPay - Payments* ([localhost:3000](http://localhost:3000)) |
+
+**Honest scope:** the stack runs in local Docker only (no auth, dev settings); Production config leaves `Observability` empty. RabbitMQ trace propagation (`MessageTraceContext`) is ready but not yet called by the publisher. Runbook: [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md).
+
+---
+
 ## Interview (three sentences)
 
 1. Same `Idempotency-Key` is the same intent: the second HTTP is **409 Conflict** so a timeout retry does not debit twice.
@@ -384,6 +403,8 @@ mobile/clearpay               Flutter JWT client (not in the .slnx)
 tests/ClearPay.Tests          LedgerPair, 409, architecture, culture
 infra/                        Bicep unused on the live site (T-104); you click Azure Portal
 docker-compose.yml            SQL Server 2022 — not the web app
+docker-compose.observability.yml  Seq + OTel Collector + Tempo + Prometheus + Grafana (local)
+infra/observability/          Collector, Tempo, Prometheus, Grafana provisioning + dashboard
 ClearPay.slnx
 ```
 
@@ -405,6 +426,7 @@ CI on `main` restores and runs `tests/ClearPay.Tests`.
 - [`docs/SPEC.md`](docs/SPEC.md) — screens and money rules
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — onion layers
 - [`docs/SQL-PERF.md`](docs/SQL-PERF.md) — stored procedures, indexes, measured before / after with execution plans
+- [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md) — find a payment by TraceId; error-analysis runbook
 - [`docs/CANLI.md`](docs/CANLI.md) — Azure click list (no secrets in git)
 - [`docs/YOL.md`](docs/YOL.md) — career path; live URL is TASK-16
 - [`docs/FARK.md`](docs/FARK.md) — reconciliation-first, not a Papara rival
